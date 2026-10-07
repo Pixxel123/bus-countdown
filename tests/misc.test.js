@@ -24,11 +24,11 @@ test('a position must be under a minute old during a countdown, 3 minutes otherw
   assert.strictEqual(run('loc_age.js', { globals: { BusStateRunning: '1' }, locals: age90, now }).busstale, 'yes');
   assert.strictEqual(run('loc_age.js', { globals: { BusStateRunning: '0' }, locals: age90, now }).busstale, 'no');
 });
-test('swiping the island away holds the trip as left', () => {
+test('swiping the island away holds the trip as left, and snoozes in its own variable', () => {
   const g = { BusStateStopId: 'S' };
   run('end_log.js', { globals: g, locals: { busfrom: 'island' } });
-  const trip = JSON.parse(g.BusStateTrip);
-  assert.strictEqual(trip.s, 'left'); assert.strictEqual(trip.swiped, true);
+  assert.strictEqual(JSON.parse(g.BusStateTrip).s, 'left');
+  assert.strictEqual(JSON.parse(g.BusStateSnooze).stop, 'S');
 });
 test('route orders are kept from TfL\'s sequence reply', () => {
   const g = { BusTempFetchSeq: '[]' };

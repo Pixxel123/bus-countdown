@@ -7,7 +7,7 @@
      - a countdown that started somewhere else ends when you get there;
      - just leaving work (or home, as BusLeaveShow says) starts one for
        your nearest saved stop.
-   Output: busdue, busend, busleave (each yes / no)
+   Output: busdue, busend, busleave, busquiet (each yes / no)
    ================================================================== */
 /* @include get */
 /* @include loc */
@@ -80,9 +80,16 @@ var leaveWanted = leaveShow === 'both' || leaveShow === leftWhich;
 var busleave = (!countdownOn && reallyLeft && leaveWanted && get('BusPlaces') !== '') ? 'yes' : 'no';
 if (busleave === 'yes') setGlobal('BusStateStartMode', 'leaving|' + Date.now());
 
+// Staying put well away from your stops (Bus Watch has slowed the pushes right down: BusStatePushMode
+// is "far"), the screen coming on doesn't need a fresh GPS fix if there was one in the last 2 minutes
+// (Tuesday evening, 39 screen-on checks in under an hour, sitting in the same place)
+var lastFix = 0; try { var winNow = JSON.parse(get('BusStateWindow') || '[]'); lastFix = winNow.length ? winNow[winNow.length - 1].t : 0; } catch (e) {}
+var quietFar = fromWake && !countdownOn && get('BusStatePushMode') === 'far' && Date.now() - lastFix < 120000;
+var busquiet = quietFar && !onHome && !onWork ? 'yes' : 'no';      // Bus Watch stops before getting a fix
 var why = get('BusPlaces') === '' ? 'no saved stops'
         : onHome ? 'on home Wi-Fi'
         : onWork ? 'on work Wi-Fi'
+        : quietFar ? 'staying put away from your stops, checked under 2 minutes ago'
         : '';
 var busdue = (byHand || why === '') ? 'yes' : 'no';
 

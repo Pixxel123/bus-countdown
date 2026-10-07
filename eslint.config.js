@@ -7,7 +7,7 @@ const globals = require('globals');
 // Local variables Tasker passes into the scripts (task locals, Perform Task parameters, results of
 // earlier steps). Listing them means a misspelt variable is still reported as undefined.
 const taskerLocals = [
-  'par1', 'par2', 'caller1', 'busssid', 'buscaller', 'busfrom', 'busaction', 'busstop', 'busvalue', 'bussetting',
+  'par1', 'par2', 'caller1', 'busssid', 'buscaller', 'busfrom', 'busreason', 'busaction', 'busstop', 'busvalue', 'bussetting',
   'http_data', 'http_response_code', 'gl_latitude', 'gl_longitude', 'gl_time_seconds', 'gl_coordinates_accuracy',
   'bus_lastloc', 'bus_fixtime', 'bus_hasspeed', 'bus_speed', 'bus_hasbearing', 'bus_bearing', 'bus_acc',
   'busacc', 'busspeed', 'busbearing', 'busnearedge', 'busdwell', 'busstatus', 'busbuild', 'busroute', 'busprevgap', 'busprevy',

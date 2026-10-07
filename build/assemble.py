@@ -136,7 +136,7 @@ def request_positions(mode, cond=None):
         deco(set_str(set_str(T['VARSET'], 0, '%BusStatePush'), 1, f'GPS, {what}'), '   GPS worked', ('%BusStatePush', 2, 'not requested'))]
 
 PROFILES = ['Bus Moved', 'Bus Screen On', 'Bus Hide When Sideways']
-VERSION = '4.26'
+VERSION = '4.27'
 BUILD = VERSION + '.' + time.strftime('%Y%m%d%H%M')     # changes with every build
 
 def profile_status(name, on, label, cond=None):
@@ -193,7 +193,7 @@ TASKS = [
     js('menu.js', 'Only what applies: Start or End, depending on whether a countdown is running'),
     list_dialog('%busmenu', 'Bus countdown', 'Pick what to do', False),
     perform('Bus Start', 'Start countdown', ('%ld_selected', 2, 'Start countdown')),
-    perform('Bus End', 'End countdown', ('%ld_selected', 2, 'End countdown')),
+    perform('Bus End', 'End countdown', ('%ld_selected', 2, 'End countdown'), par1='menu'),
     perform('Bus Settings', 'Settings (priority 6: above Bus Loop, so it opens during a countdown)', ('%ld_selected', 2, 'Settings'), pri=6),
     perform('Bus Status', 'Status', ('%ld_selected', 2, 'Status')),
     perform('Bus Status', 'Debugging', ('%ld_selected', 2, 'Debugging'), par1='copy'),
@@ -272,7 +272,7 @@ TASKS = [
     deco(set_str(T['FOR'], 1, '1:%buscycles'), 'Refresh until time is up'),
       stop('Stop if Bus End was used', ('%BusStateRunning', 2, '0')),
       js('loop_tick.js', 'Time up? And how long to wait after this refresh'),
-      perform('Bus End', "Time's up", ('%busdone', 2, 'yes')),
+      perform('Bus End', "Time's up", ('%busdone', 2, 'yes'), par1='timeout'),
       stop('Time\'s up: stop here', ('%busdone', 2, 'yes')),
       deco(js('push_params.js', 'No positions: ask for them again at the current rate'), None, ('%busnopush', 2, 'yes')),
       *request_positions('var', ('%busnopush', 2, 'yes')),
@@ -282,7 +282,7 @@ TASKS = [
       perform('Bus Refresh', 'Fetch and show the latest times (screen on, or a bus within 8 minutes)', ('%busfetch', 2, 'yes')),
       deco(set_int(T['WAIT'], 1, '%buswait', var=True), 'Wait (longer while the next bus is more than 10 minutes away)'),
     T['ENDFOR'],
-    perform('Bus End', "Time's up"),
+    perform('Bus End', "Time's up", par1='timeout'),
  ]),
  (59, 'Bus Refresh', [
     varset('%busstart', '%TIMEMS', 'When this refresh started (for the trip recorder)'),
@@ -343,7 +343,8 @@ TASKS = [
     perform('Bus Watch', 'Screen on: check now (starts a countdown at a stop, or ends one if you\'ve walked away)', None, par1='wake'),
  ]),
  (32, 'Bus End', [
-    js('end_log.js', 'Note it in the debugging log (and, if you swiped it, hold the trip as left)'),
+    varset('%busreason', '%par1', 'Why it ended, from the task that ended it (scripts can\'t read %par1)'),
+    js('end_log.js', 'Note it in the debugging log, with why (and, if you swiped it, snooze)'),
     vibrate(40, 'Dismissed from the island: confirm with a vibration', ('%busfrom', 2, 'island')),
     varset('%BusStateRunning', '0', 'Tell Bus Loop and Bus Refresh to finish'),
     stoptask('Bus Loop', 'End the refresh loop'),
@@ -381,8 +382,9 @@ TASKS = [
     java('%bus_acc', 'busloc', 'getAccuracy {float} ()', '', '   How accurate it is', ('%buscaller', 2, 'profile=moved')),
     deco(js('moved.js', '   Read it'), None, ('%buscaller', 2, 'profile=moved')),
     js('watch_due.js', 'Home or work Wi-Fi? Really left it? (50 m away, or gone for two checks)'),
-    perform('Bus End', 'On home or work Wi-Fi during a countdown: end it', ('%busend', 2, 'yes')),
+    perform('Bus End', 'On home or work Wi-Fi during a countdown: end it', ('%busend', 2, 'yes'), par1='wifi'),
     perform('Bus Start', 'Just left home or work Wi-Fi: show the next buses from your nearest stop', ('%busleave', 2, 'yes'), par1='leaving'),
+    stop('Staying put away from your stops: no new fix (there was one under 2 minutes ago)', ('%busquiet', 2, 'yes')),
     # Otherwise: fetch one
     deco(T['GETLOC'], 'Otherwise: get my location', ('%buscaller', 3, 'profile=moved'), cont=True),
     deco(js('loc_age.js', '   Is it recent? (Android sometimes hands back an old one)'), None, ('%buscaller', 3, 'profile=moved')),
@@ -396,7 +398,7 @@ TASKS = [
     *request_positions('var', ('%buspushmode', 3, 'none')),
     perform('Bus Start', 'Arrived: start the countdown (for the saved stop you are at)', ('%busaction', 2, 'start'), pri=9, par1='arrived'),
     perform('Bus Start', 'Heading to a saved stop: show its next buses early', ('%busaction', 2, 'approach'), pri=9, par1='approach'),
-    perform('Bus End', 'Left: end the countdown', ('%busaction', 2, 'stop'), pri=9),
+    perform('Bus End', 'Left: end the countdown', ('%busaction', 2, 'stop'), pri=9, par1='watch'),
  ]),
  (72, 'Bus Status', [
     # However it's run (Status or Debugging in the Bus menu, or the run button in Tasker), the full

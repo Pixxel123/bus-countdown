@@ -59,5 +59,5 @@ test('a bus on the other route that is sooner is the one that buzzes, never both
   const g = base(); let now = Date.UTC(2026, 9, 5, 8, 0, 0);
   const at = (arr) => { now += 45000; return refresh(g, arr, now); };
   at([bus('517', 4.5, 'A'), bus('566', 3.5, 'B')]);
-  assert.deepStrictEqual(Object.keys(JSON.parse(g.BusStateBuzzed)), ['566|B']);
+  assert.deepStrictEqual(Object.keys(JSON.parse(g.BusStateBuzzed)), ['S|566|B']);
 });

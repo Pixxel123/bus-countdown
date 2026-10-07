@@ -9,9 +9,9 @@ var running = get('BusStateRunning') === '1' && /(^|,)Bus Loop(,|$)/.test(get('T
 lines.push(running
   ? 'Countdown running at ' + (get('BusStateStopName') || '?') + ' (' + (get('BusStyle') === 'chip' ? 'status bar' : 'island') + ')'
   : 'No countdown running');
-var tripNow = {}; try { tripNow = JSON.parse(get('BusStateTrip') || '{}'); } catch (e) {}
-if (tripNow.s === 'left' && tripNow.swiped && Date.now() - tripNow.since < 30 * 60000)
-  lines.push('Snoozed until you leave, or ' + new Date(tripNow.since + 30 * 60000).toTimeString().slice(0, 5) + ' at the latest (you swiped it away)');
+var snoozeNow = null; try { snoozeNow = JSON.parse(get('BusStateSnooze') || 'null'); } catch (e) {}
+if (snoozeNow && Date.now() - snoozeNow.at < 30 * 60000)
+  lines.push('Snoozed until you\u2019ve been to that stop and left it, or ' + new Date(snoozeNow.at + 30 * 60000).toTimeString().slice(0, 5) + ' at the latest (you swiped it away)');
 
 // Which side of the road comes first (by direction): see sideTarget in watch.js
 var lastPlace = get('BusStateLastPlace'); var dd = new Date(); var wk = dd.getDay() >= 1 && dd.getDay() <= 5;

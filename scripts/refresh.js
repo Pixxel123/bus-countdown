@@ -29,6 +29,29 @@ if (code === '200') {
   } catch (e) { deps = []; }
 }
 
+// Buses TfL drops for a while: every so often a bus still minutes away vanishes from TfL's list for
+// a few refreshes, then comes back (Tuesday 6 Oct: the 517 due in 7 minutes disappeared for 2½
+// minutes, the island showed the next one at 20 minutes, and the buzz came at 1.9). So each bus
+// seen live is remembered (BusStateSeen, for this stop). One missing from this fetch, or from a
+// failed fetch, stays on its last countdown, shown with "~" as an estimate, while it's still at
+// least 2 minutes away and was seen in the last 3 minutes. Closer than that, it has probably come
+// and gone, so it's dropped.
+var seenBefore = {}; try { seenBefore = JSON.parse(get('BusStateSeen') || '{}'); } catch (e) {}
+var remembered = seenBefore.s === get('BusStateStopId') ? (seenBefore.b || []) : [];
+var listed = {}; deps.forEach(function (x) { if (x.v) listed[x.k + '|' + x.v] = true; });
+var keptNow = [];
+remembered.forEach(function (x) {
+  if (listed[x.k + '|' + x.v] || mine.indexOf(x.k) < 0) return;
+  if (x.t - now >= 2 * 60000 && now - x.seen <= 3 * 60000) {
+    keptNow.push(x.k + ' ' + x.v);
+    deps.push({ k: x.k, d: x.d, t: x.t, st: 'sched', v: x.v, kept: x.seen });
+  }
+});
+setGlobal('BusStateSeen', JSON.stringify({ s: get('BusStateStopId'), b: deps.filter(function (x) { return x.v; }).map(function (x) {
+  return { k: x.k, v: x.v, d: x.d, t: x.t, seen: x.kept || now };       // a kept bus keeps the time it was last really seen
+}) }));
+if (keptNow.length) debugLog('TfL dropped ' + keptNow.join(', ') + ': kept on its last countdown, with ~');
+
 // Timetable fallback: each of my routes here with no live prediction gets its next scheduled departure
 var d0 = new Date(); var nowMin = d0.getHours() * 60 + d0.getMinutes() + d0.getSeconds() / 60;
 var tt = JSON.parse(get('BusCacheTimetable') || '{}')[get('BusStateStopId')];
@@ -72,17 +95,25 @@ deps.forEach(function (x) {
 // it buzzes three times, on two refreshes in a row (so you notice even if the first passes you by),
 // then stays quiet. The next bus only gets its turn once that one has gone from the list, so two
 // routes arriving close together give one set of buzzes, not two. Buses are told apart by TfL's
-// vehicle id (or, for a timetable time, the scheduled minute); BusStateBuzzed keeps how many times
-// each has buzzed, and forgets buses no longer listed.
+// vehicle id (or, for a timetable time, the scheduled minute) at this stop; BusStateBuzzed keeps
+// how many times each has buzzed, and forgets buses no longer listed.
+//   The two buzzes are at least 30 seconds apart (two refreshes close together, the screen coming
+//   on just after one, felt like one long buzz: BusStateBuzzAt).
+//   No buzz while you're riding a bus towards the stop (a countdown shown ahead, by bus): the soonest
+//   bus is usually the one you're on, and there's nothing to hurry for until you're off.
 var buzzed = {}; try { buzzed = JSON.parse(get('BusStateBuzzed') || '{}'); } catch (e) {}
-var keyOf = function (x) { return x.k + '|' + (x.v || Math.round(x.t / 60000)); };
+var keyOf = function (x) { return get('BusStateStopId') + '|' + x.k + '|' + (x.v || Math.round(x.t / 60000)); };
 var stillHere = {};
 var busbuzz = 'no';               // its own "var": Tasker only passes back results declared this way
+var tripNow = {}; try { tripNow = JSON.parse(get('BusStateTrip') || '{}'); } catch (e) {}
+var ridingThere = tripNow.s === 'heading' && !!tripNow.bus && tripNow.stop === get('BusStateStopId');
+var sinceBuzz = now - (parseInt(get('BusStateBuzzAt'), 10) || 0);
 deps.forEach(function (x) { if (buzzed[keyOf(x)]) stillHere[keyOf(x)] = buzzed[keyOf(x)]; });
 var first = deps.filter(function (x) { return x.t - now > -60000; }).sort(function (a, b) { return a.t - b.t; })[0];
-if (first && (first.t - now) / 60000 < 5 && (stillHere[keyOf(first)] || 0) < 2) {
+if (first && (first.t - now) / 60000 < 5 && (stillHere[keyOf(first)] || 0) < 2 && !ridingThere && sinceBuzz >= 30000) {
   busbuzz = 'yes';
   stillHere[keyOf(first)] = (stillHere[keyOf(first)] || 0) + 1;
+  setGlobal('BusStateBuzzAt', String(now));
 }
 setGlobal('BusStateBuzzed', JSON.stringify(stillHere));
 if (busbuzz === 'yes') {
@@ -92,7 +123,7 @@ if (busbuzz === 'yes') {
 // Recorder: TfL's predictions as they came (route, vehicle, seconds away), for steadier times,
 // matching you to your bus, and spotting buses that have left
 record('tfl', { stop: get('BusStateStopId'), code: code, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
-  b: deps.map(function (x) { return [x.k, x.v || '', Math.round((x.t - now) / 1000), x.st === 'sched' ? 's' : 'l']; }) });
+  b: deps.map(function (x) { return [x.k, x.v || '', Math.round((x.t - now) / 1000), x.kept ? 'k' : x.st === 'sched' ? 's' : 'l']; }) });
 // The stop's letter, from its TfL indicator ("Stop B" -> B, "Stop BK" -> BK). Stops without one
 // (indicators like "opp" or "->N", or none at all) get no letter, and the island shows none.
 function stopLetter(name) {
