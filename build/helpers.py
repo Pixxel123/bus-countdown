@@ -80,6 +80,13 @@ def ask(title, text, label):
     # An empty answer makes Tasker report 'No input provided'; carry on and keep the old value
     return deco(x, label, cont=True)
 
+def mkdir(path, label, cond=None):
+    # Create Directory (409): Directory, Create All, Use Root, Use Global Namespace. Already there is
+    # fine: the step carries on after an error
+    x = (f'<Action sr="act0" ve="7"><code>409</code><Str sr="arg0" ve="3">{e(path)}</Str>'
+         '<Int sr="arg1" val="1"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>')
+    return deco(x, label, cond, cont=True)
+
 def clear_input():
     # Variable Clear (549): so an empty answer can't reuse the previous dialog's %input
     return ('<Action sr="act0" ve="7"><code>549</code><label>Forget the last answer: so an old reply from TfL is never mistaken for this one</label>'

@@ -1,4 +1,4 @@
-// Replay a recorded day (Download/bus-trip-<Day>.jsonl from the phone) through Bus Watch's rules as
+// Replay a recorded day (Downloads/Tasker-bus-trip-data/bus-trip-<Day>.jsonl from the phone) through Bus Watch's rules as
 // they are now, and show where today's code decides differently from what happened on the phone.
 //   npm run replay -- path/to/bus-trip-Tue.jsonl
 // Each "check" line is one position as it came in; the day's "setup" line gives your stops and

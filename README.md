@@ -1,6 +1,6 @@
 # Bus Countdown
 
-Version 4.32
+Version 4.33
 
 A Tasker project for Android that shows live London bus arrivals in a small pill around the front camera, in the style of a "dynamic island". It starts when you arrive at a saved bus stop and ends when you leave.
 
@@ -356,7 +356,7 @@ Earlier versions used an invisible overlay to watch for the status bar being hid
 
 ## Trip recorder
 
-For tuning against real journeys. With **Record trips** on (Bus Settings › Countdown; off unless you turn it on), each day goes to a file in Download: `bus-trip-Mon.jsonl` to `bus-trip-Sun.jsonl`, one per weekday, each started afresh when its day comes round again, so a week is kept. Every line is one JSON record:
+For tuning against real journeys. With **Record trips** on (Bus Settings › Countdown; off unless you turn it on), each day goes to a file in the **Tasker-bus-trip-data** folder in Downloads (`Download/Tasker-bus-trip-data` on the phone's storage): `bus-trip-Mon.jsonl` to `bus-trip-Sun.jsonl`, one per weekday, each started afresh when its day comes round again, so a week is kept. Every line is one JSON record:
 
 | Kind | What it holds |
 |---|---|
@@ -399,7 +399,7 @@ The `tests` folder runs the project's own scripts (from `scripts/`) the way Task
 npm test
 ```
 
-What's covered (153 tests, after the linter):
+What's covered (155 tests, after the linter):
 
 - **The project file matches the scripts:** every JavaScriptlet in `Bus_Countdown.prj.xml` is a file in `scripts/` (with its shared pieces filled in), every file and shared piece is used, no script keeps its own copy of a shared helper, every step has an explanation, and every Perform Task points at a task that exists.
 - **Replayed trips** through the state machine: walking past a stop, waiting then catching the bus, walking away with no speed readings, a saved stop coming up on a bus, a jumpy fix while waiting, passing through a circle, swiping away, and a big arrival circle not restarting as you leave.

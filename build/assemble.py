@@ -136,7 +136,7 @@ def request_positions(mode, cond=None):
         deco(set_str(set_str(T['VARSET'], 0, '%BusStatePush'), 1, f'GPS, {what}'), '   GPS worked', ('%BusStatePush', 2, 'not requested'))]
 
 PROFILES = ['Bus Moved', 'Bus Screen On', 'Bus Hide When Sideways']
-VERSION = '4.32'
+VERSION = '4.33'
 BUILD = VERSION + '.' + time.strftime('%Y%m%d%H%M')     # changes with every build
 
 def profile_status(name, on, label, cond=None):
@@ -213,6 +213,7 @@ TASKS = [
     show_settings(),
     dismiss('buspreview', 'Remove the preview island, if showing'),
     js('settings_save.js', 'Save what changed (however the screen was closed)'),
+    mkdir('Download/Tasker-bus-trip-data', 'Record trips on: make sure its folder is there (Downloads/Tasker-bus-trip-data)', ('%BusRecord', 2, 'on')),
     flash('%busmsg', 'Say what was saved, if anything', ('%busmsg', 3, 'none')),
     if_('%buspreview', 2, 'yes', 'Preview on screen was tapped: show the island or status bar for 6 seconds, then reopen Settings'),
       varset('%busaction', 'preview', 'Preview'),
@@ -251,6 +252,7 @@ TASKS = [
  (38, 'Bus Start', [
     profiles_check(),
     js('settings.js', 'Settings: fill in defaults, check TflKey and BusRoutes'),
+    mkdir('Download/Tasker-bus-trip-data', 'Record trips on: make sure its folder is there (Downloads/Tasker-bus-trip-data)', ('%BusRecord', 2, 'on')),
     flash('Bus countdown: open Bus Settings first (TfL key and routes)', 'Say why it stopped', ('%BusStateReady', 3, 'yes')),
     stop('Stop if TflKey or BusRoutes is missing', ('%BusStateReady', 3, 'yes')),
     js('start_fix.js', 'Started by a pushed position? Then use it (no new fix needed)'),

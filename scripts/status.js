@@ -20,7 +20,7 @@ var sideNow = lastPlace === 'work' ? 'the side towards home (you came from work)
             : 'the nearer side (no preference right now)';
 lines.push('Side of the road first: ' + sideNow + '. Home ' + (get('BusHomeAt') ? 'known' : 'not known yet') +
   ', work ' + (get('BusWorkAt') ? 'known' : 'not known yet') + (get('BusCacheSeq') ? '' : ', route orders not fetched yet'));
-lines.push('Recording trips: ' + (get('BusRecord') === 'on' ? 'on (Download/bus-trip-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date().getDay()] + '.jsonl today)' : 'off'));
+lines.push('Recording trips: ' + (get('BusRecord') === 'on' ? 'on (Downloads/Tasker-bus-trip-data/bus-trip-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date().getDay()] + '.jsonl today)' : 'off'));
 lines.push('Heading to a stop: ' + ({ off: 'off', walk: 'walking', both: 'walking and by bus' }[get('BusApproach') || 'both']) +
   ', ' + (get('BusApproachMin') || '3') + ' min ahead');
 lines.push('On leaving Wi-Fi, show the nearest stop: ' + ({ off: 'never', work: 'work only', home: 'home only', both: 'home and work' }[get('BusLeaveShow') || 'work']));

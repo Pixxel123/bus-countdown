@@ -139,3 +139,13 @@ test('Bus Watch stops before getting a fix when staying put far away, and only t
   assert.match(acts[quiet], /<code>137<\/code>/);
   assert.match(acts[quiet], /<rhs>yes<\/rhs>/);
 });
+
+test('Bus Start and Bus Settings create the recordings folder when Record trips is on', () => {
+  for (const name of ['Bus Start', 'Bus Settings']) {
+    const mk = rawActions(name).filter((a) => /<code>409<\/code>/.test(a));
+    assert.strictEqual(mk.length, 1, name);
+    assert.match(mk[0], /<Str sr="arg0" ve="3">Download\/Tasker-bus-trip-data<\/Str>/);
+    assert.match(mk[0], /<lhs>%BusRecord<\/lhs><op>2<\/op><rhs>on<\/rhs>/);
+    assert.match(mk[0], /<se>false<\/se>/, 'carries on if the folder is already there');
+  }
+});

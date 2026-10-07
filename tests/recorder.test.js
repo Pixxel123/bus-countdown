@@ -13,7 +13,7 @@ const { run, m, files } = require('./harness');
 const BASE = 51.37, LON = -0.08;
 const at = Date.UTC(2026, 9, 6, 8, 20, 0);
 const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date(at).getDay()];
-const FILE = `Download/bus-trip-${day}.jsonl`;
+const FILE = `Download/Tasker-bus-trip-data/bus-trip-${day}.jsonl`;
 const world = (extra) => Object.assign({ BusPlaces: `bus|S|High St (Stop S)|${BASE}|${LON}|100`, BusNearRadius: '50', BusRoutes: '517', BusStateRunning: '0', TRUN: '' }, extra);
 const check = (g, x, t, kmh) => run('watch.js', { globals: g, now: t, locals: { buscaller: 'profile=moved', gl_latitude: String(BASE + m(x)), gl_longitude: String(LON),
   gl_time_seconds: String(t / 1000), busspeed: String(kmh / 3.6), busbearing: '0', busacc: '12' } });
@@ -71,4 +71,12 @@ test('a recorded day replays, and matches what was decided on the phone', () => 
   fs.writeFileSync(tmp, files[FILE]);
   const out = execFileSync('node', [path.join(__dirname, '..', 'build', 'replay.js'), tmp], { encoding: 'utf8' });
   assert.match(out, /4 positions replayed; 0 decided differently/);
+});
+
+test('the first line of a day also makes sure the folder exists', () => {
+  delete files[FILE];
+  const calls = [];
+  run('end_log.js', { now: at, globals: { BusRecord: 'on', BusRecordDay: 'x', BusStateStopId: 'S' }, locals: { busfrom: 'island', shell: (c) => calls.push(c) } });
+  assert.deepStrictEqual(calls, ['mkdir -p /sdcard/Download/Tasker-bus-trip-data']);
+  assert.ok(files[FILE]);
 });
