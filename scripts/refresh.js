@@ -73,9 +73,10 @@ deps.sort(function (a, b) { return a.t - b.t; });
 // those listed here. Bus Watch keeps when you'd get there at the pace you've been closing in
 // (trip.eta); the bus whose TfL time agrees with that on two refreshes in a row is yours (matchBus).
 // Or, straight away, the bus you got on at your last stop (BusStateBoarded), if it's listed. Tuesday's
-// three rides were each within 10 to 30 seconds of their bus's time. Your bus then shows as "Your
-// bus" on the island, never buzzes, and the buses after it are your connections. BusStateMatch keeps
-// the state between refreshes (cleared once you're not riding).
+// three rides were each within 10 to 30 seconds of their bus's time. Your bus then leaves the island
+// (you're on it, so it isn't news), never buzzes, and the buses after it are your connections; Bus
+// Status says which bus you're on and when you'll get there. BusStateMatch keeps the state between
+// refreshes (cleared once you're not riding).
 var stopId = get('BusStateStopId');
 var tripNow = {}; try { tripNow = JSON.parse(get('BusStateTrip') || '{}'); } catch (e) {}
 var riding = tripNow.s === 'heading' && !!tripNow.bus && tripNow.stop === stopId;
@@ -106,11 +107,13 @@ match.note = yourBus ? 'on the ' + yourBus.k + ' (' + yourBus.v + '), at ' + get
   Math.max(1, Math.round((yourBus.t - now) / 60000)) + ' min' + (connection ? '; then the ' + connection.k + ' ' +
   Math.round((connection.t - yourBus.t) / 60000) + ' min after you get there' : '') : '';
 setGlobal('BusStateMatch', riding ? JSON.stringify(match) : '');
-// On the island it takes the destination's place, in the same quiet grey: "Your bus", or "You" when
-// the island has room for only a few letters there (BusDestLetters, 3 by default). (4.28 coloured it
-// light blue; 4.29 took that out, since the island is meant to be quiet.)
-var yourLabel = (parseInt(get('BusDestLetters'), 10) || 3) >= 6 ? 'Your bus' : 'You';
-if (yourBus) deps = deps.map(function (x) { return x.v === yourBus.v ? Object.assign({}, x, { d: yourLabel, mine: true }) : x; });
+// While you ride, the island shows only the buses you could change to: your own bus is left out
+// (4.30; 4.28 and 4.29 labelled it "You" instead). If it's the only bus listed, it stays, as an
+// ordinary bus with its real destination, rather than the island saying "No buses".
+if (yourBus) {
+  var others = deps.filter(function (x) { return x.v !== yourBus.v; });
+  deps = others.length ? others : deps.map(function (x) { return Object.assign({}, x, { mine: true }); });
+}
 var busnodata = (code !== '200' && !deps.length) ? 'yes' : 'no';
 
 // Refresh less often while the next bus is far off: more than 10 minutes away, wait twice

@@ -1,6 +1,6 @@
 # Bus Countdown
 
-Version 4.29
+Version 4.30
 
 A Tasker project for Android that shows live London bus arrivals in a small pill around the front camera, in the style of a "dynamic island". It starts when you arrive at a saved bus stop and ends when you leave.
 
@@ -288,12 +288,12 @@ flowchart LR
     eta --> cmp
     cmp -->|"same bus twice"| yours["Your bus"]
     b["The bus you got on<br/>at your last stop"] -->|"listed here"| yours
-    yours --> island["Island: You / Your bus"]
+    yours --> island["Island: left off,<br/>connections only"]
     yours --> buzz["Buzz: only a connection<br/>due after you get there"]
     yours --> status["Bus Status: your bus,<br/>and the connection"]
 ```
 
-- **Your bus** replaces the destination on the island, in the same grey as any destination: "You" with the default 3 letters, "Your bus" with 6 or 10. It never buzzes. Until it's known, nothing buzzes while you ride; once it is, only a connection (a bus due after yours gets there) can. Once your bus has reached the stop and dropped off TfL's list, buzzing is as usual.
+- **Your bus leaves the island** while you ride: you're on it, so it isn't news, and the island shows only the buses you could change to. Bus Status says which bus you're on and when you'll get there. If it's the only bus listed, it stays as an ordinary bus rather than the island saying "No buses". It never buzzes. Until it's known, nothing buzzes while you ride; once it is, only a connection (a bus due after yours gets there) can. Once your bus has reached the stop and dropped off TfL's list, buzzing is as usual.
 - **Getting on:** when a countdown ends because you're on a bus, the bus you got on is the one TfL had arriving nearest the moment you left the stop (including one that dropped off the list in the last 5 minutes, but never the bus you came in on). It's kept for 90 minutes (`%BusStateBoarded`), so at your next stop it's known at once, and recorded with how far TfL's time was from when you left.
 - Bus Status shows your bus and the connection ("on the 517, at Wexley in about 2 min; then the 566 6 min after you get there"), and the last bus you got on.
 

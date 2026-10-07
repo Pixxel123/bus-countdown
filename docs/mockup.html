@@ -277,7 +277,7 @@ h1{text-wrap:balance}
     <button type="button" id="viewSettings" aria-pressed="false">Settings</button>
   </div>
   <div id="nowView">
-    <p class="eyebrow">Version 4.29</p>
+    <p class="eyebrow">Version 4.30</p>
     <h1>The island as built</h1>
     <p class="lede">Drawn by the island's own page from the project, at true scale on the top edge of a Pixel 8 Pro, 448 dp wide. Swipe it sideways to change route. Sample times, refreshed every 45 seconds as on the phone.</p>
 
@@ -331,7 +331,7 @@ h1{text-wrap:balance}
 
   <div id="exploreView" hidden>
     <h1>Ways to show your bus</h1>
-    <p class="lede">You’re on the 517, 2 minutes from Wexley (Stop D), and the 566 comes 6 minutes after you get there. Five ways the island could say so, weighed with impeccable’s quieter and distill guidance: show hierarchy through shape and position rather than colour, and leave out whatever isn’t needed. None of these is built; the island has A.</p>
+    <p class="lede">You’re on the 517, 2 minutes from Wexley (Stop D), and the 566 comes 6 minutes after you get there. Five ways the island could say so, weighed with impeccable’s quieter and distill guidance: show hierarchy through shape and position rather than colour, and leave out whatever isn’t needed. The island has C, since 4.30.</p>
     <ol class="tl" id="explore"></ol>
   </div>
 
@@ -1446,9 +1446,9 @@ var buslayout = JSON.stringify({
     { id: 'kept', label: 'TfL dropped it', stop: 'M',
       note: '<b>TfL dropped a bus</b> while it was still 7 minutes away. Since 4.27 it stays on its last countdown, with ~, for up to 3 minutes. On Tuesday the island showed the next one, 20 minutes away, instead.',
       b: function (now) { return [bus(now, '517', 'Holbry', 6, { st: 'sched', t2: 20 })]; } },
-    { id: 'you', label: 'Your bus', stop: 'D',
-      note: '<b>On the 517, coming up to Wexley</b>, where you change. The bus you’re on shows as You (Your bus with 6 or 10 letters) where the destination would be, in the same grey, and the 566 after it is your connection.',
-      b: function (now, letters) { return [bus(now, '517', letters >= 6 ? 'Your bus' : 'You', 2, { mine: true }), bus(now, '566', 'Fernleigh Village', 8, { t2: 21 })]; } },
+    { id: 'you', label: 'Riding', stop: 'D',
+      note: '<b>On the 517, coming up to Wexley</b>, where you change. Your own bus is left off: the island shows only what you could change to, the 566 and the next 517. Bus Status says which bus you’re on and when you’ll get there.',
+      b: function (now) { return [bus(now, '566', 'Fernleigh Village', 8, { t2: 21 }), bus(now, '517', 'Holbry', 18)]; } },
     { id: 'none', label: 'No buses', stop: 'B',
       note: '<b>Nothing listed</b> for your routes, live or from the timetable.',
       b: function () { return []; } }
@@ -1535,10 +1535,12 @@ var buslayout = JSON.stringify({
     v416: { ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
     v427: { letters: 3, right: 'now', k: '517', d: 'Holbry', m: '~6', mCls: 'sched', m2: '20' },
     v428: { ring: 'D', letters: 3, right: 'now', k: '517', d: 'You', dCls: 'mine', m: '2 min', dots: 2 },
-    v429: { ring: 'D', letters: 3, right: 'now', k: '517', d: 'You', m: '2 min', dots: 2 }
+    v429: { ring: 'D', letters: 3, right: 'now', k: '517', d: 'You', m: '2 min', dots: 2 },
+    v430: { ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', m: '8', m2: '21', dots: 2 }
   };
   // Newest first. changed: the island looked different from the version before.
   var VERSIONS = [
+    ['4.30', '7 Oct', 'v430', true, 'While you ride, your own bus leaves the island, so it shows only the buses you could change to; Bus Status says which bus you’re on.'],
     ['4.29', '7 Oct', 'v429', true, 'Your bus keeps its You label but loses the light blue, so it’s the same quiet grey as any destination.'],
     ['4.28', '7 Oct', 'v428', true, 'Works out which bus you’re on: it shows as You (or Your bus with 6 or 10 letters) in light blue, never buzzes, and Bus Status names your connection.'],
     ['4.27', '7 Oct', 'v427', true, 'A bus TfL drops while still 2 minutes or more away stays on its countdown with ~ for up to 3 minutes, and stops by home or work no longer pop up when you arrive by bus.'],
@@ -1584,13 +1586,13 @@ var buslayout = JSON.stringify({
   var CONN = { ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', m: '8', m2: '21', dots: 2, on: 1 };
   function look(o) { var x = {}; Object.keys(CONN).forEach(function (k) { x[k] = CONN[k]; }); Object.keys(o).forEach(function (k) { x[k] = o[k]; }); return x; }
   var OPTIONS = [
-    ['A', 'A word: You', 'In 4.29', 'Your bus says You where the destination would be, in the same grey.',
+    ['A', 'A word: You', '4.28 to 4.29', 'Your bus says You where the destination would be, in the same grey.',
      'Plain and unmistakable, but it spends the destination on a word, and with 3 letters “You” sits where “Hol…” would.',
      [['Your bus', look({ k: '517', d: 'You', m: '2 min', m2: '', on: 0 })], ['Then your connection', CONN]]],
-    ['B', 'A hollow badge', 'Suggested', 'Your bus’s route badge is drawn as a red outline instead of a solid pill. Nothing else changes: same destination, same grey, same size.',
+    ['B', 'A hollow badge', '', 'Your bus’s route badge is drawn as a red outline instead of a solid pill. Nothing else changes: same destination, same grey, same size.',
      'Shape carries it, not colour or words, and it echoes the ring round the stop letter: a ring means where you are. It’s the quietest mark that still reads at a glance, once you know what it means.',
      [['Your bus', look({ k: '517', hollow: true, d: 'Holbry', m: '2 min', m2: '', on: 0 })], ['Then your connection', CONN]]],
-    ['C', 'Leave it out', '', 'While you ride, the island shows only the buses you could change to. Your own bus, and when you’ll get there, move to Bus Status.',
+    ['C', 'Leave it out', 'Chosen: 4.30', 'While you ride, the island shows only the buses you could change to. Your own bus, and when you’ll get there, move to Bus Status.',
      'The distilled answer: you’re already on that bus, so it isn’t news. But you lose the countdown to your stop, which is the one thing you might glance at on the bus.',
      [['The only thing shown', look({ dots: 1, on: 0 })]]],
     ['D', 'Count the wait', '', 'Your bus is left out, and each connection shows how long you’d wait after getting off, not minutes from now.',
@@ -1602,7 +1604,7 @@ var buslayout = JSON.stringify({
   ];
   $('explore').innerHTML = OPTIONS.map(function (o) {
     return '<li class="ver"><header><span class="num">' + o[0] + '</span><span class="date">' + o[1] + '</span>' +
-      (o[2] ? '<span class="tag ' + (o[2] === 'Suggested' ? 'pick' : 'off') + '">' + o[2] + '</span>' : '') + '</header>' +
+      (o[2] ? '<span class="tag ' + (/^Chosen/.test(o[2]) ? 'pick' : 'off') + '">' + o[2] + '</span>' : '') + '</header>' +
       '<p>' + o[3] + '</p><div class="ex-frames">' + o[5].map(function (f) {
         return '<div><div class="frame" data-h="48"><div class="fs" style="height:48px"><span class="clock">12:21</span><div class="hole"></div>' +
           islandHtml(f[1]) + '</div></div><p class="ex-cap">' + f[0] + '</p></div>';

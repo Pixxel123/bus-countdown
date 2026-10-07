@@ -34,9 +34,10 @@ function replay(lines, extraGlobals) {
       const shown = JSON.parse(g.BusStateIslandData || '{}').b || [];
       const soonest = shown.slice().sort((a, b) => a.t - b.t)[0];
       let match = {}; try { match = JSON.parse(g.BusStateMatch || '{}'); } catch (e) { match = {}; }
-      const yours = shown.find((b) => b.mine);
+      // Your bus: worked out (on two refreshes, or as the bus you got on) and listed in this reply
+      const yours = match.n >= 2 && l.b.some((b) => b[1] === match.v) ? match.v : null;
       out.push({ t: l.t, k: 'tfl', line: l, buzz: r.busbuzz, soonest: soonest ? { k: soonest.k, v: soonest.v, min: (soonest.t - l.t) / 60000, st: soonest.st, d: soonest.d } : null,
-        yours: yours ? yours.v : null, match, trip: JSON.parse(g.BusStateTrip || '{}') });
+        yours, shown: shown.map((b) => b.v || ''), match, trip: JSON.parse(g.BusStateTrip || '{}') });
       continue;
     }
     if (l.k !== 'check' || l.lat === null) continue;

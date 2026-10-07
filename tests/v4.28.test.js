@@ -31,23 +31,27 @@ const ridingTo = (etaMin, now) => JSON.stringify({ s: 'heading', stop: 'D', bus:
 function refresh(g, arrivals, now) {
   const r = run('refresh.js', { globals: g, now, locals: { http_response_code: '200', http_data: JSON.stringify(arrivals) } });
   const shown = JSON.parse(g.BusStateIslandData).b;
-  return { buzz: r.busbuzz, yours: (shown.find((b) => b.mine) || {}).v || null, labels: shown.map((b) => b.d) };
+  let match = {}; try { match = JSON.parse(g.BusStateMatch || '{}'); } catch (e) { match = {}; }
+  const yours = match.n >= 2 && arrivals.some((a) => a.vehicleId === match.v) ? match.v : null;
+  return { buzz: r.busbuzz, yours, shown: shown.map((b) => b.v), labels: shown.map((b) => b.d) };
 }
 
-test('two refreshes agreeing: "Your bus" on the island; one isn\'t enough', () => {
+test('two refreshes agreeing: your bus is worked out and left off the island; one isn\'t enough', () => {
   const g = base(); let now = T0;
   g.BusStateTrip = ridingTo(2.6, now);
   assert.strictEqual(refresh(g, [bus('517', 2.5, 'YY1'), bus('566', 8.7, 'LF1')], now).yours, null);
   now += 40000; g.BusStateTrip = ridingTo(1.9, now);
   const r = refresh(g, [bus('517', 1.8, 'YY1'), bus('566', 8, 'LF1')], now);
   assert.strictEqual(r.yours, 'YY1');
-  assert.deepStrictEqual(r.labels, ['You', 'Somewhere'], 'the island\'s 3 letters');
+  assert.deepStrictEqual(r.shown, ['LF1'], 'only the connection (4.30)');
   assert.match(JSON.parse(g.BusStateMatch).note, /^on the 517 \(YY1\), at Wexley \(Stop D\) in about 2 min; then the 566 6 min after you get there$/);
 });
 
-test('with room for 6 letters or more, it says "Your bus"', () => {
-  const g = base({ BusDestLetters: '6', BusStateBoarded: JSON.stringify({ k: '517', v: 'YY1', stop: 'M', at: T0 - 600000 }), BusStateTrip: ridingTo(2, T0) });
-  assert.deepStrictEqual(refresh(g, [bus('517', 2, 'YY1')], T0).labels, ['Your bus']);
+test('if your bus is the only one listed, it stays on the island as an ordinary bus', () => {
+  const g = base({ BusStateBoarded: JSON.stringify({ k: '517', v: 'YY1', stop: 'M', at: T0 - 600000 }), BusStateTrip: ridingTo(2, T0) });
+  const r = refresh(g, [bus('517', 2, 'YY1')], T0);
+  assert.deepStrictEqual([r.shown, r.labels], [['YY1'], ['Somewhere']]);
+  assert.strictEqual(r.buzz, 'no', 'and still never buzzes');
 });
 
 test('the bus you got on at your last stop is yours straight away', () => {
@@ -83,7 +87,7 @@ test('a bus that drops off the list is remembered as gone for 5 minutes, for tel
   assert.deepStrictEqual(JSON.parse(g.BusStateSeen).b.map((x) => x.v), ['LF2']);
 });
 
-test('4.29: your bus is labelled, not highlighted (the island stays quiet)', () => {
+test('the island never highlights a bus (4.29)', () => {
   const src = require('fs').readFileSync(require('path').join(__dirname, '..', 'scripts', 'island_show.js'), 'utf8');
   assert.doesNotMatch(src, /\.mine|' mine'/);
 });
