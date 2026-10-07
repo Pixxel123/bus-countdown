@@ -1,0 +1,39 @@
+# Publishes a release when a version tag is pushed (git tag v4.35 && git push origin v4.35):
+# runs the tests, builds the project, and attaches it as Bus_Countdown_V<version>.prj.xml, with that
+# version's notes from CHANGELOG.md.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm test
+      - name: Check the tag matches the version the build makes
+        run: |
+          VERSION=$(sed -n "s/^VERSION = '\(.*\)'/\1/p" build/assemble.py)
+          test "v$VERSION" = "$GITHUB_REF_NAME" || { echo "Tag $GITHUB_REF_NAME, but build/assemble.py says $VERSION"; exit 1; }
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+      - name: Release notes from the changelog
+        run: awk -v v="## [$VERSION]" 'index($0, v) == 1 { on = 1; next } /^## \[/ { on = 0 } on' CHANGELOG.md > notes.md
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp Bus_Countdown.prj.xml "Bus_Countdown_V$VERSION.prj.xml"
+          gh release create "$GITHUB_REF_NAME" "Bus_Countdown_V$VERSION.prj.xml" --title "Bus Countdown $VERSION" --notes-file notes.md

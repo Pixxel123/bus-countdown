@@ -1,12 +1,22 @@
 # Bus Countdown
 
-Version 4.35
+[Download the latest release](../../releases/latest) · [Changelog](CHANGELOG.md) · [MIT licence](LICENSE)
 
 A Tasker project for Android that shows live London bus arrivals in a small pill around the front camera, in the style of a "dynamic island". It starts when you arrive at a saved bus stop and ends when you leave.
 
 Data comes from the [TfL Unified API](https://api-portal.tfl.gov.uk/). Built and tested on a Pixel 8 Pro.
 
 ![The pill around the camera: stop letter, route and destination on the left, minutes on the right](docs/pill.png)
+
+## Quick start
+
+1. Get a free TfL API key from <https://api-portal.tfl.gov.uk/>.
+2. Download `Bus_Countdown_V<version>.prj.xml` from the [latest release](../../releases/latest).
+3. In [Tasker](https://tasker.joaoapps.com/), long-press the project bar at the bottom, choose Import Project, and pick the file.
+4. Run the **Bus Settings** task: paste your key under Setup, set your home and work Wi-Fi, and tap the routes you use at the stops near you.
+5. Walk to one of those stops. The pill appears when you slow down there.
+
+[Installation](#installation) has the details, and [Requirements](#requirements) lists the permissions Tasker needs.
 
 ## Features
 
@@ -35,7 +45,7 @@ Data comes from the [TfL Unified API](https://api-portal.tfl.gov.uk/). Built and
 
 ## Installation
 
-1. Download `Bus_Countdown.prj.xml`.
+1. Download `Bus_Countdown_V<version>.prj.xml` from the [latest release](../../releases/latest) (or `Bus_Countdown.prj.xml` from this repository, which is the same build of the newest code).
 2. In Tasker, long-press the project bar at the bottom, choose Import Project, and pick the file.
 3. Run the **Bus Settings** task.
 
@@ -177,6 +187,17 @@ Variables starting with `BusState`, `BusCache` or `BusTemp` are managed by the p
 
 `BusPlacesSkip` lists stops you removed on the settings screen, or said no to when offered as a stop across the road, so you aren't offered them again.
 
+## Privacy
+
+Everything stays on the phone. There are no accounts, analytics or servers of this project's own, and the only network requests go to TfL's API.
+
+- **What it reads:** your position (pushed by Android as you move, and fetched when a check needs one), the name of the Wi-Fi network you're on, and whether the screen is on.
+- **What it keeps:** Tasker global variables on the phone hold your saved stops and routes, your TfL key (`%TflKey`), your home and work Wi-Fi names, where Bus Watch has learned home and work are (`%BusHomeAt`, `%BusWorkAt`), and the current trip, including your last six positions (see [Settings](#settings)).
+- **What TfL sees:** each request carries your API key, and TfL sees the phone's IP address as with any website. Live arrivals, timetables and route lists ask about a stop or a route, never where you are. The one exception is the settings screen's list of stops near you, which sends your position to TfL's stop search (`/StopPoint?lat&lon`) each time Settings opens.
+- **Trip recordings:** off unless you turn on Record trips. They hold every position checked during the day, with times, and every TfL reply, in `Download/Tasker-bus-trip-data`. Other apps that can read your Downloads folder can read them too. A week is kept, each weekday's file started afresh when that day comes round.
+- **Reports:** Bus Status copies its report to the clipboard, and the Debugging report includes your recent positions, so check either before pasting it anywhere public.
+- **Sharing your setup:** your key and Wi-Fi names live in Tasker variables, not in the project file, but a Tasker backup includes them. Leave `%TflKey` out of anything you share.
+
 ## How it works
 
 ### The flow at a glance
@@ -268,6 +289,23 @@ Bus Start finds stops from each route's own stop list (`/Line/{id}/StopPoints`) 
 
 Bus Watch (for every pushed position, and when the screen comes on) keeps each trip in one of five states, in `%BusStateTrip`:
 
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> Idle
+    Idle --> AtStop: in a saved stop's circle,<br/>slowed down or stayed put
+    Idle --> Heading: due at a saved stop<br/>within a few minutes
+    Heading --> AtStop: reached it and slowed down
+    Heading --> OnBus: passed it on a bus
+    Heading --> Left: went past it, turned away,<br/>or got off well short
+    AtStop --> OnBus: on a bus heading away
+    AtStop --> Left: walked steadily away
+    OnBus --> Left: at walking pace again
+    Left --> Idle: after 15 min, or 100 m back<br/>from the furthest you went
+    AtStop: At stop
+    OnBus: On bus
+```
+
 | State | Island | Moves on when |
 |---|---|---|
 | Idle | none | you're inside a saved stop's circle and have slowed down, or stayed put for 30 seconds whatever a rough GPS speed reading says (at stop), or heading for one due within a few minutes (heading) |
@@ -338,7 +376,7 @@ Earlier versions used an invisible overlay to watch for the status bar being hid
 
 ## Notes for editing
 
-- **Every change to how the island looks is recorded in the mockup.** Add the version and a new look to `VERSIONS` and `LOOK` in `docs/mockup.src.html`, run `npm run build`, and republish the mockup artifact. A version that changes only what happens underneath gets no entry, and the page stays as it is (it names the island's last change, not the project's version). `tests/mockup.test.js` fails if two entries draw the same island.
+- **Every change to how the island looks is recorded in the mockup.** Add the version and a new look to `VERSIONS` and `LOOK` in `docs/mockup.src.html`, run `npm run build`, and republish `docs/mockup.html` wherever you host it. A version that changes only what happens underneath gets no entry, and the page stays as it is (it names the island's last change, not the project's version). `tests/mockup.test.js` fails if two entries draw the same island.
 
 - A JavaScriptlet only returns a local variable to the task if it is declared on its own `var` line. `var a = 1, b = 2;` returns only `a`.
 - Step labels are plain text, "Title · Explanation", because the Run Log prints labels exactly as written (HTML labels look good in the task editor but fill the log with tags).
@@ -394,6 +432,21 @@ A script can include a shared piece with a line that is only `/* @include NAME *
 
 `npm run lint` checks the scripts with ESLint (`eslint.config.js`) as Tasker runs them: with their shared pieces filled in, and with Tasker's `global()`, `setGlobal()` and the task's local variables declared, so a misspelt variable is reported. Single quotes, semicolons, `===`, one variable per `var` (Tasker only passes back a script's results declared as `var name`, so one declared after a comma is silently lost), and no unused or shadowed local variables.
 
+### Releasing
+
+Each release is a version tag. Pushing it runs `.github/workflows/release.yml`, which builds and tests the project and publishes a GitHub release with the project file and that version's changelog notes. (`.github/workflows/test.yml` runs the tests on every push.)
+
+```mermaid
+flowchart LR
+    v["Bump VERSION in<br/>build/assemble.py"] --> c["Add its entry to<br/>CHANGELOG.md"]
+    c --> b["npm run build<br/>npm test"]
+    b --> t["Commit, then<br/>git tag v4.36<br/>git push origin main v4.36"]
+    t --> ci["GitHub Actions:<br/>build, test, check the tag<br/>matches VERSION"]
+    ci --> r["Release with<br/>Bus_Countdown_V4.36.prj.xml<br/>and the changelog notes"]
+```
+
+`tests/changelog.test.js` fails until the version the build makes has its changelog entry, so the notes can't be forgotten.
+
 ## Tests
 
 The `tests` folder runs the project's own scripts (from `scripts/`) the way Tasker does: each JavaScriptlet gets `global()` and `setGlobal()` for global variables, its task's locals as plain variables, and a fixed clock, and every top-level `var` it declares comes back as an output. No phone or Tasker needed, only Node.js 18 or later:
@@ -402,7 +455,7 @@ The `tests` folder runs the project's own scripts (from `scripts/`) the way Task
 npm test
 ```
 
-What's covered (175 tests, after the linter):
+What's covered (178 tests, after the linter):
 
 - **The project file matches the scripts:** every JavaScriptlet in `Bus_Countdown.prj.xml` is a file in `scripts/` (with its shared pieces filled in), every file and shared piece is used, no script keeps its own copy of a shared helper, every step has an explanation, and every Perform Task points at a task that exists.
 - **Replayed trips** through the state machine: walking past a stop, waiting then catching the bus, walking away with no speed readings, a saved stop coming up on a bus, a jumpy fix while waiting, passing through a circle, swiping away, and a big arrival circle not restarting as you leave.
@@ -413,6 +466,7 @@ What's covered (175 tests, after the linter):
 - **The trip recorder** (`tests/recorder.test.js`): nothing written when off; each day starts with the setup; positions with their decisions, TfL replies with vehicles and timings, and buzzes each become a line; a weekday's file starts afresh on a new day; and a recorded day replays with no differences.
 - **Choosing the stop:** saved stops only, the one you arrived at first, the reason getting through without `%par1`, heading to a stop beyond 300 m, and nothing saved nearby.
 - **Bus Loop timing:** the countdown limit, the one-minute heads-up and carrying on after leaving the office, longer waits when the bus is far off, the safety net, and asking for positions again.
+- **The changelog and the mockup** (`tests/changelog.test.js`, `tests/mockup.test.js`): the newest changelog entry is the version the build makes, every release has a date, newest first, under Keep a Changelog's headings; the mockup draws the island with the project's own page and has no two timeline entries showing the same island.
 - **Smaller pieces:** stop letters, refresh spacing, how recent a position must be, swiping, and reading route orders from TfL.
 - **Version 4.11** (`tests/v4.11.test.js`, written first as todo tests): Wi-Fi hysteresis, backing off with no signal, next two buses, and the swipe rule (route changes, 90 dp to dismiss, a fast 60 dp fling).
 - **Tuesday 6 October, replayed** (`tests/tuesday.test.js`): excerpts of the first recorded day (`tests/fixtures`; the timings and TfL replies are real, but the stop names, routes, number plates, home and work are stand-ins, and every position is moved the same distance west), played through today's rules: no pop-up on the 517 to work or the 566 home; the 517 TfL dropped for 2½ minutes kept on the island and buzzing at 4½ minutes, not 1.9; still shown on the way to Wexley, where you change, without buzzing for the bus you're on; one buzz from two refreshes 6 seconds apart; and leaving Wexley on the 566 in traffic ending as "on the bus".
@@ -428,12 +482,14 @@ When something goes wrong on the phone, the Debugging report's positions can be 
 
 | Path | Contents |
 |---|---|
-| `Bus_Countdown.prj.xml` | The Tasker project. This is the file to import. |
+| `Bus_Countdown.prj.xml` | The Tasker project, built from the newest code. Releases attach the same file with its version in the name. |
+| `CHANGELOG.md`, `LICENSE` | What changed in each version, and the MIT licence. |
+| `.github/workflows/` | Tests on every push, and a release for every version tag. |
 | `scripts/` | The JavaScriptlet code from the project, one file per action, for reading and comparing changes. Editing these files does not change the project. |
 | `docs/pill.png`, `docs/chip.png` | The pill and the status bar chip, drawn from the project's own page. |
 | `build/` | The build: `assemble.py` (every task and profile, step by step), `helpers.py`, `labels.py` (each step's explanation) and `templates.prj.xml` (Tasker's own XML for each kind of action). `npm run build` turns these and `scripts/` into `Bus_Countdown.prj.xml`. |
 | `tests/`, `package.json` | Tests for the scripts: replayed trips and the rules around them (see Tests). `tests/fixtures` holds excerpts of a recorded day, with home and work replaced by stand-ins. |
-| `docs/mockup.html` | The island mockup, also published as an artifact: **Now** draws the island with the project's own `island_show.js` (built from `docs/mockup.src.html` by `build/mockup.py`), **Timeline** shows each version that changed the island, with a sentence on each, and the early placement and settings ideas. Open it in a browser. |
+| `docs/mockup.html` | The island mockup: **Now** draws the island with the project's own `island_show.js` (built from `docs/mockup.src.html` by `build/mockup.py`), **Timeline** shows each version that changed the island, with a sentence on each, and the early placement and settings ideas. Open it in a browser. |
 
 ### Scripts
 
@@ -479,3 +535,9 @@ When something goes wrong on the phone, the Debugging report's positions can be 
 - **A Kalman filter** for position and velocity together, in place of the averaging and median speed: smoother, and able to predict where you'll be in 30 seconds. Only if the current window turns out not to be enough.
 
 - Trains. Saved places already carry a type (`bus|…`), and the pill reads a common departure format with `live`, `sched`, `late` and `cancel` states, so a National Rail source can be added without changing the display.
+
+## Credits and licence
+
+Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016, and Geomni UK Map data © and database rights [2019]. Bus Countdown is an independent project, not affiliated with or endorsed by Transport for London.
+
+Released under the [MIT licence](LICENSE).
