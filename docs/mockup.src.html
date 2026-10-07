@@ -198,7 +198,8 @@ summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --now:#6FD3B0; --off:#7D879A; --rail:#2B3443; --frame:#05070B; color-scheme:dark } }
 :root[data-theme="dark"]{ --now:#6FD3B0; --off:#7D879A; --rail:#2B3443; --frame:#05070B; color-scheme:dark }
 
-.views{grid-template-columns:repeat(4,1fr)}
+.views{grid-template-columns:repeat(5,1fr)}
+.views button{font-size:.85rem}
 .views button{padding:9px 4px}
 .eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:0 0 4px}
 h1{text-wrap:balance}
@@ -227,6 +228,11 @@ h1{text-wrap:balance}
 .ver .tag.off{border:1px solid var(--line);color:var(--off)}
 .ver p{margin:0;font-size:.93rem;color:var(--ink-2);max-width:62ch}
 .ver.quiet .frame{opacity:.82}
+.isl .b.hollow{background:transparent;box-shadow:inset 0 0 0 1.5px #DC241F}
+.ex-frames{display:grid;grid-template-columns:1fr;gap:6px}
+.ver .ex-cap{font-size:.78rem;color:var(--ink-3);margin:2px 0 0}
+.ver .trade{color:var(--ink-3);font-size:.88rem}
+.ver .tag.pick{background:var(--accent);color:var(--accent-ink)}
 .gap-note{font-size:.85rem;color:var(--ink-3);text-align:center;padding:2px 0}
 
 /* A strip of the phone's top edge, 448 dp wide, scaled to the card */
@@ -266,6 +272,7 @@ h1{text-wrap:balance}
   <div class="views" role="group" aria-label="Mockup">
     <button type="button" id="tabNow" aria-pressed="true">Now</button>
     <button type="button" id="tabTimeline" aria-pressed="false">Timeline</button>
+    <button type="button" id="tabExplore" aria-pressed="false">Explore</button>
     <button type="button" id="viewIsland" aria-pressed="false">Ideas</button>
     <button type="button" id="viewSettings" aria-pressed="false">Settings</button>
   </div>
@@ -320,6 +327,12 @@ h1{text-wrap:balance}
         <p class="src">The island is a web page in a Scene V2 overlay. This one is built by <code>island_show.js</code> from the version above, so what you see here is what the phone draws (fonts aside).</p>
       </section>
     </div>
+  </div>
+
+  <div id="exploreView" hidden>
+    <h1>Ways to show your bus</h1>
+    <p class="lede">You’re on the 517, 2 minutes from Wexley (Stop D), and the 566 comes 6 minutes after you get there. Five ways the island could say so, weighed with impeccable’s quieter and distill guidance: show hierarchy through shape and position rather than colour, and leave out whatever isn’t needed. None of these is built; the island has A.</p>
+    <ol class="tl" id="explore"></ol>
   </div>
 
   <div id="timelineView" hidden>
@@ -975,8 +988,8 @@ function islandShow(global, setGlobal) {
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
-  var VIEWS = { now: 'nowView', timeline: 'timelineView', ideas: 'islandView', settings: 'settingsView' };
-  var TABS = { now: 'tabNow', timeline: 'tabTimeline', ideas: 'viewIsland', settings: 'viewSettings' };
+  var VIEWS = { now: 'nowView', timeline: 'timelineView', explore: 'exploreView', ideas: 'islandView', settings: 'settingsView' };
+  var TABS = { now: 'tabNow', timeline: 'tabTimeline', explore: 'tabExplore', ideas: 'viewIsland', settings: 'viewSettings' };
 
   // ---- Tabs (the one you last had open is remembered on this device) ------------------------------
   function show(view) {
@@ -984,7 +997,7 @@ function islandShow(global, setGlobal) {
     try { localStorage.setItem('busMockupTab', view); } catch (e) {}
     window.dispatchEvent(new Event('resize'));
     if (view === 'settings' && window.svPreview) window.svPreview();
-    if (view === 'timeline') fitFrames();
+    if (view === 'timeline' || view === 'explore') fitFrames();
   }
   Object.keys(TABS).forEach(function (k) { $(TABS[k]).addEventListener('click', function () { show(k); }); });
 
@@ -1078,11 +1091,11 @@ function islandShow(global, setGlobal) {
     var PAD = 9, GAP = 42, L = leftFor(f), R = f.rightW || RIGHT[f.right](f.dots || 1), W = PAD + L + GAP + R + PAD;
     var x = Math.round(224 - GAP / 2 - L - PAD);
     var dots = '';
-    if ((f.dots || 1) > 1) { dots = '<span class="dots">'; for (var i = 0; i < f.dots; i++) dots += '<i' + (i === 0 ? ' class="on"' : '') + '></i>'; dots += '</span>'; }
-    var right = '<span class="m' + (f.mCls ? ' ' + f.mCls : '') + '">' + f.m + '</span>' + (f.m2 ? '<span class="m2">· ' + f.m2 + ' min</span>' : '') + dots;
+    if ((f.dots || 1) > 1) { dots = '<span class="dots">'; for (var i = 0; i < f.dots; i++) dots += '<i' + (i === (f.on || 0) ? ' class="on"' : '') + '></i>'; dots += '</span>'; }
+    var right = '<span class="m' + (f.mCls ? ' ' + f.mCls : '') + '">' + f.m + '</span>' + (f.m2 ? '<span class="m2">· ' + f.m2 + ' min</span>' : '') + (f.after ? '<span class="m2"> ' + f.after + '</span>' : '') + dots;
     var ring = f.border ? '<svg width="' + W + '" height="30" viewBox="0 0 ' + W + ' 30"><rect x="1" y="1" width="' + (W - 2) + '" height="28" rx="14" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"/></svg>' : '';
     return '<div class="isl" style="left:' + x + 'px;top:9px;width:' + W + 'px;padding:0 ' + PAD + 'px">' + ring +
-      '<span class="h" style="width:' + L + 'px">' + (f.ring ? '<span class="sl">' + f.ring + '</span>' : '') + '<span class="b">' + f.k + '</span>' +
+      '<span class="h" style="width:' + L + 'px">' + (f.ring ? '<span class="sl">' + f.ring + '</span>' : '') + '<span class="b' + (f.hollow ? ' hollow' : '') + '">' + f.k + '</span>' +
       '<span class="d' + (f.dCls ? ' ' + f.dCls : '') + '">' + f.d + '</span></span>' +
       '<span class="g" style="width:' + GAP + 'px"></span><span class="h" style="width:' + R + 'px">' + right + '</span></div>';
   }
@@ -1148,6 +1161,35 @@ function islandShow(global, setGlobal) {
       '<span class="tag ' + (look.notification ? 'off">No island yet' : v[3] ? 'on">Island changed' : 'off">Same island') + '</span></header><p>' + v[4] + '</p>' +
       '<div class="frame" data-h="' + h + '"><div class="fs" style="height:' + h + 'px"><span class="clock">12:21</span><div class="hole"></div>' + inner + '</div></div></li>';
   }).join('');
+  // ---- Explore: ways to show the bus you're on ----------------------------------------------------
+  var CONN = { ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', m: '8', m2: '21', dots: 2, on: 1 };
+  function look(o) { var x = {}; Object.keys(CONN).forEach(function (k) { x[k] = CONN[k]; }); Object.keys(o).forEach(function (k) { x[k] = o[k]; }); return x; }
+  var OPTIONS = [
+    ['A', 'A word: You', 'In 4.29', 'Your bus says You where the destination would be, in the same grey.',
+     'Plain and unmistakable, but it spends the destination on a word, and with 3 letters “You” sits where “Hol…” would.',
+     [['Your bus', look({ k: '517', d: 'You', m: '2 min', m2: '', on: 0 })], ['Then your connection', CONN]]],
+    ['B', 'A hollow badge', 'Suggested', 'Your bus’s route badge is drawn as a red outline instead of a solid pill. Nothing else changes: same destination, same grey, same size.',
+     'Shape carries it, not colour or words, and it echoes the ring round the stop letter: a ring means where you are. It’s the quietest mark that still reads at a glance, once you know what it means.',
+     [['Your bus', look({ k: '517', hollow: true, d: 'Holbry', m: '2 min', m2: '', on: 0 })], ['Then your connection', CONN]]],
+    ['C', 'Leave it out', '', 'While you ride, the island shows only the buses you could change to. Your own bus, and when you’ll get there, move to Bus Status.',
+     'The distilled answer: you’re already on that bus, so it isn’t news. But you lose the countdown to your stop, which is the one thing you might glance at on the bus.',
+     [['The only thing shown', look({ dots: 1, on: 0 })]]],
+    ['D', 'Count the wait', '', 'Your bus is left out, and each connection shows how long you’d wait after getting off, not minutes from now.',
+     'Answers “get off and change?” directly. But the same spot means minutes from now everywhere else, so the island would mean two things.',
+     [['The only thing shown', look({ dots: 1, on: 0, m: '6 min', m2: '', after: 'wait' })]]],
+    ['E', 'Where you get off', '', 'Your bus keeps its badge, but the destination is the stop you’re getting off at: “517 Wex… 2 min”.',
+     'Says the useful thing, when you reach your stop, in the island’s own grammar. But with 3 letters, telling “Wex…” from a real destination relies on knowing the route.',
+     [['Your bus', look({ k: '517', d: 'Wexley', m: '2 min', m2: '', on: 0 })], ['Then your connection', CONN]]]
+  ];
+  $('explore').innerHTML = OPTIONS.map(function (o) {
+    return '<li class="ver"><header><span class="num">' + o[0] + '</span><span class="date">' + o[1] + '</span>' +
+      (o[2] ? '<span class="tag ' + (o[2] === 'Suggested' ? 'pick' : 'off') + '">' + o[2] + '</span>' : '') + '</header>' +
+      '<p>' + o[3] + '</p><div class="ex-frames">' + o[5].map(function (f) {
+        return '<div><div class="frame" data-h="48"><div class="fs" style="height:48px"><span class="clock">12:21</span><div class="hole"></div>' +
+          islandHtml(f[1]) + '</div></div><p class="ex-cap">' + f[0] + '</p></div>';
+      }).join('') + '</div><p class="trade">' + o[4] + '</p></li>';
+  }).join('');
+
   function fitFrames() {
     document.querySelectorAll('.frame').forEach(function (f) {
       var s = f.clientWidth / 448; if (!s) return;
