@@ -66,6 +66,9 @@ if (!Object.keys(pool).length) {
     // The Wi-Fi network this countdown started on: Bus Watch ends a countdown on home or work
     // Wi-Fi unless it started on that same network
     setGlobal('BusStateStartWifi', get('BusStateWifi'));
+    // Started by hand: clear a snooze from swiping the island away (since 4.27 it's kept in its own
+    // variable, which nothing else clears; 4.32)
+    if (!mode) setGlobal('BusStateSnooze', '');
     busok = 'yes';
   } else {
     busproblem = 'None of your saved stops are within ' + radius + ' m (add stops in Bus Settings)';

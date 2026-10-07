@@ -15,7 +15,7 @@ const VERSION = /VERSION = '([\d.]+)'/.exec(fs.readFileSync(path.join(ROOT, 'bui
 
 test('the mockup is built from the current island_show.js (run npm run build after changing it)', () => {
   const island = compose(fs.readFileSync(path.join(ROOT, 'scripts', 'island_show.js'), 'utf8'))
-    .replace('<!--', "${'<'}!--").replace('<script', "${'<'}script").trim();
+    .replaceAll('<!--', "${'<'}!--").replaceAll('<script', "${'<'}script").trim();
   assert.ok(page.includes(island));
   assert.ok(page.includes('Version ' + VERSION));
 });

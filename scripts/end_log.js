@@ -20,3 +20,5 @@ var how = { island: 'you swiped it away', menu: 'ended from the Bus menu', timeo
 debugLog('Countdown ended: ' + how);
 record('end', { stop: global('BusStateStopId') || '', from: from, why: how, battery: global('BATT') || '' });
 setGlobal('BusStateEndWhy', '');
+// A countdown ending mid-ride leaves no "your bus" behind for the next ride, or for Bus Status (4.32)
+setGlobal('BusStateMatch', '');

@@ -32,7 +32,10 @@ if (busdone === 'yes' && trip.s === 'atstop' && trip.stop === get('BusStateStopI
 }
 // Fetch times this cycle? Always with the screen on; with it off only when a bus is due within 8
 // minutes, so the buzz for a bus under 5 minutes still comes with the phone in your pocket
-var nextMin = parseFloat(get('BusStateNextMin'));
+// (BusStateNextAt is a time, so it counts down between fetches; BusStateNextMin, from versions before
+// 4.32, was a snapshot that didn't)
+var nextAtT = parseInt(get('BusStateNextAt'), 10);
+var nextMin = nextAtT ? (nextAtT - Date.now()) / 60000 : parseFloat(get('BusStateNextMin'));
 var busfetch = (get('SCREEN') !== 'off' || (!isNaN(nextMin) && nextMin <= 8)) ? 'yes' : 'no';
 var base = parseInt(get('BusRefresh'), 10) || 45;
 var chosen = parseInt(get('BusStateNextWait'), 10) || base;

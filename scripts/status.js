@@ -35,7 +35,7 @@ var stopNames = {}; get('BusPlaces').split('\n').forEach(function (r) { var p = 
 lines.push('Trip: ' + ({ idle: 'idle', heading: 'heading to a stop', atstop: 'at the stop', onbus: 'on a bus', left: 'just left a stop' }[trip.s] || 'idle') +
   (trip.stop && stopNames[trip.stop] ? ' (' + stopNames[trip.stop] + ')' : '') + (trip.since ? ', since ' + new Date(trip.since).toTimeString().slice(0, 5) : ''));
 var matchNow = {}; try { matchNow = JSON.parse(get('BusStateMatch') || '{}'); } catch (e) {}
-if (matchNow.note) lines.push('Your bus: ' + matchNow.note);
+if (matchNow.note && running && Date.now() - (matchNow.at || 0) < 10 * 60000) lines.push('Your bus: ' + matchNow.note);
 var boardedNow = null; try { boardedNow = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) {}
 if (boardedNow && Date.now() - boardedNow.at < 90 * 60000)
   lines.push('Last got on: the ' + boardedNow.k + ' (' + boardedNow.v + ') at ' + (stopNames[boardedNow.stop] || boardedNow.stop) + ', ' + new Date(boardedNow.at).toTimeString().slice(0, 5));

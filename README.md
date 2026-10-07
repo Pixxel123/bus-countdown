@@ -1,6 +1,6 @@
 # Bus Countdown
 
-Version 4.31
+Version 4.32
 
 A Tasker project for Android that shows live London bus arrivals in a small pill around the front camera, in the style of a "dynamic island". It starts when you arrive at a saved bus stop and ends when you leave.
 
@@ -169,6 +169,7 @@ Variables starting with `BusState`, `BusCache` or `BusTemp` are managed by the p
 - `BusStateSnooze`: the stop you last swiped away, and when (kept apart from the trip so a check running at the same moment can't undo it).
 - `BusStateSeen`: the buses TfL last listed at the current stop, so one it drops can be kept on its countdown. `BusStateBuzzed` and `BusStateBuzzAt`: which buses have buzzed at which stop, and when the last buzz was.
 - `BusStateMatch`, `BusStateBoarded`, `BusStateCameOn`: the bus you're riding (while it's being worked out, and once known), the bus you last got on, and the bus you last came in on (see "Which bus you're on").
+- `BusStateNextAt`: when the next bus is due (or your own bus reaches the stop), as a time, so Bus Loop can tell with the screen off when it's within 8 minutes.
 - `BusStateLastBusAt`: when you were last moving at bus speed (for stops by home and work). `BusStateFarAt`: where you settled, while positions are slowed down far from your stops. `BusStateEndWhy`: why Bus Watch ended the countdown, for the recorder.
 - `BusState…`: current state, such as whether a countdown is running, which stop is shown, the last Wi-Fi network seen and what Bus Watch last decided.
 - `BusCache…`: every stop on your routes and their order along each route (refreshed daily, or when your routes change), and today's timetables for recently used stops.
@@ -308,7 +309,7 @@ Earlier versions used an invisible overlay to watch for the status bar being hid
 
 - Positions are pushed by Android only as you move (every 30 m; every 10 m only when close to a saved stop; 20 m during a countdown): sitting at home or at your desk costs nothing, and nothing checks on a timer.
 - Staying put somewhere 300 m or more outside all your stops' circles (a café, a friend's), indoor GPS wanders 30 to 70 m, which would beat the 30 m step, so positions slow to every 100 m, at most once a minute, until you've moved 150 m; the screen coming on doesn't take a new fix there if there was one in the last 2 minutes.
-- During a countdown, Bus Loop doesn't fetch times while the screen is off, except while a bus is within 8 minutes (for the buzz); Bus Wake fetches them as soon as the screen is back on. While the next bus is more than 10 minutes away it fetches half as often.
+- During a countdown, Bus Loop doesn't fetch times while the screen is off, except while a bus is within 8 minutes (for the buzz; worked out from when it's due, so it counts down between fetches); Bus Wake fetches them as soon as the screen is back on. While the next bus is more than 10 minutes away it fetches half as often.
 - When TfL can't be reached (no signal), each failure in a row doubles the wait before trying again (90, 180, then at most 300 seconds); the first success goes straight back to normal.
 - Every check asks for Android's ordinary location first (Wi-Fi and mobile networks) and only forces GPS on if that position is too old: over a minute during a countdown (so walking away is seen promptly), over 3 minutes otherwise.
 - The optional border is updated 4 times a second (several routes) or once a second (one route), with a CSS transition to keep it smooth, and not at all while the screen is off.
@@ -398,7 +399,7 @@ The `tests` folder runs the project's own scripts (from `scripts/`) the way Task
 npm test
 ```
 
-What's covered (139 tests, after the linter):
+What's covered (153 tests, after the linter):
 
 - **The project file matches the scripts:** every JavaScriptlet in `Bus_Countdown.prj.xml` is a file in `scripts/` (with its shared pieces filled in), every file and shared piece is used, no script keeps its own copy of a shared helper, every step has an explanation, and every Perform Task points at a task that exists.
 - **Replayed trips** through the state machine: walking past a stop, waiting then catching the bus, walking away with no speed readings, a saved stop coming up on a bus, a jumpy fix while waiting, passing through a circle, swiping away, and a big arrival circle not restarting as you leave.
@@ -413,6 +414,7 @@ What's covered (139 tests, after the linter):
 - **Version 4.11** (`tests/v4.11.test.js`, written first as todo tests): Wi-Fi hysteresis, backing off with no signal, next two buses, and the swipe rule (route changes, 90 dp to dismiss, a fast 60 dp fling).
 - **Tuesday 6 October, replayed** (`tests/tuesday.test.js`): excerpts of the first recorded day (`tests/fixtures`, with home and work replaced by stand-ins), played through today's rules: no pop-up on the 517 to work or the 566 home; the 517 TfL dropped for 2½ minutes kept on the island and buzzing at 4½ minutes, not 1.9; still shown on the way to Wexley, where you change, without buzzing for the bus you're on; one buzz from two refreshes 6 seconds apart; and leaving Wexley on the 566 in traffic ending as "on the bus".
 - **Which bus you're on** (`tests/tuesday.test.js` and `tests/v4.28.test.js`): Tuesday's three rides each matched to the right bus (WH63YOX to work on the second refresh, LA28LPG to Wexley with the 566 as the connection, LE15BXA home known at once as the bus you got on at Wexley, not the 517 you came in on); and on made-up rides, one refresh not being enough, rivals too close to call, the connection buzzing but never your bus, nothing kept while you're waiting, and buses that drop off the list remembered as gone.
+- **Version 4.32** (`tests/v4.32.test.js`, and the wiring checks in `tests/tasks.test.js`): the code review's fixes, each with the case that showed it: times still fetched with the screen off once the next bus is within 8 minutes (it used to keep the minutes from the last fetch), your bus forgotten when a countdown ends mid-ride, the next bus on your own route never taking the connection's buzz, getting off early and walking no longer counting as riding, staying on your bus through a stop, a bus found after a walk-away picked by when you left, a start by hand clearing a swipe snooze, the bus you got on forgotten when you next wait on foot, and the "staying put" skip never applying during a countdown or by hand. The wiring checks read the project file: every Bus End caller passes its reason, Bus End copies it before its script, and Bus Watch's skip comes before the first location step.
 - **Version 4.27** (`tests/v4.27.test.js`): the same fixes on the test road, plus the swipe snooze (holding when swiped on the approach, lifting once you've been and gone, and a check running at the same moment not undoing it), poor fixes not faking a bus, staying put far away, TfL unreachable, each stop counting its own buzzes, and the recorder's end reasons, Wi-Fi changes and worked-out speed.
 - **Version 4.12** (`tests/v4.12.test.js`): the code review's fixes, each with the case that showed the problem: a southbound bus never picking a northbound stop behind you, waiting still not tripping the safety net, arrival distances capped at 200 m, the direction table noticing any change to your stops, and times fading normally while refreshes back off.
 

@@ -219,11 +219,11 @@ test('every ending says why', () => {
 
 test('a change of Wi-Fi is recorded, as home / work / other (never the network\'s name)', () => {
   for (const k of Object.keys(files)) delete files[k];
-  const g = { BusRecord: 'on', BusRecordDay: 'x', BusStateWifi: 'Virgin One', BusWorkWifi: 'Virgin One', BusHomeWifi: 'HomeNet' };
+  const g = { BusRecord: 'on', BusRecordDay: 'x', BusStateWifi: 'WorkNet', BusWorkWifi: 'WorkNet', BusHomeWifi: 'HomeNet' };
   run('wifi_save.js', { globals: g, locals: { busssid: '' } });
   const line = JSON.parse(Object.values(files)[0].trim().split('\n').pop());
   assert.deepStrictEqual([line.k, line.from, line.to], ['wifi', 'work', 'none']);
-  assert.ok(!JSON.stringify(line).includes('Virgin'));
+  assert.ok(!JSON.stringify(line).includes('WorkNet'));
 });
 
 test('each check records the speed the rules used, and whether that looked like a bus', () => {

@@ -1,8 +1,8 @@
 <TaskerData sr="" dvi="1" tv="6.7.6-beta">
 	<dmetric>1344.0,2992.0</dmetric>
 	<Profile sr="prof72" ve="2">
-		<cdate>1791365237510</cdate>
-		<edate>1791365237510</edate>
+		<cdate>1791372757430</cdate>
+		<edate>1791372757430</edate>
 		<flags>8</flags>
 		<id>72</id>
 		<mid0>79</mid0>
@@ -14,8 +14,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof74" ve="2">
-		<cdate>1791365237510</cdate>
-		<edate>1791365237510</edate>
+		<cdate>1791372757430</cdate>
+		<edate>1791372757430</edate>
 		<flags>8</flags>
 		<id>74</id>
 		<mid0>62</mid0>
@@ -33,8 +33,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof73" ve="2">
-		<cdate>1791365237510</cdate>
-		<edate>1791365237510</edate>
+		<cdate>1791372757430</cdate>
+		<edate>1791372757430</edate>
 		<flags>8</flags>
 		<id>73</id>
 		<mid0>59</mid0>
@@ -46,14 +46,14 @@
 		</State>
 	</Profile>
 	<Project sr="proj0" ve="2">
-		<cdate>1791365237510</cdate>
+		<cdate>1791372757430</cdate>
 		<name>Bus Countdown</name>
 		<pids>72,73,74</pids>
 		<tids>73,74,75,76,38,60,59,79,32,31,62,72</tids>
 	</Project>
 	<Task sr="task73">
-		<cdate>1791365237510</cdate>
-		<edate>1791365237510</edate>
+		<cdate>1791372757430</cdate>
+		<edate>1791372757430</edate>
 		<id>73</id>
 		<nme>Bus</nme>
 		<pri>6</pri>
@@ -178,11 +178,11 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.31.202610071027</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.32.202610071232</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task74">
-		<cdate>1791365237510</cdate>
-		<edate>1791365237510</edate>
+		<cdate>1791372757430</cdate>
+		<edate>1791372757430</edate>
 		<id>74</id>
 		<nme>Bus Settings</nme>
 		<pri>6</pri>
@@ -201,7 +201,7 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.31.202610071027</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.32.202610071232</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>First run? · Camera not measured yet</label>
@@ -2110,8 +2110,8 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buspreview</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task75">
-		<cdate>1791365237510</cdate>
-		<edate>1791365237510</edate>
+		<cdate>1791372757431</cdate>
+		<edate>1791372757431</edate>
 		<id>75</id>
 		<nme>Bus Settings Button</nme>
 		<pri>6</pri>
@@ -2692,8 +2692,8 @@ var buslayout = JSON.stringify({
 			<label>Open it · Shows the Android settings page</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">startActivity {} (android.content.Intent)</Str><Str sr="arg3" ve="3">busint</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busintent</lhs><op>2</op><rhs>android*</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task76">
-		<cdate>1791365237510</cdate>
-		<edate>1791365237510</edate>
+		<cdate>1791372757431</cdate>
+		<edate>1791372757431</edate>
 		<id>76</id>
 		<nme>Bus Find Camera</nme>
 		<pri>6</pri>
@@ -2826,8 +2826,8 @@ if (!r || !dens || !w) {
 			<label>Reset position: move the open screen's height slider · Shows the new value straight away</label><Str sr="arg0" ve="3">bussettings</Str><Str sr="arg1" ve="3">sl_y</Str><Str sr="arg2" ve="3">value</Str><Str sr="arg3" ve="3">%BusIslandY</Str><Int sr="arg4" val="0"/><Str sr="arg5" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrebuild</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task38">
-		<cdate>1791365237510</cdate>
-		<edate>1791365237510</edate>
+		<cdate>1791372757431</cdate>
+		<edate>1791372757431</edate>
 		<id>38</id>
 		<nme>Bus Start</nme>
 		<pri>6</pri>
@@ -2845,7 +2845,7 @@ if (!r || !dens || !w) {
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.31.202610071027</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.32.202610071232</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>Settings: fill in defaults, check TflKey and BusRoutes · Resets empty or invalid settings</label>
@@ -3420,6 +3420,9 @@ if (!Object.keys(pool).length) {
     // The Wi-Fi network this countdown started on: Bus Watch ends a countdown on home or work
     // Wi-Fi unless it started on that same network
     setGlobal('BusStateStartWifi', get('BusStateWifi'));
+    // Started by hand: clear a snooze from swiping the island away (since 4.27 it's kept in its own
+    // variable, which nothing else clears; 4.32)
+    if (!mode) setGlobal('BusStateSnooze', '');
     busok = 'yes';
   } else {
     busproblem = 'None of your saved stops are within ' + radius + ' m (add stops in Bus Settings)';
@@ -3579,8 +3582,8 @@ record(busok === 'yes' ? 'start' : 'nostart', { stop: get('BusStateStopId'), nam
 		</Action>
 	</Task>
 	<Task sr="task60">
-		<cdate>1791365237510</cdate>
-		<edate>1791365237510</edate>
+		<cdate>1791372757431</cdate>
+		<edate>1791372757431</edate>
 		<id>60</id>
 		<nme>Bus Loop</nme>
 		<pri>6</pri>
@@ -3702,7 +3705,10 @@ if (busdone === 'yes' &amp;&amp; trip.s === 'atstop' &amp;&amp; trip.stop === ge
 }
 // Fetch times this cycle? Always with the screen on; with it off only when a bus is due within 8
 // minutes, so the buzz for a bus under 5 minutes still comes with the phone in your pocket
-var nextMin = parseFloat(get('BusStateNextMin'));
+// (BusStateNextAt is a time, so it counts down between fetches; BusStateNextMin, from versions before
+// 4.32, was a snapshot that didn't)
+var nextAtT = parseInt(get('BusStateNextAt'), 10);
+var nextMin = nextAtT ? (nextAtT - Date.now()) / 60000 : parseFloat(get('BusStateNextMin'));
 var busfetch = (get('SCREEN') !== 'off' || (!isNaN(nextMin) &amp;&amp; nextMin &lt;= 8)) ? 'yes' : 'no';
 var base = parseInt(get('BusRefresh'), 10) || 45;
 var chosen = parseInt(get('BusStateNextWait'), 10) || base;
@@ -3906,8 +3912,8 @@ var buspushm = get('BusStatePushM') || '30';
 		</Action>
 	</Task>
 	<Task sr="task59">
-		<cdate>1791365237510</cdate>
-		<edate>1791365237510</edate>
+		<cdate>1791372757431</cdate>
+		<edate>1791372757431</edate>
 		<id>59</id>
 		<nme>Bus Refresh</nme>
 		<pri>6</pri>
@@ -4304,7 +4310,9 @@ var stopId = get('BusStateStopId');
 var tripNow = {}; try { tripNow = JSON.parse(get('BusStateTrip') || '{}'); } catch (e) {}
 var riding = tripNow.s === 'heading' &amp;&amp; !!tripNow.bus &amp;&amp; tripNow.stop === stopId;
 var match = {}; try { match = JSON.parse(get('BusStateMatch') || '{}'); } catch (e) {}
-if (match.stop !== stopId) match = { stop: stopId, n: 0 };
+// A match from another stop, or more than 10 minutes old (a countdown that ended mid-ride), is
+// forgotten: an old one would read as "your bus has already arrived" and let your own bus buzz (4.32)
+if (match.stop !== stopId || now - (match.at || 0) &gt; 10 * 60000) match = { stop: stopId, n: 0 };
 var yourBus = null;
 if (riding) {
   var boarded = null; try { boarded = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) {}
@@ -4317,18 +4325,20 @@ if (riding) {
   }
   if (match.n &gt;= 2) yourBus = deps.filter(function (x) { return x.v === match.v; })[0] || null;
   // Kept for Bus Watch, so the bus you came in on is never taken for the one you then get on
-  if (yourBus) setGlobal('BusStateCameOn', JSON.stringify({ v: yourBus.v, stop: stopId, at: now }));
+  if (yourBus) setGlobal('BusStateCameOn', JSON.stringify({ k: yourBus.k, v: yourBus.v, stop: stopId, at: now }));
   if (yourBus &amp;&amp; !match.noted) {
     match.noted = true;
     debugLog('Your bus: the ' + yourBus.k + ' (' + yourBus.v + ')' + (match.by === 'boarded' ? ', the one you got on' : ', ' + match.err + ' s from your own arrival time'));
     record('match', { stop: stopId, route: yourBus.k, v: yourBus.v, by: match.by, err: match.err === undefined ? null : match.err });
   }
 }
-// The connection: the first bus due after yours gets there (one before it can't be caught)
-var connection = yourBus ? deps.filter(function (x) { return x.v !== yourBus.v &amp;&amp; x.t &gt; yourBus.t + 30000; })[0] : null;
+// The connection: the first bus on another route due after yours gets there (one before it can't be
+// caught, and a later bus on your own route is no use: 4.32)
+var connection = yourBus ? deps.filter(function (x) { return x.v !== yourBus.v &amp;&amp; x.k !== yourBus.k &amp;&amp; x.t &gt; yourBus.t + 30000; })[0] : null;
 match.note = yourBus ? 'on the ' + yourBus.k + ' (' + yourBus.v + '), at ' + get('BusStateStopName') + ' in about ' +
   Math.max(1, Math.round((yourBus.t - now) / 60000)) + ' min' + (connection ? '; then the ' + connection.k + ' ' +
   Math.round((connection.t - yourBus.t) / 60000) + ' min after you get there' : '') : '';
+match.at = now;
 setGlobal('BusStateMatch', riding ? JSON.stringify(match) : '');
 // While you ride, the island shows only the buses you could change to: your own bus is left out
 // (4.30; 4.28 and 4.29 labelled it "You" instead). If it's the only bus listed, it stays, as an
@@ -4356,7 +4366,14 @@ var fails = code === '200' ? 0 : (parseInt(get('BusStateFailCount'), 10) || 0) +
 setGlobal('BusStateFailCount', String(fails));
 if (fails) nextWait = Math.min(300, baseWait * Math.pow(2, fails));
 setGlobal('BusStateNextWait', String(nextWait));
-setGlobal('BusStateNextMin', String(Math.round(soonest * 10) / 10));   // Bus Loop refreshes with the screen off when this is 8 or less
+setGlobal('BusStateNextMin', String(Math.round(soonest * 10) / 10));   // for Bus Status and old versions of Bus Loop
+// When the next thing happens, as a time (so it counts down between refreshes): the soonest bus
+// shown, or your own bus reaching the stop if that's sooner. Bus Loop fetches with the screen off
+// once this is within 8 minutes. (Before 4.32 it kept the minutes from the last fetch, which never
+// counted down: a bus 12 minutes away meant no fetch, and no buzz, with the phone in your pocket.)
+var nextAt = deps.length ? deps[0].t : 0;
+if (yourBus &amp;&amp; (!nextAt || yourBus.t &lt; nextAt)) nextAt = yourBus.t;
+setGlobal('BusStateNextAt', nextAt ? String(nextAt) : '');
 
 // The island shows the soonest departure on each route, and the one after it on that route (t2,
 // st2) when there is one, as "5 · 12 min"
@@ -4387,7 +4404,7 @@ deps.forEach(function (x) { if (buzzed[keyOf(x)]) stillHere[keyOf(x)] = buzzed[k
 // there can't be caught); until it's known, nothing does
 // (Your bus known but no longer listed: it has reached the stop, so you're there, and buzzing is as usual)
 var buzzRiding = riding &amp;&amp; !(match.n &gt;= 2 &amp;&amp; !yourBus);
-var first = deps.filter(function (x) { return x.t - now &gt; -60000 &amp;&amp; (!buzzRiding || (yourBus &amp;&amp; !x.mine &amp;&amp; x.t &gt; yourBus.t + 30000)); })
+var first = deps.filter(function (x) { return x.t - now &gt; -60000 &amp;&amp; (!buzzRiding || (yourBus &amp;&amp; !x.mine &amp;&amp; !x.idle &amp;&amp; x.t &gt; yourBus.t + 30000)); })
   .sort(function (a, b) { return a.t - b.t; })[0];
 if (first &amp;&amp; (first.t - now) / 60000 &lt; 5 &amp;&amp; (stillHere[keyOf(first)] || 0) &lt; 2 &amp;&amp; sinceBuzz &gt;= 30000) {
   busbuzz = 'yes';
@@ -5050,40 +5067,40 @@ setGlobal('BusStateIslandScene', busnewscene);
 		</Action>
 	</Task>
 	<Task sr="task79">
-		<cdate>1791365237510</cdate>
-		<edate>1791365237510</edate>
+		<cdate>1791372757431</cdate>
+		<edate>1791372757431</edate>
 		<id>79</id>
 		<nme>Bus Wake</nme>
 		<pri>6</pri>
 		<Action sr="act0" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.31.202610071027</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.32.202610071232</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.31.202610071027</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.32.202610071232</rhs></Condition></ConditionList></Action>
 		<Action sr="act2" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.31.202610071027</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.32.202610071232</rhs></Condition></ConditionList></Action>
 		<Action sr="act3" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.31.202610071027</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.32.202610071232</rhs></Condition></ConditionList></Action>
 		<Action sr="act4" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.31.202610071027</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.32.202610071232</rhs></Condition></ConditionList></Action>
 		<Action sr="act5" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.31.202610071027</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.32.202610071232</rhs></Condition></ConditionList></Action>
 		<Action sr="act6" ve="7">
 			<code>547</code>
 			<label>This build · Version and build time</label>
 			<Str sr="arg0" ve="3">%busbuild</Str>
-			<Str sr="arg1" ve="3">4.31.202610071027</Str>
+			<Str sr="arg1" ve="3">4.32.202610071232</Str>
 			<Int sr="arg2" val="0"/>
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.31.202610071027</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.32.202610071232</rhs></Condition></ConditionList></Action>
 		<Action sr="act7" ve="7">
 			<code>129</code>
 			<label>Remember it was done for this build · BusStateVersion</label>
@@ -5109,11 +5126,11 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.31.202610071027</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.32.202610071232</rhs></Condition></ConditionList></Action>
 		<Action sr="act8" ve="7">
 			<code>548</code>
 			<label>Say so · A short message</label>
-			<Str sr="arg0" ve="3">Bus countdown 4.31: profiles switched on</Str>
+			<Str sr="arg0" ve="3">Bus countdown 4.32: profiles switched on</Str>
 			<Int sr="arg1" val="0"/>
 			<Str sr="arg10" ve="3"/>
 			<Int sr="arg11" val="1"/>
@@ -5129,7 +5146,7 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg7" ve="3"/>
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.31.202610071027</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.32.202610071232</rhs></Condition></ConditionList></Action>
 		<Action sr="act9" ve="7">
 			<code>137</code>
 			<label>Only asked to switch the profiles: done · Started by another task with par1 "profiles"</label>
@@ -5359,8 +5376,8 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 		</Action>
 	</Task>
 	<Task sr="task32">
-		<cdate>1791365237510</cdate>
-		<edate>1791365237510</edate>
+		<cdate>1791372757431</cdate>
+		<edate>1791372757431</edate>
 		<id>32</id>
 		<nme>Bus End</nme>
 		<pri>6</pri>
@@ -5429,6 +5446,8 @@ function record(kind, data) {
 debugLog('Countdown ended: ' + how);
 record('end', { stop: global('BusStateStopId') || '', from: from, why: how, battery: global('BATT') || '' });
 setGlobal('BusStateEndWhy', '');
+// A countdown ending mid-ride leaves no "your bus" behind for the next ride, or for Bus Status (4.32)
+setGlobal('BusStateMatch', '');
 </Str>
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
@@ -5478,8 +5497,8 @@ setGlobal('BusStateEndWhy', '');
 		</Action>
 	</Task>
 	<Task sr="task31">
-		<cdate>1791365237510</cdate>
-		<edate>1791365237510</edate>
+		<cdate>1791372757431</cdate>
+		<edate>1791372757431</edate>
 		<id>31</id>
 		<nme>Bus Island</nme>
 		<pri>6</pri>
@@ -5531,8 +5550,8 @@ if (stops.length) {
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busisland</lhs><op>2</op><rhs>switch</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task62">
-		<cdate>1791365237510</cdate>
-		<edate>1791365237510</edate>
+		<cdate>1791372757431</cdate>
+		<edate>1791372757431</edate>
 		<id>62</id>
 		<nme>Bus Watch</nme>
 		<pri>6</pri>
@@ -6312,7 +6331,8 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
       busaction = 'stop'; why = 'on the bus, away from ' + tripStop.n + ' (' + Math.round(paceAway(tripStop) * 3.6) + ' km/h for the last few minutes)' + noteBoarded(tripStop);
       setGlobal('BusStateLastBusAt', String(now)); from('onbus', { boardedAt: tripStop.id });
     } else if (tripStop.d &gt; endAtFor(tripStop) || (away &gt; 0.4 &amp;&amp; win.length &gt;= 3 &amp;&amp; tripStop.d &gt; Math.max(tripStop.r + 50, 120))) {
-      busaction = 'stop'; why = 'walking away from ' + tripStop.n; from('left', { leftD: Math.round(tripStop.d), walked: true });
+      busaction = 'stop'; why = 'walking away from ' + tripStop.n;
+      from('left', { leftD: Math.round(tripStop.d), walked: true, leftAt: leftTime(tripStop) || now, atAt: trip.since });
     } else why = 'waiting at ' + tripStop.n;
   } else if (trip.s === 'heading' &amp;&amp; tripStop) {
     trip.minD = Math.min(trip.minD || tripStop.d, Math.round(tripStop.d));
@@ -6330,7 +6350,16 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
       busaction = 'stop'; why = tripStop.n + ' is no longer coming up soon (' + Math.round(tripStop.d) + ' m at ' + Math.round(speed * 3.6) + ' km/h)';
       from('left', { leftD: Math.round(tripStop.d), slowN: 0 });
     }
-    else { why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m'; if (bus || speed &gt; 2.5) trip.slowN = 0; }
+    else {
+      why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m'; if (bus || speed &gt; 2.5) trip.slowN = 0;
+      // Shown while on a bus, but now at walking pace on two checks in a row: you got off and are
+      // walking to it, so you're no longer riding. Bus Refresh then stops treating a bus due when you
+      // get there as yours (it's the one you're walking to catch), and it can buzz (4.32)
+      if (trip.bus &amp;&amp; !bus &amp;&amp; speed &gt;= 0 &amp;&amp; speed &lt;= 2.5) {
+        trip.walkN = (trip.walkN || 0) + 1;
+        if (trip.walkN &gt;= 2) { trip.bus = false; delete trip.eta; delete trip.etaAt; why += ' (off the bus, on foot)'; }
+      } else trip.walkN = 0;
+    }
   } else if (running) {
     why = 'a countdown is already running';
   } else {
@@ -6341,14 +6370,17 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
       var boarded = stops.filter(function (st) { return st.id === trip.stop; })[0];
       from('left', { leftD: boarded ? Math.round(boarded.d) : 0, maxD: trip.maxD || 0 });
     }
-    if (trip.s === 'left' &amp;&amp; (now - trip.since &gt; 15 * 60000)) trip = { s: 'idle' };
+    // Fifteen minutes after leaving a stop the trip is over: the bus you got on is forgotten too, so a
+    // later ride can't take it for yours (4.32; not on getting off, which a crawl in traffic looks like)
+    if (trip.s === 'left' &amp;&amp; (now - trip.since &gt; 15 * 60000)) { trip = { s: 'idle' }; setGlobal('BusStateBoarded', ''); }
     // Ended as walking away, but you've kept up more than 2.2 m/s from that stop for 90 seconds or
     // more since: it was a bus after all, pulling away slowly (the countdown ended either way; this
     // keeps the trip, and the recording, right)
     if (trip.s === 'left' &amp;&amp; trip.walked &amp;&amp; now - trip.since &lt; 5 * 60000) {
       var leftFrom = stops.filter(function (st) { return st.id === trip.stop; })[0];
       if (leftFrom &amp;&amp; paceAway(leftFrom) &gt; 2.2) {
-        afterAll = 'on a bus after all, from ' + leftFrom.n + ' (' + Math.round(paceAway(leftFrom) * 3.6) + ' km/h for the last few minutes)' + noteBoarded(leftFrom);
+        afterAll = 'on a bus after all, from ' + leftFrom.n + ' (' + Math.round(paceAway(leftFrom) * 3.6) + ' km/h for the last few minutes)' +
+          noteBoarded(leftFrom, { leftAt: trip.leftAt || trip.since, arrivedAt: trip.atAt });
         setGlobal('BusStateLastBusAt', String(now)); from('onbus', { boardedAt: leftFrom.id, leftD: Math.round(leftFrom.d), walked: false });
       }
     }
@@ -6364,6 +6396,7 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
       busaction = 'start'; why = settled &amp;&amp; speed &gt; 0.8 ? 'start (you have stayed put, though the GPS speed reads ' + Math.round(speed * 3.6) + ' km/h)' : 'start';
       setGlobal('BusStateArrivedStop', arrival.id); setGlobal('BusStateStartMode', 'arrived|' + now);
       trip = { s: 'atstop', stop: arrival.id, since: now };
+      setGlobal('BusStateBoarded', '');       // waiting at a stop on foot: whatever you rode before is over (4.32)
     } else if (insideStops.length &amp;&amp; !byHand) why = 'you\u2019ve just left this stop: it starts again if you come back';
     else if (!snoozed) {
       var ahead = approaching();
@@ -6376,9 +6409,11 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
   }
   // Riding a bus to the stop: when you'd get there at the pace you've been closing in on it, for
   // Bus Refresh to pick out the bus you're on (the one TfL has arriving then)
-  if (trip.s === 'heading' &amp;&amp; trip.bus &amp;&amp; tripStop) {
-    var closing = closingSpeed(tripStop);
-    if (closing &gt; 0.5) { trip.eta = Math.round(fixT + tripStop.d / closing * 1000); trip.etaAt = now; }
+  // (The stop is looked up again: a new heading set just now is for a different stop than tripStop)
+  var etaStop = trip.s === 'heading' &amp;&amp; trip.bus ? stops.filter(function (st) { return st.id === trip.stop; })[0] : null;
+  if (etaStop) {
+    var closing = closingSpeed(etaStop);
+    if (closing &gt; 0.5) { trip.eta = Math.round(fixT + etaStop.d / closing * 1000); trip.etaAt = now; }
   }
   if (afterAll &amp;&amp; busaction === 'none') why = afterAll;
   setGlobal('BusStateTrip', JSON.stringify(trip));
@@ -6429,26 +6464,45 @@ function closingSpeed(st) {
   return -1;
 }
 
-// Which bus you got on at a stop: the one TfL had arriving nearest the time you left it (the last
-// position within 40 m of it, or failing that inside its circle), from the buses Bus Refresh last
-// listed there, including any gone from the list in the last 5 minutes (BusStateSeen), but never the
-// bus you came in on (BusStateCameOn: changing at Wexley on Tuesday, that one was nearer). Saved as
-// BusStateBoarded, so the next stop knows your bus at once, and recorded with how far TfL's time was
-// from when you actually left (for checking TfL's predictions). Returns a note for the reason, or ''.
-function noteBoarded(st) {
+// When you left a stop: the last position within 40 m of it, or failing that inside its circle (0 if
+// the window no longer has one)
+function leftTime(st) {
+  var near = 0; var inCircle = 0;
+  win.forEach(function (w) { var d = metres(w.lat, w.lon, st.lat, st.lon); if (d &lt;= 40) near = w.t; if (d &lt;= st.r) inCircle = w.t; });
+  return near || inCircle;
+}
+
+// Which bus you got on at a stop: the one TfL had arriving nearest the time you left it, from the
+// buses Bus Refresh last listed there, including any gone from the list in the last 5 minutes
+// (BusStateSeen), but never the bus you came in on (BusStateCameOn: changing at Wexley on Tuesday,
+// that one was nearer). Unless you stayed on it: it was still at the stop when you left, and you were
+// there 2 minutes at most. hint (for a walk-away found to be a bus later, when the positions
+// at the stop may have left the window): { leftAt, arrivedAt }. Saved as BusStateBoarded, so the next
+// stop knows your bus at once, and recorded with how far TfL's time was from when you actually left
+// (for checking TfL's predictions). Returns a note for the reason, or ''.
+function noteBoarded(st, hint) {
+  hint = hint || {};
   var seenHere = {}; try { seenHere = JSON.parse(get('BusStateSeen') || '{}'); } catch (e) {}
-  if (seenHere.s !== st.id) return '';
-  var leftAt = 0; var inCircle = 0;
-  win.forEach(function (w) { var d = metres(w.lat, w.lon, st.lat, st.lon); if (d &lt;= 40) leftAt = w.t; if (d &lt;= st.r) inCircle = w.t; });
-  leftAt = leftAt || inCircle || now;
+  if (seenHere.s !== st.id) { setGlobal('BusStateBoarded', ''); return ''; }
+  var leftAt = leftTime(st) || hint.leftAt || now;
+  var arrivedAt = hint.arrivedAt || (trip.s === 'atstop' ? trip.since : 0);
   var cameOn = null; try { cameOn = JSON.parse(get('BusStateCameOn') || 'null'); } catch (e) {}
+  var cameOnHere = !!cameOn &amp;&amp; cameOn.stop === st.id &amp;&amp; now - cameOn.at &lt; 30 * 60000;
   var best = null;
-  (seenHere.b || []).forEach(function (x) {
-    if (cameOn &amp;&amp; cameOn.stop === st.id &amp;&amp; cameOn.v === x.v &amp;&amp; now - cameOn.at &lt; 30 * 60000) return;   // the bus you got off
-    var off = x.t - leftAt;
-    if (off &gt;= -180000 &amp;&amp; off &lt;= 360000 &amp;&amp; (!best || Math.abs(off) &lt; Math.abs(best.t - leftAt))) best = x;
-  });
-  if (!best) return '';
+  // Stayed on: the bus you came in on was still at the stop when you left (TfL still listed it, or
+  // dropped it within 90 s of you leaving), and you weren't there more than 2 minutes
+  var cameOnSeen = cameOnHere ? (seenHere.b || []).filter(function (x) { return x.v === cameOn.v; })[0] : null;
+  var stayedOn = !!cameOnSeen &amp;&amp; !(cameOnSeen.gone &amp;&amp; cameOnSeen.seen &lt; leftAt - 90000) &amp;&amp; (!arrivedAt || leftAt - arrivedAt &lt; 120000);
+  if (stayedOn) {
+    best = cameOnSeen;
+  } else {
+    (seenHere.b || []).forEach(function (x) {
+      if (cameOnHere &amp;&amp; cameOn.v === x.v) return;                                     // the bus you got off
+      var off = x.t - leftAt;
+      if (off &gt;= -180000 &amp;&amp; off &lt;= 360000 &amp;&amp; (!best || Math.abs(off) &lt; Math.abs(best.t - leftAt))) best = x;
+    });
+  }
+  if (!best) { setGlobal('BusStateBoarded', ''); return ''; }        // on a bus, but not one we can name
   setGlobal('BusStateBoarded', JSON.stringify({ k: best.k, v: best.v, stop: st.id, at: leftAt }));
   record('board', { stop: st.id, route: best.k, v: best.v, tfl: Math.round((best.t - leftAt) / 1000) });
   return ': the ' + best.k + ' (' + best.v + ')';
@@ -6786,8 +6840,8 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busaction</lhs><op>2</op><rhs>stop</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task72">
-		<cdate>1791365237511</cdate>
-		<edate>1791365237511</edate>
+		<cdate>1791372757431</cdate>
+		<edate>1791372757431</edate>
 		<id>72</id>
 		<nme>Bus Status</nme>
 		<pri>6</pri>
@@ -6833,7 +6887,7 @@ var stopNames = {}; get('BusPlaces').split('\n').forEach(function (r) { var p = 
 lines.push('Trip: ' + ({ idle: 'idle', heading: 'heading to a stop', atstop: 'at the stop', onbus: 'on a bus', left: 'just left a stop' }[trip.s] || 'idle') +
   (trip.stop &amp;&amp; stopNames[trip.stop] ? ' (' + stopNames[trip.stop] + ')' : '') + (trip.since ? ', since ' + new Date(trip.since).toTimeString().slice(0, 5) : ''));
 var matchNow = {}; try { matchNow = JSON.parse(get('BusStateMatch') || '{}'); } catch (e) {}
-if (matchNow.note) lines.push('Your bus: ' + matchNow.note);
+if (matchNow.note &amp;&amp; running &amp;&amp; Date.now() - (matchNow.at || 0) &lt; 10 * 60000) lines.push('Your bus: ' + matchNow.note);
 var boardedNow = null; try { boardedNow = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) {}
 if (boardedNow &amp;&amp; Date.now() - boardedNow.at &lt; 90 * 60000)
   lines.push('Last got on: the ' + boardedNow.k + ' (' + boardedNow.v + ') at ' + (stopNames[boardedNow.stop] || boardedNow.stop) + ', ' + new Date(boardedNow.at).toTimeString().slice(0, 5));

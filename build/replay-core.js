@@ -10,7 +10,10 @@ function replay(lines, extraGlobals) {
   const g = Object.assign({ BusStateRunning: '0', TRUN: '', BusRecord: 'off', BusRefresh: '45' }, setup ? setup.vars : {}, extraGlobals || {});
   const out = [];
   for (const l of lines) {
-    if (l.k === 'end' && l.from === 'island') {            // you swiped it away: as Bus End does
+    // You swiped it away: as Bus End does. Only if today's rules have a countdown showing too: a swipe
+    // of one they wouldn't have shown never happened (4.32)
+    if (l.k === 'end' && l.from === 'island') {
+      if (g.BusStateRunning !== '1') { out.push({ t: l.t, k: 'swipe', line: l, note: 'swiped on the phone (no countdown here to swipe)' }); continue; }
       g.BusStateRunning = '0'; g.TRUN = '';
       run('end_log.js', { globals: g, now: l.t, locals: { busfrom: 'island' } });
       out.push({ t: l.t, k: 'swipe', line: l, note: 'you swiped it away' });
@@ -23,14 +26,20 @@ function replay(lines, extraGlobals) {
       out.push({ t: l.t, k: 'start', line: l, note: `started (${l.mode}) at ${l.name}` });
       continue;
     }
+    // (Recordings before 4.27 have no reason on any ending, from: ''. A Bus Watch ending there comes
+    // just after the position that caused it, which today's rules have already played, so by then the
+    // countdown is only still running here if today's rules kept it going.)
     if (l.k === 'end' && l.from !== 'watch' && g.BusStateRunning === '1') {
       g.BusStateRunning = '0'; g.TRUN = '';
       out.push({ t: l.t, k: 'end', line: l, note: `ended (${l.why || l.from || 'reason not recorded'})` });
       continue;
     }
-    if (l.k === 'tfl' && l.code === '200' && g.BusStateRunning === '1' && l.stop === g.BusStateStopId) {
-      const arrivals = l.b.filter((b) => b[3] === 'l').map((b) => ({ lineName: b[0], destinationName: '', timeToStation: b[2], vehicleId: b[1] }));
-      const r = run('refresh.js', { globals: g, now: l.t, locals: { http_response_code: '200', http_data: JSON.stringify(arrivals) } });
+    // Every TfL reply, failed ones too: on the phone Bus Refresh runs either way (and keeps the buses
+    // TfL last listed when a fetch fails)
+    if (l.k === 'tfl' && g.BusStateRunning === '1' && l.stop === g.BusStateStopId) {
+      const ok = l.code === '200';
+      const arrivals = ok ? l.b.filter((b) => b[3] === 'l').map((b) => ({ lineName: b[0], destinationName: '', timeToStation: b[2], vehicleId: b[1] })) : [];
+      const r = run('refresh.js', { globals: g, now: l.t, locals: { http_response_code: ok ? '200' : String(l.code || ''), http_data: ok ? JSON.stringify(arrivals) : '' } });
       const shown = JSON.parse(g.BusStateIslandData || '{}').b || [];
       const soonest = shown.slice().sort((a, b) => a.t - b.t)[0];
       let match = {}; try { match = JSON.parse(g.BusStateMatch || '{}'); } catch (e) { match = {}; }

@@ -81,7 +81,9 @@ var stopId = get('BusStateStopId');
 var tripNow = {}; try { tripNow = JSON.parse(get('BusStateTrip') || '{}'); } catch (e) {}
 var riding = tripNow.s === 'heading' && !!tripNow.bus && tripNow.stop === stopId;
 var match = {}; try { match = JSON.parse(get('BusStateMatch') || '{}'); } catch (e) {}
-if (match.stop !== stopId) match = { stop: stopId, n: 0 };
+// A match from another stop, or more than 10 minutes old (a countdown that ended mid-ride), is
+// forgotten: an old one would read as "your bus has already arrived" and let your own bus buzz (4.32)
+if (match.stop !== stopId || now - (match.at || 0) > 10 * 60000) match = { stop: stopId, n: 0 };
 var yourBus = null;
 if (riding) {
   var boarded = null; try { boarded = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) {}
@@ -94,18 +96,20 @@ if (riding) {
   }
   if (match.n >= 2) yourBus = deps.filter(function (x) { return x.v === match.v; })[0] || null;
   // Kept for Bus Watch, so the bus you came in on is never taken for the one you then get on
-  if (yourBus) setGlobal('BusStateCameOn', JSON.stringify({ v: yourBus.v, stop: stopId, at: now }));
+  if (yourBus) setGlobal('BusStateCameOn', JSON.stringify({ k: yourBus.k, v: yourBus.v, stop: stopId, at: now }));
   if (yourBus && !match.noted) {
     match.noted = true;
     debugLog('Your bus: the ' + yourBus.k + ' (' + yourBus.v + ')' + (match.by === 'boarded' ? ', the one you got on' : ', ' + match.err + ' s from your own arrival time'));
     record('match', { stop: stopId, route: yourBus.k, v: yourBus.v, by: match.by, err: match.err === undefined ? null : match.err });
   }
 }
-// The connection: the first bus due after yours gets there (one before it can't be caught)
-var connection = yourBus ? deps.filter(function (x) { return x.v !== yourBus.v && x.t > yourBus.t + 30000; })[0] : null;
+// The connection: the first bus on another route due after yours gets there (one before it can't be
+// caught, and a later bus on your own route is no use: 4.32)
+var connection = yourBus ? deps.filter(function (x) { return x.v !== yourBus.v && x.k !== yourBus.k && x.t > yourBus.t + 30000; })[0] : null;
 match.note = yourBus ? 'on the ' + yourBus.k + ' (' + yourBus.v + '), at ' + get('BusStateStopName') + ' in about ' +
   Math.max(1, Math.round((yourBus.t - now) / 60000)) + ' min' + (connection ? '; then the ' + connection.k + ' ' +
   Math.round((connection.t - yourBus.t) / 60000) + ' min after you get there' : '') : '';
+match.at = now;
 setGlobal('BusStateMatch', riding ? JSON.stringify(match) : '');
 // While you ride, the island shows only the buses you could change to: your own bus is left out
 // (4.30; 4.28 and 4.29 labelled it "You" instead). If it's the only bus listed, it stays, as an
@@ -133,7 +137,14 @@ var fails = code === '200' ? 0 : (parseInt(get('BusStateFailCount'), 10) || 0) +
 setGlobal('BusStateFailCount', String(fails));
 if (fails) nextWait = Math.min(300, baseWait * Math.pow(2, fails));
 setGlobal('BusStateNextWait', String(nextWait));
-setGlobal('BusStateNextMin', String(Math.round(soonest * 10) / 10));   // Bus Loop refreshes with the screen off when this is 8 or less
+setGlobal('BusStateNextMin', String(Math.round(soonest * 10) / 10));   // for Bus Status and old versions of Bus Loop
+// When the next thing happens, as a time (so it counts down between refreshes): the soonest bus
+// shown, or your own bus reaching the stop if that's sooner. Bus Loop fetches with the screen off
+// once this is within 8 minutes. (Before 4.32 it kept the minutes from the last fetch, which never
+// counted down: a bus 12 minutes away meant no fetch, and no buzz, with the phone in your pocket.)
+var nextAt = deps.length ? deps[0].t : 0;
+if (yourBus && (!nextAt || yourBus.t < nextAt)) nextAt = yourBus.t;
+setGlobal('BusStateNextAt', nextAt ? String(nextAt) : '');
 
 // The island shows the soonest departure on each route, and the one after it on that route (t2,
 // st2) when there is one, as "5 · 12 min"
@@ -164,7 +175,7 @@ deps.forEach(function (x) { if (buzzed[keyOf(x)]) stillHere[keyOf(x)] = buzzed[k
 // there can't be caught); until it's known, nothing does
 // (Your bus known but no longer listed: it has reached the stop, so you're there, and buzzing is as usual)
 var buzzRiding = riding && !(match.n >= 2 && !yourBus);
-var first = deps.filter(function (x) { return x.t - now > -60000 && (!buzzRiding || (yourBus && !x.mine && x.t > yourBus.t + 30000)); })
+var first = deps.filter(function (x) { return x.t - now > -60000 && (!buzzRiding || (yourBus && !x.mine && !x.idle && x.t > yourBus.t + 30000)); })
   .sort(function (a, b) { return a.t - b.t; })[0];
 if (first && (first.t - now) / 60000 < 5 && (stillHere[keyOf(first)] || 0) < 2 && sinceBuzz >= 30000) {
   busbuzz = 'yes';

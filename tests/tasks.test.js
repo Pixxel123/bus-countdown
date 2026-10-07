@@ -109,3 +109,33 @@ test('only Bus Settings starts itself, and only because it replaces itself', () 
   assert.deepStrictEqual([...new Set(selfStarts)], ['Bus Settings']);
   assert.strictEqual(byName['Bus Settings'].collision, 'abort existing');
 });
+
+// ---- The wiring the scripts rely on (4.32: these steps could be deleted with every test passing) ------
+const rawActions = (name) => {
+  const body = [...xml.matchAll(/<Task sr="task\d+">([\s\S]*?)<\/Task>/g)].map((x) => x[1]).find((b) => b.includes('<nme>' + name + '</nme>'));
+  return [...body.matchAll(/<Action sr="act\d+" ve="7">([\s\S]*?)<\/Action>/g)].map((a) => a[1]);
+};
+const labelOf = (a) => unescape((a.match(/<label>(.*?)<\/label>/) || [0, ''])[1]);
+
+test('every Perform Task of Bus End passes why it ended, as Bus End expects', () => {
+  const calls = tasks.flatMap((t) => rawActions(t.name).filter((a) => /<code>130<\/code>/.test(a) && a.includes('<Str sr="arg0" ve="3">Bus End</Str>'))
+    .map((a) => t.name + ': ' + (a.match(/<Str sr="arg2" ve="3">(.*?)<\/Str>/) || [0, ''])[1]));
+  assert.deepStrictEqual(calls.sort(), ['Bus Loop: timeout', 'Bus Loop: timeout', 'Bus Watch: watch', 'Bus Watch: wifi', 'Bus: menu']);
+});
+
+test('Bus End copies %par1 into %busreason before its script runs', () => {
+  const [first, second] = rawActions('Bus End');
+  assert.match(first, /<code>547<\/code>/);
+  assert.match(first, /<Str sr="arg0" ve="3">%busreason<\/Str>/);
+  assert.match(first, /<Str sr="arg1" ve="3">%par1<\/Str>/);
+  assert.match(labelOf(second), /^Note it in the debugging log/);
+});
+
+test('Bus Watch stops before getting a fix when staying put far away, and only then', () => {
+  const acts = rawActions('Bus Watch');
+  const quiet = acts.findIndex((a) => a.includes('<lhs>%busquiet</lhs>'));
+  const getloc = acts.findIndex((a) => /^Otherwise: get my location/.test(labelOf(a)));
+  assert.ok(quiet > -1 && getloc > -1 && quiet < getloc, 'the stop comes before the first location step');
+  assert.match(acts[quiet], /<code>137<\/code>/);
+  assert.match(acts[quiet], /<rhs>yes<\/rhs>/);
+});
