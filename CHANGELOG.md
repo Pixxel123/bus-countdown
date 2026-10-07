@@ -4,8 +4,6 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
-## [Unreleased]
-
 ## [4.35] - 2026-10-07
 
 ### Fixed
