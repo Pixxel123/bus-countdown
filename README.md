@@ -333,6 +333,8 @@ Earlier versions used an invisible overlay to watch for the status bar being hid
 
 ## Notes for editing
 
+- **Every change to the island is recorded in the mockup.** Add the version to `VERSIONS` in `docs/mockup.src.html` (and a new look in `LOOK` if the island changed), run `npm run build`, and republish the mockup artifact. `tests/mockup.test.js` fails until the current version has its entry.
+
 - A JavaScriptlet only returns a local variable to the task if it is declared on its own `var` line. `var a = 1, b = 2;` returns only `a`.
 - Step labels are plain text, "Title · Explanation", because the Run Log prints labels exactly as written (HTML labels look good in the task editor but fill the log with tags).
 - `%caller1` isn't visible to scripts. Bus Watch copies it into `%buscaller` first, and marks runs from Bus Wake and Bus Loop as `profile=wake` and `profile=loop`.
@@ -395,7 +397,7 @@ The `tests` folder runs the project's own scripts (from `scripts/`) the way Task
 npm test
 ```
 
-What's covered (133 tests, after the linter):
+What's covered (136 tests, after the linter):
 
 - **The project file matches the scripts:** every JavaScriptlet in `Bus_Countdown.prj.xml` is a file in `scripts/` (with its shared pieces filled in), every file and shared piece is used, no script keeps its own copy of a shared helper, every step has an explanation, and every Perform Task points at a task that exists.
 - **Replayed trips** through the state machine: walking past a stop, waiting then catching the bus, walking away with no speed readings, a saved stop coming up on a bus, a jumpy fix while waiting, passing through a circle, swiping away, and a big arrival circle not restarting as you leave.
@@ -424,7 +426,7 @@ When something goes wrong on the phone, the Debugging report's positions can be 
 | `docs/pill.png`, `docs/chip.png` | The pill and the status bar chip, drawn from the project's own page. |
 | `build/` | The build: `assemble.py` (every task and profile, step by step), `helpers.py`, `labels.py` (each step's explanation) and `templates.prj.xml` (Tasker's own XML for each kind of action). `npm run build` turns these and `scripts/` into `Bus_Countdown.prj.xml`. |
 | `tests/`, `package.json` | Tests for the scripts: replayed trips and the rules around them (see Tests). `tests/fixtures` holds excerpts of a recorded day, with home and work replaced by stand-ins. |
-| `docs/mockup.html` | Interactive mockup used to design the pill, including placement options, gestures and ideas for showing trains. Open it in a browser. |
+| `docs/mockup.html` | The island mockup, also published as an artifact: **Now** draws the island with the project's own `island_show.js` (built from `docs/mockup.src.html` by `build/mockup.py`), **Timeline** shows every version's island with a sentence on each, and the early placement and settings ideas. Open it in a browser. |
 
 ### Scripts
 

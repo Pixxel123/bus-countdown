@@ -4,7 +4,7 @@
   "description": "Bus Countdown Tasker project: build tools and tests",
   "scripts": {
     "test": "node build/lint.js && node --test",
-    "build": "python3 build/assemble.py",
+    "build": "python3 build/assemble.py && python3 build/mockup.py",
     "lint": "node build/lint.js",
     "replay": "node build/replay.js"
   },
