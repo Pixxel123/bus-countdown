@@ -425,11 +425,10 @@ def task_block(tid, name, acts):
             f'\t\t<nme>{name}</nme>\n\t\t<pri>6</pri>\n' + (f'\t\t<rty>{COLLISION[tid]}</rty>\n' if tid in COLLISION else '') +
             '\t\t' + '\n\t\t'.join(acts) + '\n\t</Task>')
 
-# Collision handling ("if already running"): Bus Settings replaces an older copy of itself, so
-# opening Settings again works even if a previous screen was left open (1 = abort existing task)
-# 74 Bus Settings: opening it again replaces the open screen. 59 Bus Refresh: turning the phone
-# (the Bus Hide When Sideways profile) or a new refresh replaces one under way, so hiding the island
-# is never lost to a refresh that's still running.
+# Collision handling ("if already running"; 1 = abort existing task). 74 Bus Settings replaces an
+# older copy of itself, so opening Settings again works even if a previous screen was left open.
+# 59 Bus Refresh: turning the phone (the Bus Hide When Sideways profile) or a new refresh replaces
+# one under way, so hiding the island is never lost to a refresh that's still running.
 COLLISION = {74: 1, 59: 1}
 
 NOW = str(int(time.time() * 1000))

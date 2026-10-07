@@ -1,6 +1,7 @@
 // Tuesday 6 October, replayed: excerpts of a real recorded day (tests/fixtures), through today's rules.
-// Each test is one of the moments the recording showed going wrong in V4.26. (The stops and routes are
-// real; home and work are stand-ins 200 m from their stops, and the Wi-Fi names are made up.)
+// Each test is one of the moments the recording showed going wrong in V4.26. (The timings, distances
+// and TfL replies are real; the stop names, stop codes, routes, number plates and the place on the map
+// are stand-ins, home and work are 200 m from their stops, and the Wi-Fi names are made up.)
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert');

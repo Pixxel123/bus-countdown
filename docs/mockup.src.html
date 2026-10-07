@@ -611,7 +611,7 @@ h1{text-wrap:balance}
            '<div class="nb"><span>' + (mode === 'train' ? 'Other direction' : 'Other side') + '</span><span>Stop updates</span></div>';
   }
   var IDEA_HINTS = {
-    status: 'Says what matters in words: On time, +13 min, Cancelled. The quickest read at a glance.',
+    status: 'Says the status in words (On time, +13 min, Cancelled), which is the quickest to read at a glance.',
     countdown: 'Minutes until it leaves, like the buses, worked out from the expected time and coloured by status.',
     platform: 'Leads with the platform, since that is what you act on at the station; a coloured dot carries the status.'
   };
@@ -1164,7 +1164,7 @@ function islandShow(global, setGlobal) {
      'Plain and unmistakable, but it spends the destination on a word, and with 3 letters “You” sits where “Hol…” would.',
      [['Your bus', look({ k: '517', d: 'You', m: '2 min', m2: '', on: 0 })], ['Then your connection', CONN]]],
     ['B', 'A hollow badge', '', 'Your bus’s route badge is drawn as a red outline instead of a solid pill. Nothing else changes: same destination, same grey, same size.',
-     'Shape carries it, not colour or words, and it echoes the ring round the stop letter: a ring means where you are. It’s the quietest mark that still reads at a glance, once you know what it means.',
+     'It works by shape alone and echoes the ring round the stop letter: a ring means where you are. It’s the quietest mark that still reads at a glance, once you know what it means.',
      [['Your bus', look({ k: '517', hollow: true, d: 'Holbry', m: '2 min', m2: '', on: 0 })], ['Then your connection', CONN]]],
     ['C', 'Leave it out', 'Chosen: 4.30', 'While you ride, the island shows only the buses you could change to. Your own bus, and when you’ll get there, move to Bus Status.',
      'The distilled answer: you’re already on that bus, so it isn’t news. But you lose the countdown to your stop, which is the one thing you might glance at on the bus.',

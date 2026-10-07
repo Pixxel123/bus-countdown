@@ -169,7 +169,7 @@ deps.forEach(function (x) {
 // One bus at a time: only the soonest bus at the stop, whatever its route, can buzz. Within 5 minutes
 // it buzzes three times, on two refreshes in a row (so you notice even if the first passes you by),
 // then stays quiet. The next bus only gets its turn once that one has gone from the list, so two
-// routes arriving close together give one set of buzzes, not two. Buses are told apart by TfL's
+// routes arriving close together give only one set of buzzes. Buses are told apart by TfL's
 // vehicle id (or, for a timetable time, the scheduled minute) at this stop; BusStateBuzzed keeps
 // how many times each has buzzed, and forgets buses no longer listed.
 //   The two buzzes are at least 30 seconds apart (two refreshes close together, the screen coming

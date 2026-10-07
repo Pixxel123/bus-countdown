@@ -1,7 +1,7 @@
 /* ==================================================================
    Bus Refresh · Which scene name to show the island under this time
    The island takes turns between two scene names, so a redraw can show
-   the new one on top before removing the old: no gap, no flash, and if
+   the new one on top before removing the old without a gap or a flash. If
    the refresh is interrupted part-way, the old island is still there.
    Output: busnewscene (show under this), busoldscene (then remove this,
            or 'none' if nothing was showing)

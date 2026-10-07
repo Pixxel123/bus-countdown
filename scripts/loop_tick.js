@@ -22,7 +22,7 @@ if (busdone === 'yes' && get('BusStateGlance') !== '') {
 }
 // Time's up, but you're still waiting at the stop (Bus Watch's trip state is "at the stop": it only
 // leaves that when you move off): carry on for another BusTimeout, up to 2 hours from the start. The
-// limit is there for a countdown that never noticed you'd left, not to end one while you wait.
+// limit is there for a countdown that never noticed you'd left.
 var trip = {}; try { trip = JSON.parse(get('BusStateTrip') || '{}'); } catch (e) {}
 var startedAt = parseInt(get('BusStateStartedAt'), 10) || 0;
 if (busdone === 'yes' && trip.s === 'atstop' && trip.stop === get('BusStateStopId') && startedAt && Date.now() - startedAt < 2 * 3600000) {

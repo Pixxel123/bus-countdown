@@ -24,8 +24,8 @@
    Decisions use a sliding window of the last 6 positions
    (BusStateWindow): speed is the median of the last three readings
    (Android's own, or worked out from the window), and "moving away" is
-   the trend of your distance from the stop across the window, not one
-   jump. Poor fixes (over 25 m accuracy) are averaged with the previous
+   the trend of your distance from the stop across the whole window, so
+   one jump can't trigger it. Poor fixes (over 25 m accuracy) are averaged with the previous
    one. On a bus, stops ahead are found by projecting you onto the
    route's line of stops (BusCacheSeq), not by compass direction.
 
