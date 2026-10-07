@@ -82,3 +82,8 @@ test('a bus that drops off the list is remembered as gone for 5 minutes, for tel
   refresh(g, [bus('566', 5, 'LF2')], T0 + 7 * 60000);
   assert.deepStrictEqual(JSON.parse(g.BusStateSeen).b.map((x) => x.v), ['LF2']);
 });
+
+test('4.29: your bus is labelled, not highlighted (the island stays quiet)', () => {
+  const src = require('fs').readFileSync(require('path').join(__dirname, '..', 'scripts', 'island_show.js'), 'utf8');
+  assert.doesNotMatch(src, /\.mine|' mine'/);
+});

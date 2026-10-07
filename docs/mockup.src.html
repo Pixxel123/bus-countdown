@@ -1015,7 +1015,7 @@ function islandShow(global, setGlobal) {
       note: '<b>TfL dropped a bus</b> while it was still 7 minutes away. Since 4.27 it stays on its last countdown, with ~, for up to 3 minutes. On Tuesday the island showed the next one, 20 minutes away, instead.',
       b: function (now) { return [bus(now, '517', 'Holbry', 6, { st: 'sched', t2: 20 })]; } },
     { id: 'you', label: 'Your bus', stop: 'D',
-      note: '<b>On the 517, coming up to Wexley</b>, where you change. Since 4.28 the bus you’re on shows as You (Your bus with 6 or 10 letters), and the 566 after it is your connection.',
+      note: '<b>On the 517, coming up to Wexley</b>, where you change. The bus you’re on shows as You (Your bus with 6 or 10 letters) where the destination would be, in the same grey, and the 566 after it is your connection.',
       b: function (now, letters) { return [bus(now, '517', letters >= 6 ? 'Your bus' : 'You', 2, { mine: true }), bus(now, '566', 'Fernleigh Village', 8, { t2: 21 })]; } },
     { id: 'none', label: 'No buses', stop: 'B',
       note: '<b>Nothing listed</b> for your routes, live or from the timetable.',
@@ -1102,10 +1102,12 @@ function islandShow(global, setGlobal) {
     v414: { ring: 'D', letters: 3, right: 'tilde', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
     v416: { ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
     v427: { letters: 3, right: 'now', k: '517', d: 'Holbry', m: '~6', mCls: 'sched', m2: '20' },
-    v428: { ring: 'D', letters: 3, right: 'now', k: '517', d: 'You', dCls: 'mine', m: '2 min', dots: 2 }
+    v428: { ring: 'D', letters: 3, right: 'now', k: '517', d: 'You', dCls: 'mine', m: '2 min', dots: 2 },
+    v429: { ring: 'D', letters: 3, right: 'now', k: '517', d: 'You', m: '2 min', dots: 2 }
   };
   // Newest first. changed: the island looked different from the version before.
   var VERSIONS = [
+    ['4.29', '7 Oct', 'v429', true, 'Your bus keeps its You label but loses the light blue, so it’s the same quiet grey as any destination.'],
     ['4.28', '7 Oct', 'v428', true, 'Works out which bus you’re on: it shows as You (or Your bus with 6 or 10 letters) in light blue, never buzzes, and Bus Status names your connection.'],
     ['4.27', '7 Oct', 'v427', true, 'A bus TfL drops while still 2 minutes or more away stays on its countdown with ~ for up to 3 minutes, and stops by home or work no longer pop up when you arrive by bus.'],
     ['4.26', '6 Oct', 'v416', false, 'Fixes the buzz, which never vibrated because one script declared two results on one line.'],

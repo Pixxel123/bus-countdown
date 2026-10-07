@@ -270,7 +270,7 @@ h1{text-wrap:balance}
     <button type="button" id="viewSettings" aria-pressed="false">Settings</button>
   </div>
   <div id="nowView">
-    <p class="eyebrow">Version 4.28</p>
+    <p class="eyebrow">Version 4.29</p>
     <h1>The island as built</h1>
     <p class="lede">Drawn by the island's own page from the project, at true scale on the top edge of a Pixel 8 Pro, 448 dp wide. Swipe it sideways to change route. Sample times, refreshed every 45 seconds as on the phone.</p>
 
@@ -1114,7 +1114,6 @@ var PAGE = String.raw`<!doctype html>
   .m2 { flex: none; margin-left: -2px; font-size: 11px; font-weight: 600; color: #9AA3B5; white-space: pre; }   /* "· 12 min": the bus after */
   .m.late { color: #F2C66B; }  .m.cancel { color: #FF8A80; }  /* ready for trains (V5) */
   .d.sched { font-style: italic; }
-  .d.mine { color: #8FD3FF; font-weight: 600; }                                    /* the bus you're on */
   .s { font-weight: 700; overflow: hidden; text-overflow: ellipsis; min-width: 0; }  /* stop name flash, "No buses" */
   /* Minutes start at a fixed spot just past the camera, and the dots sit at the far right: as
      routes rotate, "5 min" and "12 min" start in the same place and the dots don't jump */
@@ -1213,7 +1212,7 @@ ${'<'}script>
     } else {
       var b = list[idx];
       L.innerHTML = (data && data.l ? '<span class="sl">' + esc(data.l) + '</span>' : '') +
-                    '<span class="b">' + esc(b.k) + '</span><span class="d' + (b.mine ? ' mine' : b.st === 'sched' ? ' sched' : '') + '">' + esc(b.d) + '</span>';
+                    '<span class="b">' + esc(b.k) + '</span><span class="d' + (b.st === 'sched' ? ' sched' : '') + '">' + esc(b.d) + '</span>';
       R.innerHTML = rightHtml(b, idx);
       if (R.scrollWidth > R.clientWidth + 1) R.innerHTML = rightHtml(b, idx, true);   // too wide: just the first time
     }
@@ -1435,7 +1434,7 @@ var buslayout = JSON.stringify({
       note: '<b>TfL dropped a bus</b> while it was still 7 minutes away. Since 4.27 it stays on its last countdown, with ~, for up to 3 minutes. On Tuesday the island showed the next one, 20 minutes away, instead.',
       b: function (now) { return [bus(now, '517', 'Holbry', 6, { st: 'sched', t2: 20 })]; } },
     { id: 'you', label: 'Your bus', stop: 'D',
-      note: '<b>On the 517, coming up to Wexley</b>, where you change. Since 4.28 the bus you’re on shows as You (Your bus with 6 or 10 letters), and the 566 after it is your connection.',
+      note: '<b>On the 517, coming up to Wexley</b>, where you change. The bus you’re on shows as You (Your bus with 6 or 10 letters) where the destination would be, in the same grey, and the 566 after it is your connection.',
       b: function (now, letters) { return [bus(now, '517', letters >= 6 ? 'Your bus' : 'You', 2, { mine: true }), bus(now, '566', 'Fernleigh Village', 8, { t2: 21 })]; } },
     { id: 'none', label: 'No buses', stop: 'B',
       note: '<b>Nothing listed</b> for your routes, live or from the timetable.',
@@ -1522,10 +1521,12 @@ var buslayout = JSON.stringify({
     v414: { ring: 'D', letters: 3, right: 'tilde', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
     v416: { ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
     v427: { letters: 3, right: 'now', k: '517', d: 'Holbry', m: '~6', mCls: 'sched', m2: '20' },
-    v428: { ring: 'D', letters: 3, right: 'now', k: '517', d: 'You', dCls: 'mine', m: '2 min', dots: 2 }
+    v428: { ring: 'D', letters: 3, right: 'now', k: '517', d: 'You', dCls: 'mine', m: '2 min', dots: 2 },
+    v429: { ring: 'D', letters: 3, right: 'now', k: '517', d: 'You', m: '2 min', dots: 2 }
   };
   // Newest first. changed: the island looked different from the version before.
   var VERSIONS = [
+    ['4.29', '7 Oct', 'v429', true, 'Your bus keeps its You label but loses the light blue, so it’s the same quiet grey as any destination.'],
     ['4.28', '7 Oct', 'v428', true, 'Works out which bus you’re on: it shows as You (or Your bus with 6 or 10 letters) in light blue, never buzzes, and Bus Status names your connection.'],
     ['4.27', '7 Oct', 'v427', true, 'A bus TfL drops while still 2 minutes or more away stays on its countdown with ~ for up to 3 minutes, and stops by home or work no longer pop up when you arrive by bus.'],
     ['4.26', '6 Oct', 'v416', false, 'Fixes the buzz, which never vibrated because one script declared two results on one line.'],

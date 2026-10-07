@@ -106,8 +106,9 @@ match.note = yourBus ? 'on the ' + yourBus.k + ' (' + yourBus.v + '), at ' + get
   Math.max(1, Math.round((yourBus.t - now) / 60000)) + ' min' + (connection ? '; then the ' + connection.k + ' ' +
   Math.round((connection.t - yourBus.t) / 60000) + ' min after you get there' : '') : '';
 setGlobal('BusStateMatch', riding ? JSON.stringify(match) : '');
-// On the island it takes the destination's place: "Your bus", or "You" when the island has room for
-// only a few letters there (BusDestLetters, 3 by default), highlighted
+// On the island it takes the destination's place, in the same quiet grey: "Your bus", or "You" when
+// the island has room for only a few letters there (BusDestLetters, 3 by default). (4.28 coloured it
+// light blue; 4.29 took that out, since the island is meant to be quiet.)
 var yourLabel = (parseInt(get('BusDestLetters'), 10) || 3) >= 6 ? 'Your bus' : 'You';
 if (yourBus) deps = deps.map(function (x) { return x.v === yourBus.v ? Object.assign({}, x, { d: yourLabel, mine: true }) : x; });
 var busnodata = (code !== '200' && !deps.length) ? 'yes' : 'no';

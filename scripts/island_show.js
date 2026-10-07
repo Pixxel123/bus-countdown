@@ -133,7 +133,6 @@ var PAGE = String.raw`<!doctype html>
   .m2 { flex: none; margin-left: -2px; font-size: 11px; font-weight: 600; color: #9AA3B5; white-space: pre; }   /* "· 12 min": the bus after */
   .m.late { color: #F2C66B; }  .m.cancel { color: #FF8A80; }  /* ready for trains (V5) */
   .d.sched { font-style: italic; }
-  .d.mine { color: #8FD3FF; font-weight: 600; }                                    /* the bus you're on */
   .s { font-weight: 700; overflow: hidden; text-overflow: ellipsis; min-width: 0; }  /* stop name flash, "No buses" */
   /* Minutes start at a fixed spot just past the camera, and the dots sit at the far right: as
      routes rotate, "5 min" and "12 min" start in the same place and the dots don't jump */
@@ -232,7 +231,7 @@ var PAGE = String.raw`<!doctype html>
     } else {
       var b = list[idx];
       L.innerHTML = (data && data.l ? '<span class="sl">' + esc(data.l) + '</span>' : '') +
-                    '<span class="b">' + esc(b.k) + '</span><span class="d' + (b.mine ? ' mine' : b.st === 'sched' ? ' sched' : '') + '">' + esc(b.d) + '</span>';
+                    '<span class="b">' + esc(b.k) + '</span><span class="d' + (b.st === 'sched' ? ' sched' : '') + '">' + esc(b.d) + '</span>';
       R.innerHTML = rightHtml(b, idx);
       if (R.scrollWidth > R.clientWidth + 1) R.innerHTML = rightHtml(b, idx, true);   // too wide: just the first time
     }
