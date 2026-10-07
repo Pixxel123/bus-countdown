@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bus pill placement: Pixel 8 Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,650&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#EEF1F6; --panel:#FFFFFF; --ink:#161B24; --ink-2:#4B5363; --ink-3:#737B8C; --line:#D6DBE4;
+  --accent:#2F4DA8; --accent-ink:#FFFFFF; --chip:#E3E8F2; --warn:#9A5B00;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --page:#0D1118; --panel:#171D28; --ink:#E8ECF3; --ink-2:#B4BCCA; --ink-3:#8790A1; --line:#2B3443;
+    --accent:#9DB4FF; --accent-ink:#0D1118; --chip:#252E3D; --warn:#F2C66B;
+  }
+}
+:root[data-theme="dark"]{
+  --page:#0D1118; --panel:#171D28; --ink:#E8ECF3; --ink-2:#B4BCCA; --ink-3:#8790A1; --line:#2B3443;
+  --accent:#9DB4FF; --accent-ink:#0D1118; --chip:#252E3D; --warn:#F2C66B;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--page);color:var(--ink);font-family:"Roboto Flex",Roboto,system-ui,sans-serif;font-size:16px;line-height:1.5}
+main{max-width:520px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:1.45rem;font-weight:650;letter-spacing:-.01em;margin:0 0 4px}
+.lede{color:var(--ink-2);margin:0 0 20px;max-width:40ch}
+
+/* ---- phone stage, drawn at 448dp and scaled to fit ---- */
+.stage-wrap{position:relative;width:100%;border-radius:28px 28px 0 0;overflow:hidden;background:#000}
+.stage{position:absolute;left:0;top:0;width:448px;height:250px;transform-origin:0 0;overflow:hidden;
+  font-family:"Roboto Flex",Roboto,system-ui,sans-serif}
+.backdrop{position:absolute;inset:0}
+.backdrop.home{background:radial-gradient(120% 90% at 20% 0%,#3A4E7A 0%,#1B2334 55%,#0E131C 100%)}
+.backdrop.app{background:#F4F6FA}
+[hidden]{display:none!important}
+.appbar{position:absolute;left:0;right:0;height:64px;background:#FFFFFF;border-bottom:1px solid #E1E5EC;display:flex;align-items:center;padding:0 16px;gap:12px}
+.appbar .search{flex:1;height:44px;border-radius:22px;background:#EDF0F5;color:#5A6272;display:flex;align-items:center;padding:0 16px;font-size:15px}
+.appbar .avatar{width:32px;height:32px;border-radius:50%;background:#C9D3E6}
+.homewidget{position:absolute;left:24px;color:#EAF0FF}
+.homewidget b{display:block;font-size:44px;font-weight:400;line-height:1}
+.homewidget span{font-size:14px;opacity:.8}
+.statusbar{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 26px;font-size:15px;font-weight:500}
+.statusbar .icons{display:flex;gap:6px;align-items:center}
+.statusbar svg{width:17px;height:17px}
+.hole{position:absolute;border-radius:50%;background:#000;box-shadow:0 0 0 1.5px rgba(40,40,40,.9) inset}
+.guide{position:absolute;left:0;right:0;border-top:1px dashed rgba(255,90,82,.8)}
+.guide.show{display:block}.guide{display:none}
+.guide-label{position:absolute;right:6px;font-size:10px;color:#FF5A52;transform:translateY(-100%)}
+
+.pill{position:absolute;display:flex;align-items:center;border-radius:999px;color:#fff;white-space:nowrap;
+  transition:left .25s ease,top .25s ease,width .25s ease,height .25s ease}
+.pill .badge{background:#DC241F;color:#fff;font-weight:650;border-radius:999px;padding:1px 8px;font-variant-numeric:tabular-nums}
+.pill .mins{font-weight:650;font-variant-numeric:tabular-nums}
+.pill .mins.due{color:#7FD6A4}
+.pill .half{flex:1;display:flex;align-items:center;min-width:0}
+.pill .half.end{justify-content:flex-end}
+.pill{cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.pill .ring{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.pill .content{display:flex;align-items:center;min-width:0;flex:1;gap:inherit;transition:opacity .18s ease,transform .18s ease}
+.pill .content.out{opacity:0;transform:translateX(-10px)}.pill .content.in{opacity:0;transform:translateX(10px)}
+.pill .dest{color:#B7BFCD;overflow:hidden;text-overflow:ellipsis;min-width:0;font-size:.86em}
+.pill .dots{display:flex;gap:3px;flex:none}.pill .dots i{width:4px;height:4px;border-radius:2px;background:#5A6376}.pill .dots i.on{background:#fff}
+.pill .badge.rail{background:#2F4DA8}
+/* status bar chip (Live Update) */
+.chip{position:absolute;display:none;align-items:center;height:24px;padding:0 10px;border-radius:12px;background:#2E6F5E;color:#fff;font-size:13px;font-weight:650;white-space:nowrap}
+/* full notification card */
+.ncard{position:absolute;left:12px;right:12px;display:none;background:#1B2130;color:#E8ECF3;border-radius:22px;padding:12px 16px 12px;font-size:13.5px;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.ncard .nh{color:#9AA3B5;font-size:11.5px}
+.ncard .nt{font-weight:650;font-size:14.5px;margin:4px 0 6px}
+.ncard .nr{display:flex;gap:12px;align-items:baseline;padding:2px 0;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ncard .nr .k{min-width:42px;font-weight:700}.ncard .nr .w{min-width:74px}
+.ncard .nr .dd{color:#B7BFCD;overflow:hidden;text-overflow:ellipsis}
+.ncard .nr.due .w{color:#7FD6A4}.ncard .nr.sched .w{color:#9AA3B5}.ncard .nr.sched .dd{font-style:italic}
+.ncard .nr.late .w{color:#F2C66B}.ncard .nr.cancel .w{color:#FF8A80}
+.ncard .nb{display:flex;gap:22px;margin-top:10px;color:#9DB4FF;font-weight:600;font-size:13px}
+.hint.warn{color:var(--warn)}
+.pill .mins.sched{color:#9AA3B5;font-weight:600}.pill .dest.sched{font-style:italic}
+.pill .st-ok{color:#7FD6A4;font-weight:650}.pill .st-late{color:#F2C66B;font-weight:650}.pill .st-cancel{color:#FF8A80;font-weight:650}
+.pill .plat{font-weight:650}.pill .sdot{width:7px;height:7px;border-radius:50%;flex:none}
+.pill .stoplabel{font-weight:650;overflow:hidden;text-overflow:ellipsis}
+.stops{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--panel);border:1px solid var(--line);border-top:0;padding:10px 16px}
+.stops button{font:inherit;font-size:1.1rem;width:40px;height:40px;border-radius:12px;border:0;background:var(--chip);color:var(--ink);cursor:pointer}
+.stops button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.stops .name{text-align:center;font-size:.92rem;font-weight:500;line-height:1.3}
+.stops.acts{justify-content:center;padding-top:0}
+.stops button.wide{width:auto;padding:0 16px;font-size:.9rem;font-weight:500}
+.stops .name small{display:block;font-weight:400;color:var(--ink-3);font-size:.8rem}
+.panel{border-radius:0 0 20px 20px}
+@media (prefers-reduced-motion:reduce){.pill,.pill .content{transition:none}}
+
+/* ---- controls ---- */
+.panel{background:var(--panel);border:1px solid var(--line);border-top:0;border-radius:0 0 20px 20px;padding:16px}
+fieldset{border:0;margin:0 0 16px;padding:0}
+legend{font-size:.85rem;font-weight:500;color:var(--ink-2);margin-bottom:8px;padding:0}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.seg label{position:relative}
+.seg input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.seg span{display:block;text-align:center;padding:9px 6px;border-radius:12px;background:var(--chip);font-size:.9rem;font-weight:500;color:var(--ink)}
+.seg input:checked + span{background:var(--accent);color:var(--accent-ink)}
+.seg input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
+.seg.two{grid-template-columns:repeat(2,1fr)}
+.hint{font-size:.85rem;color:var(--ink-3);margin:8px 0 0}
+.range{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center;margin-bottom:10px}
+.range label{font-size:.9rem;color:var(--ink)}
+.range output{font-variant-numeric:tabular-nums;font-size:.9rem;color:var(--ink-2)}
+.range input{grid-column:1 / -1;width:100%;accent-color:var(--accent)}
+details{border-top:1px solid var(--line);padding-top:12px;margin-top:4px}
+summary{cursor:pointer;font-weight:500;font-size:.95rem}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.check{display:flex;gap:8px;align-items:center;font-size:.9rem;margin:10px 0 0}
+
+.out{margin-top:20px}
+.out h2{font-size:1rem;font-weight:650;margin:0 0 8px}
+.out table{width:100%;border-collapse:collapse;font-size:.92rem}
+.out td{padding:7px 0;border-bottom:1px solid var(--line)}
+.out td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:500}
+.out p{color:var(--ink-2);font-size:.9rem;margin:10px 0 0}
+</style>
+</head>
+<body>
+<main>
+  <h1>Where should the pill sit, and what should it say?</h1>
+  <p class="lede">Top of a Pixel 8 Pro at true scale, 448 dp wide. The pill rotates through the routes at a stop (or your trains at a station), falling back to the timetable when live times are missing. Short swipe to change route, long swipe to dismiss, hold for the opposite stop. Switch to Trains to explore ideas for showing status and delays. Sample data.</p>
+
+  <div class="stage-wrap" id="wrap">
+    <div class="stage" id="stage">
+      <div class="backdrop home" id="backdrop"></div>
+      <div class="appbar" id="appbar" hidden><div class="search">Search here</div><div class="avatar"></div></div>
+      <div class="homewidget" id="homewidget"><b>12:21</b><span>Sun 27 Sept</span></div>
+      <div class="statusbar" id="statusbar">
+        <span>12:21</span>
+        <span class="icons" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20l-3-3.6a4.8 4.8 0 016 0zM6.1 13a8.9 8.9 0 0111.8 0l-1.9 2.3a6 6 0 00-8 0zM3 9.3a13.8 13.8 0 0118 0l-1.9 2.3a10.8 10.8 0 00-14.2 0z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="7" width="16" height="10" rx="3"/><rect x="20" y="10" width="2" height="4" rx="1"/></svg>
+        </span>
+      </div>
+      <div class="guide" id="guideSB"><span class="guide-label">status bar edge</span></div>
+      <div class="pill" id="pill"></div>
+      <div class="chip" id="chip"></div>
+      <div class="ncard" id="ncard"></div>
+      <div class="hole" id="hole"></div>
+    </div>
+  </div>
+
+  <div class="stops">
+    <button type="button" id="prevRoute" aria-label="Previous route">&#8249;</button>
+    <div class="name" aria-live="polite"><span id="stopName"></span><small id="stripHint">Short swipe for routes, long swipe to dismiss, hold for the opposite stop</small></div>
+    <button type="button" id="nextRoute" aria-label="Next route">&#8250;</button>
+  </div>
+  <div class="stops acts">
+    <button type="button" id="otherBtn" class="wide">Opposite</button>
+    <button type="button" id="stopBtn" class="wide">Dismiss</button>
+  </div>
+
+  <div class="panel">
+    <fieldset>
+      <legend>What it shows</legend>
+      <div class="seg two" role="radiogroup">
+        <label><input type="radio" name="mode" value="bus" checked><span>Buses</span></label>
+        <label><input type="radio" name="mode" value="train"><span>Trains</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Display style</legend>
+      <div class="seg" role="radiogroup">
+        <label><input type="radio" name="style" value="pill" checked><span>Island</span></label>
+        <label><input type="radio" name="style" value="chip"><span>Chip (fallback)</span></label>
+        <label><input type="radio" name="style" value="notif"><span>Notification (removed)</span></label>
+      </div>
+      <p class="hint" id="styleHint"></p>
+    </fieldset>
+
+    <div id="busOpts">
+      <fieldset>
+        <legend>Live data</legend>
+        <div class="seg" role="radiogroup">
+          <label><input type="radio" name="live" value="all" checked><span>All live</span></label>
+          <label><input type="radio" name="live" value="some"><span>One missing</span></label>
+          <label><input type="radio" name="live" value="none"><span>Offline</span></label>
+        </div>
+        <p class="hint" id="liveHint"></p>
+      </fieldset>
+    </div>
+
+    <div id="trainOpts" hidden>
+      <fieldset>
+        <legend>Train idea</legend>
+        <div class="seg" role="radiogroup">
+          <label><input type="radio" name="idea" value="status" checked><span>Status</span></label>
+          <label><input type="radio" name="idea" value="countdown"><span>Countdown</span></label>
+          <label><input type="radio" name="idea" value="platform"><span>Platform</span></label>
+        </div>
+        <p class="hint" id="ideaHint"></p>
+      </fieldset>
+      <fieldset>
+        <legend>What's happening to the next train</legend>
+        <div class="seg" role="radiogroup">
+          <label><input type="radio" name="sit" value="ok" checked><span>On time</span></label>
+          <label><input type="radio" name="sit" value="late"><span>Delayed</span></label>
+          <label><input type="radio" name="sit" value="cancel"><span>Cancelled</span></label>
+        </div>
+        <label class="check"><input type="checkbox" id="ringColour" checked> Colour the border by status</label>
+      </fieldset>
+    </div>
+
+    <fieldset id="placeSet">
+      <legend>Placement</legend>
+      <div class="seg" role="radiogroup">
+        <label><input type="radio" name="place" value="island" checked><span>Island</span></label>
+        <label><input type="radio" name="place" value="beside"><span>Beside</span></label>
+        <label><input type="radio" name="place" value="below"><span>Below</span></label>
+      </div>
+      <p class="hint" id="placeHint"></p>
+    </fieldset>
+
+
+    <fieldset>
+      <legend>Behind the status bar</legend>
+      <div class="seg two" role="radiogroup">
+        <label><input type="radio" name="bg" value="home" checked><span>Home screen</span></label>
+        <label><input type="radio" name="bg" value="app"><span>Light app</span></label>
+      </div>
+    </fieldset>
+
+    <div class="range"><label for="h">Pill height</label><output id="hOut"></output><input id="h" type="range" min="22" max="40" value="30"></div>
+    <div class="range"><label for="dw">Destination shown</label><output id="dwOut"></output><input id="dw" type="range" min="0" max="120" value="56"></div>
+    <div class="range"><label for="gap">Gap around the camera</label><output id="gapOut"></output><input id="gap" type="range" min="4" max="20" value="10"></div>
+
+    <details>
+      <summary>Calibrate to your phone</summary>
+      <p class="hint">These start from estimates. Nudge them until the drawing matches your screen.</p>
+      <div class="range"><label for="sb">Status bar height</label><output id="sbOut"></output><input id="sb" type="range" min="36" max="64" value="48"></div>
+      <div class="range"><label for="cy">Camera centre from top</label><output id="cyOut"></output><input id="cy" type="range" min="14" max="40" value="24"></div>
+      <div class="range"><label for="cd">Camera diameter</label><output id="cdOut"></output><input id="cd" type="range" min="16" max="32" value="22"></div>
+      <label class="check"><input type="checkbox" id="showGuide"> Show status bar edge</label>
+    </details>
+
+    <section class="out" id="outSet" aria-live="polite">
+      <h2>Show Scene V2 settings</h2>
+      <table><tbody id="outRows"></tbody></table>
+      <p id="outNote"></p>
+    </section>
+  </div>
+</main>
+<script>
+(function(){
+  var W = 448, CX = W / 2, ROT = 6000, STAGE_H = 250;
+  var $ = function(id){ return document.getElementById(id); };
+  var wrap = $('wrap'), stage = $('stage'), pill = $('pill'), hole = $('hole');
+  var ranges = ['h','dw','gap','sb','cy','cd'];
+  var STOPS = [
+    { name: 'High Street', letter: 'Stop B', buses: [
+      { l: '25', d: 'Town Centre', m: 5, tm: 6 }, { l: 'N25', d: 'Station Road', m: 38, tm: 38 } ] },
+    { name: 'High Street', letter: 'Stop A', buses: [
+      { l: '25', d: 'Ingastow', m: 3, tm: 4 }, { l: 'N25', d: 'Park Lane', m: 42, tm: 42 } ] },
+    { name: 'Mill Road', letter: 'Stop M', buses: [
+      { l: '25', d: 'Town Centre', m: 0, tm: 2 } ] }
+  ];
+  // Trains: your usual services from a station, in one direction ("opposite" = the other direction)
+  var STATIONS = [
+    { name: 'Central', letter: 'to the City', trains: [
+      { t: '12:34', d: 'City Terminal', p: '4' }, { t: '12:55', d: 'City Terminal', p: '5' } ] },
+    { name: 'Central', letter: 'to the Coast', trains: [
+      { t: '12:41', d: 'Seaside', p: '2' }, { t: '13:02', d: 'Seaside', p: '1' } ] }
+  ];
+  var NOW_MIN = 12 * 60 + 21;   // the mock clock reads 12:21
+  var LIVE_HINTS = {
+    all: 'Everything is a live prediction from TfL.',
+    some: 'TfL only predicts about 30 minutes ahead, so a bus further off falls back to the timetable: ~38 min in grey, destination in italics.',
+    none: 'No signal or TfL is down: every route shows its next timetabled bus, still with its real destination so you know the direction.'
+  };
+  // Is this bus (index i at the current stop) shown from the timetable?
+  function isSched(i){
+    var live = val('live');
+    if (live === 'none') return true;
+    return live === 'some' && items()[i].m >= 30;
+  }
+  var STYLE_HINTS = {
+    pill: 'The island around the camera: the style in daily use.',
+    chip: 'The fallback, used when the island can\u2019t be shown or if you choose it. A Live Update chip in the status bar with just the next bus; tap it to open a plain notification. Needs Android 16, and it can\u2019t be swiped away.',
+    notif: 'No longer part of the project; shown for reference. A full notification with Other side and Stop updates buttons, through the AutoNotification plugin. Android strips colour and bold here, so the real one uses bold characters for routes.'
+  };
+  // One row per bus or train, for the chip and the notification
+  function rowsData(){
+    return items().map(function(b, i){
+      if (mode === 'train') {
+        var st = trainState(i);
+        return { k: b.t, w: st.s === 'cancel' ? 'Cancelled' : st.s === 'late' ? 'exp ' + st.exp : 'On time',
+                 d: st.s === 'ok' ? b.d : st.why, cls: st.s === 'ok' ? '' : st.s, delay: st.delay };
+      }
+      var sc = isSched(i);
+      return { k: b.l, w: sc ? '~' + Math.max(1, b.tm) + ' min' : (b.m < 1 ? 'Due' : b.m + ' min'), d: b.d,
+               cls: sc ? 'sched' : (b.m < 1 ? 'due' : '') };
+    });
+  }
+  function chipText(){
+    var r = rowsData()[0];
+    if (mode === 'train') return r.k + ' ' + (r.cls === 'cancel' ? 'cancelled' : r.cls === 'late' ? '+' + r.delay : 'on time');
+    return r.k + ' ' + (r.w === 'Due' ? 'now' : r.w.replace(' min', 'm'));
+  }
+  function cardHtml(){
+    var s = stop(), label = mode === 'train' ? s.name + ' ' + s.letter : s.name + ' (' + s.letter + ')';
+    var rows = rowsData().map(function(r){
+      return '<div class="nr ' + r.cls + '"><span class="k">' + esc(r.k) + '</span><span class="w">' + esc(r.w) + '</span><span class="dd">' + esc(r.d) + '</span></div>';
+    }).join('');
+    return '<div class="nh">' + (mode === 'train' ? 'Train check' : 'AutoNotification') + ' \u2022 197 m away, updated 12:21</div>' +
+           '<div class="nt">' + esc(label) + '</div>' + rows +
+           '<div class="nb"><span>' + (mode === 'train' ? 'Other direction' : 'Other side') + '</span><span>Stop updates</span></div>';
+  }
+  var IDEA_HINTS = {
+    status: 'Says what matters in words: On time, +13 min, Cancelled. The quickest read at a glance.',
+    countdown: 'Minutes until it leaves, like the buses, worked out from the expected time and coloured by status.',
+    platform: 'Leads with the platform, since that is what you act on at the station; a coloured dot carries the status.'
+  };
+  var stopIdx = 0, routeIdx = 0, rotStart = Date.now(), flashUntil = 0, stopped = false, place, mode = 'bus', geo = {};
+
+  function val(name){ return document.querySelector('input[name="'+name+'"]:checked').value; }
+  function num(id){ return parseInt($(id).value, 10); }
+  function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+  var HINTS = {
+    island: 'Black capsule wrapped around the camera: route and a little of the destination on the left, minutes on the right.',
+    beside: 'Small pill just right of the camera, inside the status bar. Can collide with notification icons when you have a few.',
+    below: 'Full pill centred under the status bar. Easiest to read, but it sits over the top of whatever app is open.'
+  };
+
+  function places(){ return mode === 'train' ? STATIONS : STOPS; }
+  function stop(){ return places()[Math.min(stopIdx, places().length - 1)]; }
+  function items(){ return mode === 'train' ? stop().trains : stop().buses; }
+  function bus(){ var b = items(); return b[Math.min(routeIdx, b.length - 1)]; }
+  function toMin(hhmm){ var p = hhmm.split(':'); return +p[0] * 60 + +p[1]; }
+  function fromMin(m){ return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); }
+  // Status of a train: the chosen situation applies to the first train in the list
+  function trainState(i){
+    var sit = val('sit'), tr = items()[i];
+    if (i === 0 && sit === 'late') return { s: 'late', exp: fromMin(toMin(tr.t) + 13), delay: 13, why: 'Signalling problem' };
+    if (i === 0 && sit === 'cancel') return { s: 'cancel', why: 'Train crew unavailable' };
+    return { s: 'ok', exp: tr.t, delay: 0 };
+  }
+  var STATE_COLOUR = { ok: 'rgba(127,214,164,0.9)', late: 'rgba(242,198,107,0.95)', cancel: 'rgba(255,138,128,0.95)' };
+  function mins(m){ return m < 1 ? 'Due' : m + ' min'; }
+  function dots(){
+    var n = items().length; if (n < 2) return '';
+    var h = '<span class="dots">'; for (var i = 0; i < n; i++) h += '<i' + (i === routeIdx ? ' class="on"' : '') + '></i>';
+    return h + '</span>';
+  }
+
+  function trainRight(){
+    var st = trainState(routeIdx), tr = bus(), idea = val('idea');
+    var cls = st.s === 'late' ? 'st-late' : st.s === 'cancel' ? 'st-cancel' : 'st-ok';
+    if (st.s === 'cancel') return '<span class="' + cls + '">Cancelled</span>';
+    if (idea === 'status') return '<span class="' + cls + '">' + (st.s === 'late' ? '+' + st.delay + ' min' : 'On time') + '</span>';
+    if (idea === 'countdown') {
+      var m = toMin(st.exp) - NOW_MIN;
+      return '<span class="' + cls + '">' + (m < 1 ? 'Now' : m + ' min') + '</span>';
+    }
+    return '<span class="sdot" style="background:' + STATE_COLOUR[st.s] + '"></span><span class="plat">Plat ' + esc(tr.p) + '</span>';
+  }
+
+  function content(){
+    var DW = num('dw'), b = bus(), flashing = Date.now() < flashUntil, s = stop();
+    if (mode === 'train') {
+      var st = trainState(routeIdx);
+      var badge = '<span class="badge rail">' + esc(b.t) + '</span>';
+      var dest = DW > 0 ? '<span class="dest" style="max-width:' + DW + 'px">' + esc(st.s === 'ok' ? b.d : st.why) + '</span>' : '';
+      if (place === 'island') {
+        var left = flashing ? '<span class="stoplabel">' + esc(s.letter) + '</span>' : badge + dest;
+        var right = flashing ? '<span class="stoplabel">' + esc(s.name.split(' ')[0]) + '</span>' : trainRight() + dots();
+        return '<span class="half" style="gap:6px">' + left + '</span>' +
+               '<span style="flex:none;width:' + geo.holeGap + 'px"></span>' +
+               '<span class="half end" style="gap:6px">' + right + '</span>';
+      }
+      if (flashing) return '<span class="stoplabel">' + esc(s.name + ' (' + s.letter + ')') + '</span>';
+      return badge + trainRight() + dest + dots();
+    }
+    var sched = isSched(routeIdx);
+    var badge = '<span class="badge">' + esc(b.l) + '</span>';
+    var mm = sched
+      ? '<span class="mins sched">~' + Math.max(1, b.tm) + ' min</span>'
+      : '<span class="mins' + (b.m < 1 ? ' due' : '') + '">' + mins(b.m) + '</span>';
+    var dest = DW > 0 ? '<span class="dest' + (sched ? ' sched' : '') + '" style="max-width:' + DW + 'px">' + esc(b.d) + '</span>' : '';
+    if (place === 'island') {
+      var left = flashing ? '<span class="stoplabel">' + esc(s.letter) + '</span>' : badge + dest;
+      var right = flashing ? '<span class="stoplabel">' + esc(s.name.split(' ')[0]) + '</span>' : mm + dots();
+      return '<span class="half" style="gap:6px">' + left + '</span>' +
+             '<span style="flex:none;width:' + geo.holeGap + 'px"></span>' +
+             '<span class="half end" style="gap:6px">' + right + '</span>';
+    }
+    if (flashing) return '<span class="stoplabel">' + esc(s.name + ' (' + s.letter + ')') + '</span>';
+    return badge + mm + dest + dots();
+  }
+
+  function paintContent(){
+    var c = pill.querySelector('.content');
+    if (c) c.innerHTML = content();
+  }
+
+  function render(){
+    place = val('place');
+    var newMode = val('mode');
+    if (newMode !== mode) { mode = newMode; stopIdx = 0; routeIdx = 0; rotStart = Date.now(); flashUntil = 0; }
+    $('trainOpts').hidden = mode !== 'train';
+    $('busOpts').hidden = mode !== 'bus';
+    $('liveHint').textContent = LIVE_HINTS[val('live')];
+    $('ideaHint').textContent = IDEA_HINTS[val('idea')];
+    $('otherBtn').textContent = 'Opposite';
+    $('stripHint').textContent = mode === 'train'
+      ? 'Short swipe for your trains, long swipe to dismiss, hold for the opposite direction'
+      : 'Short swipe for routes, long swipe to dismiss, hold for the opposite stop';
+    var bg = val('bg');
+    var H = num('h'), gap = num('gap'), SB = num('sb'), CY = num('cy'), CD = num('cd'), DW = num('dw');
+    ranges.forEach(function(id){ $(id + 'Out').textContent = $(id).value + ' dp'; });
+
+    var isApp = bg === 'app';
+    $('backdrop').className = 'backdrop ' + (isApp ? 'app' : 'home');
+    $('appbar').hidden = !isApp; $('appbar').style.top = SB + 'px';
+    $('homewidget').hidden = isApp; $('homewidget').style.top = (SB + 56) + 'px';
+    var sbar = $('statusbar'); sbar.style.height = SB + 'px'; sbar.style.color = isApp ? '#1B1F27' : '#FFFFFF';
+    sbar.style.background = isApp ? '#FFFFFF' : 'transparent';
+    $('guideSB').style.top = SB + 'px'; $('guideSB').classList.toggle('show', $('showGuide').checked);
+
+    hole.style.width = hole.style.height = CD + 'px';
+    hole.style.left = (CX - CD / 2) + 'px'; hole.style.top = (CY - CD / 2) + 'px';
+
+    var fs = Math.max(12, Math.round(H * 0.5));
+    pill.style.fontSize = fs + 'px';
+    pill.style.height = H + 'px';
+    geo.holeGap = CD + 2 * gap;
+
+    var rows, note, x, y, w;
+    if (place === 'island') {
+      var half = Math.max(Math.round(fs * 2.4 + 6 + DW), Math.round(fs * 3.6 + 16));
+      w = geo.holeGap + 2 * half + 2 * Math.round(H * 0.3);
+      x = CX - w / 2; y = CY - H / 2;
+      pill.style.background = '#000000';
+      pill.style.padding = '0 ' + Math.round(H * 0.3) + 'px';
+      pill.style.gap = '0';
+      rows = [['Display Mode','Overlay'],['Show Over Everything','On'],['X Position','50%'],
+              ['Y Position', Math.round(y)],['Width', Math.round(w)],['Height', H]];
+      note = 'Centred on the camera. Needs Show Over Everything, which uses Tasker\u2019s accessibility service, because normal overlays can\u2019t cover the status bar.';
+    } else if (place === 'beside') {
+      w = null; x = CX + CD / 2 + gap; y = CY - H / 2;
+      pill.style.background = '#1F2533';
+      pill.style.padding = '0 ' + Math.round(H * 0.3) + 'px 0 ' + Math.round(H * 0.16) + 'px';
+      pill.style.gap = Math.round(H * 0.22) + 'px';
+      rows = [['Display Mode','Overlay'],['Show Over Everything','On'],['X Position', Math.round(x)],
+              ['Y Position', Math.round(y)],['Width', Math.round(W - x - 8)],['Height', H]];
+      note = 'Left edge sits just past the camera. A long destination runs into the status icons, so keep it short here.';
+    } else {
+      w = null; y = SB + 8;
+      pill.style.background = '#1F2533';
+      pill.style.padding = '0 ' + Math.round(H * 0.45) + 'px 0 ' + Math.round(H * 0.2) + 'px';
+      pill.style.gap = Math.round(H * 0.28) + 'px';
+      rows = [['Display Mode','Overlay'],['Show Over Everything','Off'],['X Position','50%'],
+              ['Y Position', Math.round(y)],['Width','260'],['Height', H + 8]];
+      note = 'Centred 8 dp under the status bar. A normal overlay is enough here. Width and height give the web-page pill room to sit in.';
+    }
+    pill.innerHTML = '<svg class="ring" aria-hidden="true"><rect class="track"/><rect class="prog"/></svg><span class="content">' + content() + '</span>';
+    pill.style.width = w ? Math.round(w) + 'px' : 'auto';
+    pill.style.top = y + 'px';
+    if (place === 'below') { pill.style.left = '0px'; pill.style.left = (CX - pill.offsetWidth / 2) + 'px'; }
+    else pill.style.left = x + 'px';
+    sizeRing();
+
+    $('placeHint').textContent = HINTS[place];
+    $('outRows').innerHTML = rows.map(function(r){ return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>'; }).join('');
+    $('outNote').textContent = note;
+    var style = val('style');
+    $('styleHint').textContent = STYLE_HINTS[style];
+    $('styleHint').className = 'hint' + (style === 'pill' ? '' : ' warn');
+    $('placeSet').hidden = style !== 'pill';
+    $('outSet').hidden = style !== 'pill';
+    pill.style.display = (stopped || style !== 'pill') ? 'none' : '';
+    var chip = $('chip'), card = $('ncard');
+    chip.style.display = (!stopped && style === 'chip') ? 'flex' : 'none';
+    if (style === 'chip') { chip.textContent = chipText(); chip.style.top = Math.round((SB - 24) / 2) + 'px'; chip.style.left = '84px'; }
+    card.style.display = (!stopped && style === 'notif') ? 'block' : 'none';
+    if (style === 'notif') { card.innerHTML = cardHtml(); card.style.top = (SB + 8) + 'px'; }
+    STAGE_H = style === 'notif' ? 272 : 250;
+    stage.style.height = STAGE_H + 'px'; fit();
+    $('stopName').textContent = stopped ? 'Updates stopped' : stop().name + ' (' + stop().letter + ')';
+    $('stopBtn').textContent = stopped ? 'Start again' : 'Dismiss';
+    $('otherBtn').disabled = false;
+  }
+
+  function sizeRing(){
+    var svg = pill.querySelector('.ring'); if (!svg) return;
+    var w = pill.offsetWidth, h = pill.offsetHeight;
+    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    svg.querySelectorAll('rect').forEach(function(r){
+      r.setAttribute('x', 1); r.setAttribute('y', 1); r.setAttribute('width', w - 2); r.setAttribute('height', h - 2);
+      r.setAttribute('rx', (h - 2) / 2); r.setAttribute('fill', 'none'); r.setAttribute('stroke-width', 2); r.setAttribute('pathLength', 100);
+    });
+    var colour = 'rgba(255,255,255,0.85)', track = 'rgba(255,255,255,0.12)';
+    if (mode === 'train' && $('ringColour').checked) {
+      colour = STATE_COLOUR[trainState(routeIdx).s];
+      track = colour.replace(/[\d.]+\)$/, '0.22)');
+    }
+    svg.querySelector('.track').setAttribute('stroke', track);
+    var pr = svg.querySelector('.prog'); pr.setAttribute('stroke', colour); pr.setAttribute('stroke-dasharray', '100 100');
+  }
+
+  function slide(dir, change){
+    var c = pill.querySelector('.content'); if (!c) { change(); render(); return; }
+    c.classList.add(dir > 0 ? 'out' : 'in');
+    setTimeout(function(){ change(); render(); }, 180);
+  }
+  function changeRoute(dir){
+    var n = items().length; rotStart = Date.now(); if (n < 2 || stopped) return;
+    slide(dir, function(){ routeIdx = (routeIdx + dir + n) % n; });
+  }
+  function otherSide(){
+    if (stopped) return;
+    rotStart = Date.now();
+    slide(1, function(){
+      stopIdx = (stopIdx + 1) % places().length; routeIdx = 0; flashUntil = Date.now() + 1200;
+      setTimeout(function(){ paintContent(); sizeRing(); }, 1250);
+    });
+  }
+  function stopUpdates(){ stopped = true; render(); }
+  function startAgain(){ stopped = false; rotStart = Date.now(); render(); }
+
+  function tick(){
+    if (!stopped) {
+      var n = items().length, el = Date.now() - rotStart, dur = n > 1 ? ROT : 45000;
+      var f = Math.max(0, Math.min(1, 1 - el / dur));
+      var pr = pill.querySelector('.prog'); if (pr) pr.setAttribute('stroke-dashoffset', String(100 - 100 * f));
+      if (el >= dur) { if (n > 1) changeRoute(1); else rotStart = Date.now(); }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  var sx = null, sy = 0, held = false, holdTimer = null;
+  pill.addEventListener('pointerdown', function(e){
+    sx = e.clientX; sy = e.clientY; held = false;
+    try { pill.setPointerCapture(e.pointerId); } catch (err) {}
+    holdTimer = setTimeout(function(){ held = true; otherSide(); }, 550);
+  });
+  pill.addEventListener('pointermove', function(e){
+    if (sx !== null && (Math.abs(e.clientX - sx) > 10 || Math.abs(e.clientY - sy) > 10)) clearTimeout(holdTimer);
+  });
+  pill.addEventListener('pointerup', function(e){
+    clearTimeout(holdTimer);
+    if (sx === null || held) { sx = null; return; }
+    var dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+    // Short swipe = change route; long swipe (60% of the island) = dismiss
+    var longPx = Math.max(120 * (wrap.clientWidth / W), pill.getBoundingClientRect().width * 0.6);
+    if (Math.abs(dx) > 24 && Math.abs(dx) > Math.abs(dy)) {
+      if (Math.abs(dx) >= longPx) stopUpdates();
+      else changeRoute(dx < 0 ? 1 : -1);
+    }
+  });
+  pill.addEventListener('pointercancel', function(){ clearTimeout(holdTimer); sx = null; });
+  pill.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+  $('prevRoute').addEventListener('click', function(){ changeRoute(-1); });
+  $('nextRoute').addEventListener('click', function(){ changeRoute(1); });
+  $('otherBtn').addEventListener('click', otherSide);
+  $('stopBtn').addEventListener('click', function(){ if (stopped) startAgain(); else stopUpdates(); });
+
+  function fit(){
+    var s = wrap.clientWidth / W;
+    stage.style.transform = 'scale(' + s + ')';
+    wrap.style.height = (STAGE_H * s) + 'px';
+  }
+  document.querySelectorAll('input').forEach(function(i){ i.addEventListener('input', render); i.addEventListener('change', render); });
+  window.addEventListener('resize', fit);
+  if (window.ResizeObserver) new ResizeObserver(fit).observe(wrap);
+  fit(); render(); requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

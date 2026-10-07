@@ -1,0 +1,127 @@
+/* ==================================================================
+   Bus Refresh · Build the departures
+   Input : http_data = TfL live arrivals for the current stop
+           BusCacheTimetable = today's scheduled departures (fallback)
+   Every departure is turned into one common shape, which is all the
+   island reads. V5 trains will produce the same shape:
+     { k: label (route), d: destination, t: due (ms), st: status }
+     st = live | sched (timetable) | late | cancel (late/cancel: trains, V5)
+   Output: busnodata = yes when there's nothing at all to show
+           BusStateIslandData (global, read live by the island)
+   ================================================================== */
+/* @include get */
+/* @include loc */
+/* @include routesHere */
+/* @include debugLog */
+/* @include record */
+var mine = get('BusRoutes').split(',').map(function (s) { return s.trim(); });
+var code = loc('http_response_code');
+var now = Date.now();
+
+// Live predictions on my routes (none if TfL couldn't be reached)
+var deps = [];
+if (code === '200') {
+  try {
+    JSON.parse(http_data).forEach(function (b) {
+      if (mine.indexOf(b.lineName) < 0) return;
+      deps.push({ k: b.lineName, d: b.destinationName, t: now + b.timeToStation * 1000, st: 'live', v: b.vehicleId || '' });
+    });
+  } catch (e) { deps = []; }
+}
+
+// Timetable fallback: each of my routes here with no live prediction gets its next scheduled departure
+var d0 = new Date(); var nowMin = d0.getHours() * 60 + d0.getMinutes() + d0.getSeconds() / 60;
+var tt = JSON.parse(get('BusCacheTimetable') || '{}')[get('BusStateStopId')];
+var liveRoutes = deps.map(function (x) { return x.k; });
+Object.keys((tt && tt.r) || {}).forEach(function (route) {
+  var saved = tt.r[route];
+  if (liveRoutes.indexOf(route) > -1 || mine.indexOf(route) < 0 || !saved || !saved.t) return;
+  var next = saved.t.map(function (p) { return { m: p[0] < nowMin - 180 ? p[0] + 1440 : p[0], d: saved.n[p[1]] }; })  // after-midnight runs
+    .filter(function (p) { return p.m >= nowMin; }).sort(function (a, b) { return a.m - b.m; }).slice(0, 2);   // the next two
+  next.forEach(function (n) { deps.push({ k: route, d: n.d || 'Timetable', t: now + (n.m - nowMin) * 60000, st: 'sched' }); });
+});
+
+deps.sort(function (a, b) { return a.t - b.t; });
+var busnodata = (code !== '200' && !deps.length) ? 'yes' : 'no';
+
+// Refresh less often while the next bus is far off: more than 10 minutes away, wait twice
+// BusRefresh (90 s by default) before the next fetch; closer than that, BusRefresh as normal.
+// Bus Loop reads BusStateNextWait.
+var baseWait = parseInt(get('BusRefresh'), 10) || 45;
+var soonest = deps.length ? (deps[0].t - now) / 60000 : 0;
+var nextWait = soonest > 10 ? 2 * baseWait : baseWait;
+// TfL couldn't be reached (no signal, say): each failure in a row doubles the wait, up to 5 minutes;
+// the first success goes straight back to normal (BusStateFailCount)
+var normalWait = nextWait;                       // for fading old times (not stretched by backing off)
+var fails = code === '200' ? 0 : (parseInt(get('BusStateFailCount'), 10) || 0) + 1;
+setGlobal('BusStateFailCount', String(fails));
+if (fails) nextWait = Math.min(300, baseWait * Math.pow(2, fails));
+setGlobal('BusStateNextWait', String(nextWait));
+setGlobal('BusStateNextMin', String(Math.round(soonest * 10) / 10));   // Bus Loop refreshes with the screen off when this is 8 or less
+
+// The island shows the soonest departure on each route, and the one after it on that route (t2,
+// st2) when there is one, as "5 · 12 min"
+var seen = {}; var perRoute = [];
+deps.forEach(function (x) {
+  if (!seen[x.k]) { seen[x.k] = Object.assign({}, x); perRoute.push(seen[x.k]); }
+  // (TfL sometimes lists the same bus twice: a time within a minute of the first is the same bus)
+  else if (seen[x.k].t2 === undefined && x.t - seen[x.k].t >= 60000) { seen[x.k].t2 = x.t; seen[x.k].st2 = x.st; }
+});
+
+// One bus at a time: only the soonest bus at the stop, whatever its route, can buzz. Within 5 minutes
+// it buzzes three times, on two refreshes in a row (so you notice even if the first passes you by),
+// then stays quiet. The next bus only gets its turn once that one has gone from the list, so two
+// routes arriving close together give one set of buzzes, not two. Buses are told apart by TfL's
+// vehicle id (or, for a timetable time, the scheduled minute); BusStateBuzzed keeps how many times
+// each has buzzed, and forgets buses no longer listed.
+var buzzed = {}; try { buzzed = JSON.parse(get('BusStateBuzzed') || '{}'); } catch (e) {}
+var keyOf = function (x) { return x.k + '|' + (x.v || Math.round(x.t / 60000)); };
+var stillHere = {};
+var busbuzz = 'no';               // its own "var": Tasker only passes back results declared this way
+deps.forEach(function (x) { if (buzzed[keyOf(x)]) stillHere[keyOf(x)] = buzzed[keyOf(x)]; });
+var first = deps.filter(function (x) { return x.t - now > -60000; }).sort(function (a, b) { return a.t - b.t; })[0];
+if (first && (first.t - now) / 60000 < 5 && (stillHere[keyOf(first)] || 0) < 2) {
+  busbuzz = 'yes';
+  stillHere[keyOf(first)] = (stillHere[keyOf(first)] || 0) + 1;
+}
+setGlobal('BusStateBuzzed', JSON.stringify(stillHere));
+if (busbuzz === 'yes') {
+  debugLog('Buzz: ' + first.k + ' in ' + Math.max(0, Math.round((first.t - now) / 60000)) + ' min (' + stillHere[keyOf(first)] + ' of 2)');
+  record('buzz', { stop: get('BusStateStopId'), route: first.k, v: first.v || '', min: Math.round((first.t - now) / 6000) / 10, n: stillHere[keyOf(first)] });
+}
+// Recorder: TfL's predictions as they came (route, vehicle, seconds away), for steadier times,
+// matching you to your bus, and spotting buses that have left
+record('tfl', { stop: get('BusStateStopId'), code: code, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
+  b: deps.map(function (x) { return [x.k, x.v || '', Math.round((x.t - now) / 1000), x.st === 'sched' ? 's' : 'l']; }) });
+// The stop's letter, from its TfL indicator ("Stop B" -> B, "Stop BK" -> BK). Stops without one
+// (indicators like "opp" or "->N", or none at all) get no letter, and the island shows none.
+function stopLetter(name) {
+  var m = /\(([^)]*)\)\s*$/.exec(name || ''); var ind = m ? m[1].trim() : '';
+  var l = /^stop\s+([a-z][a-z0-9]?)$/i.exec(ind);
+  return l ? l[1].toUpperCase() : '';
+}
+var busletter = stopLetter(get('BusStateStopName'));
+
+// The island's size depends on how many of your routes this stop has (one dot each, whether or not
+// they're showing right now) and, for the chip, the stop letter. If that changes (a different
+// stop, or new settings), it's shown again at the new size. Same form as island_show.js: i or c
+// (island or status bar chip), route count, L and the letter's length. A change (including switching
+// Show as in Settings) shows it again in the new shape.
+var shape = (get('BusStyle') === 'chip' ? 'c' : 'i') + routesHere(perRoute.length) +
+  (busletter ? 'L' + busletter.length : '');                 // the chip is wider with a stop letter
+// (The right half always has room for "~88 · ~88 min", so times, timetable "~" and second times
+// coming and going never change the size, and never redraw the island.)
+if (get('BusStateIslandShown') === '1' && get('BusStateIslandShape') !== '' && get('BusStateIslandShape') !== shape) {
+  setGlobal('BusStateIslandShown', '0');
+}
+setGlobal('BusStateIslandData', JSON.stringify({
+  u: now,                                                       // when this data arrived
+  r: 1000 * normalWait,                                         // the usual time between refreshes: border and fading
+  rot: Math.round(1000 * (parseFloat(get('BusRotate')) || 6)),  // time per route: border with several
+  s: get('BusStateStopId'), n: get('BusStateStopName'),         // current stop (a change = Bus Opposite)
+  l: busletter,                                                 // its letter ("B", "BK"), or "" for none
+  b: perRoute
+}));
+
+// Chip: "25 in 5 min" in the status bar, plain lines when it's opened
+function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sched' ? '~' : '') + (m < 1 ? (x.st === 'sched' ? '1' : 'now') : m); }

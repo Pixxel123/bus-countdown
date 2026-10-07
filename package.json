@@ -1,0 +1,15 @@
+{
+  "name": "bus-countdown",
+  "private": true,
+  "description": "Bus Countdown Tasker project: build tools and tests",
+  "scripts": {
+    "test": "node build/lint.js && node --test",
+    "build": "python3 build/assemble.py",
+    "lint": "node build/lint.js",
+    "replay": "node build/replay.js"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.5",
+    "globals": "^15.15.0"
+  }
+}
