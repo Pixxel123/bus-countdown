@@ -121,6 +121,7 @@ var PAGE = String.raw`<!doctype html>
   #ring.off { display: none; }                  /* BusBorder is off (the default) */
 
   .b { background: #DC241F; border-radius: 99px; padding: 1px 7px; font-weight: 700; font-size: 13px; flex: none; } /* route badge */
+  .b.idle { background: #5A6376; }              /* a later bus on the route you're riding: the idle dots' grey */
   /* Stop letter: a white ring like the circle on TfL's stop flags; wider for two letters */
   .sl { flex: none; box-sizing: border-box; min-width: 18px; height: 18px; padding: 0 4px; border: 1.5px solid #fff;
         border-radius: 9px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
@@ -231,7 +232,7 @@ var PAGE = String.raw`<!doctype html>
     } else {
       var b = list[idx];
       L.innerHTML = (data && data.l ? '<span class="sl">' + esc(data.l) + '</span>' : '') +
-                    '<span class="b">' + esc(b.k) + '</span><span class="d' + (b.st === 'sched' ? ' sched' : '') + '">' + esc(b.d) + '</span>';
+                    '<span class="b' + (b.idle ? ' idle' : '') + '">' + esc(b.k) + '</span><span class="d' + (b.st === 'sched' ? ' sched' : '') + '">' + esc(b.d) + '</span>';
       R.innerHTML = rightHtml(b, idx);
       if (R.scrollWidth > R.clientWidth + 1) R.innerHTML = rightHtml(b, idx, true);   // too wide: just the first time
     }

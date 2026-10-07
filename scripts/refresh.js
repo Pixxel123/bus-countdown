@@ -113,6 +113,10 @@ setGlobal('BusStateMatch', riding ? JSON.stringify(match) : '');
 if (yourBus) {
   var others = deps.filter(function (x) { return x.v !== yourBus.v; });
   deps = others.length ? others : deps.map(function (x) { return Object.assign({}, x, { mine: true }); });
+  // Later buses on the route you're riding (the next 517 behind your 517) can't help you, but shown
+  // like any other bus they can look like yours: their badge is drawn idle, in the grey of the
+  // island's idle dots, instead of TfL red (4.31). Nothing else about them changes.
+  deps = deps.map(function (x) { return x.k === yourBus.k && x.v !== yourBus.v ? Object.assign({}, x, { idle: true }) : x; });
 }
 var busnodata = (code !== '200' && !deps.length) ? 'yes' : 'no';
 

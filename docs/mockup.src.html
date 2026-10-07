@@ -339,7 +339,7 @@ h1{text-wrap:balance}
     <ol class="tl" id="explore"></ol>
 
     <h2 class="ex-h">The next bus on your route</h2>
-    <p class="lede">Riding the 517 into Wexley, the island also lists the next 517, 18 minutes behind you. Shown like any other bus, it can look like yours. Three variants made with impeccable’s generate method: the island’s identity written down first, then each variant changes one different thing (hierarchy, colour, structure) and is checked against that identity. None is built yet.</p>
+    <p class="lede">Riding the 517 into Wexley, the island also lists the next 517, 18 minutes behind you. Shown like any other bus, it can look like yours. Three variants made with impeccable’s generate method: the island’s identity written down first, then each variant changes one different thing (hierarchy, colour, structure) and is checked against that identity. The island has 2, since 4.31.</p>
     <p class="lock"><b>Identity kept in every variant:</b> a black capsule 30 dp high round the camera; white 14 px bold minutes; a solid TfL-red route badge; the destination in 12 px #B7BFCD; the bus after in 11 px #9AA3B5; a 1.5 px white ring for the stop letter; 4 px dots, #5A6376 with the active one white; no shadows or decoration; terse numbers.</p>
     <ol class="tl" id="explore2"></ol>
   </div>
@@ -1021,6 +1021,7 @@ function islandShow(global, setGlobal) {
     var x = { k: k, d: d, t: now + min * 60000, st: o.st || 'live' };
     if (o.t2 !== undefined) { x.t2 = now + o.t2 * 60000; x.st2 = o.st2 || 'live'; }
     if (o.mine) x.mine = true;
+    if (o.idle) x.idle = true;
     return x;
   }
   var SCEN = [
@@ -1037,8 +1038,8 @@ function islandShow(global, setGlobal) {
       note: '<b>TfL dropped a bus</b> while it was still 7 minutes away. Since 4.27 it stays on its last countdown, with ~, for up to 3 minutes. On Tuesday the island showed the next one, 20 minutes away, instead.',
       b: function (now) { return [bus(now, '517', 'Holbry', 6, { st: 'sched', t2: 20 })]; } },
     { id: 'you', label: 'Riding', stop: 'D',
-      note: '<b>On the 517, coming up to Wexley</b>, where you change. Your own bus is left off: the island shows only what you could change to, the 566 and the next 517. Bus Status says which bus you’re on and when you’ll get there.',
-      b: function (now) { return [bus(now, '566', 'Fernleigh Village', 8, { t2: 21 }), bus(now, '517', 'Holbry', 18)]; } },
+      note: '<b>On the 517, coming up to Wexley</b>, where you change. Your own bus is left off: the island shows only what you could change to, the 566 and the next 517, whose badge is idle grey so it doesn’t look like yours. Bus Status says which bus you’re on and when you’ll get there.',
+      b: function (now) { return [bus(now, '566', 'Fernleigh Village', 8, { t2: 21 }), bus(now, '517', 'Holbry', 18, { idle: true })]; } },
     { id: 'none', label: 'No buses', stop: 'B',
       note: '<b>Nothing listed</b> for your routes, live or from the timetable.',
       b: function () { return []; } }
@@ -1126,10 +1127,12 @@ function islandShow(global, setGlobal) {
     v427: { letters: 3, right: 'now', k: '517', d: 'Holbry', m: '~6', mCls: 'sched', m2: '20' },
     v428: { ring: 'D', letters: 3, right: 'now', k: '517', d: 'You', dCls: 'mine', m: '2 min', dots: 2 },
     v429: { ring: 'D', letters: 3, right: 'now', k: '517', d: 'You', m: '2 min', dots: 2 },
-    v430: { ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', m: '8', m2: '21', dots: 2 }
+    v430: { ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', m: '8', m2: '21', dots: 2 },
+    v431: { ring: 'D', letters: 3, right: 'now', k: '517', idle: true, d: 'Holbry', m: '18 min', dots: 2, on: 1 }
   };
   // Newest first. changed: the island looked different from the version before.
   var VERSIONS = [
+    ['4.31', '7 Oct', 'v431', true, 'While you ride, later buses on your own route keep their place and time but get a grey badge, the island\u2019s idle colour, so the next 517 never looks like yours.'],
     ['4.30', '7 Oct', 'v430', true, 'While you ride, your own bus leaves the island, so it shows only the buses you could change to; Bus Status says which bus you’re on.'],
     ['4.29', '7 Oct', 'v429', true, 'Your bus keeps its You label but loses the light blue, so it’s the same quiet grey as any destination.'],
     ['4.28', '7 Oct', 'v428', true, 'Works out which bus you’re on: it shows as You (or Your bus with 6 or 10 letters) in light blue, never buzzes, and Bus Status names your connection.'],
@@ -1196,7 +1199,7 @@ function islandShow(global, setGlobal) {
     ['1', 'Hierarchy: no lead time', '', 'The next 517 drops its bold minutes and shows only the quiet second time, \u201c\u00b7 18 min\u201d. The island already uses that tier for the bus after this one, and your bus is this one.',
      'Uses the island\u2019s own grammar, so there\u2019s nothing new to learn. But the bold spot just past the camera sits empty, which could read as a gap rather than a meaning.',
      [['Your connection', CONN], ['The next 517', look({ k: '517', d: 'Holbry', m: '', m2: '18', on: 1 })]]],
-    ['2', 'Colour: an idle badge', 'Suggested', 'The next 517\u2019s badge is filled with the grey the island already uses for idle dots, instead of TfL red. The destination and time stay exactly as they are.',
+    ['2', 'Colour: an idle badge', 'Chosen: 4.31', 'The next 517\u2019s badge is filled with the grey the island already uses for idle dots, instead of TfL red. The destination and time stay exactly as they are.',
      'Only one thing changes, using the grey the island already gives idle dots, so it reads as \u201cnot the one coming now\u201d without words. It removes colour rather than adding any, and the grey differs from the red in lightness as well as hue.',
      [['Your connection', CONN], ['The next 517', look({ k: '517', idle: true, d: 'Holbry', m: '18 min', m2: '', on: 1 })]]],
     ['3', 'Structure: leave it out', '', 'While you ride, later buses on your own route leave the island too, so it shows only other routes. Bus Status still lists them.',

@@ -91,3 +91,19 @@ test('the island never highlights a bus (4.29)', () => {
   const src = require('fs').readFileSync(require('path').join(__dirname, '..', 'scripts', 'island_show.js'), 'utf8');
   assert.doesNotMatch(src, /\.mine|' mine'/);
 });
+
+test('4.31: riding the 517, the next 517 has an idle badge; other routes keep theirs', () => {
+  const g = base({ BusStateBoarded: JSON.stringify({ k: '517', v: 'YY1', stop: 'M', at: T0 - 600000 }), BusStateTrip: ridingTo(2, T0) });
+  refresh(g, [bus('517', 2, 'YY1'), bus('566', 8, 'LF1'), bus('517', 18, 'YY2')], T0);
+  const shown = JSON.parse(g.BusStateIslandData).b;
+  assert.deepStrictEqual(shown.map((b) => [b.v, !!b.idle]), [['LF1', false], ['YY2', true]]);
+  const page = run('island_show.js', { globals: Object.assign({}, g) }).html;
+  assert.match(page, /\.b\.idle \{ background: #5A6376; \}/);
+  assert.match(page, /b\.idle \? ' idle' : ''/);
+});
+
+test('not riding, nothing is idle', () => {
+  const g = base({ BusStateTrip: JSON.stringify({ s: 'atstop', stop: 'D' }) });
+  refresh(g, [bus('517', 2, 'YY1'), bus('517', 18, 'YY2')], T0);
+  assert.ok(JSON.parse(g.BusStateIslandData).b.every((b) => !b.idle));
+});
