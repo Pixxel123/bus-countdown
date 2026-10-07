@@ -89,7 +89,9 @@ test('09:18 on the 517 to work: matched to WH63YOX on the second refresh', () =>
 test('17:41 on the 517 to Wexley: matched to LA28LPG, with the 566 as your connection', () => {
   const o = at('17:41:39', 'tfl');
   assert.strictEqual(o.yours, 'LA28LPG');
-  assert.match(o.match.note, /^on the 517 \(LA28LPG\), at Wexley .* in about 2 min; then the 566 6 min after you get there$/);
+  // Not seen getting on at 17:20 (the countdown there ended without Bus Watch, so the trip was already
+  // "left"), so since 4.34 it's only "probably" yours
+  assert.match(o.match.note, /^probably on the 517 \(LA28LPG\), at Wexley .* in about 2 min; then the 566 6 min after you get there$/);
 });
 
 test('17:48 leaving Wexley: you got on LE15BXA (not LA28LPG, the bus you came in on)', () => {

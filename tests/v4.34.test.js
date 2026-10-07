@@ -59,22 +59,59 @@ test('15 minutes after leaving, and no bus speed lately: the trip is over and th
   assert.strictEqual(g.BusStateBoarded, '');
 });
 
-// ---- 3. Tuesday, replayed: getting on at 17:20 now carries through to Wexley ------------------------
+// ---- 3. Tuesday, replayed ------------------------------------------------------------------------
 const tue = fs.readFileSync(path.join(__dirname, 'fixtures', 'tue-6-oct-excerpts.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
 const out = replay(tue).out;
 const clock = (o) => new Date(o.t + 3600000).toISOString().slice(11, 19);
 const at = (hms, k) => out.find((o) => clock(o) === hms && (!k || o.k === k));
-test('Tuesday 17:21: getting on LA28LPG at Corvel Lodge is seen (the replay leaves Bus Watch\'s own ending to today\'s rules)', () => {
-  assert.match(at('17:21:01', 'check').why, /on the bus, away from Corvel Lodge School \(opp\): the 517 \(LA28LPG\)/);
+test('Tuesday 17:20:31: an ending with no reason that no position on the phone caused is played as it happened', () => {
+  // (The position a second later decided nothing; only an ending just after a position that stopped
+  // the countdown is left to today's rules)
+  assert.ok(at('17:20:31', 'end'), 'played');
+  assert.strictEqual(at('17:20:32', 'check').state, 'left');
 });
-test('Tuesday 17:41 into Wexley: LA28LPG is yours for sure, so it leaves the island and the 566 is your connection', () => {
+test('Tuesday 17:41 into Wexley: LA28LPG was never seen being got on, so it is "probably" yours and stays on the island', () => {
   const o = at('17:41:39', 'tfl');
-  assert.deepStrictEqual([o.match.v, o.match.by, o.match.sure], ['LA28LPG', 'boarded', true]);
-  assert.ok(!o.shown.includes('LA28LPG'));
+  assert.deepStrictEqual([o.match.v, o.match.by, o.match.sure], ['LA28LPG', 'eta', false]);
+  assert.ok(o.shown.includes('LA28LPG'));
+  assert.strictEqual(o.buzz, 'no');
+});
+
+// ---- 3b. A boarding worked out with a "probably" bus's help isn't sure either -----------------------
+const seen = (now, list) => JSON.stringify({ s: 'KH', b: list.map(([k, v, inSec, gone]) => Object.assign({ k, v, d: 'X', t: now + inSec * 1000, seen: now - 20000 }, gone ? { gone: true } : {})) });
+const boardAt = (cameOnSure) => {
+  const now = T0;
+  const g = { BusPlaces: `bus|KH|Kiln Street (Stop KH)|${LAT}|${LON}|50`, BusRoutes: '566,517', BusStateRunning: '1', TRUN: 'Bus Loop', BusStateStopId: 'KH',
+    BusStateTrip: JSON.stringify({ s: 'atstop', stop: 'KH', since: now - 240000 }),
+    BusStateWindow: JSON.stringify([[70, 0, 0], [45, 2, 0], [12, 40, 6]].map(([s, d, v]) => ({ t: now - s * 1000, lat: +(LAT + m(d)).toFixed(6), lon: LON, acc: 10, spd: v }))),
+    BusStateCameOn: JSON.stringify({ k: '566', v: 'WD21TSS', stop: 'KH', at: now - 250000, sure: cameOnSure }),
+    BusStateSeen: seen(now, [['566', 'WD21TSS', -40], ['566', 'NA39ECX', 300]]) };
+  run('watch.js', { globals: g, now, locals: { buscaller: 'profile=moved', gl_latitude: String(LAT + m(160)), gl_longitude: String(LON), gl_time_seconds: String(now / 1000), busspeed: '8', busacc: '10' } });
+  return JSON.parse(g.BusStateBoarded || 'null');
+};
+test('the tram case: a "probably" bus you came in on can make the wrong bus look boarded, so that boarding is saved as not sure', () => {
+  const b = boardAt(false);
+  assert.ok(b, 'a bus is still noted');
+  assert.strictEqual(b.sure, false);
+  const g = base({ BusStateBoarded: JSON.stringify(b), BusStateTrip: ridingTo(3, T0 + 60000) });
+  const r = refresh(g, [bus('566', 3, b.v), bus('517', 9, 'WG84LLS')], T0 + 60000);
+  assert.strictEqual(JSON.parse(g.BusStateMatch).sure, false, 'so it hides nothing at the next stop');
+  assert.ok(r.shown.includes(b.v));
+});
+test('the bus you came in on for sure: the boarding is sure too (as in 4.33)', () => {
+  assert.strictEqual(boardAt(true).sure, true);
+});
+test('kept through a crawl, the bus you got on goes once you have been off bus speed for 5 minutes', () => {
+  const g = crawlWorld(60000); crawl(g);
+  assert.ok(g.BusStateBoarded);
+  g.BusStateLastBusAt = String(T0 - 6 * 60000);
+  run('watch.js', { globals: g, now: T0 + 20000, locals: { buscaller: 'profile=moved', gl_latitude: String(LAT + m(4010)), gl_longitude: String(LON), gl_time_seconds: String((T0 + 20000) / 1000), busspeed: '1', busacc: '12' } });
+  assert.strictEqual(g.BusStateBoarded, '');
 });
 
 // ---- 4. No second fetch within 20 s ----------------------------------------------------------------
-const due = (g, caller, now) => run('fetch_due.js', { globals: g, now, locals: { caller1: caller } }).busfresh;
+// (Bus Refresh copies %caller1 into %busrefby: scripts can't read %caller1 itself)
+const due = (g, caller, now) => run('fetch_due.js', { globals: g, now, locals: { busrefby: caller } }).busfresh;
 test('Bus Loop or the screen coming on within 20 s of the last fetch for this stop: skipped', () => {
   const g = { BusStateStopId: 'G', BusStateFetchStop: 'G', BusStateFetchAt: String(T0) };
   assert.deepStrictEqual([due(g, 'task=Bus Loop', T0 + 10000), due(g, 'task=Bus Wake', T0 + 19000)], ['yes', 'yes']);
@@ -92,12 +129,19 @@ test('Bus Refresh notes when times last arrived, but not after a failed fetch', 
   refresh(g, [], T0 + 30000, '');
   assert.strictEqual(g.BusStateFetchAt, String(T0));
 });
-test('in the project: the check runs first, and fetching to buzzing is skipped together, the island still shows', () => {
+test('in the project: %caller1 copied, the check, then fetching to buzzing skipped together inside one If; the island block outside it', () => {
   const xml = fs.readFileSync(path.join(__dirname, '..', 'Bus_Countdown.prj.xml'), 'utf8');
   const task = xml.slice(xml.indexOf('<nme>Bus Refresh</nme>'));
-  const iCheck = task.indexOf('Fetched these times under 20 s ago');
-  const iIf = task.indexOf('%busfresh'), iHttp = task.indexOf('StopPoint/%BusStateStopId/Arrivals'), iIsland = task.indexOf('Island not up yet');
-  assert.ok(iCheck > 0 && iCheck < iIf && iIf < iHttp && iHttp < iIsland, [iCheck, iIf, iHttp, iIsland].join(' '));
+  const acts = [...task.slice(0, task.indexOf('</Task>')).matchAll(/<Action sr="act\d+" ve="\d+">[\s\S]*?<\/Action>/g)].map((x) => x[0]);
+  const idx = (re) => acts.findIndex((a) => re.test(a));
+  const iCopy = idx(/<Str sr="arg0" ve="3">%busrefby<\/Str>[\s\S]*<Str sr="arg1" ve="3">%caller1<\/Str>/), iCheck = idx(/Fetched these times under 20 s ago/);
+  const iIf = idx(/<code>37<\/code>[\s\S]*<lhs>%busfresh<\/lhs><op>3<\/op><rhs>yes<\/rhs>/);
+  const iHttp = idx(/StopPoint\/%BusStateStopId\/Arrivals/), iIsland = idx(/Island not up yet/);
+  assert.ok(iCopy >= 0 && iCopy < iCheck && iCheck < iIf && iIf < iHttp && iHttp < iIsland, [iCopy, iCheck, iIf, iHttp, iIsland].join(' '));
+  // Nesting: count If (37) and End If (38) between the busfresh If and the island step: back to level 0
+  let depth = 0;
+  for (let i = iIf; i < iIsland; i++) { if (/<code>37<\/code>/.test(acts[i])) depth++; if (/<code>38<\/code>/.test(acts[i])) depth--; }
+  assert.strictEqual(depth, 0, 'the busfresh If is closed before the island block');
 });
 
 // ---- 5. Travel mode, on trial ------------------------------------------------------------------------
@@ -127,17 +171,22 @@ test('the same position twice changes nothing; a gap of over 5 minutes starts ag
   const later = ctx.travelMode(T0 + 20000 + 6 * 60000, LAT + m(3000), LON, 10);
   assert.strictEqual(later.nv, 0, 'no speed made up across the gap');
 });
+test('a stored state of the wrong shape starts it again rather than switching it off for good', () => {
+  for (const bad of ['"abc"', '{}', '[]', '5']) { ctx.G = { BusStateKF: bad }; const r = ctx.travelMode(T0, LAT, LON, 10); assert.strictEqual(r.mode, 'still', bad); }
+});
 test('Tuesday, replayed: riding the 517 reads as riding; waiting at Corvel Lodge as still; and nothing it says changes a decision', () => {
   const checks = (a, b) => out.filter((o) => o.k === 'check' && clock(o) >= a && clock(o) <= b);
   const rideChecks = checks('17:22:00', '17:29:40');
   assert.ok(rideChecks.filter((o) => o.mode === 'ride').length >= rideChecks.length - 1, rideChecks.map((o) => o.mode).join(' '));
   const wait = checks('17:15:00', '17:17:40');
   assert.ok(wait.every((o) => o.mode === 'still'), wait.map((o) => o.mode).join(' '));
-  // Record-only: the same day without the travel mode decides exactly the same
-  const src = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'watch.js'), 'utf8');
-  assert.match(src, /tmode = travelMode\(/);
-  const uses = src.split('\n').filter((l) => /tmode/.test(l));
-  assert.strictEqual(uses.length, 3, 'only declared, set, and written to the recording:\n' + uses.join('\n'));
+  // Record-only: nothing outside the recording and Bus Status reads it
+  const scripts = path.join(__dirname, '..', 'scripts');
+  const code = (f) => fs.readFileSync(path.join(scripts, f), 'utf8').split('\n').map((l) => l.replace(/\/\/.*$/, '')).join('\n');
+  const uses = code('watch.js').split('\n').filter((l) => /tmode/.test(l));
+  assert.ok(uses.every((l) => /^var tmode = null;|tmode = travelMode\(|tmode \? tmode\./.test(l.trim())), 'only declared, set, and written to the recording:\n' + uses.join('\n'));
+  const readers = fs.readdirSync(scripts).filter((f) => f.endsWith('.js') && /BusStateMode|BusStateKF/.test(code(f)));
+  assert.deepStrictEqual(readers.sort(), ['status.js', 'watch.js']);
 });
 test('the recording carries the travel mode with every position', () => {
   const g = { BusPlaces: `bus|S|High St (Stop S)|${LAT}|${LON}|100`, BusNearRadius: '50', BusRoutes: '517', BusStateRunning: '0', TRUN: '', BusRecord: 'on' };

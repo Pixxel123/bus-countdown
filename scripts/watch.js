@@ -257,6 +257,8 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     // were seen getting on now counts as yours (4.34), that would have put your own bus back on the
     // island at Wexley.
     if (trip.s === 'left' && (now - trip.since > 15 * 60000)) { trip = { s: 'idle' }; if (!byBusLately) setGlobal('BusStateBoarded', ''); }
+    // Kept that way, it goes once you've been off bus speed for 5 minutes, any time later
+    if (trip.s === 'idle' && !byBusLately && get('BusStateBoarded') !== '') setGlobal('BusStateBoarded', '');
     // Ended as walking away, but you've kept up more than 2.2 m/s from that stop for 90 seconds or
     // more since: it was a bus after all, pulling away slowly (the countdown ended either way; this
     // keeps the trip, and the recording, right)
@@ -387,7 +389,11 @@ function noteBoarded(st, hint) {
     });
   }
   if (!best) { setGlobal('BusStateBoarded', ''); return ''; }        // on a bus, but not one we can name
-  setGlobal('BusStateBoarded', JSON.stringify({ k: best.k, v: best.v, stop: st.id, at: leftAt }));
+  // If the bus you came in on was only "probably" yours (matched on arrival time, 4.34), it may be
+  // wrong: a tram matched to the very bus you then got on would rule that bus out here, or count as
+  // "stayed on". The bus picked is still saved, but not as sure, so it can't hide anything.
+  var firm = !(cameOnHere && cameOn.sure === false);
+  setGlobal('BusStateBoarded', JSON.stringify({ k: best.k, v: best.v, stop: st.id, at: leftAt, sure: firm }));
   record('board', { stop: st.id, route: best.k, v: best.v, tfl: Math.round((best.t - leftAt) / 1000) });
   return ': the ' + best.k + ' (' + best.v + ')';
 }

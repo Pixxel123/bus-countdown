@@ -29,10 +29,11 @@ function replay(lines, extraGlobals) {
     // (Recordings before 4.27 have no reason on any ending, from: ''. A Bus Watch ending there comes
     // just after the position that caused it, which today's rules have already played, so by then the
     // countdown is only still running here if today's rules kept it going.)
-    // (4.34: an ending with no reason that comes within 3 s of a position was Bus Watch's own doing
-    // either way round: on Tuesday at 17:20:31 the ending was written a second before the position
-    // that caused it. Today's rules decide those for themselves.)
-    const watchEnd = l.k === 'end' && l.from === '' && lines.some((c) => c.k === 'check' && Math.abs(c.t - l.t) <= 3000);
+    // (4.34: an ending with no reason written up to 2 s after a position that stopped it, on the phone,
+    // was Bus Watch's own: today's rules decide those for themselves. Any other ending with no reason
+    // (Tuesday 17:20:31 came a second before a position that didn't stop anything) was something else,
+    // and is played as it happened.)
+    const watchEnd = l.k === 'end' && l.from === '' && lines.some((c) => c.k === 'check' && c.action === 'stop' && l.t - c.t >= 0 && l.t - c.t <= 2000);
     if (l.k === 'end' && l.from !== 'watch' && !watchEnd && g.BusStateRunning === '1') {
       g.BusStateRunning = '0'; g.TRUN = '';
       out.push({ t: l.t, k: 'end', line: l, note: `ended (${l.why || l.from || 'reason not recorded'})` });

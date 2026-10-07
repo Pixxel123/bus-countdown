@@ -88,7 +88,7 @@ var yourBus = null;
 if (riding) {
   var boarded = null; try { boarded = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) {}
   var boardedHere = boarded && now - boarded.at < 90 * 60000 && deps.some(function (x) { return x.v === boarded.v; });
-  if (boardedHere) { if (match.v !== boarded.v || match.by !== 'boarded') match = { stop: stopId, k: boarded.k, v: boarded.v, n: 2, by: 'boarded' }; }
+  if (boardedHere) { if (match.v !== boarded.v || match.by !== 'boarded') match = { stop: stopId, k: boarded.k, v: boarded.v, n: 2, by: 'boarded', firm: boarded.sure !== false }; }
   else if (tripNow.eta && now - (tripNow.etaAt || 0) < 120000) {
     var m = matchBus(deps, tripNow.eta);
     if (m && m.v === match.v) { match.n++; match.err = Math.round(m.err); }
@@ -101,7 +101,7 @@ if (riding) {
   // or a car closing in on a stop looks just like a bus doing so; only getting on at a stop tells
   // them apart. A "probably" bus stays on the island like any other, and nothing buzzes while you
   // ride (as when your bus isn't known), but Bus Status and the recording still name it.
-  match.sure = match.by === 'boarded';
+  match.sure = match.by === 'boarded' && match.firm !== false;
   if (likely && match.sure) yourBus = likely;
   // Kept for Bus Watch, so the bus you came in on is never taken for the one you then get on
   if (likely) setGlobal('BusStateCameOn', JSON.stringify({ k: likely.k, v: likely.v, stop: stopId, at: now, sure: match.sure }));

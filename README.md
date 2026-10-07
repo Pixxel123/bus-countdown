@@ -1,6 +1,6 @@
 # Bus Countdown
 
-Version 4.34
+Version 4.35
 
 A Tasker project for Android that shows live London bus arrivals in a small pill around the front camera, in the style of a "dynamic island". It starts when you arrive at a saved bus stop and ends when you leave.
 
@@ -284,7 +284,7 @@ Swiping the island away, the 30-minute limit and getting home also move it to Le
 
 When a countdown shows a stop you're riding a bus towards, Bus Watch keeps when you'd get there at the pace you've been closing in on it, and Bus Refresh compares that with each bus TfL lists. The bus whose time agrees (within 2½ minutes, with no other bus nearly as close) on two refreshes in a row is **probably** yours. On Tuesday 6 October's three rides each bus's time was within 10 to 30 seconds of when you actually reached the stop.
 
-Since 4.34 only a bus you were **seen getting on** at a stop counts as yours for the island and the buzz. On Wednesday 7 October, coming into Kiln Street on the tram, your arrival time matched the 566 WD21TSS, and 4.33 hid the very bus you were about to catch: a tram or a car closing in on a stop looks exactly like a bus doing so. A "probably" bus stays on the island like any other and nothing buzzes while you ride (as when your bus isn't known); Bus Status and the recording still name it ("probably on the 566 (WD21TSS)"). To keep the bus you got on through a long ride, it's no longer forgotten 15 minutes after a crawl in traffic read as "left" while you're still moving at bus speed (Tuesday's 517 to Wexley).
+Since 4.34 only a bus you were **seen getting on** at a stop counts as yours for the island and the buzz. On Wednesday 7 October, coming into Kiln Street on the tram, your arrival time matched the 566 WD21TSS, and 4.33 hid the very bus you were about to catch: a tram or a car closing in on a stop looks exactly like a bus doing so. A "probably" bus stays on the island like any other and nothing buzzes while you ride (as when your bus isn't known); Bus Status and the recording still name it ("probably on the 566 (WD21TSS)"). To keep the bus you got on through a long ride, it's no longer forgotten 15 minutes after a crawl in traffic read as "left" while you're still moving at bus speed (it goes once you've been off bus speed for 5 minutes). And a boarding worked out with the help of a "probably" bus you came in on is saved as not sure either, since that bus may have been wrong.
 
 ```mermaid
 flowchart LR
@@ -340,11 +340,11 @@ Earlier versions used an invisible overlay to watch for the status bar being hid
 
 ## Notes for editing
 
-- **Every change to the island is recorded in the mockup.** Add the version to `VERSIONS` in `docs/mockup.src.html` (and a new look in `LOOK` if the island changed), run `npm run build`, and republish the mockup artifact. `tests/mockup.test.js` fails until the current version has its entry.
+- **Every change to how the island looks is recorded in the mockup.** Add the version and a new look to `VERSIONS` and `LOOK` in `docs/mockup.src.html`, run `npm run build`, and republish the mockup artifact. A version that changes only what happens underneath gets no entry, and the page stays as it is (it names the island's last change, not the project's version). `tests/mockup.test.js` fails if two entries draw the same island.
 
 - A JavaScriptlet only returns a local variable to the task if it is declared on its own `var` line. `var a = 1, b = 2;` returns only `a`.
 - Step labels are plain text, "Title · Explanation", because the Run Log prints labels exactly as written (HTML labels look good in the task editor but fill the log with tags).
-- `%caller1` isn't visible to scripts. Bus Watch copies it into `%buscaller` first, and marks runs from Bus Wake and Bus Loop as `profile=wake` and `profile=loop`.
+- `%caller1` isn't visible to scripts. Bus Watch copies it into `%buscaller` first, and marks runs from Bus Wake and Bus Loop as `profile=wake` and `profile=loop`; Bus Refresh copies it into `%busrefby` (4.35).
 - The connected Wi-Fi network is read from Android with Java Function (`WifiManager.getConnectionInfo().getSSID()`) in Bus Wake and Bus Watch only (and Bus Settings, for its "Use" button), and saved in `%BusStateWifi` for the other tasks. `%WIFII` isn't used: it stops updating once no profile has a Wi-Fi condition.
 - The pill's web page must not contain a percent sign followed by letters, apart from the data placeholder, or Tasker treats it as a variable.
 - Scene V2 web views need fixed pixel heights (not `100vh`), `darkMode: ForceLight`, and a rounded clip on the parent box to draw a transparent, rounded pill. Any part of the overlay window not covered by the page shows as black. The pill also needs a fixed width equal to its window: as a plain flex box it stretched to the page's width, which can be wider than the window, cutting off its rounded right end.
@@ -379,7 +379,7 @@ The files hold your location history and stay on the phone until you choose to u
 npm run replay -- bus-trip-Tue.jsonl
 ```
 
-It plays every position through Bus Watch, and every TfL reply through Bus Refresh (showing when it would buzz), and marks each position where the current rules decide differently from what happened on the phone (`≠`), which is how a change can be checked against real trips before it reaches the phone. Countdowns you started by hand, or that ended for another reason (Wi-Fi, time's up), are played as they happened. The replay itself is `build/replay-core.js`, which the tests use too.
+It plays every position through Bus Watch, and every TfL reply through Bus Refresh (showing when it would buzz), and marks each position where the current rules decide differently from what happened on the phone (`≠`), which is how a change can be checked against real trips before it reaches the phone. Countdowns you started by hand, or that ended for another reason (Wi-Fi, time's up), are played as they happened. In recordings from before 4.27, where endings carry no reason, an ending written up to 2 s after a position that stopped the countdown on the phone is taken as Bus Watch's own and left to today's rules. The replay itself is `build/replay-core.js`, which the tests use too.
 
 ## Building
 
@@ -404,7 +404,7 @@ The `tests` folder runs the project's own scripts (from `scripts/`) the way Task
 npm test
 ```
 
-What's covered (171 tests, after the linter):
+What's covered (175 tests, after the linter):
 
 - **The project file matches the scripts:** every JavaScriptlet in `Bus_Countdown.prj.xml` is a file in `scripts/` (with its shared pieces filled in), every file and shared piece is used, no script keeps its own copy of a shared helper, every step has an explanation, and every Perform Task points at a task that exists.
 - **Replayed trips** through the state machine: walking past a stop, waiting then catching the bus, walking away with no speed readings, a saved stop coming up on a bus, a jumpy fix while waiting, passing through a circle, swiping away, and a big arrival circle not restarting as you leave.
@@ -419,7 +419,7 @@ What's covered (171 tests, after the linter):
 - **Version 4.11** (`tests/v4.11.test.js`, written first as todo tests): Wi-Fi hysteresis, backing off with no signal, next two buses, and the swipe rule (route changes, 90 dp to dismiss, a fast 60 dp fling).
 - **Tuesday 6 October, replayed** (`tests/tuesday.test.js`): excerpts of the first recorded day (`tests/fixtures`, with home and work replaced by stand-ins), played through today's rules: no pop-up on the 517 to work or the 566 home; the 517 TfL dropped for 2½ minutes kept on the island and buzzing at 4½ minutes, not 1.9; still shown on the way to Wexley, where you change, without buzzing for the bus you're on; one buzz from two refreshes 6 seconds apart; and leaving Wexley on the 566 in traffic ending as "on the bus".
 - **Which bus you're on** (`tests/tuesday.test.js` and `tests/v4.28.test.js`): Tuesday's three rides each matched to the right bus (WH63YOX to work on the second refresh, LA28LPG to Wexley with the 566 as the connection, LE15BXA home known at once as the bus you got on at Wexley, not the 517 you came in on); and on made-up rides, one refresh not being enough, rivals too close to call, the connection buzzing but never your bus, nothing kept while you're waiting, and buses that drop off the list remembered as gone.
-- **Version 4.34** (`tests/v4.34.test.js`): the Kiln Street tram (your arrival matching the bus you're about to catch leaves it on the island, not greyed, and nothing buzzes) against the same ride having been seen getting on; the bus you got on kept through a crawl in traffic but forgotten once the trip's really over; Tuesday replayed with getting on LA28LPG at 17:21 seen and carried through to Wexley; no second fetch within 20 s from Bus Loop or the screen coming on (but always for a new stop, a preview or a run by hand), and the project wiring for it; and the travel mode on trial: still while indoors with the position wandering, walking, riding through red lights, a gap starting it again, Tuesday's 517 ride read as riding, the recording carrying it, and nothing in Bus Watch reading it.
+- **Version 4.34** (`tests/v4.34.test.js`): the Kiln Street tram (your arrival matching the bus you're about to catch leaves it on the island, not greyed, and nothing buzzes) against the same ride having been seen getting on; the bus you got on kept through a crawl in traffic but forgotten once the trip's really over; Tuesday's 517 into Wexley staying "probably" (the countdown at Corvel Lodge ended without Bus Watch, so getting on wasn't seen); a boarding helped by a "probably" bus saved as not sure; the bus you got on going once you've been off bus speed for 5 minutes; no second fetch within 20 s from Bus Loop or the screen coming on (but always for a new stop, a preview or a run by hand), and the project wiring for it (the caller copied first, the If's condition, and its End If before the island steps); and the travel mode on trial: still while indoors with the position wandering, walking, riding through red lights, a gap starting it again, Tuesday's 517 ride read as riding, the recording carrying it, and nothing in Bus Watch reading it.
 - **Version 4.32** (`tests/v4.32.test.js`, and the wiring checks in `tests/tasks.test.js`): the code review's fixes, each with the case that showed it: times still fetched with the screen off once the next bus is within 8 minutes (it used to keep the minutes from the last fetch), your bus forgotten when a countdown ends mid-ride, the next bus on your own route never taking the connection's buzz, getting off early and walking no longer counting as riding, staying on your bus through a stop, a bus found after a walk-away picked by when you left, a start by hand clearing a swipe snooze, the bus you got on forgotten when you next wait on foot, and the "staying put" skip never applying during a countdown or by hand. The wiring checks read the project file: every Bus End caller passes its reason, Bus End copies it before its script, and Bus Watch's skip comes before the first location step.
 - **Version 4.27** (`tests/v4.27.test.js`): the same fixes on the test road, plus the swipe snooze (holding when swiped on the approach, lifting once you've been and gone, and a check running at the same moment not undoing it), poor fixes not faking a bus, staying put far away, TfL unreachable, each stop counting its own buzzes, and the recorder's end reasons, Wi-Fi changes and worked-out speed.
 - **Version 4.12** (`tests/v4.12.test.js`): the code review's fixes, each with the case that showed the problem: a southbound bus never picking a northbound stop behind you, waiting still not tripping the safety net, arrival distances capped at 200 m, the direction table noticing any change to your stops, and times fading normally while refreshes back off.
@@ -435,7 +435,7 @@ When something goes wrong on the phone, the Debugging report's positions can be 
 | `docs/pill.png`, `docs/chip.png` | The pill and the status bar chip, drawn from the project's own page. |
 | `build/` | The build: `assemble.py` (every task and profile, step by step), `helpers.py`, `labels.py` (each step's explanation) and `templates.prj.xml` (Tasker's own XML for each kind of action). `npm run build` turns these and `scripts/` into `Bus_Countdown.prj.xml`. |
 | `tests/`, `package.json` | Tests for the scripts: replayed trips and the rules around them (see Tests). `tests/fixtures` holds excerpts of a recorded day, with home and work replaced by stand-ins. |
-| `docs/mockup.html` | The island mockup, also published as an artifact: **Now** draws the island with the project's own `island_show.js` (built from `docs/mockup.src.html` by `build/mockup.py`), **Timeline** shows every version's island with a sentence on each, and the early placement and settings ideas. Open it in a browser. |
+| `docs/mockup.html` | The island mockup, also published as an artifact: **Now** draws the island with the project's own `island_show.js` (built from `docs/mockup.src.html` by `build/mockup.py`), **Timeline** shows each version that changed the island, with a sentence on each, and the early placement and settings ideas. Open it in a browser. |
 
 ### Scripts
 

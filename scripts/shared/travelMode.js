@@ -20,7 +20,7 @@ function travelMode(t, lat, lon, acc) {
   var rad = Math.PI / 180;
   var r = Math.max(15, (acc || 30) * 1.5);                           // Android's accuracy is optimistic
   var gap = kf ? (t - kf.t) / 1000 : Infinity; var had = !!kf;
-  var fresh = !kf || gap > 300 || gap <= 0 || metres(kf.a, kf.o, lat, lon) > 20000;
+  var fresh = !kf || !(gap > 0 && gap <= 300) || !Array.isArray(kf.x) || !Array.isArray(kf.P) || !Array.isArray(kf.p) || !(metres(kf.a, kf.o, lat, lon) <= 20000);
   if (fresh) kf = { a: lat, o: lon, x: [0, 0, 0, 0], P: [r * r, 0, 0, 0, 0, r * r, 0, 0, 0, 0, 25, 0, 0, 0, 0, 25], h: [], p: [0.6, 0.3, 0.1] };
   var zx = (lon - kf.o) * rad * 6371000 * Math.cos(kf.a * rad); var zy = (lat - kf.a) * rad * 6371000;
   var x = kf.x; var P = kf.P;

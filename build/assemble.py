@@ -136,7 +136,7 @@ def request_positions(mode, cond=None):
         deco(set_str(set_str(T['VARSET'], 0, '%BusStatePush'), 1, f'GPS, {what}'), '   GPS worked', ('%BusStatePush', 2, 'not requested'))]
 
 PROFILES = ['Bus Moved', 'Bus Screen On', 'Bus Hide When Sideways']
-VERSION = '4.34'
+VERSION = '4.35'
 BUILD = VERSION + '.' + time.strftime('%Y%m%d%H%M')     # changes with every build
 
 def profile_status(name, on, label, cond=None):
@@ -296,6 +296,7 @@ TASKS = [
       stop('Sideways: nothing more to do', ('%busfullnow', 2, 'yes')),
     endif(),
     stop('Stop if Bus End was used', ('%BusStateRunning', 3, '1')),
+    varset('%busrefby', '%caller1', 'Who asked for this refresh (scripts can\'t read %caller1)'),
     js('fetch_due.js', 'Fetched these times under 20 s ago? (Bus Loop and the screen coming on can both ask at once)'),
     if_('%busfresh', 3, 'yes', 'Not fetched in the last 20 s (fetch new times, build the departures and buzz)'),
     js('tt_check.js', 'Timetable for this stop today? (only fetched once a day per stop)'),

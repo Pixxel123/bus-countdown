@@ -2,10 +2,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,650&display=swap" rel="stylesheet">
-<!-- Bus Countdown: the island now, every version of it, and the early design ideas.
+<!-- Bus Countdown: the island now, every change to it, and the early design ideas.
      Built from docs/mockup.src.html by build/mockup.py (npm run build): the island's own builder,
      scripts/island_show.js, is filled in, so the Now tab draws exactly what the project draws.
-     Every change to the island gets an entry in VERSIONS (Timeline tab). -->
+     Every change to how the island looks gets an entry in VERSIONS (Timeline tab); a version that
+     changes only what happens underneath gets none, so the page stays as it is. -->
 <style>
 :root{
   --page:#EEF1F6; --panel:#FFFFFF; --ink:#161B24; --ink-2:#4B5363; --ink-3:#737B8C; --line:#D6DBE4;
@@ -219,7 +220,6 @@ h1{text-wrap:balance}
 
 .tl{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;position:relative}
 .ver{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:10px}
-.ver.quiet{background:transparent}
 .ver header{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .ver .num{font-size:1.25rem;font-weight:650;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 .ver .date{font-size:.85rem;color:var(--ink-3);font-variant-numeric:tabular-nums}
@@ -227,7 +227,6 @@ h1{text-wrap:balance}
 .ver .tag.on{background:var(--now);color:var(--panel)}
 .ver .tag.off{border:1px solid var(--line);color:var(--off)}
 .ver p{margin:0;font-size:.93rem;color:var(--ink-2);max-width:62ch}
-.ver.quiet .frame{opacity:.82}
 .isl .b.hollow{background:transparent;box-shadow:inset 0 0 0 1.5px #DC241F}
 .ex-frames{display:grid;grid-template-columns:1fr;gap:6px}
 .ver .ex-cap{font-size:.78rem;color:var(--ink-3);margin:2px 0 0}
@@ -346,8 +345,8 @@ h1{text-wrap:balance}
 
   <div id="timelineView" hidden>
     <p class="eyebrow">27 September to {{DATE}}</p>
-    <h1>Every version of the island</h1>
-    <p class="lede">Newest first. Each card shows the island as that version drew it, with a sentence on what the version brought. Versions that changed only what happens underneath say so, and keep the island of the one before.</p>
+    <h1>Every change to the island</h1>
+    <p class="lede">Newest first. Each card shows the island as that version drew it, with a sentence on what changed. Versions in between changed only what happens underneath, so they aren’t listed.</p>
     <ol class="tl" id="tl"></ol>
   </div>
 
@@ -1130,52 +1129,31 @@ function islandShow(global, setGlobal) {
     v430: { ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', m: '8', m2: '21', dots: 2 },
     v431: { ring: 'D', letters: 3, right: 'now', k: '517', idle: true, d: 'Holbry', m: '18 min', dots: 2, on: 1 }
   };
-  // Newest first. changed: the island looked different from the version before.
+  // Newest first, only the versions that changed how the island looks: [version, date, look, what changed]
   var VERSIONS = [
-    ['4.34', '7 Oct', 'v431', false, 'Your bus only leaves the island once you were seen getting on it; matched on arrival time alone it stays, like any other bus, so riding a tram into Kiln Street can no longer hide the bus you\u2019re about to catch.'],
-    ['4.33', '7 Oct', 'v431', false, 'The trip recordings move into their own folder, Downloads/Tasker-bus-trip-data, which the project creates when Record trips is on.'],
-    ['4.32', '7 Oct', 'v431', false, 'Code review fixes: times keep coming with the screen off, your bus is forgotten when a countdown ends mid-ride, and walking the last bit to a stop no longer counts as riding.'],
-    ['4.31', '7 Oct', 'v431', true, 'While you ride, later buses on your own route keep their place and time but get a grey badge, the island\u2019s idle colour, so the next 517 never looks like yours.'],
-    ['4.30', '7 Oct', 'v430', true, 'While you ride, your own bus leaves the island, so it shows only the buses you could change to; Bus Status says which bus you’re on.'],
-    ['4.29', '7 Oct', 'v429', true, 'Your bus keeps its You label but loses the light blue, so it’s the same quiet grey as any destination.'],
-    ['4.28', '7 Oct', 'v428', true, 'Works out which bus you’re on: it shows as You (or Your bus with 6 or 10 letters) in light blue, never buzzes, and Bus Status names your connection.'],
-    ['4.27', '7 Oct', 'v427', true, 'A bus TfL drops while still 2 minutes or more away stays on its countdown with ~ for up to 3 minutes, and stops by home or work no longer pop up when you arrive by bus.'],
-    ['4.26', '6 Oct', 'v416', false, 'Fixes the buzz, which never vibrated because one script declared two results on one line.'],
-    ['4.25', '3–6 Oct', 'v416', false, 'A longer buzz, and the trip recorder that saves each day’s positions and TfL replies to Download for replaying.'],
-    ['4.24', '3–6 Oct', 'v416', false, 'The stop you just got on at no longer pops up while the bus is held up inside its circle.'],
-    ['4.23', '3–6 Oct', 'v416', false, 'Bus Status copies its report to the clipboard however it’s run.'],
-    ['4.22', '3–6 Oct', 'v416', false, 'Standing at a stop counts even when the GPS fix wanders, so the countdown starts.'],
-    ['4.21', '3–6 Oct', 'v416', false, 'Only the soonest bus buzzes, so two routes arriving together give one set of buzzes.'],
-    ['4.20', '3–6 Oct', 'v416', false, 'A three-pulse buzz when a bus is under 5 minutes away, on two refreshes for each bus.'],
-    ['4.19', '3–6 Oct', 'v416', false, 'The countdown carries on, up to 2 hours, while you’re still waiting at the stop.'],
-    ['4.18', '3–6 Oct', 'v416', false, 'Ends the countdown when you get off short of the stop, and a bus TfL lists twice no longer shows as “24 · 24”.'],
-    ['4.17', '3–6 Oct', 'v416', false, 'Bus Settings opens during a countdown.'],
-    ['4.16', '3–6 Oct', 'v416', true, 'Narrower again after the preview looked far too big: room for “88 · 88 min”, with the second time left out whenever it wouldn’t fit.'],
-    ['4.15', '3–6 Oct', 'v414', false, 'Sized once per stop, for all your routes there, so a route dropping out of TfL’s list never resizes it.'],
-    ['4.14', '3–6 Oct', 'v414', true, 'No more flashing: new times redraw in place and a new size is shown before the old island goes, but it kept room for “~88 · ~88 min”, which made it too wide.'],
-    ['4.13', '3–6 Oct', 'v411', false, 'Shared helpers with a linter, tests for how tasks run together, and four tasks merged into others.'],
-    ['4.12', '3–6 Oct', 'v411', false, 'Code review fixes: no stop behind you on a bus, no safety net while you wait, arrival circles capped at 200 m.'],
-    ['4.11', '3 Oct', 'v411', true, 'The next two buses on each route (“5 · 17 min”, the second quieter), and an easier swipe to dismiss: 90 dp, or a 60 dp flick.'],
-    ['4.10', '2 Oct', 'v45', false, 'Fewer tasks and profiles, positions requested to suit the trip, and a one-minute heads-up at your desk.'],
-    ['4.9', '2 Oct', 'v45', false, 'A trip state machine over your last six positions, with smoothing and your place along the route.'],
-    ['4.8', '2 Oct', 'v45', false, 'On commutes the side of the road heading home or to work comes first, and leaving ends it sooner.'],
-    ['4.7', '2 Oct', 'v45', false, 'Profiles switch themselves on after an import, and Bus Status gains a Debugging report.'],
-    ['4.6', '1 Oct', 'v45', false, 'Starts from your speed and position, shows a stop you’re heading for a few minutes early, and labels every step plainly.'],
-    ['4.5', '29 Sep – 1 Oct', 'v45', true, 'A settings screen and only your saved stops; the island gains the TfL stop-letter ring, a few letters of destination, minutes at a fixed spot, faded old times, and hides when the phone turns sideways.'],
+    ['4.31', '7 Oct', 'v431', 'While you ride, later buses on your own route keep their place and time but get a grey badge, the island\u2019s idle colour, so the next 517 never looks like yours.'],
+    ['4.30', '7 Oct', 'v430', 'While you ride, your own bus leaves the island, so it shows only the buses you could change to; Bus Status says which bus you’re on.'],
+    ['4.29', '7 Oct', 'v429', 'Your bus keeps its You label but loses the light blue, so it’s the same quiet grey as any destination.'],
+    ['4.28', '7 Oct', 'v428', 'Works out which bus you’re on: it shows as You (or Your bus with 6 or 10 letters) in light blue, never buzzes, and Bus Status names your connection.'],
+    ['4.27', '7 Oct', 'v427', 'A bus TfL drops while still 2 minutes or more away stays on its countdown with ~ for up to 3 minutes, and stops by home or work no longer pop up when you arrive by bus.'],
+    ['4.16', '3–6 Oct', 'v416', 'Narrower again after the preview looked far too big: room for “88 · 88 min”, with the second time left out whenever it wouldn’t fit.'],
+    ['4.14', '3–6 Oct', 'v414', 'No more flashing: new times redraw in place and a new size is shown before the old island goes, but it kept room for “~88 · ~88 min”, which made it too wide.'],
+    ['4.11', '3 Oct', 'v411', 'The next two buses on each route (“5 · 17 min”, the second quieter), and an easier swipe to dismiss: 90 dp, or a 60 dp flick.'],
+    ['4.5', '29 Sep – 1 Oct', 'v45', 'A settings screen and only your saved stops; the island gains the TfL stop-letter ring, a few letters of destination, minutes at a fixed spot, faded old times, and hides when the phone turns sideways.'],
     ['gap', 'There was no 4.1 to 4.4: the numbering went from V4 straight to 4.5.'],
-    ['V4', '28 Sep', 'v4', true, 'The island becomes the main display, fitted to the measured camera, with the status bar chip as a fallback; a long swipe dismisses it and a long press switches to the stop opposite.'],
-    ['V3', '28 Sep', 'v3', true, 'Setup questions, saved stops and starting by itself; when TfL has no prediction the timetable fills in, shown with ~ in grey.'],
-    ['V2', '27 Sep', 'v2', true, 'A richer notification with Other side and Stop buttons, then the first island: a black capsule round the camera rotating through routes, with dots and a draining border.'],
-    ['V1', '27 Sep', 'v1', true, 'Four tasks built by hand: press Start and the next buses at the nearest stop appear in a notification for about ten minutes.']
+    ['V4', '28 Sep', 'v4', 'The island becomes the main display, fitted to the measured camera, with the status bar chip as a fallback; a long swipe dismisses it and a long press switches to the stop opposite.'],
+    ['V3', '28 Sep', 'v3', 'Setup questions, saved stops and starting by itself; when TfL has no prediction the timetable fills in, shown with ~ in grey.'],
+    ['V2', '27 Sep', 'v2', 'A richer notification with Other side and Stop buttons, then the first island: a black capsule round the camera rotating through routes, with dots and a draining border.'],
+    ['V1', '27 Sep', 'v1', 'Four tasks built by hand: press Start and the next buses at the nearest stop appear in a notification for about ten minutes.']
   ];
   var tl = $('tl');
   tl.innerHTML = VERSIONS.map(function (v) {
     if (v[0] === 'gap') return '<li class="gap-note">' + v[1] + '</li>';
     var look = LOOK[v[2]], h = look.notification ? 150 : 48;
     var inner = look.notification ? notificationHtml() : islandHtml(look);
-    return '<li class="ver' + (v[3] ? '' : ' quiet') + '" data-version="' + v[0].replace(/^V/, '') + '">' +
+    return '<li class="ver" data-version="' + v[0].replace(/^V/, '') + '">' +
       '<header><span class="num">' + (/^V/.test(v[0]) ? v[0] : 'V' + v[0]) + '</span><span class="date">' + v[1] + '</span>' +
-      '<span class="tag ' + (look.notification ? 'off">No island yet' : v[3] ? 'on">Island changed' : 'off">Same island') + '</span></header><p>' + v[4] + '</p>' +
+      '<span class="tag ' + (look.notification ? 'off">No island yet' : 'on">Island changed') + '</span></header><p>' + v[3] + '</p>' +
       '<div class="frame" data-h="' + h + '"><div class="fs" style="height:' + h + 'px"><span class="clock">12:21</span><div class="hole"></div>' + inner + '</div></div></li>';
   }).join('');
   // ---- Explore: ways to show the bus you're on ----------------------------------------------------

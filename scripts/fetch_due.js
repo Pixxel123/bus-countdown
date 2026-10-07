@@ -13,6 +13,7 @@
 var now = Date.now();
 var lastAt = parseInt(get('BusStateFetchAt'), 10) || 0;
 // Only the two automatic callers are held back: switching stop, a preview in Settings, or running
-// Bus Refresh by hand always fetches
-var auto = /^task=Bus (Loop|Wake)$/.test(loc('caller1'));
+// Bus Refresh by hand always fetches. (%caller1 isn't visible to scripts: Bus Refresh copies it into
+// %busrefby first.)
+var auto = /^task=Bus (Loop|Wake)$/.test(loc('busrefby'));
 var busfresh = auto && get('BusStateFetchStop') === get('BusStateStopId') && now - lastAt >= 0 && now - lastAt < 20000 ? 'yes' : 'no';

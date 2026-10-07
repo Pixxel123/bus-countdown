@@ -42,7 +42,7 @@ if (boardedNow && Date.now() - boardedNow.at < 90 * 60000)
 var modeNow = null; try { modeNow = JSON.parse(get('BusStateMode') || 'null'); } catch (e) {}
 if (modeNow && Date.now() - modeNow.t < 10 * 60000) {
   var mi = ['still', 'walk', 'ride'].indexOf(modeNow.m);
-  lines.push('Travel mode (on trial, not used yet): ' + ({ still: 'still', walk: 'walking', ride: 'riding' }[modeNow.m] || '?') + ', ' + (mi > -1 ? modeNow.p[mi] : '?') + '% sure, ' + Math.round(modeNow.v * 3.6) + ' km/h');
+  lines.push('Travel mode (on trial, not used yet): ' + ({ still: 'still', walk: 'walking', ride: 'riding' }[modeNow.m] || '?') + ', ' + (mi > -1 && modeNow.p ? modeNow.p[mi] : '?') + '% sure' + (isFinite(modeNow.v) ? ', ' + Math.round(modeNow.v * 3.6) + ' km/h' : ''));
 }
 lines.push('Bus Watch last run: ' + (get('BusStateWatchInfo') || 'not yet'));
 
