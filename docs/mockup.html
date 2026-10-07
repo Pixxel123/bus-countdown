@@ -231,6 +231,10 @@ h1{text-wrap:balance}
 .isl .b.hollow{background:transparent;box-shadow:inset 0 0 0 1.5px #DC241F}
 .ex-frames{display:grid;grid-template-columns:1fr;gap:6px}
 .ver .ex-cap{font-size:.78rem;color:var(--ink-3);margin:2px 0 0}
+.ex-h{font-size:1.2rem;font-weight:650;margin:32px 0 4px;text-wrap:balance}
+.lock{font-size:.86rem;color:var(--ink-2);background:var(--chip);border-radius:12px;padding:10px 12px;margin:0 0 16px;max-width:none}
+.lock b{font-weight:600;color:var(--ink)}
+.isl .b.idle{background:#5A6376}
 .ver .trade{color:var(--ink-3);font-size:.88rem}
 .ver .tag.pick{background:var(--accent);color:var(--accent-ink)}
 .gap-note{font-size:.85rem;color:var(--ink-3);text-align:center;padding:2px 0}
@@ -333,6 +337,11 @@ h1{text-wrap:balance}
     <h1>Ways to show your bus</h1>
     <p class="lede">You’re on the 517, 2 minutes from Wexley (Stop D), and the 566 comes 6 minutes after you get there. Five ways the island could say so, weighed with impeccable’s quieter and distill guidance: show hierarchy through shape and position rather than colour, and leave out whatever isn’t needed. The island has C, since 4.30.</p>
     <ol class="tl" id="explore"></ol>
+
+    <h2 class="ex-h">The next bus on your route</h2>
+    <p class="lede">Riding the 517 into Wexley, the island also lists the next 517, 18 minutes behind you. Shown like any other bus, it can look like yours. Three variants made with impeccable’s generate method: the island’s identity written down first, then each variant changes one different thing (hierarchy, colour, structure) and is checked against that identity. None is built yet.</p>
+    <p class="lock"><b>Identity kept in every variant:</b> a black capsule 30 dp high round the camera; white 14 px bold minutes; a solid TfL-red route badge; the destination in 12 px #B7BFCD; the bus after in 11 px #9AA3B5; a 1.5 px white ring for the stop letter; 4 px dots, #5A6376 with the active one white; no shadows or decoration; terse numbers.</p>
+    <ol class="tl" id="explore2"></ol>
   </div>
 
   <div id="timelineView" hidden>
@@ -1514,7 +1523,7 @@ var buslayout = JSON.stringify({
     var right = '<span class="m' + (f.mCls ? ' ' + f.mCls : '') + '">' + f.m + '</span>' + (f.m2 ? '<span class="m2">· ' + f.m2 + ' min</span>' : '') + (f.after ? '<span class="m2"> ' + f.after + '</span>' : '') + dots;
     var ring = f.border ? '<svg width="' + W + '" height="30" viewBox="0 0 ' + W + ' 30"><rect x="1" y="1" width="' + (W - 2) + '" height="28" rx="14" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"/></svg>' : '';
     return '<div class="isl" style="left:' + x + 'px;top:9px;width:' + W + 'px;padding:0 ' + PAD + 'px">' + ring +
-      '<span class="h" style="width:' + L + 'px">' + (f.ring ? '<span class="sl">' + f.ring + '</span>' : '') + '<span class="b' + (f.hollow ? ' hollow' : '') + '">' + f.k + '</span>' +
+      '<span class="h" style="width:' + L + 'px">' + (f.ring ? '<span class="sl">' + f.ring + '</span>' : '') + '<span class="b' + (f.hollow ? ' hollow' : '') + (f.idle ? ' idle' : '') + '">' + f.k + '</span>' +
       '<span class="d' + (f.dCls ? ' ' + f.dCls : '') + '">' + f.d + '</span></span>' +
       '<span class="g" style="width:' + GAP + 'px"></span><span class="h" style="width:' + R + 'px">' + right + '</span></div>';
   }
@@ -1602,6 +1611,28 @@ var buslayout = JSON.stringify({
      'Says the useful thing, when you reach your stop, in the island’s own grammar. But with 3 letters, telling “Wex…” from a real destination relies on knowing the route.',
      [['Your bus', look({ k: '517', d: 'Wexley', m: '2 min', m2: '', on: 0 })], ['Then your connection', CONN]]]
   ];
+  var NEXT = [
+    ['1', 'Hierarchy: no lead time', '', 'The next 517 drops its bold minutes and shows only the quiet second time, \u201c\u00b7 18 min\u201d. The island already uses that tier for the bus after this one, and your bus is this one.',
+     'Uses the island\u2019s own grammar, so there\u2019s nothing new to learn. But the bold spot just past the camera sits empty, which could read as a gap rather than a meaning.',
+     [['Your connection', CONN], ['The next 517', look({ k: '517', d: 'Holbry', m: '', m2: '18', on: 1 })]]],
+    ['2', 'Colour: an idle badge', 'Suggested', 'The next 517\u2019s badge is filled with the grey the island already uses for idle dots, instead of TfL red. The destination and time stay exactly as they are.',
+     'Only one thing changes, using the grey the island already gives idle dots, so it reads as \u201cnot the one coming now\u201d without words. It removes colour rather than adding any, and the grey differs from the red in lightness as well as hue.',
+     [['Your connection', CONN], ['The next 517', look({ k: '517', idle: true, d: 'Holbry', m: '18 min', m2: '', on: 1 })]]],
+    ['3', 'Structure: leave it out', '', 'While you ride, later buses on your own route leave the island too, so it shows only other routes. Bus Status still lists them.',
+     'The most distilled: a 517 behind the one you\u2019re on can\u2019t help you change at Wexley. But it goes without a trace, which may feel like missing data.',
+     [['The only thing shown', look({ dots: 1, on: 0 })]]]
+  ];
+  function cards(list) {
+    return list.map(function (o) {
+      return '<li class="ver"><header><span class="num">' + o[0] + '</span><span class="date">' + o[1] + '</span>' +
+        (o[2] ? '<span class="tag ' + (/^(Chosen|Suggested)/.test(o[2]) ? 'pick' : 'off') + '">' + o[2] + '</span>' : '') + '</header>' +
+        '<p>' + o[3] + '</p><div class="ex-frames">' + o[5].map(function (f) {
+          return '<div><div class="frame" data-h="48"><div class="fs" style="height:48px"><span class="clock">12:21</span><div class="hole"></div>' +
+            islandHtml(f[1]) + '</div></div><p class="ex-cap">' + f[0] + '</p></div>';
+        }).join('') + '</div><p class="trade">' + o[4] + '</p></li>';
+    }).join('');
+  }
+  $('explore2').innerHTML = cards(NEXT);
   $('explore').innerHTML = OPTIONS.map(function (o) {
     return '<li class="ver"><header><span class="num">' + o[0] + '</span><span class="date">' + o[1] + '</span>' +
       (o[2] ? '<span class="tag ' + (/^Chosen/.test(o[2]) ? 'pick' : 'off') + '">' + o[2] + '</span>' : '') + '</header>' +
