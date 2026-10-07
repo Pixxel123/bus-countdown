@@ -36,15 +36,16 @@ function refresh(g, arrivals, now) {
   return { buzz: r.busbuzz, yours, shown: shown.map((b) => b.v), labels: shown.map((b) => b.d) };
 }
 
-test('two refreshes agreeing: your bus is worked out and left off the island; one isn\'t enough', () => {
+test('two refreshes agreeing: your bus is worked out, but only as "probably", so it stays on the island (4.34); one isn\'t enough', () => {
   const g = base(); let now = T0;
   g.BusStateTrip = ridingTo(2.6, now);
   assert.strictEqual(refresh(g, [bus('517', 2.5, 'YY1'), bus('566', 8.7, 'LF1')], now).yours, null);
   now += 40000; g.BusStateTrip = ridingTo(1.9, now);
   const r = refresh(g, [bus('517', 1.8, 'YY1'), bus('566', 8, 'LF1')], now);
   assert.strictEqual(r.yours, 'YY1');
-  assert.deepStrictEqual(r.shown, ['LF1'], 'only the connection (4.30)');
-  assert.match(JSON.parse(g.BusStateMatch).note, /^on the 517 \(YY1\), at Wexley \(Stop D\) in about 2 min; then the 566 6 min after you get there$/);
+  assert.deepStrictEqual(r.shown, ['YY1', 'LF1'], 'not seen getting on it: it stays, in case it\'s the bus you\'re about to catch');
+  assert.strictEqual(r.buzz, 'no', 'and nothing buzzes while you ride, as when your bus isn\'t known');
+  assert.match(JSON.parse(g.BusStateMatch).note, /^probably on the 517 \(YY1\), at Wexley \(Stop D\) in about 2 min; then the 566 6 min after you get there$/);
 });
 
 test('if your bus is the only one listed, it stays on the island as an ordinary bus', () => {

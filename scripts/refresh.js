@@ -94,21 +94,30 @@ if (riding) {
     if (m && m.v === match.v) { match.n++; match.err = Math.round(m.err); }
     else if (m) match = { stop: stopId, k: m.k, v: m.v, n: 1, by: 'eta', err: Math.round(m.err) };
   }
-  if (match.n >= 2) yourBus = deps.filter(function (x) { return x.v === match.v; })[0] || null;
+  var likely = match.n >= 2 ? deps.filter(function (x) { return x.v === match.v; })[0] || null : null;
+  // Only a bus you were seen getting on counts as yours for the island and the buzz (4.34). A match
+  // on arrival time alone stays a "probably": on Wednesday, coming into Kiln Street on the tram, your
+  // arrival time matched the 566 WD21TSS, and 4.33 hid the very bus you were about to catch. A tram
+  // or a car closing in on a stop looks just like a bus doing so; only getting on at a stop tells
+  // them apart. A "probably" bus stays on the island like any other, and nothing buzzes while you
+  // ride (as when your bus isn't known), but Bus Status and the recording still name it.
+  match.sure = match.by === 'boarded';
+  if (likely && match.sure) yourBus = likely;
   // Kept for Bus Watch, so the bus you came in on is never taken for the one you then get on
-  if (yourBus) setGlobal('BusStateCameOn', JSON.stringify({ k: yourBus.k, v: yourBus.v, stop: stopId, at: now }));
-  if (yourBus && !match.noted) {
+  if (likely) setGlobal('BusStateCameOn', JSON.stringify({ k: likely.k, v: likely.v, stop: stopId, at: now, sure: match.sure }));
+  if (likely && !match.noted) {
     match.noted = true;
-    debugLog('Your bus: the ' + yourBus.k + ' (' + yourBus.v + ')' + (match.by === 'boarded' ? ', the one you got on' : ', ' + match.err + ' s from your own arrival time'));
-    record('match', { stop: stopId, route: yourBus.k, v: yourBus.v, by: match.by, err: match.err === undefined ? null : match.err });
+    debugLog('Your bus: the ' + likely.k + ' (' + likely.v + ')' + (match.sure ? ', the one you got on' : ', probably: ' + match.err + ' s from your own arrival time'));
+    record('match', { stop: stopId, route: likely.k, v: likely.v, by: match.by, sure: match.sure, err: match.err === undefined ? null : match.err });
   }
 }
 // The connection: the first bus on another route due after yours gets there (one before it can't be
 // caught, and a later bus on your own route is no use: 4.32)
-var connection = yourBus ? deps.filter(function (x) { return x.v !== yourBus.v && x.k !== yourBus.k && x.t > yourBus.t + 30000; })[0] : null;
-match.note = yourBus ? 'on the ' + yourBus.k + ' (' + yourBus.v + '), at ' + get('BusStateStopName') + ' in about ' +
-  Math.max(1, Math.round((yourBus.t - now) / 60000)) + ' min' + (connection ? '; then the ' + connection.k + ' ' +
-  Math.round((connection.t - yourBus.t) / 60000) + ' min after you get there' : '') : '';
+var named = yourBus || (typeof likely !== 'undefined' ? likely : null);
+var connection = named ? deps.filter(function (x) { return x.v !== named.v && x.k !== named.k && x.t > named.t + 30000; })[0] : null;
+match.note = named ? (yourBus ? '' : 'probably ') + 'on the ' + named.k + ' (' + named.v + '), at ' + get('BusStateStopName') + ' in about ' +
+  Math.max(1, Math.round((named.t - now) / 60000)) + ' min' + (connection ? '; then the ' + connection.k + ' ' +
+  Math.round((connection.t - named.t) / 60000) + ' min after you get there' : '') : '';
 match.at = now;
 setGlobal('BusStateMatch', riding ? JSON.stringify(match) : '');
 // While you ride, the island shows only the buses you could change to: your own bus is left out
@@ -123,6 +132,8 @@ if (yourBus) {
   deps = deps.map(function (x) { return x.k === yourBus.k && x.v !== yourBus.v ? Object.assign({}, x, { idle: true }) : x; });
 }
 var busnodata = (code !== '200' && !deps.length) ? 'yes' : 'no';
+// When these times arrived, for Bus Refresh's next run (fetch_due.js: a second fetch within 20 s is skipped)
+if (code === '200') { setGlobal('BusStateFetchAt', String(now)); setGlobal('BusStateFetchStop', get('BusStateStopId')); }
 
 // Refresh less often while the next bus is far off: more than 10 minutes away, wait twice
 // BusRefresh (90 s by default) before the next fetch; closer than that, BusRefresh as normal.
@@ -174,7 +185,7 @@ deps.forEach(function (x) { if (buzzed[keyOf(x)]) stillHere[keyOf(x)] = buzzed[k
 // Riding, once your bus is known: the soonest connection buzzes instead (a bus due before yours gets
 // there can't be caught); until it's known, nothing does
 // (Your bus known but no longer listed: it has reached the stop, so you're there, and buzzing is as usual)
-var buzzRiding = riding && !(match.n >= 2 && !yourBus);
+var buzzRiding = riding && !(match.n >= 2 && match.sure && !yourBus);
 var first = deps.filter(function (x) { return x.t - now > -60000 && (!buzzRiding || (yourBus && !x.mine && !x.idle && x.t > yourBus.t + 30000)); })
   .sort(function (a, b) { return a.t - b.t; })[0];
 if (first && (first.t - now) / 60000 < 5 && (stillHere[keyOf(first)] || 0) < 2 && sinceBuzz >= 30000) {

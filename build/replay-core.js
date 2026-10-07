@@ -29,7 +29,11 @@ function replay(lines, extraGlobals) {
     // (Recordings before 4.27 have no reason on any ending, from: ''. A Bus Watch ending there comes
     // just after the position that caused it, which today's rules have already played, so by then the
     // countdown is only still running here if today's rules kept it going.)
-    if (l.k === 'end' && l.from !== 'watch' && g.BusStateRunning === '1') {
+    // (4.34: an ending with no reason that comes within 3 s of a position was Bus Watch's own doing
+    // either way round: on Tuesday at 17:20:31 the ending was written a second before the position
+    // that caused it. Today's rules decide those for themselves.)
+    const watchEnd = l.k === 'end' && l.from === '' && lines.some((c) => c.k === 'check' && Math.abs(c.t - l.t) <= 3000);
+    if (l.k === 'end' && l.from !== 'watch' && !watchEnd && g.BusStateRunning === '1') {
       g.BusStateRunning = '0'; g.TRUN = '';
       out.push({ t: l.t, k: 'end', line: l, note: `ended (${l.why || l.from || 'reason not recorded'})` });
       continue;
@@ -60,7 +64,8 @@ function replay(lines, extraGlobals) {
     }
     if (r.busaction === 'stop') { g.BusStateRunning = '0'; g.TRUN = ''; }
     const state = JSON.parse(g.BusStateTrip || '{}').s;
-    out.push({ t: l.t, k: 'check', line: l, action: r.busaction, state, why: r.why, rate: g.BusStatePushMode,
+    let md = null; try { md = JSON.parse(g.BusStateMode || 'null'); } catch (e) { md = null; }   // travel mode on trial (4.34)
+    out.push({ t: l.t, k: 'check', line: l, action: r.busaction, state, why: r.why, rate: g.BusStatePushMode, mode: md && md.t === l.t ? md.m : null, kv: md && md.t === l.t ? md.v : null,
       same: r.busaction === l.action && state === l.state });
   }
   return { out, globals: g };

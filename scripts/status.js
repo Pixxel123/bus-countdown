@@ -39,6 +39,11 @@ if (matchNow.note && running && Date.now() - (matchNow.at || 0) < 10 * 60000) li
 var boardedNow = null; try { boardedNow = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) {}
 if (boardedNow && Date.now() - boardedNow.at < 90 * 60000)
   lines.push('Last got on: the ' + boardedNow.k + ' (' + boardedNow.v + ') at ' + (stopNames[boardedNow.stop] || boardedNow.stop) + ', ' + new Date(boardedNow.at).toTimeString().slice(0, 5));
+var modeNow = null; try { modeNow = JSON.parse(get('BusStateMode') || 'null'); } catch (e) {}
+if (modeNow && Date.now() - modeNow.t < 10 * 60000) {
+  var mi = ['still', 'walk', 'ride'].indexOf(modeNow.m);
+  lines.push('Travel mode (on trial, not used yet): ' + ({ still: 'still', walk: 'walking', ride: 'riding' }[modeNow.m] || '?') + ', ' + (mi > -1 ? modeNow.p[mi] : '?') + '% sure, ' + Math.round(modeNow.v * 3.6) + ' km/h');
+}
 lines.push('Bus Watch last run: ' + (get('BusStateWatchInfo') || 'not yet'));
 
 var places = get('BusPlaces').split('\n').filter(function (r) { return r.split('|').length >= 5; });

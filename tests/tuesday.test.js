@@ -79,8 +79,10 @@ const allAt = (hms, k) => all.find((o) => clock(o) === hms && (!k || o.k === k))
 test('09:18 on the 517 to work: matched to WH63YOX on the second refresh', () => {
   assert.strictEqual(allAt('09:17:46', 'tfl').yours, null, 'one refresh isn\'t enough');
   assert.strictEqual(allAt('09:18:37', 'tfl').yours, 'WH63YOX');
-  assert.ok(!allAt('09:18:37', 'tfl').shown.includes('WH63YOX'), 'and left off the island (4.30)');
-  assert.strictEqual(allAt('09:18:37', 'tfl').soonest.v, 'TB46CMO', 'the island shows the next one instead');
+  // The recording starts with you already on it, so you were never seen getting on: since 4.34 a
+  // match on arrival time alone is only "probably", and the bus stays on the island
+  assert.strictEqual(allAt('09:18:37', 'tfl').match.sure, false);
+  assert.ok(allAt('09:18:37', 'tfl').shown.includes('WH63YOX'), 'so it stays on the island (4.34)');
   assert.ok(all.filter((o) => o.k === 'tfl' && o.yours && clock(o) < '10:00').every((o) => o.yours === 'WH63YOX'), 'never any other');
 });
 

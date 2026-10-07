@@ -1,6 +1,6 @@
 # Bus Countdown
 
-Version 4.33
+Version 4.34
 
 A Tasker project for Android that shows live London bus arrivals in a small pill around the front camera, in the style of a "dynamic island". It starts when you arrive at a saved bus stop and ends when you leave.
 
@@ -169,6 +169,8 @@ Variables starting with `BusState`, `BusCache` or `BusTemp` are managed by the p
 - `BusStateSnooze`: the stop you last swiped away, and when (kept apart from the trip so a check running at the same moment can't undo it).
 - `BusStateSeen`: the buses TfL last listed at the current stop, so one it drops can be kept on its countdown. `BusStateBuzzed` and `BusStateBuzzAt`: which buses have buzzed at which stop, and when the last buzz was.
 - `BusStateMatch`, `BusStateBoarded`, `BusStateCameOn`: the bus you're riding (while it's being worked out, and once known), the bus you last got on, and the bus you last came in on (see "Which bus you're on").
+- `BusStateKF`, `BusStateMode`: the travel mode on trial (4.34): the filter's state between positions, and the latest mode for Bus Status.
+- `BusStateFetchAt`, `BusStateFetchStop`: when times last arrived, and for which stop (no second fetch within 20 s).
 - `BusStateNextAt`: when the next bus is due (or your own bus reaches the stop), as a time, so Bus Loop can tell with the screen off when it's within 8 minutes.
 - `BusStateLastBusAt`: when you were last moving at bus speed (for stops by home and work). `BusStateFarAt`: where you settled, while positions are slowed down far from your stops. `BusStateEndWhy`: why Bus Watch ended the countdown, for the recorder.
 - `BusState…`: current state, such as whether a countdown is running, which stop is shown, the last Wi-Fi network seen and what Bus Watch last decided.
@@ -280,15 +282,17 @@ Swiping the island away, the 30-minute limit and getting home also move it to Le
 
 ### Which bus you're on
 
-When a countdown shows a stop you're riding a bus towards, Bus Watch keeps when you'd get there at the pace you've been closing in on it, and Bus Refresh compares that with each bus TfL lists. The bus whose time agrees (within 2½ minutes, with no other bus nearly as close) on two refreshes in a row is yours. On Tuesday 6 October's three rides each bus's time was within 10 to 30 seconds of when you actually reached the stop.
+When a countdown shows a stop you're riding a bus towards, Bus Watch keeps when you'd get there at the pace you've been closing in on it, and Bus Refresh compares that with each bus TfL lists. The bus whose time agrees (within 2½ minutes, with no other bus nearly as close) on two refreshes in a row is **probably** yours. On Tuesday 6 October's three rides each bus's time was within 10 to 30 seconds of when you actually reached the stop.
+
+Since 4.34 only a bus you were **seen getting on** at a stop counts as yours for the island and the buzz. On Wednesday 7 October, coming into Kiln Street on the tram, your arrival time matched the 566 WD21TSS, and 4.33 hid the very bus you were about to catch: a tram or a car closing in on a stop looks exactly like a bus doing so. A "probably" bus stays on the island like any other and nothing buzzes while you ride (as when your bus isn't known); Bus Status and the recording still name it ("probably on the 566 (WD21TSS)"). To keep the bus you got on through a long ride, it's no longer forgotten 15 minutes after a crawl in traffic read as "left" while you're still moving at bus speed (Tuesday's 517 to Wexley).
 
 ```mermaid
 flowchart LR
     w["Bus Watch: your distance<br/>and closing speed"] --> eta["Your arrival time<br/>(trip.eta)"]
     t["TfL: each bus's time<br/>at the stop"] --> cmp{"Nearest within 2½ min,<br/>no close rival?"}
     eta --> cmp
-    cmp -->|"same bus twice"| yours["Your bus"]
-    b["The bus you got on<br/>at your last stop"] -->|"listed here"| yours
+    cmp -->|"same bus twice"| prob["Probably your bus:<br/>Bus Status only"]
+    b["The bus you got on<br/>at your last stop"] -->|"listed here"| yours["Your bus"]
     yours --> island["Island: left off,<br/>connections only"]
     yours --> buzz["Buzz: only a connection<br/>due after you get there"]
     yours --> status["Bus Status: your bus,<br/>and the connection"]
@@ -311,6 +315,7 @@ Earlier versions used an invisible overlay to watch for the status bar being hid
 - Staying put somewhere 300 m or more outside all your stops' circles (a café, a friend's), indoor GPS wanders 30 to 70 m, which would beat the 30 m step, so positions slow to every 100 m, at most once a minute, until you've moved 150 m; the screen coming on doesn't take a new fix there if there was one in the last 2 minutes.
 - During a countdown, Bus Loop doesn't fetch times while the screen is off, except while a bus is within 8 minutes (for the buzz; worked out from when it's due, so it counts down between fetches); Bus Wake fetches them as soon as the screen is back on. While the next bus is more than 10 minutes away it fetches half as often.
 - When TfL can't be reached (no signal), each failure in a row doubles the wait before trying again (90, 180, then at most 300 seconds); the first success goes straight back to normal.
+- Bus Loop and the screen coming on can both ask for times within seconds of each other (11 times a day on Tuesday and Wednesday). TfL only updates its times about every 30 seconds, so since 4.34 a second fetch for the same stop within 20 seconds is skipped and the island stays as it is (`fetch_due.js`); switching stop, a Settings preview or a run by hand always fetch.
 - Every check asks for Android's ordinary location first (Wi-Fi and mobile networks) and only forces GPS on if that position is too old: over a minute during a countdown (so walking away is seen promptly), over 3 minutes otherwise.
 - The optional border is updated 4 times a second (several routes) or once a second (one route), with a CSS transition to keep it smooth, and not at all while the screen is off.
 - Turning sideways is noticed by a Tasker profile, not by anything running in the background.
@@ -361,10 +366,10 @@ For tuning against real journeys. With **Record trips** on (Bus Settings › Cou
 | Kind | What it holds |
 |---|---|
 | `setup` | First line of each day: your saved stops, routes, the route lists, home and work, and the settings that shape decisions, so the day can be replayed |
-| `check` | Each position Bus Watch checked (pushed, screen on, safety net or by hand): where, accuracy, Android's speed and direction, how old, the speed the rules used (`v`), whether that looked like a bus, whether you'd settled, the position rate asked for, and what it decided (trip state, action, why) |
+| `check` | Each position Bus Watch checked (pushed, screen on, safety net or by hand): where, accuracy, Android's speed and direction, how old, the speed the rules used (`v`), whether that looked like a bus, whether you'd settled, the position rate asked for, what it decided (trip state, action, why), and the travel mode on trial (`mode`: still, walk or ride; `mp`: how sure, per cent each; `kv`: the filtered speed over the last minute) |
 | `tfl` | Each TfL reply: every bus (route, vehicle, seconds away; `l` live, `s` timetable, `k` kept after TfL dropped it), your bus if known (`you`), and how long the refresh took |
 | `start`, `nostart`, `end` | Countdowns starting (which stop, why, battery level) and ending (`from`: island, menu, timeout, wifi or watch, with `why` in words, and the battery level) |
-| `match`, `board` | Your bus worked out while riding (route, vehicle, how: from your arrival time, with how many seconds out, or as the bus you got on), and the bus you got on at a stop (with how many seconds TfL still had it away when you left) |
+| `match`, `board` | Your bus worked out while riding (route, vehicle, how: from your arrival time, with how many seconds out, or as the bus you got on; `sure` when it's the bus you got on), and the bus you got on at a stop (with how many seconds TfL still had it away when you left) |
 | `wifi` | Each change of Wi-Fi network, as `home`, `work`, `other` or `none` (never the network's name) |
 | `buzz` | Each buzz: route, vehicle, minutes away, first or second |
 
@@ -399,7 +404,7 @@ The `tests` folder runs the project's own scripts (from `scripts/`) the way Task
 npm test
 ```
 
-What's covered (155 tests, after the linter):
+What's covered (171 tests, after the linter):
 
 - **The project file matches the scripts:** every JavaScriptlet in `Bus_Countdown.prj.xml` is a file in `scripts/` (with its shared pieces filled in), every file and shared piece is used, no script keeps its own copy of a shared helper, every step has an explanation, and every Perform Task points at a task that exists.
 - **Replayed trips** through the state machine: walking past a stop, waiting then catching the bus, walking away with no speed readings, a saved stop coming up on a bus, a jumpy fix while waiting, passing through a circle, swiping away, and a big arrival circle not restarting as you leave.
@@ -414,6 +419,7 @@ What's covered (155 tests, after the linter):
 - **Version 4.11** (`tests/v4.11.test.js`, written first as todo tests): Wi-Fi hysteresis, backing off with no signal, next two buses, and the swipe rule (route changes, 90 dp to dismiss, a fast 60 dp fling).
 - **Tuesday 6 October, replayed** (`tests/tuesday.test.js`): excerpts of the first recorded day (`tests/fixtures`, with home and work replaced by stand-ins), played through today's rules: no pop-up on the 517 to work or the 566 home; the 517 TfL dropped for 2½ minutes kept on the island and buzzing at 4½ minutes, not 1.9; still shown on the way to Wexley, where you change, without buzzing for the bus you're on; one buzz from two refreshes 6 seconds apart; and leaving Wexley on the 566 in traffic ending as "on the bus".
 - **Which bus you're on** (`tests/tuesday.test.js` and `tests/v4.28.test.js`): Tuesday's three rides each matched to the right bus (WH63YOX to work on the second refresh, LA28LPG to Wexley with the 566 as the connection, LE15BXA home known at once as the bus you got on at Wexley, not the 517 you came in on); and on made-up rides, one refresh not being enough, rivals too close to call, the connection buzzing but never your bus, nothing kept while you're waiting, and buses that drop off the list remembered as gone.
+- **Version 4.34** (`tests/v4.34.test.js`): the Kiln Street tram (your arrival matching the bus you're about to catch leaves it on the island, not greyed, and nothing buzzes) against the same ride having been seen getting on; the bus you got on kept through a crawl in traffic but forgotten once the trip's really over; Tuesday replayed with getting on LA28LPG at 17:21 seen and carried through to Wexley; no second fetch within 20 s from Bus Loop or the screen coming on (but always for a new stop, a preview or a run by hand), and the project wiring for it; and the travel mode on trial: still while indoors with the position wandering, walking, riding through red lights, a gap starting it again, Tuesday's 517 ride read as riding, the recording carrying it, and nothing in Bus Watch reading it.
 - **Version 4.32** (`tests/v4.32.test.js`, and the wiring checks in `tests/tasks.test.js`): the code review's fixes, each with the case that showed it: times still fetched with the screen off once the next bus is within 8 minutes (it used to keep the minutes from the last fetch), your bus forgotten when a countdown ends mid-ride, the next bus on your own route never taking the connection's buzz, getting off early and walking no longer counting as riding, staying on your bus through a stop, a bus found after a walk-away picked by when you left, a start by hand clearing a swipe snooze, the bus you got on forgotten when you next wait on foot, and the "staying put" skip never applying during a countdown or by hand. The wiring checks read the project file: every Bus End caller passes its reason, Bus End copies it before its script, and Bus Watch's skip comes before the first location step.
 - **Version 4.27** (`tests/v4.27.test.js`): the same fixes on the test road, plus the swipe snooze (holding when swiped on the approach, lifting once you've been and gone, and a check running at the same moment not undoing it), poor fixes not faking a bus, staying put far away, TfL unreachable, each stop counting its own buzzes, and the recorder's end reasons, Wi-Fi changes and worked-out speed.
 - **Version 4.12** (`tests/v4.12.test.js`): the code review's fixes, each with the case that showed the problem: a southbound bus never picking a northbound stop behind you, waiting still not tripping the safety net, arrival distances capped at 200 m, the direction table noticing any change to your stops, and times fading normally while refreshes back off.
@@ -470,6 +476,7 @@ When something goes wrong on the phone, the Debugging report's positions can be 
 
 - Learning from trips (planned, not built): record boarding (at stop to on bus) and getting off (on bus to walking), keep the last 100 trips, and use patterns by stop, day and time for which side comes first, your usual route first and leaving work. To discuss for the next version: holding each pattern as a count that decays exponentially (for example halving every two weeks) instead of a fixed six-week window, and treating time of day as circular (23:50 is close to 00:10).
 - A spatial grid for stop lookups, if the number of saved stops grows a lot.
+- **Travel mode, on trial since 4.34.** A Kalman filter and a hidden Markov model (`scripts/shared/travelMode.js`) work out still, walking or riding at every position. It's recorded with each position and shown in Bus Status, but nothing decides on it yet: after about two weeks of Record trips on days it wasn't tuned on, compare it with what you actually did (`npm run replay` shows it per position), and if it holds up, let it tell Bus Watch you're riding between stops. Calibrating TfL's times per route and a leave-now buzz wait for three to four weeks of recordings.
 - **Probabilistic trip states.** Instead of fixed thresholds (0.8 m/s, 15 km/h, a 0.4 m/s trend), a hidden Markov model would weigh how likely each state is given the last few positions and pick the most likely sequence, handling borderline cases (shuffling at a stop, slow traffic, walking along the bus route) more gracefully. Worth it once Debugging reports and the tests give real trips to tune against.
 - **A Kalman filter** for position and velocity together, in place of the averaging and median speed: smoother, and able to predict where you'll be in 30 seconds. Only if the current window turns out not to be enough.
 

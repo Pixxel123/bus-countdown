@@ -136,7 +136,7 @@ def request_positions(mode, cond=None):
         deco(set_str(set_str(T['VARSET'], 0, '%BusStatePush'), 1, f'GPS, {what}'), '   GPS worked', ('%BusStatePush', 2, 'not requested'))]
 
 PROFILES = ['Bus Moved', 'Bus Screen On', 'Bus Hide When Sideways']
-VERSION = '4.33'
+VERSION = '4.34'
 BUILD = VERSION + '.' + time.strftime('%Y%m%d%H%M')     # changes with every build
 
 def profile_status(name, on, label, cond=None):
@@ -296,6 +296,8 @@ TASKS = [
       stop('Sideways: nothing more to do', ('%busfullnow', 2, 'yes')),
     endif(),
     stop('Stop if Bus End was used', ('%BusStateRunning', 3, '1')),
+    js('fetch_due.js', 'Fetched these times under 20 s ago? (Bus Loop and the screen coming on can both ask at once)'),
+    if_('%busfresh', 3, 'yes', 'Not fetched in the last 20 s (fetch new times, build the departures and buzz)'),
     js('tt_check.js', 'Timetable for this stop today? (only fetched once a day per stop)'),
     if_('%busttfetch', 2, 'yes', 'Not yet: fetch it'),
       deco(set_str(T['FOR'], 1, '1:%busttcount'), 'For each of my routes here'),
@@ -313,6 +315,7 @@ TASKS = [
     vibrate(200, '   buzz', ('%busbuzz', 2, 'yes')),
     deco(set_int(set_int(T['WAIT'], 0, 200), 1, 0), '   pause', ('%busbuzz', 2, 'yes')),
     vibrate(200, '   buzz (three in all)', ('%busbuzz', 2, 'yes')),
+    endif(),
     if_('%BusStateIslandShown', 3, '1', 'Island not up yet: show it (after that it updates itself)'),
       *orientation_check(),
       stop('Phone is sideways: keep the island hidden for now', ('%busfullnow', 2, 'yes')),

@@ -42,6 +42,7 @@
 /* @include get */
 /* @include loc */
 /* @include metres */
+/* @include travelMode */
 
 var now = Date.now();
 var lat = parseFloat(loc('gl_latitude')); var lon = parseFloat(loc('gl_longitude'));
@@ -58,6 +59,7 @@ var busaction = 'none';
 var busdwell = 'no';
 var why = '';
 var skipped = '';                    // why approaching() passed over a stop, for the note
+var tmode = null;                    // travel mode on trial (4.34): recorded only
 var afterAll = '';                   // set when a walk away turns out to have been a bus
 var closest = null;
 var trip = { s: 'idle' };
@@ -86,6 +88,8 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     win.push({ t: fixT, lat: +lat.toFixed(6), lon: +lon.toFixed(6), acc: accuracy || 15, spd: est >= 0 ? +est.toFixed(2) : -1 });
     win = win.slice(-6);
     setGlobal('BusStateWindow', JSON.stringify(win));
+    // Travel mode (4.34), on trial: recorded and shown in Bus Status, but nothing below reads it
+    try { tmode = travelMode(fixT, lat, lon, accuracy); setGlobal('BusStateMode', JSON.stringify({ t: now, m: tmode.mode, p: tmode.p, v: tmode.nv })); } catch (e) { tmode = null; }
   }
   // Speed: the median of the last three readings, so one jumpy fix can't fake (or hide) a bus
   var recent = win.map(function (w) { return w.spd; }).filter(function (v) { return v >= 0; }).slice(-3).sort(function (a, c) { return a - c; });
@@ -247,8 +251,12 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
       from('left', { leftD: boarded ? Math.round(boarded.d) : 0, maxD: trip.maxD || 0 });
     }
     // Fifteen minutes after leaving a stop the trip is over: the bus you got on is forgotten too, so a
-    // later ride can't take it for yours (4.32; not on getting off, which a crawl in traffic looks like)
-    if (trip.s === 'left' && (now - trip.since > 15 * 60000)) { trip = { s: 'idle' }; setGlobal('BusStateBoarded', ''); }
+    // later ride can't take it for yours (4.32; not on getting off, which a crawl in traffic looks like).
+    // Unless you're still moving at bus speed: on Tuesday the 517 crawled through traffic, read as
+    // "left", and 15 minutes later it forgot LA28LPG while you were still on it. Since only a bus you
+    // were seen getting on now counts as yours (4.34), that would have put your own bus back on the
+    // island at Wexley.
+    if (trip.s === 'left' && (now - trip.since > 15 * 60000)) { trip = { s: 'idle' }; if (!byBusLately) setGlobal('BusStateBoarded', ''); }
     // Ended as walking away, but you've kept up more than 2.2 m/s from that stop for 90 seconds or
     // more since: it was a bus after all, pulling away slowly (the countdown ended either way; this
     // keeps the trip, and the recording, right)
@@ -497,4 +505,5 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
   spd: androidSpeed >= 0 ? +androidSpeed.toFixed(2) : null, brg: bearing >= 0 ? Math.round(bearing) : null, age: fixAge,
   v: typeof speed !== 'undefined' && speed >= 0 ? +speed.toFixed(2) : null,       // the speed the rules used (Android's, or worked out)
   bus: typeof bus !== 'undefined' && bus ? 1 : 0, settled: typeof settled !== 'undefined' && settled ? 1 : 0, rate: rateWant,
+  kv: tmode ? tmode.nv : null, mode: tmode ? tmode.mode : null, mp: tmode ? tmode.p : null,   // travel mode on trial (4.34)
   state: trip.s, stop: trip.stop || '', action: busaction, why: why, near: closest ? { n: closest.name, d: Math.round(closest.d), r: closest.radius } : null });

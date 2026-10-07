@@ -17,7 +17,8 @@ for (const o of replay(lines).out) {
   if (o.k === 'check') {
     checks++; if (!o.same) differ++;
     const l = o.line;
-    console.log(time(o.t), o.same ? '  ' : '≠ ', `[${o.state}] ${o.action} ${o.why}` + (o.same ? '' : `   (on the phone: [${l.state}] ${l.action} ${l.why})`));
+    console.log(time(o.t), o.same ? '  ' : '≠ ', `[${o.state}] ${o.action} ${o.why}` + (o.same ? '' : `   (on the phone: [${l.state}] ${l.action} ${l.why})`) +
+      (o.mode ? `   {travel mode: ${o.mode}, ${o.kv} m/s}` : ''));
   } else if (o.k === 'tfl') {
     if (o.buzz === 'yes') console.log(time(o.t), '  buzz:', o.soonest ? `${o.soonest.k} ${o.soonest.v} in ${o.soonest.min.toFixed(1)} min` : '');
   } else console.log(time(o.t), '  ' + o.note);
