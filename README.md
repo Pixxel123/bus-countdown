@@ -1,6 +1,6 @@
 # Bus Countdown
 
-Version 4.27
+Version 4.28
 
 A Tasker project for Android that shows live London bus arrivals in a small pill around the front camera, in the style of a "dynamic island". It starts when you arrive at a saved bus stop and ends when you leave.
 
@@ -168,6 +168,7 @@ Variables starting with `BusState`, `BusCache` or `BusTemp` are managed by the p
 - `BusStateTrip`, `BusStateWindow`: the trip's state and the last six positions (see "The trip, step by step").
 - `BusStateSnooze`: the stop you last swiped away, and when (kept apart from the trip so a check running at the same moment can't undo it).
 - `BusStateSeen`: the buses TfL last listed at the current stop, so one it drops can be kept on its countdown. `BusStateBuzzed` and `BusStateBuzzAt`: which buses have buzzed at which stop, and when the last buzz was.
+- `BusStateMatch`, `BusStateBoarded`, `BusStateCameOn`: the bus you're riding (while it's being worked out, and once known), the bus you last got on, and the bus you last came in on (see "Which bus you're on").
 - `BusStateLastBusAt`: when you were last moving at bus speed (for stops by home and work). `BusStateFarAt`: where you settled, while positions are slowed down far from your stops. `BusStateEndWhy`: why Bus Watch ended the countdown, for the recorder.
 - `BusState…`: current state, such as whether a countdown is running, which stop is shown, the last Wi-Fi network seen and what Bus Watch last decided.
 - `BusCache…`: every stop on your routes and their order along each route (refreshed daily, or when your routes change), and today's timetables for recently used stops.
@@ -276,6 +277,26 @@ Bus Watch (for every pushed position, and when the screen comes on) keeps each t
 
 Swiping the island away, the 30-minute limit and getting home also move it to Left. Decisions use the last six positions (`%BusStateWindow`): speed is the median of the last three readings (or the last two both being fast; Android gives a speed for only about one position in eight, so mostly it's worked out from the positions, ignoring any fix worse than 50 m), "moving away" is the trend of your distance over the most recent positions, and fixes worse than 25 m are averaged with the previous one. On a bus, the stop coming up is found by projecting your position onto the route's line of stops, rather than by compass direction. Which way each saved stop's side heads is worked out once and kept in `%BusCacheDir`.
 
+### Which bus you're on
+
+When a countdown shows a stop you're riding a bus towards, Bus Watch keeps when you'd get there at the pace you've been closing in on it, and Bus Refresh compares that with each bus TfL lists. The bus whose time agrees (within 2½ minutes, with no other bus nearly as close) on two refreshes in a row is yours. On Tuesday 6 October's three rides each bus's time was within 10 to 30 seconds of when you actually reached the stop.
+
+```mermaid
+flowchart LR
+    w["Bus Watch: your distance<br/>and closing speed"] --> eta["Your arrival time<br/>(trip.eta)"]
+    t["TfL: each bus's time<br/>at the stop"] --> cmp{"Nearest within 2½ min,<br/>no close rival?"}
+    eta --> cmp
+    cmp -->|"same bus twice"| yours["Your bus"]
+    b["The bus you got on<br/>at your last stop"] -->|"listed here"| yours
+    yours --> island["Island: Your bus"]
+    yours --> buzz["Buzz: only a connection<br/>due after you get there"]
+    yours --> status["Bus Status: your bus,<br/>and the connection"]
+```
+
+- **Your bus** replaces the destination on the island, and never buzzes. Until it's known, nothing buzzes while you ride; once it is, only a connection (a bus due after yours gets there) can. Once your bus has reached the stop and dropped off TfL's list, buzzing is as usual.
+- **Getting on:** when a countdown ends because you're on a bus, the bus you got on is the one TfL had arriving nearest the moment you left the stop (including one that dropped off the list in the last 5 minutes, but never the bus you came in on). It's kept for 90 minutes (`%BusStateBoarded`), so at your next stop it's known at once, and recorded with how far TfL's time was from when you left.
+- Bus Status shows your bus and the connection ("on the 517, at Wexley in about 2 min; then the 566 6 min after you get there"), and the last bus you got on.
+
 ### Sideways
 
 The Bus Hide When Sideways profile (Display Orientation: Landscape) runs the task of the same name when the screen turns sideways and again when it turns back. It asks Android which way up the screen is (its configuration says `port` or `land`) and hides the pill, or shows it with fresh times. Bus Refresh asks the same question before showing the pill. The countdown keeps running while the pill is hidden.
@@ -337,8 +358,9 @@ For tuning against real journeys. With **Record trips** on (Bus Settings › Cou
 |---|---|
 | `setup` | First line of each day: your saved stops, routes, the route lists, home and work, and the settings that shape decisions, so the day can be replayed |
 | `check` | Each position Bus Watch checked (pushed, screen on, safety net or by hand): where, accuracy, Android's speed and direction, how old, the speed the rules used (`v`), whether that looked like a bus, whether you'd settled, the position rate asked for, and what it decided (trip state, action, why) |
-| `tfl` | Each TfL reply: every bus (route, vehicle, seconds away; `l` live, `s` timetable, `k` kept after TfL dropped it), and how long the refresh took |
+| `tfl` | Each TfL reply: every bus (route, vehicle, seconds away; `l` live, `s` timetable, `k` kept after TfL dropped it), your bus if known (`you`), and how long the refresh took |
 | `start`, `nostart`, `end` | Countdowns starting (which stop, why, battery level) and ending (`from`: island, menu, timeout, wifi or watch, with `why` in words, and the battery level) |
+| `match`, `board` | Your bus worked out while riding (route, vehicle, how: from your arrival time, with how many seconds out, or as the bus you got on), and the bus you got on at a stop (with how many seconds TfL still had it away when you left) |
 | `wifi` | Each change of Wi-Fi network, as `home`, `work`, `other` or `none` (never the network's name) |
 | `buzz` | Each buzz: route, vehicle, minutes away, first or second |
 
@@ -373,7 +395,7 @@ The `tests` folder runs the project's own scripts (from `scripts/`) the way Task
 npm test
 ```
 
-What's covered (119 tests, after the linter):
+What's covered (132 tests, after the linter):
 
 - **The project file matches the scripts:** every JavaScriptlet in `Bus_Countdown.prj.xml` is a file in `scripts/` (with its shared pieces filled in), every file and shared piece is used, no script keeps its own copy of a shared helper, every step has an explanation, and every Perform Task points at a task that exists.
 - **Replayed trips** through the state machine: walking past a stop, waiting then catching the bus, walking away with no speed readings, a saved stop coming up on a bus, a jumpy fix while waiting, passing through a circle, swiping away, and a big arrival circle not restarting as you leave.
@@ -387,6 +409,7 @@ What's covered (119 tests, after the linter):
 - **Smaller pieces:** stop letters, refresh spacing, how recent a position must be, swiping, and reading route orders from TfL.
 - **Version 4.11** (`tests/v4.11.test.js`, written first as todo tests): Wi-Fi hysteresis, backing off with no signal, next two buses, and the swipe rule (route changes, 90 dp to dismiss, a fast 60 dp fling).
 - **Tuesday 6 October, replayed** (`tests/tuesday.test.js`): excerpts of the first recorded day (`tests/fixtures`, with home and work replaced by stand-ins), played through today's rules: no pop-up on the 517 to work or the 566 home; the 517 TfL dropped for 2½ minutes kept on the island and buzzing at 4½ minutes, not 1.9; still shown on the way to Wexley, where you change, without buzzing for the bus you're on; one buzz from two refreshes 6 seconds apart; and leaving Wexley on the 566 in traffic ending as "on the bus".
+- **Which bus you're on** (`tests/tuesday.test.js` and `tests/v4.28.test.js`): Tuesday's three rides each matched to the right bus (WH63YOX to work on the second refresh, LA28LPG to Wexley with the 566 as the connection, LE15BXA home known at once as the bus you got on at Wexley, not the 517 you came in on); and on made-up rides, one refresh not being enough, rivals too close to call, the connection buzzing but never your bus, nothing kept while you're waiting, and buses that drop off the list remembered as gone.
 - **Version 4.27** (`tests/v4.27.test.js`): the same fixes on the test road, plus the swipe snooze (holding when swiped on the approach, lifting once you've been and gone, and a check running at the same moment not undoing it), poor fixes not faking a bus, staying put far away, TfL unreachable, each stop counting its own buzzes, and the recorder's end reasons, Wi-Fi changes and worked-out speed.
 - **Version 4.12** (`tests/v4.12.test.js`): the code review's fixes, each with the case that showed the problem: a southbound bus never picking a northbound stop behind you, waiting still not tripping the safety net, arrival distances capped at 200 m, the direction table noticing any change to your stops, and times fading normally while refreshes back off.
 
@@ -417,7 +440,7 @@ When something goes wrong on the phone, the Debugging report's positions can be 
 | `loop.js`, `loop_tick.js` | Bus Loop: when it ends, and how long to wait between refreshes |
 | `tt_check.js`, `tt_route.js`, `tt_store.js` | Bus Refresh: timetables |
 | `refresh.js`, `island_show.js`, `island_swap.js` | Bus Refresh: departures (two per route), the pill, and which of its two scene names to show it under |
-| `shared/` | Pieces several scripts share, kept once and filled in by the build: `record.js` (the trip recorder), `get.js` (read a global), `loc.js` (read a task local), `metres.js` (distance and bearing between two points), `wifiName.js` (the Wi-Fi network from Android's answer), `sides.js` (which side of the road heads home or to work), `routesHere.js` (how many of your routes the current stop has, which the pill is sized for), `debugLog.js` (the Debugging log) and `swipe.js` (the pill's swipe rule, also tested on its own) |
+| `shared/` | Pieces several scripts share, kept once and filled in by the build: `record.js` (the trip recorder), `get.js` (read a global), `loc.js` (read a task local), `metres.js` (distance and bearing between two points), `wifiName.js` (the Wi-Fi network from Android's answer), `sides.js` (which side of the road heads home or to work), `routesHere.js` (how many of your routes the current stop has, which the pill is sized for), `debugLog.js` (the Debugging log), `swipe.js` (the pill's swipe rule, also tested on its own) and `matchBus.js` (which listed bus is the one you're riding) |
 | `fullscreen.js` | Bus Hide When Sideways and Bus Refresh: sideways or upright? |
 | `opposite.js` | Bus Island: the next nearby stop |
 | `watch_due.js`, `watch.js` | Bus Watch: the Wi-Fi rules, then the trip state machine (which also sets the position rate) |
@@ -435,7 +458,7 @@ When something goes wrong on the phone, the Debugging report's positions can be 
 
 ### After that, once real trips have shown what TfL's data looks like
 
-- **Match you to the bus you're on.** TfL's arrivals include each bus's vehicle ID and its predicted time at each stop. While you're on a bus, the bus whose predictions keep matching your progress is yours. That gives trip learning your route for certain, firms up "on a bus" (a car or taxi never matches), and makes "get off at the next stop?" possible: your bus's time at the stop ahead against the connecting buses there.
+- **Following your bus between stops.** 4.28 works out your bus while a countdown shows the stop ahead, and the bus you got on. With an extra TfL request for that vehicle (`/Vehicle/{id}/Arrivals`) while you ride with no countdown, it could also tell a bus crawling in traffic from you having got off, and show "get off here and change?" for any stop on the way.
 - **Steadier times.** Predictions jump (5, then 7, then 4 minutes). Following each vehicle across refreshes and smoothing its prediction would make the island count down steadily. (4.27 does the first part: a bus TfL drops while still 2 minutes or more away is kept on its countdown for up to 3 minutes.)
 
 ### Later

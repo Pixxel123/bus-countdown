@@ -202,9 +202,9 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
   if (trip.s === 'atstop' && tripStop) {
     var away = trend(tripStop.lat, tripStop.lon);
     if (bus && away > 1 && tripStop.d > tripStop.r * 0.5) {
-      busaction = 'stop'; why = 'on the bus, away from ' + tripStop.n; from('onbus', { boardedAt: tripStop.id });
+      busaction = 'stop'; why = 'on the bus, away from ' + tripStop.n + noteBoarded(tripStop); from('onbus', { boardedAt: tripStop.id });
     } else if (tripStop.d > Math.max(tripStop.r + 50, 120) && paceAway(tripStop) > 2.2) {
-      busaction = 'stop'; why = 'on the bus, away from ' + tripStop.n + ' (' + Math.round(paceAway(tripStop) * 3.6) + ' km/h for the last few minutes)';
+      busaction = 'stop'; why = 'on the bus, away from ' + tripStop.n + ' (' + Math.round(paceAway(tripStop) * 3.6) + ' km/h for the last few minutes)' + noteBoarded(tripStop);
       setGlobal('BusStateLastBusAt', String(now)); from('onbus', { boardedAt: tripStop.id });
     } else if (tripStop.d > endAtFor(tripStop) || (away > 0.4 && win.length >= 3 && tripStop.d > Math.max(tripStop.r + 50, 120))) {
       busaction = 'stop'; why = 'walking away from ' + tripStop.n; from('left', { leftD: Math.round(tripStop.d), walked: true });
@@ -243,7 +243,7 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     if (trip.s === 'left' && trip.walked && now - trip.since < 5 * 60000) {
       var leftFrom = stops.filter(function (st) { return st.id === trip.stop; })[0];
       if (leftFrom && paceAway(leftFrom) > 2.2) {
-        afterAll = 'on a bus after all, from ' + leftFrom.n + ' (' + Math.round(paceAway(leftFrom) * 3.6) + ' km/h for the last few minutes)';
+        afterAll = 'on a bus after all, from ' + leftFrom.n + ' (' + Math.round(paceAway(leftFrom) * 3.6) + ' km/h for the last few minutes)' + noteBoarded(leftFrom);
         setGlobal('BusStateLastBusAt', String(now)); from('onbus', { boardedAt: leftFrom.id, leftD: Math.round(leftFrom.d), walked: false });
       }
     }
@@ -268,6 +268,12 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
         trip = { s: 'heading', stop: ahead.id, since: now, minD: Math.round(ahead.d), bus: ahead.bus };
       } else why = skipped || (trip.s === 'onbus' ? 'on a bus' : 'not close enough');
     } else why = 'snoozed: you swiped it away; it comes back once you\u2019ve been to that stop and left it, or at ' + new Date(snoozedAt + 30 * 60000).toTimeString().slice(0, 5);
+  }
+  // Riding a bus to the stop: when you'd get there at the pace you've been closing in on it, for
+  // Bus Refresh to pick out the bus you're on (the one TfL has arriving then)
+  if (trip.s === 'heading' && trip.bus && tripStop) {
+    var closing = closingSpeed(tripStop);
+    if (closing > 0.5) { trip.eta = Math.round(fixT + tripStop.d / closing * 1000); trip.etaAt = now; }
   }
   if (afterAll && busaction === 'none') why = afterAll;
   setGlobal('BusStateTrip', JSON.stringify(trip));
@@ -305,6 +311,42 @@ function approaching() {
   best.bus = onABus;
   best.why = 'heading to ' + best.n + ' (' + Math.round(best.d) + ' m, about ' + Math.max(1, Math.round(best.eta / 60)) + ' min ' + (onABus ? 'by bus' : 'on foot') + ')';
   return best;
+}
+
+// How fast you've been closing in on a stop (m/s): your distance from it now against a position 45
+// seconds to 4 minutes back (the oldest such in the window). Straight-line both times, so a bend in
+// the road affects both alike. -1 when there's nothing to go on.
+function closingSpeed(st) {
+  for (var i = 0; i < win.length; i++) {
+    var dt = (fixT - win[i].t) / 1000;
+    if (dt >= 45 && dt <= 240) return (metres(win[i].lat, win[i].lon, st.lat, st.lon) - st.d) / dt;
+  }
+  return -1;
+}
+
+// Which bus you got on at a stop: the one TfL had arriving nearest the time you left it (the last
+// position within 40 m of it, or failing that inside its circle), from the buses Bus Refresh last
+// listed there, including any gone from the list in the last 5 minutes (BusStateSeen), but never the
+// bus you came in on (BusStateCameOn: changing at Wexley on Tuesday, that one was nearer). Saved as
+// BusStateBoarded, so the next stop knows your bus at once, and recorded with how far TfL's time was
+// from when you actually left (for checking TfL's predictions). Returns a note for the reason, or ''.
+function noteBoarded(st) {
+  var seenHere = {}; try { seenHere = JSON.parse(get('BusStateSeen') || '{}'); } catch (e) {}
+  if (seenHere.s !== st.id) return '';
+  var leftAt = 0; var inCircle = 0;
+  win.forEach(function (w) { var d = metres(w.lat, w.lon, st.lat, st.lon); if (d <= 40) leftAt = w.t; if (d <= st.r) inCircle = w.t; });
+  leftAt = leftAt || inCircle || now;
+  var cameOn = null; try { cameOn = JSON.parse(get('BusStateCameOn') || 'null'); } catch (e) {}
+  var best = null;
+  (seenHere.b || []).forEach(function (x) {
+    if (cameOn && cameOn.stop === st.id && cameOn.v === x.v && now - cameOn.at < 30 * 60000) return;   // the bus you got off
+    var off = x.t - leftAt;
+    if (off >= -180000 && off <= 360000 && (!best || Math.abs(off) < Math.abs(best.t - leftAt))) best = x;
+  });
+  if (!best) return '';
+  setGlobal('BusStateBoarded', JSON.stringify({ k: best.k, v: best.v, stop: st.id, at: leftAt }));
+  record('board', { stop: st.id, route: best.k, v: best.v, tfl: Math.round((best.t - leftAt) / 1000) });
+  return ': the ' + best.k + ' (' + best.v + ')';
 }
 
 // A saved stop within 400 m of home or work (where Bus Watch has learned they are, from your Wi-Fi):

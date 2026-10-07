@@ -14,6 +14,7 @@
 /* @include routesHere */
 /* @include debugLog */
 /* @include record */
+/* @include matchBus */
 var mine = get('BusRoutes').split(',').map(function (s) { return s.trim(); });
 var code = loc('http_response_code');
 var now = Date.now();
@@ -40,16 +41,17 @@ var seenBefore = {}; try { seenBefore = JSON.parse(get('BusStateSeen') || '{}');
 var remembered = seenBefore.s === get('BusStateStopId') ? (seenBefore.b || []) : [];
 var listed = {}; deps.forEach(function (x) { if (x.v) listed[x.k + '|' + x.v] = true; });
 var keptNow = [];
+var goneNow = [];                    // gone from the list in the last 5 minutes: for Bus Watch to tell which you boarded
 remembered.forEach(function (x) {
   if (listed[x.k + '|' + x.v] || mine.indexOf(x.k) < 0) return;
-  if (x.t - now >= 2 * 60000 && now - x.seen <= 3 * 60000) {
+  if (!x.gone && x.t - now >= 2 * 60000 && now - x.seen <= 3 * 60000) {
     keptNow.push(x.k + ' ' + x.v);
     deps.push({ k: x.k, d: x.d, t: x.t, st: 'sched', v: x.v, kept: x.seen });
-  }
+  } else if (now - x.seen <= 5 * 60000) goneNow.push({ k: x.k, v: x.v, d: x.d, t: x.t, seen: x.seen, gone: true });
 });
 setGlobal('BusStateSeen', JSON.stringify({ s: get('BusStateStopId'), b: deps.filter(function (x) { return x.v; }).map(function (x) {
   return { k: x.k, v: x.v, d: x.d, t: x.t, seen: x.kept || now };       // a kept bus keeps the time it was last really seen
-}) }));
+}).concat(goneNow) }));
 if (keptNow.length) debugLog('TfL dropped ' + keptNow.join(', ') + ': kept on its last countdown, with ~');
 
 // Timetable fallback: each of my routes here with no live prediction gets its next scheduled departure
@@ -65,6 +67,46 @@ Object.keys((tt && tt.r) || {}).forEach(function (route) {
 });
 
 deps.sort(function (a, b) { return a.t - b.t; });
+
+// ---- Which bus you're on --------------------------------------------------------------------------
+// Riding a bus towards this stop (Bus Watch's trip is "heading", by bus), the bus you're on is one of
+// those listed here. Bus Watch keeps when you'd get there at the pace you've been closing in
+// (trip.eta); the bus whose TfL time agrees with that on two refreshes in a row is yours (matchBus).
+// Or, straight away, the bus you got on at your last stop (BusStateBoarded), if it's listed. Tuesday's
+// three rides were each within 10 to 30 seconds of their bus's time. Your bus then shows as "Your
+// bus" on the island, never buzzes, and the buses after it are your connections. BusStateMatch keeps
+// the state between refreshes (cleared once you're not riding).
+var stopId = get('BusStateStopId');
+var tripNow = {}; try { tripNow = JSON.parse(get('BusStateTrip') || '{}'); } catch (e) {}
+var riding = tripNow.s === 'heading' && !!tripNow.bus && tripNow.stop === stopId;
+var match = {}; try { match = JSON.parse(get('BusStateMatch') || '{}'); } catch (e) {}
+if (match.stop !== stopId) match = { stop: stopId, n: 0 };
+var yourBus = null;
+if (riding) {
+  var boarded = null; try { boarded = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) {}
+  var boardedHere = boarded && now - boarded.at < 90 * 60000 && deps.some(function (x) { return x.v === boarded.v; });
+  if (boardedHere) { if (match.v !== boarded.v || match.by !== 'boarded') match = { stop: stopId, k: boarded.k, v: boarded.v, n: 2, by: 'boarded' }; }
+  else if (tripNow.eta && now - (tripNow.etaAt || 0) < 120000) {
+    var m = matchBus(deps, tripNow.eta);
+    if (m && m.v === match.v) { match.n++; match.err = Math.round(m.err); }
+    else if (m) match = { stop: stopId, k: m.k, v: m.v, n: 1, by: 'eta', err: Math.round(m.err) };
+  }
+  if (match.n >= 2) yourBus = deps.filter(function (x) { return x.v === match.v; })[0] || null;
+  // Kept for Bus Watch, so the bus you came in on is never taken for the one you then get on
+  if (yourBus) setGlobal('BusStateCameOn', JSON.stringify({ v: yourBus.v, stop: stopId, at: now }));
+  if (yourBus && !match.noted) {
+    match.noted = true;
+    debugLog('Your bus: the ' + yourBus.k + ' (' + yourBus.v + ')' + (match.by === 'boarded' ? ', the one you got on' : ', ' + match.err + ' s from your own arrival time'));
+    record('match', { stop: stopId, route: yourBus.k, v: yourBus.v, by: match.by, err: match.err === undefined ? null : match.err });
+  }
+}
+// The connection: the first bus due after yours gets there (one before it can't be caught)
+var connection = yourBus ? deps.filter(function (x) { return x.v !== yourBus.v && x.t > yourBus.t + 30000; })[0] : null;
+match.note = yourBus ? 'on the ' + yourBus.k + ' (' + yourBus.v + '), at ' + get('BusStateStopName') + ' in about ' +
+  Math.max(1, Math.round((yourBus.t - now) / 60000)) + ' min' + (connection ? '; then the ' + connection.k + ' ' +
+  Math.round((connection.t - yourBus.t) / 60000) + ' min after you get there' : '') : '';
+setGlobal('BusStateMatch', riding ? JSON.stringify(match) : '');
+if (yourBus) deps = deps.map(function (x) { return x.v === yourBus.v ? Object.assign({}, x, { d: 'Your bus', mine: true }) : x; });
 var busnodata = (code !== '200' && !deps.length) ? 'yes' : 'no';
 
 // Refresh less often while the next bus is far off: more than 10 minutes away, wait twice
@@ -99,18 +141,21 @@ deps.forEach(function (x) {
 // how many times each has buzzed, and forgets buses no longer listed.
 //   The two buzzes are at least 30 seconds apart (two refreshes close together, the screen coming
 //   on just after one, felt like one long buzz: BusStateBuzzAt).
-//   No buzz while you're riding a bus towards the stop (a countdown shown ahead, by bus): the soonest
-//   bus is usually the one you're on, and there's nothing to hurry for until you're off.
+//   Riding a bus towards the stop: never your own bus. Until it's known which that is, no buzz at all;
+//   once it is, only a connection (due after you get there) can buzz.
 var buzzed = {}; try { buzzed = JSON.parse(get('BusStateBuzzed') || '{}'); } catch (e) {}
 var keyOf = function (x) { return get('BusStateStopId') + '|' + x.k + '|' + (x.v || Math.round(x.t / 60000)); };
 var stillHere = {};
 var busbuzz = 'no';               // its own "var": Tasker only passes back results declared this way
-var tripNow = {}; try { tripNow = JSON.parse(get('BusStateTrip') || '{}'); } catch (e) {}
-var ridingThere = tripNow.s === 'heading' && !!tripNow.bus && tripNow.stop === get('BusStateStopId');
 var sinceBuzz = now - (parseInt(get('BusStateBuzzAt'), 10) || 0);
 deps.forEach(function (x) { if (buzzed[keyOf(x)]) stillHere[keyOf(x)] = buzzed[keyOf(x)]; });
-var first = deps.filter(function (x) { return x.t - now > -60000; }).sort(function (a, b) { return a.t - b.t; })[0];
-if (first && (first.t - now) / 60000 < 5 && (stillHere[keyOf(first)] || 0) < 2 && !ridingThere && sinceBuzz >= 30000) {
+// Riding, once your bus is known: the soonest connection buzzes instead (a bus due before yours gets
+// there can't be caught); until it's known, nothing does
+// (Your bus known but no longer listed: it has reached the stop, so you're there, and buzzing is as usual)
+var buzzRiding = riding && !(match.n >= 2 && !yourBus);
+var first = deps.filter(function (x) { return x.t - now > -60000 && (!buzzRiding || (yourBus && !x.mine && x.t > yourBus.t + 30000)); })
+  .sort(function (a, b) { return a.t - b.t; })[0];
+if (first && (first.t - now) / 60000 < 5 && (stillHere[keyOf(first)] || 0) < 2 && sinceBuzz >= 30000) {
   busbuzz = 'yes';
   stillHere[keyOf(first)] = (stillHere[keyOf(first)] || 0) + 1;
   setGlobal('BusStateBuzzAt', String(now));
@@ -122,7 +167,7 @@ if (busbuzz === 'yes') {
 }
 // Recorder: TfL's predictions as they came (route, vehicle, seconds away), for steadier times,
 // matching you to your bus, and spotting buses that have left
-record('tfl', { stop: get('BusStateStopId'), code: code, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
+record('tfl', { stop: get('BusStateStopId'), code: code, you: yourBus ? yourBus.v : undefined, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
   b: deps.map(function (x) { return [x.k, x.v || '', Math.round((x.t - now) / 1000), x.kept ? 'k' : x.st === 'sched' ? 's' : 'l']; }) });
 // The stop's letter, from its TfL indicator ("Stop B" -> B, "Stop BK" -> BK). Stops without one
 // (indicators like "opp" or "->N", or none at all) get no letter, and the island shows none.

@@ -33,14 +33,21 @@ function replay(lines, extraGlobals) {
       const r = run('refresh.js', { globals: g, now: l.t, locals: { http_response_code: '200', http_data: JSON.stringify(arrivals) } });
       const shown = JSON.parse(g.BusStateIslandData || '{}').b || [];
       const soonest = shown.slice().sort((a, b) => a.t - b.t)[0];
-      out.push({ t: l.t, k: 'tfl', line: l, buzz: r.busbuzz, soonest: soonest ? { k: soonest.k, v: soonest.v, min: (soonest.t - l.t) / 60000, st: soonest.st } : null });
+      let match = {}; try { match = JSON.parse(g.BusStateMatch || '{}'); } catch (e) { match = {}; }
+      const yours = shown.find((b) => b.mine);
+      out.push({ t: l.t, k: 'tfl', line: l, buzz: r.busbuzz, soonest: soonest ? { k: soonest.k, v: soonest.v, min: (soonest.t - l.t) / 60000, st: soonest.st, d: soonest.d } : null,
+        yours: yours ? yours.v : null, match, trip: JSON.parse(g.BusStateTrip || '{}') });
       continue;
     }
     if (l.k !== 'check' || l.lat === null) continue;
     const r = run('watch.js', { globals: g, now: l.t, locals: { buscaller: l.src === 'hand' ? '' : l.src, gl_latitude: String(l.lat), gl_longitude: String(l.lon),
       gl_time_seconds: String((l.t - (l.age || 0) * 1000) / 1000), busspeed: l.spd === null ? '' : String(l.spd), busbearing: l.brg === null ? '' : String(l.brg),
       busacc: l.acc === null ? '' : String(l.acc) } });
-    if (r.busaction === 'start' || r.busaction === 'approach') { g.BusStateRunning = '1'; g.TRUN = 'Bus Loop'; g.BusStateStopId = g.BusStateArrivedStop; }
+    if (r.busaction === 'start' || r.busaction === 'approach') {             // as Bus Start does
+      g.BusStateRunning = '1'; g.TRUN = 'Bus Loop'; g.BusStateStopId = g.BusStateArrivedStop;
+      const row = (g.BusPlaces || '').split('\n').map((x) => x.split('|')).find((p) => p[1] === g.BusStateStopId);
+      g.BusStateStopName = row ? row[2] : '';
+    }
     if (r.busaction === 'stop') { g.BusStateRunning = '0'; g.TRUN = ''; }
     const state = JSON.parse(g.BusStateTrip || '{}').s;
     out.push({ t: l.t, k: 'check', line: l, action: r.busaction, state, why: r.why, rate: g.BusStatePushMode,

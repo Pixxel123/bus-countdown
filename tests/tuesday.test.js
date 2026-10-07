@@ -45,11 +45,11 @@ test('17:11 a bus that drops out under 2 minutes away has been and gone: not kep
 
 test('17:40 on the 517 to Wexley, where you change: still shown, no buzz for the bus you are on', () => {
   assert.strictEqual(at('17:40:37', 'check').action, 'approach');
-  const riding = between('17:40:37', '17:44:57').filter((o) => o.k === 'tfl');
+  const riding = between('17:40:37', '17:43:49').filter((o) => o.k === 'tfl');
   assert.ok(riding.length >= 5);
   assert.deepStrictEqual(riding.filter((o) => o.buzz === 'yes').map(clock), [], 'riding LA28LPG to the stop');
-  const waiting = between('17:44:58', '17:47:00').filter((o) => o.k === 'tfl' && o.buzz === 'yes');
-  assert.strictEqual(waiting[0].soonest.v, 'LE15BXA', 'the 566 buzzes once you are at the stop');
+  const waiting = between('17:43:50', '17:47:00').filter((o) => o.k === 'tfl' && o.buzz === 'yes');
+  assert.strictEqual(waiting[0].soonest.v, 'LE15BXA', 'the 566 buzzes once your bus has reached the stop');
 });
 
 test('17:44 two refreshes 6 seconds apart give one buzz, not two together', () => {
@@ -68,4 +68,33 @@ test('18:19 on the 566 home: no pop-up for the stop by home (on the phone you sw
   const home = checks('18:17:00', '18:21:00');
   assert.deepStrictEqual(home.filter((o) => o.action !== 'none').map((o) => `${clock(o)} ${o.action}`), []);
   assert.match(at('18:19:12', 'check').why, /by home: no pop-up/);
+});
+
+// ---- Which bus you're on (V4.28) -------------------------------------------------------------------
+// The same excerpts, and again with home and work unknown so the rides to work and home show their
+// countdowns too: each of Tuesday's three rides is matched to the bus you were really on.
+const all = replay(lines, { BusHomeAt: '', BusWorkAt: '' }).out;
+const allAt = (hms, k) => all.find((o) => clock(o) === hms && (!k || o.k === k));
+
+test('09:18 on the 517 to work: matched to WH63YOX on the second refresh', () => {
+  assert.strictEqual(allAt('09:17:46', 'tfl').yours, null, 'one refresh isn\'t enough');
+  assert.strictEqual(allAt('09:18:37', 'tfl').yours, 'WH63YOX');
+  assert.strictEqual(allAt('09:18:37', 'tfl').soonest.d, 'Your bus', 'shown on the island');
+  assert.ok(all.filter((o) => o.k === 'tfl' && o.yours && clock(o) < '10:00').every((o) => o.yours === 'WH63YOX'), 'never any other');
+});
+
+test('17:41 on the 517 to Wexley: matched to LA28LPG, with the 566 as your connection', () => {
+  const o = at('17:41:39', 'tfl');
+  assert.strictEqual(o.yours, 'LA28LPG');
+  assert.match(o.match.note, /^on the 517 \(LA28LPG\), at Wexley .* in about 2 min; then the 566 6 min after you get there$/);
+});
+
+test('17:48 leaving Wexley: you got on LE15BXA (not LA28LPG, the bus you came in on)', () => {
+  assert.match(at('17:48:28', 'check').why, /: the 566 \(LE15BXA\)$/);
+});
+
+test('18:19 on the 566 home: known at once, as the bus you got on at Wexley', () => {
+  const o = allAt('18:19:21', 'tfl');
+  assert.strictEqual(o.yours, 'LE15BXA');
+  assert.strictEqual(o.match.by, 'boarded');
 });
