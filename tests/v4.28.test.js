@@ -41,8 +41,13 @@ test('two refreshes agreeing: "Your bus" on the island; one isn\'t enough', () =
   now += 40000; g.BusStateTrip = ridingTo(1.9, now);
   const r = refresh(g, [bus('517', 1.8, 'YY1'), bus('566', 8, 'LF1')], now);
   assert.strictEqual(r.yours, 'YY1');
-  assert.deepStrictEqual(r.labels, ['Your bus', 'Somewhere']);
+  assert.deepStrictEqual(r.labels, ['You', 'Somewhere'], 'the island\'s 3 letters');
   assert.match(JSON.parse(g.BusStateMatch).note, /^on the 517 \(YY1\), at Wexley \(Stop D\) in about 2 min; then the 566 6 min after you get there$/);
+});
+
+test('with room for 6 letters or more, it says "Your bus"', () => {
+  const g = base({ BusDestLetters: '6', BusStateBoarded: JSON.stringify({ k: '517', v: 'YY1', stop: 'M', at: T0 - 600000 }), BusStateTrip: ridingTo(2, T0) });
+  assert.deepStrictEqual(refresh(g, [bus('517', 2, 'YY1')], T0).labels, ['Your bus']);
 });
 
 test('the bus you got on at your last stop is yours straight away', () => {

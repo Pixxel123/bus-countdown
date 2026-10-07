@@ -288,12 +288,12 @@ flowchart LR
     eta --> cmp
     cmp -->|"same bus twice"| yours["Your bus"]
     b["The bus you got on<br/>at your last stop"] -->|"listed here"| yours
-    yours --> island["Island: Your bus"]
+    yours --> island["Island: You / Your bus"]
     yours --> buzz["Buzz: only a connection<br/>due after you get there"]
     yours --> status["Bus Status: your bus,<br/>and the connection"]
 ```
 
-- **Your bus** replaces the destination on the island, and never buzzes. Until it's known, nothing buzzes while you ride; once it is, only a connection (a bus due after yours gets there) can. Once your bus has reached the stop and dropped off TfL's list, buzzing is as usual.
+- **Your bus** replaces the destination on the island, highlighted: "You" with the default 3 letters, "Your bus" with 6 or 10. It never buzzes. Until it's known, nothing buzzes while you ride; once it is, only a connection (a bus due after yours gets there) can. Once your bus has reached the stop and dropped off TfL's list, buzzing is as usual.
 - **Getting on:** when a countdown ends because you're on a bus, the bus you got on is the one TfL had arriving nearest the moment you left the stop (including one that dropped off the list in the last 5 minutes, but never the bus you came in on). It's kept for 90 minutes (`%BusStateBoarded`), so at your next stop it's known at once, and recorded with how far TfL's time was from when you left.
 - Bus Status shows your bus and the connection ("on the 517, at Wexley in about 2 min; then the 566 6 min after you get there"), and the last bus you got on.
 
@@ -395,7 +395,7 @@ The `tests` folder runs the project's own scripts (from `scripts/`) the way Task
 npm test
 ```
 
-What's covered (132 tests, after the linter):
+What's covered (133 tests, after the linter):
 
 - **The project file matches the scripts:** every JavaScriptlet in `Bus_Countdown.prj.xml` is a file in `scripts/` (with its shared pieces filled in), every file and shared piece is used, no script keeps its own copy of a shared helper, every step has an explanation, and every Perform Task points at a task that exists.
 - **Replayed trips** through the state machine: walking past a stop, waiting then catching the bus, walking away with no speed readings, a saved stop coming up on a bus, a jumpy fix while waiting, passing through a circle, swiping away, and a big arrival circle not restarting as you leave.

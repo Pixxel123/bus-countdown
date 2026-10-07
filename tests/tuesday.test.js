@@ -79,7 +79,7 @@ const allAt = (hms, k) => all.find((o) => clock(o) === hms && (!k || o.k === k))
 test('09:18 on the 517 to work: matched to WH63YOX on the second refresh', () => {
   assert.strictEqual(allAt('09:17:46', 'tfl').yours, null, 'one refresh isn\'t enough');
   assert.strictEqual(allAt('09:18:37', 'tfl').yours, 'WH63YOX');
-  assert.strictEqual(allAt('09:18:37', 'tfl').soonest.d, 'Your bus', 'shown on the island');
+  assert.strictEqual(allAt('09:18:37', 'tfl').soonest.d, 'You', 'shown on the island');
   assert.ok(all.filter((o) => o.k === 'tfl' && o.yours && clock(o) < '10:00').every((o) => o.yours === 'WH63YOX'), 'never any other');
 });
 
