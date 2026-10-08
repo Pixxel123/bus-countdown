@@ -87,12 +87,14 @@ test('09:18 on the 517 to work: matched to WH63YOX on the second refresh', () =>
   assert.ok(all.filter((o) => o.k === 'tfl' && o.yours && clock(o) < '10:00').every((o) => o.yours === 'WH63YOX'), 'never any other');
 });
 
-test('17:41 on the 517 to Wexley: matched to LA28LPG, with the 566 as your connection', () => {
+test('17:41 on the 517 to Wexley: LA28LPG, with the 566 as your connection', () => {
   const o = at('17:41:39', 'tfl');
   assert.strictEqual(o.yours, 'LA28LPG');
-  // Not seen getting on at 17:20 (the countdown there ended without Bus Watch, so the trip was already
-  // "left"), so since 4.34 it's only "probably" yours
-  assert.match(o.match.note, /^probably on the 517 \(LA28LPG\), at Wexley .* in about 2 min; then the 566 6 min after you get there$/);
+  // The countdown at Corvel Lodge ended at 17:20 without Bus Watch, so the trip was already "left";
+  // 4.34 to 4.39 never saw you get on, and LA28LPG was only "probably" yours. Since 4.40, being 150 m
+  // along the route from that stop faster than walking proves you got on there (17:21:49)
+  assert.match(o.match.note, /^on the 517 \(LA28LPG\), at Wexley .* in about 2 min; then the 566 6 min after you get there$/);
+  assert.strictEqual(o.match.by, 'boarded');
 });
 
 test('17:48 leaving Wexley: you got on LE15BXA (not LA28LPG, the bus you came in on)', () => {

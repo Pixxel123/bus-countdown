@@ -99,7 +99,7 @@ test('leaving a stop at 9 km/h for 2 minutes is a bus, not a walk', () => {
   const { out } = trip([[0, 0, 0], [5, 30, 0], [5, 30, 0], [55, 20, null], [100, 20, null], [150, 20, null], [210, 20, null], [260, 20, null], [310, 20, null], [360, 20, null]]);
   assert.strictEqual(out.filter((o) => o.action === 'stop').length, 1);
   assert.strictEqual(out[out.length - 1].state, 'onbus');
-  assert.ok(out.some((o) => /on a bus after all, from High St/.test(o.why)));
+  assert.ok(out.some((o) => /on a bus (after all, )?from High St/.test(o.why)));
 });
 
 test('positions held back for 2½ minutes (as at Wexley): ends as on the bus straight away', () => {

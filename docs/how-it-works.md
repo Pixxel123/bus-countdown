@@ -115,6 +115,7 @@ stateDiagram-v2
     AtStop --> OnBus: on a bus heading away
     AtStop --> Left: walked steadily away
     OnBus --> Left: at walking pace again
+    Left --> OnBus: 150 m along a route<br/>from the stop, faster than walking
     Left --> Idle: after 15 min, or 100 m back<br/>from the furthest you went
     AtStop: At stop
     OnBus: On bus
@@ -126,7 +127,7 @@ stateDiagram-v2
 | Heading | showing | you reach it and slow down (at stop); you go past it, turn away, or pass it on a bus (left / on bus); or you got off well short of it (walking, more than twice the minutes-ahead setting away, on three checks running and for 2 minutes, not counting standing still: left; if you then keep up bus pace, you were still on the bus: on bus) |
 | At stop | showing | you're on a bus heading away, or moving away at over 2.2 m/s for 90 seconds or more, however slowly the bus crawls (on bus); you walk steadily away, or pass the end distance (left: and if the pace then shows it was a bus after all, on bus) |
 | On bus | none, unless a saved stop is coming up on the route | you're at walking pace again (left); the stop you boarded at is kept, so a bus held up while still inside its circle doesn't show it again |
-| Left | none | after 15 minutes, or once you've come back 100 m from the furthest you went (idle); other stops are free straight away |
+| Left | none | after 15 minutes, or once you've come back 100 m from the furthest you went (idle); other stops are free straight away. If you'd got to the stop and are now 150 m or more past it along a route that calls there, faster than walking on average since you left it, you got on a bus there (on bus, and that bus is the one you got on) |
 
 Swiping the island away, the 30-minute limit and getting home also move it to Left. Decisions use the last six positions (`%BusStateWindow`): speed is the median of the last three readings (or the last two both being fast; Android gives a speed for only about one position in eight, so mostly it's worked out from the positions, ignoring any fix worse than 50 m, and holding a reading just under bus speed when the two fixes' error could hide a walk), "moving away" is the trend of your distance over the most recent positions, and fixes worse than 25 m are averaged with the previous one. On a bus, the stop coming up is found by projecting your position onto the route's line of stops, rather than by compass direction. Which way each saved stop's side heads is worked out once and kept in `%BusCacheDir`.
 
@@ -150,7 +151,7 @@ flowchart LR
 
 - Your bus leaves the island while you ride, since you're already on it, and the island shows only the buses you could change to. Bus Status says which bus you're on and when you'll get there. If it's the only bus listed, it stays as an ordinary bus rather than the island saying "No buses". It never buzzes.
 - Later buses on your route (the next 517 behind the 517 you're on) keep their place, destination and time, but their route badge is grey, the colour of the island's idle dots, instead of red, so they don't look like yours. Until it's known, nothing buzzes while you ride; once it is, only a connection (a bus due after yours gets there) can. Once your bus has reached the stop and dropped off TfL's list, buzzing is as usual.
-- Getting on: when a countdown ends because you're on a bus, the bus you got on is the one TfL had arriving nearest the moment you left the stop (including one that dropped off the list in the last 5 minutes, but never the bus you came in on, nor one TfL had dropped while you were still standing at the stop). It's kept for 90 minutes (`%BusStateBoarded`), so at your next stop it's known at once, and recorded with how far TfL's time was from when you left.
+- Getting on: when a countdown ends because you're on a bus, or once you're 150 m along a route from a stop you'd got to, faster than walking (as OneBusAway's reminders tell that you've boarded: whatever ended the countdown, only a bus takes you along its route that fast), the bus you got on is the one TfL had arriving nearest the moment you left the stop (including one that dropped off the list in the last 5 minutes, but never the bus you came in on, nor one TfL had dropped while you were still standing at the stop). It's kept for 90 minutes (`%BusStateBoarded`), so at your next stop it's known at once, and recorded with how far TfL's time was from when you left.
 - Bus Status shows your bus and the connection ("on the 517, at Wexley in about 2 min; then the 566 6 min after you get there"), and the last bus you got on.
 
 ## Sideways

@@ -4,6 +4,12 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.40] - 2026-10-08
+
+### Fixed
+
+- Getting on a bus is seen however the countdown ended. Once you've left a stop you'd got to, being 150 m or more along a route that calls there, faster than walking on average since you left, means you got on a bus there, and Bus Watch works out which one. On Tuesday the countdown at Corvel Lodge ended on its own just before the 517 came, so the ride to Wexley never knew its bus, and the 517 stayed on the island there as only "probably" yours. On Wednesday, off the tram at Kiln Street and onto the 566, the ride counted as still being on the tram.
+
 ## [4.39] - 2026-10-08
 
 ### Fixed

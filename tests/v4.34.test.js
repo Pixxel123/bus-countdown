@@ -70,10 +70,12 @@ test('Tuesday 17:20:31: an ending with no reason that no position on the phone c
   assert.ok(at('17:20:31', 'end'), 'played');
   assert.strictEqual(at('17:20:32', 'check').state, 'left');
 });
-test('Tuesday 17:41 into Wexley: LA28LPG was never seen being got on, so it is "probably" yours and stays on the island', () => {
+test('Tuesday 17:41 into Wexley: LA28LPG, seen being got on since 4.40, is yours and leaves the island', () => {
+  // (4.34 to 4.39 never saw you get on at Corvel Lodge, so it was "probably" yours and stayed on the
+  // island; a bus only matched on arrival time still does: see the tram case below)
   const o = at('17:41:39', 'tfl');
-  assert.deepStrictEqual([o.match.v, o.match.by, o.match.sure], ['LA28LPG', 'eta', false]);
-  assert.ok(o.shown.includes('LA28LPG'));
+  assert.deepStrictEqual([o.match.v, o.match.by, o.match.sure], ['LA28LPG', 'boarded', true]);
+  assert.ok(!o.shown.includes('LA28LPG'));
   assert.strictEqual(o.buzz, 'no');
 });
 

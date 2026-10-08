@@ -18,7 +18,9 @@
               route). Walking pace again -> left.
      left     island gone. That stop only starts again once you've come
               back 100 m from the furthest you went, or after 15 minutes.
-              Other stops are free.
+              Other stops are free. Left a stop you'd got to, and now 150 m
+              along a route from it faster than walking -> on bus (you got
+              on a bus there).
    Ending by swiping, timing out or getting home also moves to "left".
 
    Decisions use a sliding window of the last 6 positions
@@ -149,7 +151,8 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
   } else if (!running && (trip.s === 'atstop' || trip.s === 'heading')) {
     // Ended without us (swiped, timed out, got home): treat it as left
     var was = stops.filter(function (st) { return st.id === trip.stop; })[0];
-    trip = { s: 'left', stop: trip.stop, since: now, leftD: was ? Math.round(was.d) : 0 };
+    trip = { s: 'left', stop: trip.stop, since: now, leftD: was ? Math.round(was.d) : 0, wasAt: trip.s === 'atstop' || (trip.minD || 9999) <= (was ? was.r : 0),
+      leftAt: was && was.d > was.r ? leftTime(was) || now : now, atAt: trip.s === 'atstop' ? trip.since : 0 };   // still there: now
   }
   // Swiped away (Bus End notes it in BusStateSnooze: the stop, and when): nothing starts anywhere
   // until you've got near the stop and then away from it, clear of all your stops, or for 30 minutes.
@@ -224,7 +227,7 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
       setGlobal('BusStateLastBusAt', String(now)); from('onbus', { boardedAt: tripStop.id });
     } else if (tripStop.d > endAtFor(tripStop) || (away > 0.4 && win.length >= 3 && tripStop.d > Math.max(tripStop.r + 50, 120))) {
       busaction = 'stop'; why = 'walking away from ' + tripStop.n;
-      from('left', { leftD: Math.round(tripStop.d), walked: true, leftAt: leftTime(tripStop) || now, atAt: trip.since });
+      from('left', { leftD: Math.round(tripStop.d), walked: true, leftAt: leftTime(tripStop) || now, atAt: trip.since, wasAt: true });
     } else why = 'waiting at ' + tripStop.n;
   } else if (trip.s === 'heading' && tripStop) {
     trip.minD = Math.min(trip.minD || tripStop.d, Math.round(tripStop.d));
@@ -237,7 +240,7 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     if (trip.bus) trip.rode = true;      // rode towards it at some point (for "still on the bus", 4.39)
     if (tripStop.d <= tripStop.r && slow) { from('atstop'); why = 'reached ' + tripStop.n; }
     else if (passBus && awayH > 1 && tripStop.d > endAtFor(tripStop)) { busaction = 'stop'; why = 'passed ' + tripStop.n + ' on a bus'; from('onbus'); }
-    else if (trip.minD <= tripStop.r && awayH > 0.4 && tripStop.d > Math.max(tripStop.r + 50, 120)) { busaction = 'stop'; why = 'went past ' + tripStop.n; from('left', { leftD: Math.round(tripStop.d), byBus: !!trip.rode }); }
+    else if (trip.minD <= tripStop.r && awayH > 0.4 && tripStop.d > Math.max(tripStop.r + 50, 120)) { busaction = 'stop'; why = 'went past ' + tripStop.n; from('left', { leftD: Math.round(tripStop.d), byBus: !!trip.rode, wasAt: !trip.rode || !get('BusStateBoarded'), leftAt: leftTime(tripStop) || now }); }
     else if (tripStop.d > trip.minD + 200 && tripStop.d > endAtFor(tripStop)) { busaction = 'stop'; why = (passBus ? 'passed ' : 'turned away from ') + tripStop.n; from(passBus ? 'onbus' : 'left', { leftD: Math.round(tripStop.d) }); }
     // No longer coming up soon: shown while on a bus, but you got off (or slowed right down) well short
     // of it. At walking pace or slower, and more than twice BusApproachMin away at that pace, on three
@@ -281,6 +284,21 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     if (trip.s === 'left' && (now - trip.since > 15 * 60000)) { trip = { s: 'idle' }; if (!byBusLately) setGlobal('BusStateBoarded', ''); }
     // Kept that way, it goes once you've been off bus speed for 5 minutes, any time later
     if (trip.s === 'idle' && !byBusLately && get('BusStateBoarded') !== '') setGlobal('BusStateBoarded', '');
+    // Boarding proved by distance (4.40, as OneBusAway's reminders do): you left a stop you'd got to
+    // (waited at, or reached on foot), in the last 5 minutes, and you're now 150 m or more past it
+    // along a route that calls there, faster than walking on average since you left it (2.5 m/s).
+    // No timer and no single speed reading: only a bus gets you there that fast, along its route.
+    if (trip.s === 'left' && trip.wasAt && now - trip.since < 5 * 60000) {
+      var boardStop = stops.filter(function (st) { return st.id === trip.stop; })[0];
+      var past = boardStop ? pastAlong(boardStop) : -1;
+      var boardLeft = Math.max(trip.leftAt || trip.since, boardStop ? leftTime(boardStop) : 0);   // your last position at the stop, if later
+      var sinceLeft = (fixT - boardLeft) / 1000;
+      if (past >= 150 && past / Math.max(1, sinceLeft) > 2.5) {
+        afterAll = 'on a bus from ' + boardStop.n + ' (' + Math.round(past) + ' m along its route in ' + Math.round(sinceLeft) + ' s)' +
+          noteBoarded(boardStop, { leftAt: boardLeft, arrivedAt: trip.atAt });
+        setGlobal('BusStateLastBusAt', String(now)); from('onbus', { boardedAt: boardStop.id, leftD: Math.round(boardStop.d), walked: false, wasAt: false });
+      }
+    }
     // Ended as walking away, but you've kept up more than 2.2 m/s from that stop for 90 seconds or
     // more since: it was a bus after all, pulling away slowly (the countdown ended either way; this
     // keeps the trip, and the recording, right)
@@ -489,6 +507,28 @@ function alongRoute(maxAlong) {
     }
   });
   return found;
+}
+
+// How far past a stop you are along a route that calls there (4.40): each route's line of stops
+// (BusCacheSeq) is followed on from it for up to 2 km, and you're placed on the nearest segment within
+// 60 m. Metres along the route from the stop, or -1 when you're not on one of its routes beyond it.
+function pastAlong(st) {
+  var seqs = []; try { seqs = JSON.parse(get('BusCacheSeq') || '[]'); } catch (e) {}
+  var R = Math.PI / 180; var kx = Math.cos(lat * R) * 6371000 * R; var ky = 6371000 * R;
+  var best = -1; var bestOff = 60;
+  seqs.forEach(function (seq) {
+    var i0 = -1; for (var i = 0; i < seq.length && i0 < 0; i++) if (seq[i][0] === st.id) i0 = i;
+    var along = 0;
+    for (var j = i0; i0 >= 0 && j < seq.length - 1 && along <= 2000; j++) {
+      var ax = (seq[j][2] - lon) * kx; var ay = (seq[j][1] - lat) * ky; var dx = (seq[j + 1][2] - lon) * kx - ax; var dy = (seq[j + 1][1] - lat) * ky - ay;
+      var len2 = dx * dx + dy * dy; if (!len2) continue;
+      var f = Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2));
+      var off = Math.sqrt(Math.pow(ax + f * dx, 2) + Math.pow(ay + f * dy, 2));
+      if (off <= bestOff) { bestOff = off; best = along + f * Math.sqrt(len2); }
+      along += Math.sqrt(len2);
+    }
+  });
+  return best;
 }
 
 // Left a stop a moment ago: for 15 minutes it only starts again if you come back at least 100 m
