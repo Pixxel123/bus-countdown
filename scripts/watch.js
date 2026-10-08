@@ -46,6 +46,7 @@
 
 var now = Date.now();
 var lat = parseFloat(loc('gl_latitude')); var lon = parseFloat(loc('gl_longitude'));
+var fixLat = lat; var fixLon = lon;    // the fix as Android gave it, before any averaging (recorded, 4.36)
 var fixT = parseFloat(loc('gl_time_seconds')) > 0 ? parseFloat(loc('gl_time_seconds')) * 1000 : now;
 var fixAge = Math.round((now - fixT) / 1000);
 var accuracy = parseFloat(loc('busacc') || loc('gl_coordinates_accuracy')) || null;
@@ -524,6 +525,7 @@ setGlobal('BusStateWatchInfo', (get('BusStateWatchInfo') || '') + ' \u2192 ' + b
 debugLog((caller === 'profile=moved' ? '(pushed) ' : '') + busnote.replace(/^Bus Watch: /, '') + (busaction !== 'none' ? ' => ' + busaction : ''));
 // Recorder: the position as it came in, and what was decided from it
 record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6), lon: isNaN(lon) ? null : +lon.toFixed(6), acc: accuracy,
+  rlat: lat !== fixLat && !isNaN(fixLat) ? +fixLat.toFixed(6) : undefined, rlon: lon !== fixLon && !isNaN(fixLon) ? +fixLon.toFixed(6) : undefined,   // the fix before averaging, when it was averaged
   spd: androidSpeed >= 0 ? +androidSpeed.toFixed(2) : null, brg: bearing >= 0 ? Math.round(bearing) : null, age: fixAge,
   v: typeof speed !== 'undefined' && speed >= 0 ? +speed.toFixed(2) : null,       // the speed the rules used (Android's, or worked out)
   bus: typeof bus !== 'undefined' && bus ? 1 : 0, settled: typeof settled !== 'undefined' && settled ? 1 : 0, rate: rateWant,

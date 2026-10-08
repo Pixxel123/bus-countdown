@@ -58,3 +58,26 @@ test('a bus pulling away from the stop you were waiting at is seen as soon as be
   const out = ride.map((p) => check(g, p));
   assert.deepStrictEqual(out.map((o) => o.state), ['atstop', 'atstop', 'onbus']);
 });
+
+// ---- The recording of that walk (tests/fixtures/wed-7-oct-evening.jsonl: stand-in names, codes,
+// routes and positions, moved as in the Tuesday excerpts; home, work and Wi-Fi are the Tuesday
+// excerpts' stand-ins) ----------------------------------------------------------------------------
+const fs = require('fs');
+const path = require('path');
+const { replay } = require('../build/replay-core');
+const evening = fs.readFileSync(path.join(__dirname, 'fixtures', 'wed-7-oct-evening.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+const clock = (o) => new Date(o.t + 3600000).toISOString().slice(11, 19);
+
+test('the replay plays each fix as Android gave it: the averaged position is not averaged again', () => {
+  const at = replay(evening).out.find((o) => o.k === 'check' && clock(o) === '17:18:09');
+  assert.match(at.why, /, 247 m$/, 'the phone showed 247 m: ' + at.why);
+});
+
+test('replayed, the walk out of the office is never "on a bus", and the countdown ends as turned away', () => {
+  const checks = replay(evening).out.filter((o) => o.k === 'check');
+  const ended = checks.find((o) => o.action === 'stop');
+  assert.strictEqual(clock(ended), '17:19:07');
+  assert.match(ended.why, /^turned away from /);
+  assert.deepStrictEqual(checks.filter((o) => o.state === 'onbus').map(clock), []);
+  assert.deepStrictEqual(checks.filter((o) => o.line.state === 'onbus').map(clock), ['17:19:07', '17:19:29', '17:19:50', '17:20:27'], 'where the phone (4.33) had you on a bus');
+});

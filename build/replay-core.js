@@ -55,7 +55,21 @@ function replay(lines, extraGlobals) {
       continue;
     }
     if (l.k !== 'check' || l.lat === null) continue;
-    const r = run('watch.js', { globals: g, now: l.t, locals: { buscaller: l.src === 'hand' ? '' : l.src, gl_latitude: String(l.lat), gl_longitude: String(l.lon),
+    // The position Android gave. A poor fix (over 25 m) is averaged with the one before it, and the
+    // recording has the averaged position; played as it is, it would be averaged a second time, which
+    // smooths away the very jumps that fooled the phone (Wednesday evening, 4.36). Since 4.36 the fix
+    // itself is recorded too (rlat, rlon); before that, the averaging is undone the way it was done,
+    // from the previous position the rules kept
+    let fLat = l.lat; let fLon = l.lon;
+    if (l.rlat !== undefined) { fLat = l.rlat; fLon = l.rlon; } else if (l.acc > 25) {
+      let win = []; try { win = JSON.parse(g.BusStateWindow || '[]'); } catch (e) { win = []; }
+      const prev = win[win.length - 1]; const fixT = l.t - (l.age || 0) * 1000;
+      if (prev && prev.acc && fixT - prev.t < 30000 && fixT > prev.t + 1000) {
+        const wNow = 1 / (l.acc * l.acc); const wPrev = 1 / (prev.acc * prev.acc);
+        fLat = (l.lat * (wNow + wPrev) - prev.lat * wPrev) / wNow; fLon = (l.lon * (wNow + wPrev) - prev.lon * wPrev) / wNow;
+      }
+    }
+    const r = run('watch.js', { globals: g, now: l.t, locals: { buscaller: l.src === 'hand' ? '' : l.src, gl_latitude: String(fLat), gl_longitude: String(fLon),
       gl_time_seconds: String((l.t - (l.age || 0) * 1000) / 1000), busspeed: l.spd === null ? '' : String(l.spd), busbearing: l.brg === null ? '' : String(l.brg),
       busacc: l.acc === null ? '' : String(l.acc) } });
     if (r.busaction === 'start' || r.busaction === 'approach') {             // as Bus Start does

@@ -4,6 +4,16 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.37] - 2026-10-07
+
+### Added
+
+- The trip recorder also writes the fix as Android gave it (`rlat`, `rlon`) when a poor one was averaged with the one before.
+
+### Fixed
+
+- Replays play each fix as Android gave it. The recordings hold the averaged position, which the replay averaged a second time, smoothing away the very jumps that misled the phone: Wednesday evening's walk replayed as "turned away" on 4.35's rules, though the phone had said "on a bus". It now replays exactly as the phone decided, and 4.36's fix holds on it.
+
 ## [4.36] - 2026-10-07
 
 ### Fixed
