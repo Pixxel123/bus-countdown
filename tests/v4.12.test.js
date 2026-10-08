@@ -82,9 +82,10 @@ test('shown from a bus, then you get off well short of the stop: it ends once yo
   assert.strictEqual(at(-2200, 35), 'none', 'over 3 minutes away by bus');
   assert.strictEqual(at(-1700, 35), 'approach', 'coming up by bus (35 km/h: 3 minutes is about 1,750 m)');
   assert.strictEqual(at(-1690, 6), 'none', 'got off: one slow check is not enough');
-  assert.strictEqual(at(-1675, 6), 'none');
-  assert.strictEqual(at(-1660, 6), 'none');
-  assert.strictEqual(at(-1645, 6), 'stop', 'walking, about 16 minutes away: no longer coming up soon');
+  // Since 4.39 it takes 2 minutes of walking, not just three checks (a tram held at a stop for 25 s
+  // had ended a countdown): positions every 15 s, and the first of them still reads as the bus
+  for (let i = 1; i < 9; i++) assert.strictEqual(at(-1690 + i * 25, 6), 'none', 'still under 2 minutes');
+  assert.strictEqual(at(-1465, 6), 'stop', 'walking, about 15 minutes away: no longer coming up soon');
 });
 
 test('a bus crawling in traffic for a moment does not end it', () => {

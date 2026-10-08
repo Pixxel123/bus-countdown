@@ -1,8 +1,8 @@
 <TaskerData sr="" dvi="1" tv="6.7.6-beta">
 	<dmetric>1344.0,2992.0</dmetric>
 	<Profile sr="prof72" ve="2">
-		<cdate>1791447211362</cdate>
-		<edate>1791447211362</edate>
+		<cdate>1791447918530</cdate>
+		<edate>1791447918530</edate>
 		<flags>8</flags>
 		<id>72</id>
 		<mid0>79</mid0>
@@ -14,8 +14,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof74" ve="2">
-		<cdate>1791447211362</cdate>
-		<edate>1791447211362</edate>
+		<cdate>1791447918530</cdate>
+		<edate>1791447918530</edate>
 		<flags>8</flags>
 		<id>74</id>
 		<mid0>62</mid0>
@@ -33,8 +33,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof73" ve="2">
-		<cdate>1791447211362</cdate>
-		<edate>1791447211362</edate>
+		<cdate>1791447918530</cdate>
+		<edate>1791447918530</edate>
 		<flags>8</flags>
 		<id>73</id>
 		<mid0>59</mid0>
@@ -46,14 +46,14 @@
 		</State>
 	</Profile>
 	<Project sr="proj0" ve="2">
-		<cdate>1791447211362</cdate>
+		<cdate>1791447918530</cdate>
 		<name>Bus Countdown</name>
 		<pids>72,73,74</pids>
 		<tids>73,74,75,76,38,60,59,79,32,31,62,72</tids>
 	</Project>
 	<Task sr="task73">
-		<cdate>1791447211362</cdate>
-		<edate>1791447211362</edate>
+		<cdate>1791447918530</cdate>
+		<edate>1791447918530</edate>
 		<id>73</id>
 		<nme>Bus</nme>
 		<pri>6</pri>
@@ -178,11 +178,11 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.39.202610080925</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task74">
-		<cdate>1791447211362</cdate>
-		<edate>1791447211362</edate>
+		<cdate>1791447918530</cdate>
+		<edate>1791447918530</edate>
 		<id>74</id>
 		<nme>Bus Settings</nme>
 		<pri>6</pri>
@@ -201,7 +201,7 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.39.202610080925</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>First run? · Camera not measured yet</label>
@@ -2113,8 +2113,8 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buspreview</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task75">
-		<cdate>1791447211362</cdate>
-		<edate>1791447211362</edate>
+		<cdate>1791447918531</cdate>
+		<edate>1791447918531</edate>
 		<id>75</id>
 		<nme>Bus Settings Button</nme>
 		<pri>6</pri>
@@ -2695,8 +2695,8 @@ var buslayout = JSON.stringify({
 			<label>Open it · Shows the Android settings page</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">startActivity {} (android.content.Intent)</Str><Str sr="arg3" ve="3">busint</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busintent</lhs><op>2</op><rhs>android*</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task76">
-		<cdate>1791447211362</cdate>
-		<edate>1791447211362</edate>
+		<cdate>1791447918531</cdate>
+		<edate>1791447918531</edate>
 		<id>76</id>
 		<nme>Bus Find Camera</nme>
 		<pri>6</pri>
@@ -2829,8 +2829,8 @@ if (!r || !dens || !w) {
 			<label>Reset position: move the open screen's height slider · Shows the new value straight away</label><Str sr="arg0" ve="3">bussettings</Str><Str sr="arg1" ve="3">sl_y</Str><Str sr="arg2" ve="3">value</Str><Str sr="arg3" ve="3">%BusIslandY</Str><Int sr="arg4" val="0"/><Str sr="arg5" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrebuild</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task38">
-		<cdate>1791447211362</cdate>
-		<edate>1791447211362</edate>
+		<cdate>1791447918531</cdate>
+		<edate>1791447918531</edate>
 		<id>38</id>
 		<nme>Bus Start</nme>
 		<pri>6</pri>
@@ -2848,7 +2848,7 @@ if (!r || !dens || !w) {
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.39.202610080925</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>Settings: fill in defaults, check TflKey and BusRoutes · Resets empty or invalid settings</label>
@@ -3601,8 +3601,8 @@ record(busok === 'yes' ? 'start' : 'nostart', { stop: get('BusStateStopId'), nam
 		</Action>
 	</Task>
 	<Task sr="task60">
-		<cdate>1791447211362</cdate>
-		<edate>1791447211362</edate>
+		<cdate>1791447918531</cdate>
+		<edate>1791447918531</edate>
 		<id>60</id>
 		<nme>Bus Loop</nme>
 		<pri>6</pri>
@@ -3931,8 +3931,8 @@ var buspushm = get('BusStatePushM') || '30';
 		</Action>
 	</Task>
 	<Task sr="task59">
-		<cdate>1791447211362</cdate>
-		<edate>1791447211362</edate>
+		<cdate>1791447918531</cdate>
+		<edate>1791447918531</edate>
 		<id>59</id>
 		<nme>Bus Refresh</nme>
 		<pri>6</pri>
@@ -5159,40 +5159,40 @@ setGlobal('BusStateIslandScene', busnewscene);
 		</Action>
 	</Task>
 	<Task sr="task79">
-		<cdate>1791447211362</cdate>
-		<edate>1791447211362</edate>
+		<cdate>1791447918531</cdate>
+		<edate>1791447918531</edate>
 		<id>79</id>
 		<nme>Bus Wake</nme>
 		<pri>6</pri>
 		<Action sr="act0" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.39.202610080925</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.39.202610080925</rhs></Condition></ConditionList></Action>
 		<Action sr="act2" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.39.202610080925</rhs></Condition></ConditionList></Action>
 		<Action sr="act3" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.39.202610080925</rhs></Condition></ConditionList></Action>
 		<Action sr="act4" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.39.202610080925</rhs></Condition></ConditionList></Action>
 		<Action sr="act5" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.39.202610080925</rhs></Condition></ConditionList></Action>
 		<Action sr="act6" ve="7">
 			<code>547</code>
 			<label>This build · Version and build time</label>
 			<Str sr="arg0" ve="3">%busbuild</Str>
-			<Str sr="arg1" ve="3">4.38.202610080913</Str>
+			<Str sr="arg1" ve="3">4.39.202610080925</Str>
 			<Int sr="arg2" val="0"/>
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.39.202610080925</rhs></Condition></ConditionList></Action>
 		<Action sr="act7" ve="7">
 			<code>129</code>
 			<label>Remember it was done for this build · BusStateVersion</label>
@@ -5218,11 +5218,11 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.39.202610080925</rhs></Condition></ConditionList></Action>
 		<Action sr="act8" ve="7">
 			<code>548</code>
 			<label>Say so · A short message</label>
-			<Str sr="arg0" ve="3">Bus countdown 4.38: profiles switched on</Str>
+			<Str sr="arg0" ve="3">Bus countdown 4.39: profiles switched on</Str>
 			<Int sr="arg1" val="0"/>
 			<Str sr="arg10" ve="3"/>
 			<Int sr="arg11" val="1"/>
@@ -5238,7 +5238,7 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg7" ve="3"/>
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.39.202610080925</rhs></Condition></ConditionList></Action>
 		<Action sr="act9" ve="7">
 			<code>137</code>
 			<label>Only asked to switch the profiles: done · Started by another task with par1 "profiles"</label>
@@ -5481,8 +5481,8 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 		</Action>
 	</Task>
 	<Task sr="task32">
-		<cdate>1791447211362</cdate>
-		<edate>1791447211362</edate>
+		<cdate>1791447918531</cdate>
+		<edate>1791447918531</edate>
 		<id>32</id>
 		<nme>Bus End</nme>
 		<pri>6</pri>
@@ -5615,8 +5615,8 @@ setGlobal('BusStateMatch', '');
 		</Action>
 	</Task>
 	<Task sr="task31">
-		<cdate>1791447211362</cdate>
-		<edate>1791447211362</edate>
+		<cdate>1791447918531</cdate>
+		<edate>1791447918531</edate>
 		<id>31</id>
 		<nme>Bus Island</nme>
 		<pri>6</pri>
@@ -5668,8 +5668,8 @@ if (stops.length) {
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busisland</lhs><op>2</op><rhs>switch</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task62">
-		<cdate>1791447211362</cdate>
-		<edate>1791447211362</edate>
+		<cdate>1791447918531</cdate>
+		<edate>1791447918531</edate>
 		<id>62</id>
 		<nme>Bus Watch</nme>
 		<pri>6</pri>
@@ -6501,7 +6501,7 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
   }
   var snoozed = !!snooze &amp;&amp; !byHand;
   var snoozedAt = snoozed ? snooze.at : 0;
-  var from = function (to, note) { trip = Object.assign({}, trip, { s: to, since: now }, note || {}); };
+  var from = function (to, note) { trip = Object.assign({}, trip, { s: to, since: now, byBus: false }, note || {}); };   // byBus: see "still on the bus"
   var tripStop = stops.filter(function (st) { return st.id === trip.stop; })[0];
 
   // ---- What this position means, from the current state --------------------------------------
@@ -6563,21 +6563,26 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
     // three: on Wednesday evening one high reading from Android after a jumpy fix ended a walk as "on
     // a bus" (4.36)
     var passBus = trip.bus ? bus : busTwice;
+    if (trip.bus) trip.rode = true;      // rode towards it at some point (for "still on the bus", 4.39)
     if (tripStop.d &lt;= tripStop.r &amp;&amp; slow) { from('atstop'); why = 'reached ' + tripStop.n; }
     else if (passBus &amp;&amp; awayH &gt; 1 &amp;&amp; tripStop.d &gt; endAtFor(tripStop)) { busaction = 'stop'; why = 'passed ' + tripStop.n + ' on a bus'; from('onbus'); }
-    else if (trip.minD &lt;= tripStop.r &amp;&amp; awayH &gt; 0.4 &amp;&amp; tripStop.d &gt; Math.max(tripStop.r + 50, 120)) { busaction = 'stop'; why = 'went past ' + tripStop.n; from('left', { leftD: Math.round(tripStop.d) }); }
+    else if (trip.minD &lt;= tripStop.r &amp;&amp; awayH &gt; 0.4 &amp;&amp; tripStop.d &gt; Math.max(tripStop.r + 50, 120)) { busaction = 'stop'; why = 'went past ' + tripStop.n; from('left', { leftD: Math.round(tripStop.d), byBus: !!trip.rode }); }
     else if (tripStop.d &gt; trip.minD + 200 &amp;&amp; tripStop.d &gt; endAtFor(tripStop)) { busaction = 'stop'; why = (passBus ? 'passed ' : 'turned away from ') + tripStop.n; from(passBus ? 'onbus' : 'left', { leftD: Math.round(tripStop.d) }); }
     // No longer coming up soon: shown while on a bus, but you got off (or slowed right down) well short
     // of it. At walking pace or slower, and more than twice BusApproachMin away at that pace, on three
-    // checks in a row (so a bus crawling in traffic for a moment doesn't count), it ends. If you then
-    // speed up towards it again (back on a bus), it can show again once you're 100 m closer.
+    // checks in a row and for 2 minutes at walking pace (so a bus or tram held at a stop or lights
+    // doesn't count: on Thursday a tram stood still for two and a half minutes, which three checks in
+    // 25 s had taken for getting off, 4.39), it ends. Standing still doesn't count towards it. If you
+    // then speed up towards it again (back on a bus), it can show again once you're 100 m closer.
+    else if (!bus &amp;&amp; speed &gt;= 0 &amp;&amp; speed &lt; 0.6) { why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m (standing still)'; trip.slowN = 0; trip.slowSince = 0; }
     else if (!bus &amp;&amp; speed &gt;= 0 &amp;&amp; speed &lt;= 2.5 &amp;&amp; tripStop.d &gt; endAtFor(tripStop) &amp;&amp;
-             tripStop.d / Math.max(speed, 0.3) &gt; 2 * (parseFloat(get('BusApproachMin')) || 3) * 60 &amp;&amp; (trip.slowN = (trip.slowN || 0) + 1) &gt;= 3) {
+             tripStop.d / Math.max(speed, 0.3) &gt; 2 * (parseFloat(get('BusApproachMin')) || 3) * 60 &amp;&amp;
+             (trip.slowSince = trip.slowSince || now) &amp;&amp; (trip.slowN = (trip.slowN || 0) + 1) &gt;= 3 &amp;&amp; now - trip.slowSince &gt;= 120000) {
       busaction = 'stop'; why = tripStop.n + ' is no longer coming up soon (' + Math.round(tripStop.d) + ' m at ' + Math.round(speed * 3.6) + ' km/h)';
-      from('left', { leftD: Math.round(tripStop.d), slowN: 0 });
+      from('left', { leftD: Math.round(tripStop.d), slowN: 0, slowSince: 0, byBus: !!trip.rode });
     }
     else {
-      why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m'; if (bus || speed &gt; 2.5) trip.slowN = 0;
+      why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m'; if (bus || speed &gt; 2.5) { trip.slowN = 0; trip.slowSince = 0; }
       // Shown while on a bus, but now at walking pace on two checks in a row: you got off and are
       // walking to it, so you're no longer riding. Bus Refresh then stops treating a bus due when you
       // get there as yours (it's the one you're walking to catch), and it can buzz (4.32)
@@ -6614,6 +6619,18 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
         afterAll = 'on a bus after all, from ' + leftFrom.n + ' (' + Math.round(paceAway(leftFrom) * 3.6) + ' km/h for the last few minutes)' +
           noteBoarded(leftFrom, { leftAt: trip.leftAt || trip.since, arrivedAt: trip.atAt });
         setGlobal('BusStateLastBusAt', String(now)); from('onbus', { boardedAt: leftFrom.id, leftD: Math.round(leftFrom.d), walked: false });
+      }
+    }
+    // Ended as having got off the bus short of the stop, or gone past it, while riding towards it, but
+    // you've kept up more than 2.2 m/s from it for 90 seconds or more since: you never got off (the
+    // bus was held at a stop or in traffic). On Thursday the 517 waited at Wexley a minute and a half,
+    // the trip ended as "went past", and you rode on to work as "just left a stop" (4.39). The bus you
+    // got on is kept as it was: you're still on it.
+    if (trip.s === 'left' &amp;&amp; trip.byBus &amp;&amp; now - trip.since &lt; 5 * 60000) {
+      var passedStop = stops.filter(function (st) { return st.id === trip.stop; })[0];
+      if (passedStop &amp;&amp; paceAway(passedStop) &gt; 2.2) {
+        afterAll = 'still on the bus past ' + passedStop.n + ' (' + Math.round(paceAway(passedStop) * 3.6) + ' km/h for the last few minutes)';
+        setGlobal('BusStateLastBusAt', String(now)); from('onbus', { leftD: Math.round(passedStop.d), rode: false });
       }
     }
     if (trip.s === 'left' || trip.s === 'onbus') {    // how far you've gone since leaving that stop
@@ -6734,6 +6751,11 @@ function noteBoarded(st, hint) {
   } else {
     (seenHere.b || []).forEach(function (x) {
       if (cameOnHere &amp;&amp; cameOn.v === x.v) return;                                     // the bus you got off
+      // A bus TfL had already dropped, due 20 s or more before a moment you were still standing at the
+      // stop (within 40 m, under 1.5 m/s), had gone without you. On Thursday at Kiln Street the 566
+      // was due at 08:46:50 and dropped; you were still there at 08:47:16 and got on the 517 a minute
+      // later, but "nearest the time you left" (08:47:16, your last fix within 40 m) picked the 566 (4.39)
+      if (x.gone &amp;&amp; win.some(function (w) { return w.t &gt; Math.max(x.t, x.seen || 0) + 20000 &amp;&amp; w.spd &gt;= 0 &amp;&amp; w.spd &lt; 1.5 &amp;&amp; metres(w.lat, w.lon, st.lat, st.lon) &lt;= 40; })) return;
       var off = x.t - leftAt;
       if (off &gt;= -180000 &amp;&amp; off &lt;= 360000 &amp;&amp; (!best || Math.abs(off) &lt; Math.abs(best.t - leftAt))) best = x;
     });
@@ -7095,8 +7117,8 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busaction</lhs><op>2</op><rhs>stop</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task72">
-		<cdate>1791447211363</cdate>
-		<edate>1791447211363</edate>
+		<cdate>1791447918531</cdate>
+		<edate>1791447918531</edate>
 		<id>72</id>
 		<nme>Bus Status</nme>
 		<pri>6</pri>

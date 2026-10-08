@@ -64,10 +64,10 @@ test('Bus Status says when today\'s file is missing, and the last write error', 
 
 // ---- 3. "Last got on", once you're off it -------------------------------------------------------------
 test('Bus Status still names the bus you last got on, but says you are off it once you are on foot', () => {
-  const boarded = JSON.stringify({ k: '566', v: 'LF75OWB', stop: 'KH', at: NOW - 18 * 60000, sure: true });
+  const boarded = JSON.stringify({ k: '566', v: 'SF40MGA', stop: 'KH', at: NOW - 18 * 60000, sure: true });
   const base = { BusRoutes: '517,566', BusPlaces: 'bus|KH|Kiln Street (Stop KH)|51.37|-0.29|50\nbus|G|Wexley / Thornacre Precinct (Stop G)|51.34|-0.31|100', BusStateBoarded: boarded };
   const riding = status(Object.assign({ BusStateTrip: JSON.stringify({ s: 'heading', stop: 'G', bus: true, since: NOW - 240000 }) }, base), NOW);
-  assert.match(riding, /Last got on: the 566 \(LF75OWB\) at Kiln Street \(Stop KH\), 07:47\n/);
+  assert.match(riding, /Last got on: the 566 \(SF40MGA\) at Kiln Street \(Stop KH\), 07:47\n/);
   const walking = status(Object.assign({ BusStateTrip: JSON.stringify({ s: 'heading', stop: 'G', bus: false, since: NOW - 240000 }) }, base), NOW);
-  assert.match(walking, /Last got on: the 566 \(LF75OWB\) at Kiln Street \(Stop KH\), 07:47 \(off it now\)/);
+  assert.match(walking, /Last got on: the 566 \(SF40MGA\) at Kiln Street \(Stop KH\), 07:47 \(off it now\)/);
 });

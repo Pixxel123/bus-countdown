@@ -172,7 +172,7 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
   }
   var snoozed = !!snooze && !byHand;
   var snoozedAt = snoozed ? snooze.at : 0;
-  var from = function (to, note) { trip = Object.assign({}, trip, { s: to, since: now }, note || {}); };
+  var from = function (to, note) { trip = Object.assign({}, trip, { s: to, since: now, byBus: false }, note || {}); };   // byBus: see "still on the bus"
   var tripStop = stops.filter(function (st) { return st.id === trip.stop; })[0];
 
   // ---- What this position means, from the current state --------------------------------------
@@ -234,21 +234,26 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     // three: on Wednesday evening one high reading from Android after a jumpy fix ended a walk as "on
     // a bus" (4.36)
     var passBus = trip.bus ? bus : busTwice;
+    if (trip.bus) trip.rode = true;      // rode towards it at some point (for "still on the bus", 4.39)
     if (tripStop.d <= tripStop.r && slow) { from('atstop'); why = 'reached ' + tripStop.n; }
     else if (passBus && awayH > 1 && tripStop.d > endAtFor(tripStop)) { busaction = 'stop'; why = 'passed ' + tripStop.n + ' on a bus'; from('onbus'); }
-    else if (trip.minD <= tripStop.r && awayH > 0.4 && tripStop.d > Math.max(tripStop.r + 50, 120)) { busaction = 'stop'; why = 'went past ' + tripStop.n; from('left', { leftD: Math.round(tripStop.d) }); }
+    else if (trip.minD <= tripStop.r && awayH > 0.4 && tripStop.d > Math.max(tripStop.r + 50, 120)) { busaction = 'stop'; why = 'went past ' + tripStop.n; from('left', { leftD: Math.round(tripStop.d), byBus: !!trip.rode }); }
     else if (tripStop.d > trip.minD + 200 && tripStop.d > endAtFor(tripStop)) { busaction = 'stop'; why = (passBus ? 'passed ' : 'turned away from ') + tripStop.n; from(passBus ? 'onbus' : 'left', { leftD: Math.round(tripStop.d) }); }
     // No longer coming up soon: shown while on a bus, but you got off (or slowed right down) well short
     // of it. At walking pace or slower, and more than twice BusApproachMin away at that pace, on three
-    // checks in a row (so a bus crawling in traffic for a moment doesn't count), it ends. If you then
-    // speed up towards it again (back on a bus), it can show again once you're 100 m closer.
+    // checks in a row and for 2 minutes at walking pace (so a bus or tram held at a stop or lights
+    // doesn't count: on Thursday a tram stood still for two and a half minutes, which three checks in
+    // 25 s had taken for getting off, 4.39), it ends. Standing still doesn't count towards it. If you
+    // then speed up towards it again (back on a bus), it can show again once you're 100 m closer.
+    else if (!bus && speed >= 0 && speed < 0.6) { why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m (standing still)'; trip.slowN = 0; trip.slowSince = 0; }
     else if (!bus && speed >= 0 && speed <= 2.5 && tripStop.d > endAtFor(tripStop) &&
-             tripStop.d / Math.max(speed, 0.3) > 2 * (parseFloat(get('BusApproachMin')) || 3) * 60 && (trip.slowN = (trip.slowN || 0) + 1) >= 3) {
+             tripStop.d / Math.max(speed, 0.3) > 2 * (parseFloat(get('BusApproachMin')) || 3) * 60 &&
+             (trip.slowSince = trip.slowSince || now) && (trip.slowN = (trip.slowN || 0) + 1) >= 3 && now - trip.slowSince >= 120000) {
       busaction = 'stop'; why = tripStop.n + ' is no longer coming up soon (' + Math.round(tripStop.d) + ' m at ' + Math.round(speed * 3.6) + ' km/h)';
-      from('left', { leftD: Math.round(tripStop.d), slowN: 0 });
+      from('left', { leftD: Math.round(tripStop.d), slowN: 0, slowSince: 0, byBus: !!trip.rode });
     }
     else {
-      why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m'; if (bus || speed > 2.5) trip.slowN = 0;
+      why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m'; if (bus || speed > 2.5) { trip.slowN = 0; trip.slowSince = 0; }
       // Shown while on a bus, but now at walking pace on two checks in a row: you got off and are
       // walking to it, so you're no longer riding. Bus Refresh then stops treating a bus due when you
       // get there as yours (it's the one you're walking to catch), and it can buzz (4.32)
@@ -285,6 +290,18 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
         afterAll = 'on a bus after all, from ' + leftFrom.n + ' (' + Math.round(paceAway(leftFrom) * 3.6) + ' km/h for the last few minutes)' +
           noteBoarded(leftFrom, { leftAt: trip.leftAt || trip.since, arrivedAt: trip.atAt });
         setGlobal('BusStateLastBusAt', String(now)); from('onbus', { boardedAt: leftFrom.id, leftD: Math.round(leftFrom.d), walked: false });
+      }
+    }
+    // Ended as having got off the bus short of the stop, or gone past it, while riding towards it, but
+    // you've kept up more than 2.2 m/s from it for 90 seconds or more since: you never got off (the
+    // bus was held at a stop or in traffic). On Thursday the 517 waited at Wexley a minute and a half,
+    // the trip ended as "went past", and you rode on to work as "just left a stop" (4.39). The bus you
+    // got on is kept as it was: you're still on it.
+    if (trip.s === 'left' && trip.byBus && now - trip.since < 5 * 60000) {
+      var passedStop = stops.filter(function (st) { return st.id === trip.stop; })[0];
+      if (passedStop && paceAway(passedStop) > 2.2) {
+        afterAll = 'still on the bus past ' + passedStop.n + ' (' + Math.round(paceAway(passedStop) * 3.6) + ' km/h for the last few minutes)';
+        setGlobal('BusStateLastBusAt', String(now)); from('onbus', { leftD: Math.round(passedStop.d), rode: false });
       }
     }
     if (trip.s === 'left' || trip.s === 'onbus') {    // how far you've gone since leaving that stop
@@ -405,6 +422,11 @@ function noteBoarded(st, hint) {
   } else {
     (seenHere.b || []).forEach(function (x) {
       if (cameOnHere && cameOn.v === x.v) return;                                     // the bus you got off
+      // A bus TfL had already dropped, due 20 s or more before a moment you were still standing at the
+      // stop (within 40 m, under 1.5 m/s), had gone without you. On Thursday at Kiln Street the 566
+      // was due at 08:46:50 and dropped; you were still there at 08:47:16 and got on the 517 a minute
+      // later, but "nearest the time you left" (08:47:16, your last fix within 40 m) picked the 566 (4.39)
+      if (x.gone && win.some(function (w) { return w.t > Math.max(x.t, x.seen || 0) + 20000 && w.spd >= 0 && w.spd < 1.5 && metres(w.lat, w.lon, st.lat, st.lon) <= 40; })) return;
       var off = x.t - leftAt;
       if (off >= -180000 && off <= 360000 && (!best || Math.abs(off) < Math.abs(best.t - leftAt))) best = x;
     });

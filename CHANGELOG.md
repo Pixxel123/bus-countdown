@@ -4,6 +4,14 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.39] - 2026-10-08
+
+### Fixed
+
+- The bus you got on is no longer a bus TfL had already dropped while you were still standing at the stop. On Thursday at Kiln Street it picked the 566 that left a minute before the 517 you caught, so Bus Status said you were on the 566.
+- A bus held at a stop on the way to the one shown no longer ends the ride. If the trip ended as "went past" or "no longer coming up soon" while you were riding, and you then keep up bus pace, you're still on the bus, and still on the bus you got on. On Thursday the 517 waited at Wexley a minute and a half and the rest of the ride counted as "just left a stop".
+- A tram or bus standing still short of the stop shown no longer ends its countdown. "No longer coming up soon" now takes 2 minutes at walking pace; standing still doesn't count. On Thursday the tram stood still 25 s, the countdown ended, and it came back 2 minutes later.
+
 ## [4.38] - 2026-10-08
 
 ### Fixed
