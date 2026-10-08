@@ -20,7 +20,20 @@ var sideNow = lastPlace === 'work' ? 'the side towards home (you came from work)
             : 'the nearer side (no preference right now)';
 lines.push('Side of the road first: ' + sideNow + '. Home ' + (get('BusHomeAt') ? 'known' : 'not known yet') +
   ', work ' + (get('BusWorkAt') ? 'known' : 'not known yet') + (get('BusCacheSeq') ? '' : ', route orders not fetched yet'));
-lines.push('Recording trips: ' + (get('BusRecord') === 'on' ? 'on (Downloads/Tasker-bus-trip-data/bus-trip-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date().getDay()] + '.jsonl today)' : 'off'));
+// Recording: whether today's file is really there, as Tasker sees it, and how much it holds (4.38)
+var recDay = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][dd.getDay()];
+var recFile = 'Download/Tasker-bus-trip-data/bus-trip-' + recDay + '.jsonl';
+var recNote = 'off';
+if (get('BusRecord') === 'on') {
+  var recToday = get('BusRecordDay') === dd.getFullYear() + '-' + (dd.getMonth() + 1) + '-' + dd.getDate();
+  var recText = null; try { recText = typeof readFile === 'function' ? readFile(recFile) : null; } catch (e) { recText = null; }
+  var recLines = typeof recText === 'string' ? recText.split('\n').filter(function (l) { return l; }) : [];
+  var recLast = null; try { recLast = recLines.length ? JSON.parse(recLines[recLines.length - 1]).t : null; } catch (e) { recLast = null; }
+  recNote = 'on (Downloads/Tasker-bus-trip-data/bus-trip-' + recDay + '.jsonl: ' +
+    (!recToday ? 'nothing written today yet' : recLines.length ? recLines.length + ' lines, last at ' + (recLast ? new Date(recLast).toTimeString().slice(0, 5) : '?') : 'not found') +
+    (get('BusRecordErr') ? '; last write failed at ' + get('BusRecordErr') : '') + ')';
+}
+lines.push('Recording trips: ' + recNote);
 lines.push('Heading to a stop: ' + ({ off: 'off', walk: 'walking', both: 'walking and by bus' }[get('BusApproach') || 'both']) +
   ', ' + (get('BusApproachMin') || '3') + ' min ahead');
 lines.push('On leaving Wi-Fi, show the nearest stop: ' + ({ off: 'never', work: 'work only', home: 'home only', both: 'home and work' }[get('BusLeaveShow') || 'work']));
@@ -38,7 +51,8 @@ var matchNow = {}; try { matchNow = JSON.parse(get('BusStateMatch') || '{}'); } 
 if (matchNow.note && running && Date.now() - (matchNow.at || 0) < 10 * 60000) lines.push('Your bus: ' + matchNow.note);
 var boardedNow = null; try { boardedNow = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) {}
 if (boardedNow && Date.now() - boardedNow.at < 90 * 60000)
-  lines.push('Last got on: the ' + boardedNow.k + ' (' + boardedNow.v + ') at ' + (stopNames[boardedNow.stop] || boardedNow.stop) + ', ' + new Date(boardedNow.at).toTimeString().slice(0, 5));
+  lines.push('Last got on: the ' + boardedNow.k + ' (' + boardedNow.v + ') at ' + (stopNames[boardedNow.stop] || boardedNow.stop) + ', ' + new Date(boardedNow.at).toTimeString().slice(0, 5) +
+    (trip.s === 'onbus' || (trip.s === 'heading' && trip.bus) ? '' : ' (off it now)'));
 var modeNow = null; try { modeNow = JSON.parse(get('BusStateMode') || 'null'); } catch (e) {}
 if (modeNow && Date.now() - modeNow.t < 10 * 60000) {
   var mi = ['still', 'walk', 'ride'].indexOf(modeNow.m);

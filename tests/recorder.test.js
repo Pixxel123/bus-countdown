@@ -77,6 +77,7 @@ test('the first line of a day also makes sure the folder exists', () => {
   delete files[FILE];
   const calls = [];
   run('end_log.js', { now: at, globals: { BusRecord: 'on', BusRecordDay: 'x', BusStateStopId: 'S' }, locals: { busfrom: 'island', shell: (c) => calls.push(c) } });
-  assert.deepStrictEqual(calls, ['mkdir -p /sdcard/Download/Tasker-bus-trip-data']);
+  assert.strictEqual(calls[0], 'mkdir -p /sdcard/Download/Tasker-bus-trip-data');
+  assert.match(calls[1], /^am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:\/\/\/sdcard\/Download\/Tasker-bus-trip-data\/bus-trip-\w{3}\.jsonl$/, 'and the new file is announced to the media index');
   assert.ok(files[FILE]);
 });

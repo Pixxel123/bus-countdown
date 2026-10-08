@@ -4,6 +4,18 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.38] - 2026-10-08
+
+### Fixed
+
+- A train standing at a station near your bus route no longer shows the bus stop there as one you're riding to. Heading for a stop by bus now needs a fix good to 50 m: on Wednesday evening, standing at Wexley 200 m from the route, one fix of ±100 m landed on it.
+- The trip recorder only counts a day as started once its first line is really written; if that write fails, the next line starts the file again, with the setup. Each new file is announced to Android's media index, so the Files app lists it.
+
+### Changed
+
+- Bus Status shows how many lines today's recording has and when the last was written, or that it's missing and the last write error.
+- Bus Status's "Last got on" says "(off it now)" once you're no longer riding that bus.
+
 ## [4.37] - 2026-10-07
 
 ### Added

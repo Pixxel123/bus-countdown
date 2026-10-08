@@ -38,6 +38,7 @@ function run(name, { globals = {}, locals = {}, now = Date.now() } = {}) {
     setGlobal: (k, v) => { globals[k] = String(v); },
     Date: clockAt(now), Math, JSON, parseInt, parseFloat, isNaN, String, Number, Object, Array, RegExp,
     writeFile: (p, text, append) => { files[p] = (append ? (files[p] || '') : '') + text; },
+    readFile: (p) => { if (!(p in files)) throw new Error('No such file: ' + p); return files[p]; },
   }, locals);
   vm.createContext(ctx);
   vm.runInContext(src, ctx, { filename: name });

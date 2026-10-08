@@ -334,6 +334,10 @@ function approaching() {
   if (onABus && setting !== 'both') return null;
   var limit = (parseFloat(get('BusApproachMin')) || 3) * 60;
   var best = null;
+  // By bus, only from a fix good to 50 m: on Wednesday evening, a train standing at a station 200 m
+  // from the route gave one fix of ±100 m that landed on it, and the island showed the bus stop
+  // there as one you were riding to (4.38)
+  if (onABus && (accuracy || 15) > 50) { skipped = 'moving fast, but the fix (±' + Math.round(accuracy) + ' m) is too rough to tell which road you are on'; return null; }
   if (onABus) {
     var onRoute = alongRoute(speed * limit);
     if (onRoute) best = { id: onRoute.st.id, n: onRoute.st.n, d: onRoute.along, eta: onRoute.along / speed, pref: onRoute.st.pref };

@@ -12,7 +12,7 @@ const taskerLocals = [
   'bus_lastloc', 'bus_fixtime', 'bus_hasspeed', 'bus_speed', 'bus_hasbearing', 'bus_bearing', 'bus_acc',
   'busacc', 'busspeed', 'busbearing', 'busnearedge', 'busdwell', 'busstatus', 'busbuild', 'busroute', 'busprevgap', 'busprevy',
   'bp_fine', 'errmsg', 'ld_selected', 'busres', 'buscfg', 'busmetrics', 'busrects', 'businsets', 'busproblem',
-  'i', 'busttroute', 'busfetch', 'busrects2', 'buscuterr', 'busconfig', 'busisland', 'busstart', 'writeFile', 'shell',
+  'i', 'busttroute', 'busfetch', 'busrects2', 'buscuterr', 'busconfig', 'busisland', 'busstart', 'writeFile', 'readFile', 'shell',
 ];
 
 module.exports = [

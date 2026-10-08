@@ -1,8 +1,8 @@
 <TaskerData sr="" dvi="1" tv="6.7.6-beta">
 	<dmetric>1344.0,2992.0</dmetric>
 	<Profile sr="prof72" ve="2">
-		<cdate>1791390787389</cdate>
-		<edate>1791390787389</edate>
+		<cdate>1791447211362</cdate>
+		<edate>1791447211362</edate>
 		<flags>8</flags>
 		<id>72</id>
 		<mid0>79</mid0>
@@ -14,8 +14,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof74" ve="2">
-		<cdate>1791390787389</cdate>
-		<edate>1791390787389</edate>
+		<cdate>1791447211362</cdate>
+		<edate>1791447211362</edate>
 		<flags>8</flags>
 		<id>74</id>
 		<mid0>62</mid0>
@@ -33,8 +33,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof73" ve="2">
-		<cdate>1791390787389</cdate>
-		<edate>1791390787389</edate>
+		<cdate>1791447211362</cdate>
+		<edate>1791447211362</edate>
 		<flags>8</flags>
 		<id>73</id>
 		<mid0>59</mid0>
@@ -46,14 +46,14 @@
 		</State>
 	</Profile>
 	<Project sr="proj0" ve="2">
-		<cdate>1791390787389</cdate>
+		<cdate>1791447211362</cdate>
 		<name>Bus Countdown</name>
 		<pids>72,73,74</pids>
 		<tids>73,74,75,76,38,60,59,79,32,31,62,72</tids>
 	</Project>
 	<Task sr="task73">
-		<cdate>1791390787389</cdate>
-		<edate>1791390787389</edate>
+		<cdate>1791447211362</cdate>
+		<edate>1791447211362</edate>
 		<id>73</id>
 		<nme>Bus</nme>
 		<pri>6</pri>
@@ -178,11 +178,11 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.37.202610071733</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task74">
-		<cdate>1791390787389</cdate>
-		<edate>1791390787389</edate>
+		<cdate>1791447211362</cdate>
+		<edate>1791447211362</edate>
 		<id>74</id>
 		<nme>Bus Settings</nme>
 		<pri>6</pri>
@@ -201,7 +201,7 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.37.202610071733</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>First run? · Camera not measured yet</label>
@@ -2113,8 +2113,8 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buspreview</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task75">
-		<cdate>1791390787389</cdate>
-		<edate>1791390787389</edate>
+		<cdate>1791447211362</cdate>
+		<edate>1791447211362</edate>
 		<id>75</id>
 		<nme>Bus Settings Button</nme>
 		<pri>6</pri>
@@ -2695,8 +2695,8 @@ var buslayout = JSON.stringify({
 			<label>Open it · Shows the Android settings page</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">startActivity {} (android.content.Intent)</Str><Str sr="arg3" ve="3">busint</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busintent</lhs><op>2</op><rhs>android*</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task76">
-		<cdate>1791390787389</cdate>
-		<edate>1791390787389</edate>
+		<cdate>1791447211362</cdate>
+		<edate>1791447211362</edate>
 		<id>76</id>
 		<nme>Bus Find Camera</nme>
 		<pri>6</pri>
@@ -2829,8 +2829,8 @@ if (!r || !dens || !w) {
 			<label>Reset position: move the open screen's height slider · Shows the new value straight away</label><Str sr="arg0" ve="3">bussettings</Str><Str sr="arg1" ve="3">sl_y</Str><Str sr="arg2" ve="3">value</Str><Str sr="arg3" ve="3">%BusIslandY</Str><Int sr="arg4" val="0"/><Str sr="arg5" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrebuild</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task38">
-		<cdate>1791390787389</cdate>
-		<edate>1791390787389</edate>
+		<cdate>1791447211362</cdate>
+		<edate>1791447211362</edate>
 		<id>38</id>
 		<nme>Bus Start</nme>
 		<pri>6</pri>
@@ -2848,7 +2848,7 @@ if (!r || !dens || !w) {
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.37.202610071733</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>Settings: fill in defaults, check TflKey and BusRoutes · Resets empty or invalid settings</label>
@@ -3511,7 +3511,6 @@ function record(kind, data) {
   var file = 'Download/Tasker-bus-trip-data/bus-trip-' + day + '.jsonl';
   var today = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   var fresh = global('BusRecordDay') !== today;            // first line today: start the file afresh
-  if (fresh) setGlobal('BusRecordDay', today);
   // The folder: Bus Start and Bus Settings create it with Tasker's Create Directory when recording is
   // on; the first line of each day also makes sure of it, in case it was deleted since
   if (fresh &amp;&amp; typeof shell === 'function') { try { shell('mkdir -p /sdcard/Download/Tasker-bus-trip-data', false, 5); } catch (e) {} }
@@ -3524,7 +3523,17 @@ function record(kind, data) {
     var setup = {}; keep.forEach(function (n) { var v = global(n); if (v !== undefined &amp;&amp; v !== null &amp;&amp; String(v).charAt(0) !== '%') setup[n] = String(v); });
     line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
   }
-  try { writeFile(file, line + '\n', !fresh); } catch (e) {}
+  // The day only counts as started once its first line is really written: if that fails, the next
+  // line tries again from scratch (with the setup), and Bus Status says what went wrong (4.38). A new
+  // file is then announced to Android's media index, or the Files app may not list it.
+  try {
+    writeFile(file, line + '\n', !fresh);
+    setGlobal('BusRecordErr', '');
+    if (fresh) {
+      setGlobal('BusRecordDay', today);
+      if (typeof shell === 'function') { try { shell('am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/' + file, false, 5); } catch (e) {} }
+    }
+  } catch (e) { setGlobal('BusRecordErr', d.toTimeString().slice(0, 5) + ' ' + String((e &amp;&amp; e.message) || e).slice(0, 120)); }
 }
 
 // Debugging: keep the last 20 decisions in BusDebugLog (copied by the Bus Debugging task).
@@ -3592,8 +3601,8 @@ record(busok === 'yes' ? 'start' : 'nostart', { stop: get('BusStateStopId'), nam
 		</Action>
 	</Task>
 	<Task sr="task60">
-		<cdate>1791390787389</cdate>
-		<edate>1791390787389</edate>
+		<cdate>1791447211362</cdate>
+		<edate>1791447211362</edate>
 		<id>60</id>
 		<nme>Bus Loop</nme>
 		<pri>6</pri>
@@ -3922,8 +3931,8 @@ var buspushm = get('BusStatePushM') || '30';
 		</Action>
 	</Task>
 	<Task sr="task59">
-		<cdate>1791390787389</cdate>
-		<edate>1791390787389</edate>
+		<cdate>1791447211362</cdate>
+		<edate>1791447211362</edate>
 		<id>59</id>
 		<nme>Bus Refresh</nme>
 		<pri>6</pri>
@@ -4275,7 +4284,6 @@ function record(kind, data) {
   var file = 'Download/Tasker-bus-trip-data/bus-trip-' + day + '.jsonl';
   var today = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   var fresh = global('BusRecordDay') !== today;            // first line today: start the file afresh
-  if (fresh) setGlobal('BusRecordDay', today);
   // The folder: Bus Start and Bus Settings create it with Tasker's Create Directory when recording is
   // on; the first line of each day also makes sure of it, in case it was deleted since
   if (fresh &amp;&amp; typeof shell === 'function') { try { shell('mkdir -p /sdcard/Download/Tasker-bus-trip-data', false, 5); } catch (e) {} }
@@ -4288,7 +4296,17 @@ function record(kind, data) {
     var setup = {}; keep.forEach(function (n) { var v = global(n); if (v !== undefined &amp;&amp; v !== null &amp;&amp; String(v).charAt(0) !== '%') setup[n] = String(v); });
     line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
   }
-  try { writeFile(file, line + '\n', !fresh); } catch (e) {}
+  // The day only counts as started once its first line is really written: if that fails, the next
+  // line tries again from scratch (with the setup), and Bus Status says what went wrong (4.38). A new
+  // file is then announced to Android's media index, or the Files app may not list it.
+  try {
+    writeFile(file, line + '\n', !fresh);
+    setGlobal('BusRecordErr', '');
+    if (fresh) {
+      setGlobal('BusRecordDay', today);
+      if (typeof shell === 'function') { try { shell('am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/' + file, false, 5); } catch (e) {} }
+    }
+  } catch (e) { setGlobal('BusRecordErr', d.toTimeString().slice(0, 5) + ' ' + String((e &amp;&amp; e.message) || e).slice(0, 120)); }
 }
 // Which of the buses listed at a stop is the one you're riding towards it. eta is when you'd get
 // there at the pace you've been closing in (ms). Each bus's TfL time is compared with it: the
@@ -5141,40 +5159,40 @@ setGlobal('BusStateIslandScene', busnewscene);
 		</Action>
 	</Task>
 	<Task sr="task79">
-		<cdate>1791390787389</cdate>
-		<edate>1791390787389</edate>
+		<cdate>1791447211362</cdate>
+		<edate>1791447211362</edate>
 		<id>79</id>
 		<nme>Bus Wake</nme>
 		<pri>6</pri>
 		<Action sr="act0" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.37.202610071733</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.37.202610071733</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
 		<Action sr="act2" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.37.202610071733</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
 		<Action sr="act3" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.37.202610071733</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
 		<Action sr="act4" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.37.202610071733</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
 		<Action sr="act5" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.37.202610071733</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
 		<Action sr="act6" ve="7">
 			<code>547</code>
 			<label>This build · Version and build time</label>
 			<Str sr="arg0" ve="3">%busbuild</Str>
-			<Str sr="arg1" ve="3">4.37.202610071733</Str>
+			<Str sr="arg1" ve="3">4.38.202610080913</Str>
 			<Int sr="arg2" val="0"/>
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.37.202610071733</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
 		<Action sr="act7" ve="7">
 			<code>129</code>
 			<label>Remember it was done for this build · BusStateVersion</label>
@@ -5200,11 +5218,11 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.37.202610071733</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
 		<Action sr="act8" ve="7">
 			<code>548</code>
 			<label>Say so · A short message</label>
-			<Str sr="arg0" ve="3">Bus countdown 4.37: profiles switched on</Str>
+			<Str sr="arg0" ve="3">Bus countdown 4.38: profiles switched on</Str>
 			<Int sr="arg1" val="0"/>
 			<Str sr="arg10" ve="3"/>
 			<Int sr="arg11" val="1"/>
@@ -5220,7 +5238,7 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg7" ve="3"/>
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.37.202610071733</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.38.202610080913</rhs></Condition></ConditionList></Action>
 		<Action sr="act9" ve="7">
 			<code>137</code>
 			<label>Only asked to switch the profiles: done · Started by another task with par1 "profiles"</label>
@@ -5351,7 +5369,6 @@ function record(kind, data) {
   var file = 'Download/Tasker-bus-trip-data/bus-trip-' + day + '.jsonl';
   var today = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   var fresh = global('BusRecordDay') !== today;            // first line today: start the file afresh
-  if (fresh) setGlobal('BusRecordDay', today);
   // The folder: Bus Start and Bus Settings create it with Tasker's Create Directory when recording is
   // on; the first line of each day also makes sure of it, in case it was deleted since
   if (fresh &amp;&amp; typeof shell === 'function') { try { shell('mkdir -p /sdcard/Download/Tasker-bus-trip-data', false, 5); } catch (e) {} }
@@ -5364,7 +5381,17 @@ function record(kind, data) {
     var setup = {}; keep.forEach(function (n) { var v = global(n); if (v !== undefined &amp;&amp; v !== null &amp;&amp; String(v).charAt(0) !== '%') setup[n] = String(v); });
     line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
   }
-  try { writeFile(file, line + '\n', !fresh); } catch (e) {}
+  // The day only counts as started once its first line is really written: if that fails, the next
+  // line tries again from scratch (with the setup), and Bus Status says what went wrong (4.38). A new
+  // file is then announced to Android's media index, or the Files app may not list it.
+  try {
+    writeFile(file, line + '\n', !fresh);
+    setGlobal('BusRecordErr', '');
+    if (fresh) {
+      setGlobal('BusRecordDay', today);
+      if (typeof shell === 'function') { try { shell('am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/' + file, false, 5); } catch (e) {} }
+    }
+  } catch (e) { setGlobal('BusRecordErr', d.toTimeString().slice(0, 5) + ' ' + String((e &amp;&amp; e.message) || e).slice(0, 120)); }
 }
 var wifiBefore = global('BusStateWifi') || '';
 var wifiNow = wifiName();
@@ -5454,8 +5481,8 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 		</Action>
 	</Task>
 	<Task sr="task32">
-		<cdate>1791390787389</cdate>
-		<edate>1791390787389</edate>
+		<cdate>1791447211362</cdate>
+		<edate>1791447211362</edate>
 		<id>32</id>
 		<nme>Bus End</nme>
 		<pri>6</pri>
@@ -5510,7 +5537,6 @@ function record(kind, data) {
   var file = 'Download/Tasker-bus-trip-data/bus-trip-' + day + '.jsonl';
   var today = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   var fresh = global('BusRecordDay') !== today;            // first line today: start the file afresh
-  if (fresh) setGlobal('BusRecordDay', today);
   // The folder: Bus Start and Bus Settings create it with Tasker's Create Directory when recording is
   // on; the first line of each day also makes sure of it, in case it was deleted since
   if (fresh &amp;&amp; typeof shell === 'function') { try { shell('mkdir -p /sdcard/Download/Tasker-bus-trip-data', false, 5); } catch (e) {} }
@@ -5523,7 +5549,17 @@ function record(kind, data) {
     var setup = {}; keep.forEach(function (n) { var v = global(n); if (v !== undefined &amp;&amp; v !== null &amp;&amp; String(v).charAt(0) !== '%') setup[n] = String(v); });
     line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
   }
-  try { writeFile(file, line + '\n', !fresh); } catch (e) {}
+  // The day only counts as started once its first line is really written: if that fails, the next
+  // line tries again from scratch (with the setup), and Bus Status says what went wrong (4.38). A new
+  // file is then announced to Android's media index, or the Files app may not list it.
+  try {
+    writeFile(file, line + '\n', !fresh);
+    setGlobal('BusRecordErr', '');
+    if (fresh) {
+      setGlobal('BusRecordDay', today);
+      if (typeof shell === 'function') { try { shell('am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/' + file, false, 5); } catch (e) {} }
+    }
+  } catch (e) { setGlobal('BusRecordErr', d.toTimeString().slice(0, 5) + ' ' + String((e &amp;&amp; e.message) || e).slice(0, 120)); }
 }
 debugLog('Countdown ended: ' + how);
 record('end', { stop: global('BusStateStopId') || '', from: from, why: how, battery: global('BATT') || '' });
@@ -5579,8 +5615,8 @@ setGlobal('BusStateMatch', '');
 		</Action>
 	</Task>
 	<Task sr="task31">
-		<cdate>1791390787389</cdate>
-		<edate>1791390787389</edate>
+		<cdate>1791447211362</cdate>
+		<edate>1791447211362</edate>
 		<id>31</id>
 		<nme>Bus Island</nme>
 		<pri>6</pri>
@@ -5632,8 +5668,8 @@ if (stops.length) {
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busisland</lhs><op>2</op><rhs>switch</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task62">
-		<cdate>1791390787389</cdate>
-		<edate>1791390787389</edate>
+		<cdate>1791447211362</cdate>
+		<edate>1791447211362</edate>
 		<id>62</id>
 		<nme>Bus Watch</nme>
 		<pri>6</pri>
@@ -5719,7 +5755,6 @@ function record(kind, data) {
   var file = 'Download/Tasker-bus-trip-data/bus-trip-' + day + '.jsonl';
   var today = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   var fresh = global('BusRecordDay') !== today;            // first line today: start the file afresh
-  if (fresh) setGlobal('BusRecordDay', today);
   // The folder: Bus Start and Bus Settings create it with Tasker's Create Directory when recording is
   // on; the first line of each day also makes sure of it, in case it was deleted since
   if (fresh &amp;&amp; typeof shell === 'function') { try { shell('mkdir -p /sdcard/Download/Tasker-bus-trip-data', false, 5); } catch (e) {} }
@@ -5732,7 +5767,17 @@ function record(kind, data) {
     var setup = {}; keep.forEach(function (n) { var v = global(n); if (v !== undefined &amp;&amp; v !== null &amp;&amp; String(v).charAt(0) !== '%') setup[n] = String(v); });
     line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
   }
-  try { writeFile(file, line + '\n', !fresh); } catch (e) {}
+  // The day only counts as started once its first line is really written: if that fails, the next
+  // line tries again from scratch (with the setup), and Bus Status says what went wrong (4.38). A new
+  // file is then announced to Android's media index, or the Files app may not list it.
+  try {
+    writeFile(file, line + '\n', !fresh);
+    setGlobal('BusRecordErr', '');
+    if (fresh) {
+      setGlobal('BusRecordDay', today);
+      if (typeof shell === 'function') { try { shell('am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/' + file, false, 5); } catch (e) {} }
+    }
+  } catch (e) { setGlobal('BusRecordErr', d.toTimeString().slice(0, 5) + ' ' + String((e &amp;&amp; e.message) || e).slice(0, 120)); }
 }
 var wifiBefore = global('BusStateWifi') || '';
 var wifiNow = wifiName();
@@ -6618,6 +6663,10 @@ function approaching() {
   if (onABus &amp;&amp; setting !== 'both') return null;
   var limit = (parseFloat(get('BusApproachMin')) || 3) * 60;
   var best = null;
+  // By bus, only from a fix good to 50 m: on Wednesday evening, a train standing at a station 200 m
+  // from the route gave one fix of ±100 m that landed on it, and the island showed the bus stop
+  // there as one you were riding to (4.38)
+  if (onABus &amp;&amp; (accuracy || 15) &gt; 50) { skipped = 'moving fast, but the fix (±' + Math.round(accuracy) + ' m) is too rough to tell which road you are on'; return null; }
   if (onABus) {
     var onRoute = alongRoute(speed * limit);
     if (onRoute) best = { id: onRoute.st.id, n: onRoute.st.n, d: onRoute.along, eta: onRoute.along / speed, pref: onRoute.st.pref };
@@ -6813,7 +6862,6 @@ function record(kind, data) {
   var file = 'Download/Tasker-bus-trip-data/bus-trip-' + day + '.jsonl';
   var today = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   var fresh = global('BusRecordDay') !== today;            // first line today: start the file afresh
-  if (fresh) setGlobal('BusRecordDay', today);
   // The folder: Bus Start and Bus Settings create it with Tasker's Create Directory when recording is
   // on; the first line of each day also makes sure of it, in case it was deleted since
   if (fresh &amp;&amp; typeof shell === 'function') { try { shell('mkdir -p /sdcard/Download/Tasker-bus-trip-data', false, 5); } catch (e) {} }
@@ -6826,7 +6874,17 @@ function record(kind, data) {
     var setup = {}; keep.forEach(function (n) { var v = global(n); if (v !== undefined &amp;&amp; v !== null &amp;&amp; String(v).charAt(0) !== '%') setup[n] = String(v); });
     line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
   }
-  try { writeFile(file, line + '\n', !fresh); } catch (e) {}
+  // The day only counts as started once its first line is really written: if that fails, the next
+  // line tries again from scratch (with the setup), and Bus Status says what went wrong (4.38). A new
+  // file is then announced to Android's media index, or the Files app may not list it.
+  try {
+    writeFile(file, line + '\n', !fresh);
+    setGlobal('BusRecordErr', '');
+    if (fresh) {
+      setGlobal('BusRecordDay', today);
+      if (typeof shell === 'function') { try { shell('am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/' + file, false, 5); } catch (e) {} }
+    }
+  } catch (e) { setGlobal('BusRecordErr', d.toTimeString().slice(0, 5) + ' ' + String((e &amp;&amp; e.message) || e).slice(0, 120)); }
 }
 // ---- Which side of the road? (B: by direction) ----------------------------------------------
 // Coming from home on a weekday morning, the side heading towards work comes first; coming from
@@ -7037,8 +7095,8 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busaction</lhs><op>2</op><rhs>stop</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task72">
-		<cdate>1791390787390</cdate>
-		<edate>1791390787390</edate>
+		<cdate>1791447211363</cdate>
+		<edate>1791447211363</edate>
 		<id>72</id>
 		<nme>Bus Status</nme>
 		<pri>6</pri>
@@ -7069,7 +7127,20 @@ var sideNow = lastPlace === 'work' ? 'the side towards home (you came from work)
             : 'the nearer side (no preference right now)';
 lines.push('Side of the road first: ' + sideNow + '. Home ' + (get('BusHomeAt') ? 'known' : 'not known yet') +
   ', work ' + (get('BusWorkAt') ? 'known' : 'not known yet') + (get('BusCacheSeq') ? '' : ', route orders not fetched yet'));
-lines.push('Recording trips: ' + (get('BusRecord') === 'on' ? 'on (Downloads/Tasker-bus-trip-data/bus-trip-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date().getDay()] + '.jsonl today)' : 'off'));
+// Recording: whether today's file is really there, as Tasker sees it, and how much it holds (4.38)
+var recDay = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][dd.getDay()];
+var recFile = 'Download/Tasker-bus-trip-data/bus-trip-' + recDay + '.jsonl';
+var recNote = 'off';
+if (get('BusRecord') === 'on') {
+  var recToday = get('BusRecordDay') === dd.getFullYear() + '-' + (dd.getMonth() + 1) + '-' + dd.getDate();
+  var recText = null; try { recText = typeof readFile === 'function' ? readFile(recFile) : null; } catch (e) { recText = null; }
+  var recLines = typeof recText === 'string' ? recText.split('\n').filter(function (l) { return l; }) : [];
+  var recLast = null; try { recLast = recLines.length ? JSON.parse(recLines[recLines.length - 1]).t : null; } catch (e) { recLast = null; }
+  recNote = 'on (Downloads/Tasker-bus-trip-data/bus-trip-' + recDay + '.jsonl: ' +
+    (!recToday ? 'nothing written today yet' : recLines.length ? recLines.length + ' lines, last at ' + (recLast ? new Date(recLast).toTimeString().slice(0, 5) : '?') : 'not found') +
+    (get('BusRecordErr') ? '; last write failed at ' + get('BusRecordErr') : '') + ')';
+}
+lines.push('Recording trips: ' + recNote);
 lines.push('Heading to a stop: ' + ({ off: 'off', walk: 'walking', both: 'walking and by bus' }[get('BusApproach') || 'both']) +
   ', ' + (get('BusApproachMin') || '3') + ' min ahead');
 lines.push('On leaving Wi-Fi, show the nearest stop: ' + ({ off: 'never', work: 'work only', home: 'home only', both: 'home and work' }[get('BusLeaveShow') || 'work']));
@@ -7087,7 +7158,8 @@ var matchNow = {}; try { matchNow = JSON.parse(get('BusStateMatch') || '{}'); } 
 if (matchNow.note &amp;&amp; running &amp;&amp; Date.now() - (matchNow.at || 0) &lt; 10 * 60000) lines.push('Your bus: ' + matchNow.note);
 var boardedNow = null; try { boardedNow = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) {}
 if (boardedNow &amp;&amp; Date.now() - boardedNow.at &lt; 90 * 60000)
-  lines.push('Last got on: the ' + boardedNow.k + ' (' + boardedNow.v + ') at ' + (stopNames[boardedNow.stop] || boardedNow.stop) + ', ' + new Date(boardedNow.at).toTimeString().slice(0, 5));
+  lines.push('Last got on: the ' + boardedNow.k + ' (' + boardedNow.v + ') at ' + (stopNames[boardedNow.stop] || boardedNow.stop) + ', ' + new Date(boardedNow.at).toTimeString().slice(0, 5) +
+    (trip.s === 'onbus' || (trip.s === 'heading' &amp;&amp; trip.bus) ? '' : ' (off it now)'));
 var modeNow = null; try { modeNow = JSON.parse(get('BusStateMode') || 'null'); } catch (e) {}
 if (modeNow &amp;&amp; Date.now() - modeNow.t &lt; 10 * 60000) {
   var mi = ['still', 'walk', 'ride'].indexOf(modeNow.m);
