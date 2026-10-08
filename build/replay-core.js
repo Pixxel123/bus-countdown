@@ -43,7 +43,8 @@ function replay(lines, extraGlobals) {
     // TfL last listed when a fetch fails)
     if (l.k === 'tfl' && g.BusStateRunning === '1' && l.stop === g.BusStateStopId) {
       const ok = l.code === '200';
-      const arrivals = ok ? l.b.filter((b) => b[3] === 'l').map((b) => ({ lineName: b[0], destinationName: '', timeToStation: b[2], vehicleId: b[1] })) : [];
+      const arrivals = ok ? l.b.filter((b) => b[3] === 'l').map((b) => ({ lineName: b[0], destinationName: '', timeToStation: b[2], vehicleId: b[1] }))
+        .concat((l.o || []).map((o) => ({ lineName: o[0], vehicleId: o[1], timeToStation: o[2], destinationName: o[3] }))) : [];   // the stop's other routes, since 4.41
       const r = run('refresh.js', { globals: g, now: l.t, locals: { http_response_code: ok ? '200' : String(l.code || ''), http_data: ok ? JSON.stringify(arrivals) : '' } });
       const shown = JSON.parse(g.BusStateIslandData || '{}').b || [];
       const soonest = shown.slice().sort((a, b) => a.t - b.t)[0];

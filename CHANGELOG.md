@@ -4,6 +4,13 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.41] - 2026-10-08
+
+### Added
+
+- Bus Refresh keeps the stop's other routes, the ones that aren't yours: each one's next three times, soonest first, up to 8 routes. They go in the island's data, ready for the stop board (tap the island to see every bus at the stop), which isn't built yet. Nothing on the island changes.
+- The trip recorder records those routes with each TfL reply (`o`), so replays can test the stop board.
+
 ## [4.40] - 2026-10-08
 
 ### Fixed

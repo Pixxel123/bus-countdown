@@ -30,6 +30,28 @@ if (code === '200') {
   } catch (e) { deps = []; }
 }
 
+// The stop's other routes (4.41), for the stop board to come: every route TfL lists here that isn't
+// one of yours, soonest first, with its next three times, up to 8 routes. Kept in the island's data
+// (a) and recorded (o), so replays can test the board. Nothing else here reads them.
+var otherBuses = [];
+if (code === '200') {
+  try {
+    JSON.parse(http_data).forEach(function (b) {
+      if (mine.indexOf(b.lineName) >= 0) return;
+      otherBuses.push({ k: b.lineName, d: b.destinationName || '', t: now + b.timeToStation * 1000, v: b.vehicleId || '' });
+    });
+  } catch (e) { otherBuses = []; }
+}
+otherBuses.sort(function (a, b) { return a.t - b.t; });
+var otherRoutes = []; var otherByRoute = {};
+otherBuses.forEach(function (x) {
+  if (!otherByRoute[x.k]) {
+    if (otherRoutes.length >= 8) return;
+    otherByRoute[x.k] = { k: x.k, d: x.d, t: [] }; otherRoutes.push(otherByRoute[x.k]);
+  }
+  if (otherByRoute[x.k].t.length < 3) otherByRoute[x.k].t.push(x.t);
+});
+
 // Buses TfL drops for a while: every so often a bus still minutes away vanishes from TfL's list for
 // a few refreshes, then comes back (Tuesday 6 Oct: the 517 due in 7 minutes disappeared for 2½
 // minutes, the island showed the next one at 20 minutes, and the buzz came at 1.9). So each bus
@@ -201,7 +223,8 @@ if (busbuzz === 'yes') {
 // Recorder: TfL's predictions as they came (route, vehicle, seconds away), for steadier times,
 // matching you to your bus, and spotting buses that have left
 record('tfl', { stop: get('BusStateStopId'), code: code, you: yourBus ? yourBus.v : undefined, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
-  b: deps.map(function (x) { return [x.k, x.v || '', Math.round((x.t - now) / 1000), x.kept ? 'k' : x.st === 'sched' ? 's' : 'l']; }) });
+  b: deps.map(function (x) { return [x.k, x.v || '', Math.round((x.t - now) / 1000), x.kept ? 'k' : x.st === 'sched' ? 's' : 'l']; }),
+  o: otherBuses.length ? otherBuses.map(function (x) { return [x.k, x.v, Math.round((x.t - now) / 1000), x.d]; }) : undefined });   // the stop's other routes (4.41)
 // The stop's letter, from its TfL indicator ("Stop B" -> B, "Stop BK" -> BK). Stops without one
 // (indicators like "opp" or "->N", or none at all) get no letter, and the island shows none.
 function stopLetter(name) {
@@ -229,7 +252,8 @@ setGlobal('BusStateIslandData', JSON.stringify({
   rot: Math.round(1000 * (parseFloat(get('BusRotate')) || 6)),  // time per route: border with several
   s: get('BusStateStopId'), n: get('BusStateStopName'),         // current stop (a change = Bus Opposite)
   l: busletter,                                                 // its letter ("B", "BK"), or "" for none
-  b: perRoute
+  b: perRoute,
+  a: otherRoutes                                                // the stop's other routes: { k, d, t: [up to 3 times] } (4.41)
 }));
 
 // Chip: "25 in 5 min" in the status bar, plain lines when it's opened

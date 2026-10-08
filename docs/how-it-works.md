@@ -72,7 +72,7 @@ flowchart LR
     wait --> tick
 ```
 
-- Bus Refresh fetches live arrivals from TfL, fills gaps from today's timetable, and writes the result to `%BusStateIslandData`. The pill's page picks up the change itself, so it's only shown once per countdown (again if the number of routes changes).
+- Bus Refresh fetches live arrivals from TfL, fills gaps from today's timetable, and writes the result to `%BusStateIslandData`. Since 4.41 it also keeps the stop's other routes there (`a`: each one's next three times, up to 8 routes) for the stop board to come. The pill's page picks up the change itself, so it's only shown once per countdown (again if the number of routes changes).
 - With the screen off nothing is fetched; Bus Wake fetches fresh times as soon as the screen comes back on.
 
 </details>
