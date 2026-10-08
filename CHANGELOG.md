@@ -4,6 +4,12 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.36] - 2026-10-07
+
+### Fixed
+
+- Walking briskly away from a stop no longer reads as passing it on a bus. A speed worked out from two positions counts as bus speed only if it's still faster than walking once the two fixes' error is allowed for, and when you were walking towards the stop, passing it on a bus takes two fast readings in a row. On Wednesday evening one jumpy fix (±29 m, then ±45 m, 86 m apart in 20 s) and one high reading from Android had ended a walk as "on a bus".
+
 ## [4.35] - 2026-10-07
 
 ### Fixed

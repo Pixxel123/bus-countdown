@@ -79,10 +79,20 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     var est = androidSpeed;
     // No reading from Android (most of the time: only 13% of Tuesday's positions had one): worked out
     // from the newest position at least 8 s back with a decent fix (50 m or better; a poor one makes
-    // a jump that looks like a fast bus), and never more than 30 m/s
+    // a jump that looks like a fast bus), and never more than 30 m/s. A reading only counts as bus
+    // speed (over 4.2 m/s) if, after taking off the two fixes' combined error, it's still faster than
+    // walking (2.5 m/s); otherwise it's held at 4.2, which is neither (4.36). On Wednesday evening,
+    // walking at 7 km/h, two fixes of ±29 m and ±45 m 20 s apart were 86 m apart: 4.3 m/s, which had
+    // read as a bus, though it could have been as little as 1.6.
     if (est < 0 && (accuracy || 15) <= 50) {
       for (var b = win.length - 1; b >= 0; b--) {
-        if (fixT - win[b].t >= 8000 && (win[b].acc || 15) <= 50) { est = Math.min(30, metres(win[b].lat, win[b].lon, lat, lon) / ((fixT - win[b].t) / 1000)); break; }
+        if (fixT - win[b].t >= 8000 && (win[b].acc || 15) <= 50) {
+          var apart = metres(win[b].lat, win[b].lon, lat, lon); var secs = (fixT - win[b].t) / 1000;
+          var err = Math.sqrt((accuracy || 15) * (accuracy || 15) + (win[b].acc || 15) * (win[b].acc || 15));
+          est = Math.min(30, apart / secs);
+          if (est > 4.2 && (apart - err) / secs < 2.5) est = 4.2;
+          break;
+        }
       }
     }
     win.push({ t: fixT, lat: +lat.toFixed(6), lon: +lon.toFixed(6), acc: accuracy || 15, spd: est >= 0 ? +est.toFixed(2) : -1 });
@@ -189,7 +199,8 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
   })();
   var slow = speed < 0 || speed <= 0.8 || settled;
   var lastTwo = win.map(function (w) { return w.spd; }).filter(function (v) { return v >= 0; }).slice(-2);
-  var bus = speed > 4.2 || (lastTwo.length === 2 && lastTwo[0] > 4.2 && lastTwo[1] > 4.2);   // or the last two both fast
+  var busTwice = lastTwo.length === 2 && lastTwo[0] > 4.2 && lastTwo[1] > 4.2;
+  var bus = speed > 4.2 || busTwice;   // or the last two both fast
   // Steady pace away from a stop: the fastest average over 90 seconds or more of the window. Walking
   // tops out under 2 m/s even with GPS error; over 2.2 m/s for that long is a bus, however slowly it
   // crawled through traffic (Tuesday, leaving Wexley on the 566: 2.6 m/s for nearly 3 minutes, which
@@ -217,10 +228,15 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
   } else if (trip.s === 'heading' && tripStop) {
     trip.minD = Math.min(trip.minD || tripStop.d, Math.round(tripStop.d));
     var awayH = trend(tripStop.lat, tripStop.lon);
+    // Passing it on a bus: when you weren't already riding towards it (walking to it, or a countdown
+    // from the heads-up or leaving work), it takes the last two readings both fast, not two of the last
+    // three: on Wednesday evening one high reading from Android after a jumpy fix ended a walk as "on
+    // a bus" (4.36)
+    var passBus = trip.bus ? bus : busTwice;
     if (tripStop.d <= tripStop.r && slow) { from('atstop'); why = 'reached ' + tripStop.n; }
-    else if (bus && awayH > 1 && tripStop.d > endAtFor(tripStop)) { busaction = 'stop'; why = 'passed ' + tripStop.n + ' on a bus'; from('onbus'); }
+    else if (passBus && awayH > 1 && tripStop.d > endAtFor(tripStop)) { busaction = 'stop'; why = 'passed ' + tripStop.n + ' on a bus'; from('onbus'); }
     else if (trip.minD <= tripStop.r && awayH > 0.4 && tripStop.d > Math.max(tripStop.r + 50, 120)) { busaction = 'stop'; why = 'went past ' + tripStop.n; from('left', { leftD: Math.round(tripStop.d) }); }
-    else if (tripStop.d > trip.minD + 200 && tripStop.d > endAtFor(tripStop)) { busaction = 'stop'; why = (bus ? 'passed ' : 'turned away from ') + tripStop.n; from(bus ? 'onbus' : 'left', { leftD: Math.round(tripStop.d) }); }
+    else if (tripStop.d > trip.minD + 200 && tripStop.d > endAtFor(tripStop)) { busaction = 'stop'; why = (passBus ? 'passed ' : 'turned away from ') + tripStop.n; from(passBus ? 'onbus' : 'left', { leftD: Math.round(tripStop.d) }); }
     // No longer coming up soon: shown while on a bus, but you got off (or slowed right down) well short
     // of it. At walking pace or slower, and more than twice BusApproachMin away at that pace, on three
     // checks in a row (so a bus crawling in traffic for a moment doesn't count), it ends. If you then

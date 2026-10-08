@@ -11,16 +11,14 @@ const log = fs.readFileSync(path.join(ROOT, 'CHANGELOG.md'), 'utf8');
 const VERSION = /VERSION = '([\d.]+)'/.exec(fs.readFileSync(path.join(ROOT, 'build', 'assemble.py'), 'utf8'))[1];
 const releases = [...log.matchAll(/^## \[([^\]]+)\](?: - (\d{4}-\d{2}-\d{2}))?$/gm)].map((m) => ({ v: m[1], date: m[2] }));
 
-test('the changelog starts with Unreleased, then this version', () => {
-  assert.strictEqual(releases[0].v, 'Unreleased');
-  assert.strictEqual(releases[1].v, VERSION, 'add a "## [' + VERSION + '] - YYYY-MM-DD" entry to CHANGELOG.md');
+test('the changelog starts with this version', () => {
+  assert.strictEqual(releases[0].v, VERSION, 'add a "## [' + VERSION + '] - YYYY-MM-DD" entry to CHANGELOG.md');
 });
 
 test('every release has a date, newest first, and appears once', () => {
-  const rest = releases.slice(1);
-  for (const r of rest) assert.ok(r.date, r.v + ' needs a date');
-  for (let i = 1; i < rest.length; i++) assert.ok(rest[i - 1].date >= rest[i].date, rest[i - 1].v + ' is older than ' + rest[i].v);
-  assert.strictEqual(new Set(rest.map((r) => r.v)).size, rest.length);
+  for (const r of releases) assert.ok(r.date, r.v + ' needs a date');
+  for (let i = 1; i < releases.length; i++) assert.ok(releases[i - 1].date >= releases[i].date, releases[i - 1].v + ' is older than ' + releases[i].v);
+  assert.strictEqual(new Set(releases.map((r) => r.v)).size, releases.length);
 });
 
 test('every entry is under one of Keep a Changelog\'s headings', () => {
