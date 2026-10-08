@@ -7,7 +7,9 @@
            or 'none' if nothing was showing)
    ================================================================== */
 /* @include get */
-var showing = get('BusStateIslandShown') === '1' ? (get('BusStateIslandScene') || 'buspill') : '';
+// 1: showing; 2: showing, to be drawn again at a new size (a new stop, or the stop board opening or
+// closing, 4.42), so the old one must go too. (Until 4.42 a redraw set 0, so the old one wasn't removed.)
+var showing = /^[12]$/.test(get('BusStateIslandShown')) ? (get('BusStateIslandScene') || 'buspill') : '';
 var busnewscene = showing === 'buspill' ? 'buspill2' : 'buspill';
 var busoldscene = showing || 'none';
 setGlobal('BusStateIslandScene', busnewscene);

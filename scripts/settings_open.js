@@ -370,10 +370,14 @@ children.push(card('Island',
   choices('Show as', P.style, get('BusStyle') || 'pill', 'BusStyle')
   .concat(choices('Countdown border', P.border, get('BusBorder') || 'off', 'BusBorder'))
   .concat(choices('Destination length', [['3 letters', '3'], ['6 letters', '6'], ['10 letters', '10']], get('BusDestLetters') || '3', 'BusDestLetters'))
+  // The stop board (4.42): tap the island to see every bus at the stop
+  .concat(choices('Tap for the stop board: show', [['All routes', 'all'], ['Your routes', 'mine']], get('BusBoardRoutes') || 'all', 'BusBoardRoutes'))
+  .concat(choices('Stop board closes', [['After 10 s', '10'], ['After 30 s', '30'], ['When tapped', '0']], get('BusBoardSecs') || '10', 'BusBoardSecs'))
   .concat(slider('Camera gap', 26, 80, 1, Math.min(80, Math.max(26, gap)), 'set_gap'))
   .concat(slider('Top offset', 0, 24, 1, Math.min(24, y), 'set_y'))
   .concat(slider('Chip offset from left', 0, 200, 2, Math.min(200, parseInt(get('BusChipX'), 10) >= 0 ? parseInt(get('BusChipX'), 10) : 76), 'set_cx'))
-  // Preview closes this screen (saving) and shows the real island for 6 seconds, then reopens
+  // Preview closes this screen (saving) and shows the real island for 3 seconds, then its stop board
+  // for 4 (the status bar chip, which has no board, for 3), then reopens
   // Settings. Showing it on top of the open screen did nothing, and left the screen unable to report
   // that it had closed.
   .concat([row([button('Preview', [setVar('bus_preview', 'yes'), { type: 'DismissLayout' }]),

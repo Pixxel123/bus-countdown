@@ -9,7 +9,7 @@ Bus Settings opens a native Tasker screen (Scene V2), with the most used section
 - **Stops and routes.** Your stops, then other stops within 400 m. Tap the routes you want at each stop; a stop with a chosen route moves up under Your stops. Stops on both sides of a road share one entry showing one side at a time, with ⇄ to switch; each side says which way it goes. Stops you use get an arrival distance: 50, 100 or 200 m, or Custom (up to 200 m) (tap it, type the distance, then Use custom; tapping a preset hides the box again). Custom is always there, and filled only while a custom distance is in use, for example ✓ Custom 70 m. To take a saved stop off your list, tap Remove stop (Undo brings it back); it's removed when the screen closes, and isn't added back automatically as a stop across the road. Its routes stay if you use them at another stop.
 - **Countdown.** How often times update, when a countdown stops by itself, how long each route shows, how far Start countdown looks for stops, and whether (and how far ahead) to show a stop you're heading towards.
 - **Home and work Wi-Fi.** The two networks (with buttons to use the one you're on, or clear work), which of them shows your nearest stop's next buses when you leave it (work by default), and the heads-up window at work.
-- **Island.** Island or status bar, the optional border, how much of the destination to show (3, 6 or 10 letters), the gap for the camera, the distance from the top, and where the status bar chip starts. Preview closes the settings, shows the real island or chip for 6 seconds, then reopens them. Reset measures the camera again.
+- **Island.** Island or status bar, the optional border, how much of the destination to show (3, 6 or 10 letters), what the stop board shows and when it closes, the gap for the camera, the distance from the top, and where the status bar chip starts. Preview closes the settings, shows the real island for 3 seconds and then its stop board for 4 (the status bar chip, which has no board, for 3), then reopens them. Reset measures the camera again.
 - **Setup.** The TfL key, and permissions (one line when they're all on).
 
 Choices save as soon as you tap them. Text, sliders, routes and distances save when the screen closes, with Done or the back gesture. A message lists what changed.
@@ -39,6 +39,8 @@ Most of these are on the settings screen. All of them can also be set in Tasker'
 | `%BusStyle` | `pill` | `pill` (round the camera) or `chip` (in the status bar). Both are drawn by Tasker the same way. |
 | `%BusBorder` | `off` | `on` draws a border round the pill that drains until the next route or refresh |
 | `%BusDestLetters` | 3 | How many letters of the destination the pill's left side has room for: 3, 6 or 10. The left side is sized to fit the stop letter, the widest route and that many letters. |
+| `%BusBoardRoutes` | `all` | What the stop board (tap the pill) shows: `all` routes at the stop, or `mine` for yours only |
+| `%BusBoardSecs` | 10 | Seconds before the stop board closes by itself: 10 or 30, or 0 to stay open until you tap it |
 | `%BusChipX` | 76 | Where the status bar chip starts, in dp from the left edge |
 | `%BusIslandGap` | set by Bus Find Camera | Space left over the camera, in dp |
 | `%BusIslandY` | set by Bus Find Camera | Top of the pill in dp, so that it lines up with the camera |
@@ -51,6 +53,7 @@ Variables starting with `BusState`, `BusCache` or `BusTemp` are managed by the p
 
 - `BusDebugLog`: the last 20 decisions, for Debugging (Bus Status).
 - `BusStateTrip`, `BusStateWindow`: the trip's state and the last six positions (see [The trip, step by step](how-it-works.md#the-trip-step-by-step)).
+- `BusStateBoard`: `1` while the stop board is open (Bus Island sets it; Bus End and a new countdown clear it).
 - `BusStateSnooze`: the stop you last swiped away, and when (kept apart from the trip so a check running at the same moment can't undo it).
 - `BusStateSeen`: the buses TfL last listed at the current stop, so one it drops can be kept on its countdown. `BusStateBuzzed` and `BusStateBuzzAt`: which buses have buzzed at which stop, and when the last buzz was.
 - `BusStateMatch`, `BusStateBoarded`, `BusStateCameOn`: the bus you're riding (while it's being worked out, and once known), the bus you last got on, and the bus you last came in on (see [Which bus you're on](how-it-works.md#which-bus-youre-on)).
@@ -77,7 +80,7 @@ Variables starting with `BusState`, `BusCache` or `BusTemp` are managed by the p
 | Bus Refresh | Gets live arrivals and, where needed, timetable times. Shows the pill the first time; after that the pill updates itself from `%BusStateIslandData`. Also run by the Bus Hide When Sideways profile: hides the pill while the phone is sideways, and shows it again with fresh times when it's upright. |
 | Bus End | Ends the countdown, removes the pill or chip, and sets the pushed positions back to every 30 m. |
 | Bus Watch | Every check runs here: a position pushed by Android (the Bus Moved profile), the screen coming on (Bus Wake), Bus Loop's safety net, or you running it by hand (to see what it found and why). Only where the position comes from differs. It applies the Wi-Fi rules, moves the trip on (idle, heading, at stop, on bus, left), starts or ends countdowns, and sets how often Android pushes positions next. |
-| Bus Island | Everything the pill's gestures ask of Tasker apart from ending (that's Bus End): the tick when a swipe is far enough to dismiss, and switching to the next nearby stop on a long press. |
+| Bus Island | Everything the pill's gestures ask of Tasker apart from ending (that's Bus End): the tick when a swipe is far enough to dismiss, switching to the next nearby stop on a long press, and opening or closing the stop board (it shows the pill again at the board's height, or back to its own). |
 | Bus Wake | Once after each import (or when the Bus menu, Bus Settings or Bus Start ask), switches the three profiles off and on so imported ones start listening. Run by the Bus Screen On profile: makes sure positions are being pushed (they stop if the phone restarts) and notes which Wi-Fi network you're on; the heads-up at work if it's due; during a countdown, fresh times; and a Bus Watch check. |
 | Bus Status | Shows the current state, the Wi-Fi network you're on, what Bus Watch last decided and why, and the main settings; and, however it's run (Status or Debugging in the Bus menu, or Tasker's run button), copies the full report, with the last 20 decisions, to the clipboard. Debugging (par1 `copy`) just says it's been copied. |
 

@@ -51,7 +51,7 @@ test('switching to a stop with a different number of your routes does redraw it'
   run('island_show.js', { globals: g, now: at }); g.BusStateIslandShown = '1';
   g.BusStateStopId = 'P'; g.BusStateStopName = 'Wexley (Stop P)';      // a long press: the other stop
   refresh(g, [bus('517', 6)]);
-  assert.strictEqual(g.BusStateIslandShown, '0');
+  assert.strictEqual(g.BusStateIslandShown, '2', 'drawn again, and the old one removed (4.42; 0 left it up)');
 });
 
 test('the island is sized for every one of your routes at the stop, not just the ones showing', () => {

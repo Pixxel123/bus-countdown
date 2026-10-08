@@ -250,6 +250,14 @@ h1{text-wrap:balance}
   font-size:14px;white-space:nowrap;font-family:system-ui,Roboto,sans-serif}
 .isl .h{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;flex:none}
 .isl .g{flex:none}
+/* The stop board (4.42): the island, taller, every line split round the camera */
+.isl.board{display:block;height:auto;border-radius:20px;padding-bottom:8px}
+.isl .row{display:flex;align-items:center;height:26px}
+.isl .row.top{height:30px}
+.isl .row .d{font-size:12.5px}
+.isl .row .m2{font-size:12px}
+.isl .b.other{background:transparent;box-shadow:inset 0 0 0 1.5px #5A6376;color:#D5DAE3}
+.isl .age{margin-left:auto;font-size:12px;font-weight:600;color:#9AA3B5}
 .isl .b{background:#DC241F;border-radius:99px;padding:1px 7px;font-weight:700;font-size:13px;flex:none}
 .isl .sl{flex:none;box-sizing:border-box;min-width:18px;height:18px;padding:0 4px;border:1.5px solid #fff;border-radius:9px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .isl .d{color:#B7BFCD;font-size:12px;overflow:hidden;text-overflow:ellipsis;min-width:0}
@@ -280,9 +288,9 @@ h1{text-wrap:balance}
     <button type="button" id="viewSettings" aria-pressed="false">Settings</button>
   </div>
   <div id="nowView">
-    <p class="eyebrow">Version 4.31</p>
+    <p class="eyebrow">Version 4.42</p>
     <h1>The island as built</h1>
-    <p class="lede">Drawn by the island's own page from the project, at true scale on the top edge of a Pixel 8 Pro, 448 dp wide. Swipe it sideways to change route. Sample times, refreshed every 45 seconds as on the phone.</p>
+    <p class="lede">Drawn by the island's own page from the project, at true scale on the top edge of a Pixel 8 Pro, 448 dp wide. Swipe it sideways to change route; pick Stop board to see it tapped open. Sample times, refreshed every 45 seconds as on the phone.</p>
 
     <div class="now-stage" id="nowWrap">
       <div class="stage" id="nowStage">
@@ -344,7 +352,7 @@ h1{text-wrap:balance}
   </div>
 
   <div id="timelineView" hidden>
-    <p class="eyebrow">27 September to 7 October</p>
+    <p class="eyebrow">27 September to 8 October</p>
     <h1>Every change to the island</h1>
     <p class="lede">Newest first. Each card shows the island as that version drew it, with a sentence on what changed. Versions in between changed only what happens underneath, so they aren’t listed.</p>
     <ol class="tl" id="tl"></ol>
@@ -1022,6 +1030,23 @@ var CHIP = global('BusStyle') === 'chip';
 var H = CHIP ? 24 : (parseInt(global('BusIslandH'), 10) || 30);                   // island height (30 unless BusIslandH is set)
 var GAP = CHIP ? 13 : (parseInt(loc('busprevgap') || global('BusIslandGap'), 10) || 42);   // space over the camera
 var PAD = Math.round(H * 0.3);                          // inner padding at each end
+// The stop board (4.42): a tap on the island opens it below the island, the same width, with every
+// bus at the stop by route: yours first, in Settings order, then the stop's other routes, soonest
+// first (Bus Refresh's data.a), up to 8 lines. Bus Island keeps whether it's open in BusStateBoard and
+// shows the island again; Bus Settings' preview asks for it with busboard = yes. Not for the status
+// bar chip. BusBoardRoutes = mine leaves the other routes out; BusBoardSecs is how long it stays open
+// (10 s unless set; 0 = until you tap it again).
+var BOARD = !CHIP && (PREVIEW ? loc('busboard') === 'yes' : global('BusStateBoard') === '1');
+var BOARD_MINE = global('BusBoardRoutes') === 'mine';
+var BOARD_SECS = parseInt(global('BusBoardSecs'), 10); if (!(BOARD_SECS >= 0)) BOARD_SECS = 10;
+var LINE = 26;                                          // each line of the board, dp
+var BOARD_ROWS = 0;
+if (BOARD) {
+  var boardData = {}; try { boardData = JSON.parse(global(DATA_VAR)) || {}; } catch (e) {}
+  BOARD_ROWS = Math.max(1, Math.min(8, (boardData.b || []).length + (BOARD_MINE ? 0 : (boardData.a || []).length)));
+}
+var WINH = BOARD ? H + BOARD_ROWS * LINE + 8 : H;       // the window's height: the island, or the island and its board
+var ROUTE_ORDER = JSON.stringify((global('BusRoutes') || '').split(',').map(function (r) { return r.trim(); }).filter(String));
 var LEFT = 40;                                          // left half: set below, once the data is read
 
 /* ---- Right half: always the same width -------------------------------
@@ -1081,7 +1106,7 @@ if (CHIP) busx = String(parseInt(global('BusChipX'), 10) >= 0 ? parseInt(global(
 var yWanted = loc('busprevy') || global('BusIslandY');
 var busy = String(parseInt(yWanted, 10) >= 0 ? parseInt(yWanted, 10) : 9);  // dp from the top
 if (CHIP) busy = String(parseInt(busy, 10) + 3);                            // centred on the same line as the island
-var bush = String(H);
+var bush = String(WINH);
 
 /* ---- The island's web page ----------------------------------------
    {{TOKENS}} are filled in below. The page must never contain a
@@ -1093,11 +1118,29 @@ var PAGE = String.raw`<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
   /* Transparent page: the black island is the only thing drawn */
-  html, body { margin: 0; height: {{H}}px; width: {{TOTAL}}px; background: transparent; overflow: hidden;
+  html, body { margin: 0; height: {{WINH}}px; width: {{TOTAL}}px; background: transparent; overflow: hidden;
                -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
   body { font-family: system-ui, Roboto, sans-serif; }
 
   /* The island: left half | camera gap | right half */
+  /* The stop board (4.42): the same black shape, taller. Its first line is still left half | camera gap
+     | right half (now the stop and how old the times are), and every line below keeps the same three
+     columns, so the camera gap runs the whole way down: routes to its left, times to its right */
+  body.board #p { height: {{WINH}}px; flex-wrap: wrap; align-content: flex-start; border-radius: 20px; }
+  body.board #L, body.board #g, body.board #R { height: {{H}}px; }
+  #board { display: none; flex: 0 0 100%; }
+  body.board #board { display: block; }
+  .bl { display: flex; align-items: center; height: {{LINE}}px; }
+  .bl .h { height: {{LINE}}px; }
+  .bl .bl-l { width: {{LEFT}}px; } .bl .bl-g { flex: none; width: {{GAP}}px; } .bl .bl-r { width: {{RIGHT}}px; }
+  .bl .d { font-size: 12.5px; }
+  .bl .m2 { font-size: 12px; }
+  .b.other { background: transparent; box-shadow: inset 0 0 0 1.5px #5A6376; color: #D5DAE3; }   /* not one of your routes */
+  .age { margin-left: auto; font-size: 12px; font-weight: 600; color: #9AA3B5; }
+  .age.old { color: #D5DAE3; }
+  /* Old times on the board fade less than on the island (0.7: still 4.4:1 for the quieter times), and
+     the first line says how old they are */
+  #board.old .m, #board.old .m2 { opacity: .7; }
   /* Status bar chip: route badge and minutes only, a little smaller */
   body.chip .d { display: none; }
   body.chip .b { font-size: 12px; padding: 0 6px; }
@@ -1151,6 +1194,7 @@ ${'<'}!-- Tasker replaces this with the live bus data, and again on every refres
 <div id="p">
   <svg id="ring"><rect id="track"/><rect id="prog"/></svg>
   <div class="h" id="L"></div><div id="g"></div><div class="h" id="R"></div>
+  <div id="board" role="list"></div>
 </div>
 ${'<'}script>
   // Fixed when the island first appears
@@ -1163,6 +1207,11 @@ ${'<'}script>
   var dataEl = $('d'), p = $('p'), L = $('L'), R = $('R'), ring = $('ring'), track = $('track'), prog = $('prog');
   var BORDER = {{BORDER}};                        // countdown border on or off (setting BusBorder)
   if (!BORDER) ring.classList.add('off');
+  var BOARD = {{BOARD}};                          // the stop board is open (BusStateBoard; see above)
+  var BOARD_ROWS = {{BOARD_ROWS}}, BOARD_MINE = {{BOARD_MINE}}, BOARD_SECS = {{BOARD_SECS}};
+  var ROUTE_ORDER = {{ROUTE_ORDER}};              // your routes, in Settings order (BusRoutes)
+  var board = $('board'), boardOrder = null, boardHtmlNow = '', closeAt = 0;
+  if (BOARD) { document.body.classList.add('board'); ring.classList.add('off'); }
 
   function buses() { return data && data.b ? data.b : []; }
   function rotateMs() { return (data && data.rot) || DEFAULT_ROTATE; }
@@ -1219,7 +1268,67 @@ ${'<'}script>
      The window is placed so the gap sits over the camera; see busx above.
      (Leaving part of a wider window uncovered showed as black on the phone.) */
 
+  /* The stop board: the first line is the stop and how old its times are; then one line per route,
+     yours first in Settings order, then the stop's other routes soonest first. The order is fixed the
+     first time it's drawn (each opening is a new page), so lines never swap while you read them. A
+     line shows as many times as fit: "2 · 8 · 19 min". It's only rewritten when something on it
+     changes, so TalkBack isn't read the same thing again and again. */
+  function timesHtml(r, n) {
+    var st = r.st || 'live', first = mins(r.t[0]);
+    if (st === 'sched' && first === 'Due') first = '1 min';
+    var cls = st === 'live' ? (first === 'Due' ? ' due' : '') : ' ' + st, pre = st === 'sched' ? '~' : '';
+    var rest = r.t.slice(1, n).map(function (t, i) { var m = mins(t).replace(/ min$/, ''); return ((r.sts && r.sts[i + 1] === 'sched') ? '~' : '') + (m === 'Due' ? '1' : m); });
+    if (!rest.length) return '<span class="m' + cls + '">' + pre + first + '</span>';
+    return '<span class="m' + cls + '">' + pre + first.replace(/ min$/, '') + '</span><span class="m2">\u00b7 ' + rest.join(' \u00b7 ') + ' min</span>';
+  }
+  function spoken(r, n) {
+    var ms = r.t.slice(0, n).map(function (t) { var m = mins(t); return m === 'Due' ? 'due now' : m.replace(/ min$/, ''); });
+    var said = ms.length > 1 ? ms.slice(0, -1).join(', ') + ' and ' + ms[ms.length - 1] : ms[0];
+    return r.k + ' to ' + r.d + (r.st === 'sched' ? ', timetable, about ' : ', ') + said + (/due now$/.test(said) ? '' : ' minutes') +
+      (r.other ? ', another route' : r.idle ? ', a later bus on the route you are riding' : '');
+  }
+  function boardRows() {
+    var rows = buses().map(function (b) {
+      return { key: 'y' + b.k, k: b.k, d: b.d, st: b.st || 'live', idle: !!b.idle, sts: [b.st || 'live', b.st2 || 'live', b.st3 || 'live'],
+               t: [b.t].concat(b.t2 !== undefined ? [b.t2] : [], b.t3 !== undefined ? [b.t3] : []) };
+    });
+    if (!BOARD_MINE) ((data && data.a) || []).forEach(function (o) { rows.push({ key: 'o' + o.k, k: o.k, d: o.d, st: 'live', other: true, t: o.t.slice(0, 3) }); });
+    if (!boardOrder) {
+      var yours = rows.filter(function (r) { return !r.other; }).sort(function (a, c) {
+        var ia = ROUTE_ORDER.indexOf(a.k), ic = ROUTE_ORDER.indexOf(c.k);
+        return (ia < 0 ? 99 : ia) - (ic < 0 ? 99 : ic);
+      });
+      boardOrder = yours.concat(rows.filter(function (r) { return r.other; })).map(function (r) { return r.key; });
+    }
+    var at = function (r) { var i = boardOrder.indexOf(r.key); return i < 0 ? 999 : i; };
+    return rows.sort(function (a, c) { return at(a) - at(c); }).slice(0, BOARD_ROWS);
+  }
+  function drawBoard() {
+    var name = (data && data.n) || '', parts = name.match(/^(.*) \((.*)\)$/);
+    var age = data && data.u ? Date.now() - data.u : 0, old = age > 2 * ((data && data.r) || 45000);
+    L.innerHTML = (data && data.l ? '<span class="sl" aria-label="Stop ' + esc(data.l) + '">' + esc(data.l) + '</span>' : '') + '<span class="s">' + esc(parts ? parts[1] : name) + '</span>';
+    R.innerHTML = '<span class="age' + (old ? ' old' : '') + '">' + (age < 30000 ? 'now' : age < 60000 ? '&lt;1 min' : Math.floor(age / 60000) + ' min' + (old ? ' old' : '')) + '</span>';
+    var rows = boardRows(), html = '';
+    rows.forEach(function (r) {
+      html += '<div class="bl" role="listitem"><span class="h bl-l"><span class="b' + (r.other ? ' other' : r.idle ? ' idle' : '') + '">' + esc(r.k) + '</span>' +
+        '<span class="d' + (r.st === 'sched' ? ' sched' : '') + '">' + esc(r.d) + '</span></span><span class="bl-g"></span><span class="h bl-r">' + timesHtml(r, 3) + '</span></div>';
+    });
+    if (!rows.length) html = '<div class="bl" role="listitem"><span class="h bl-l"><span class="d">No buses due</span></span></div>';
+    if (html + old !== boardHtmlNow) {
+      boardHtmlNow = html + old;
+      board.innerHTML = html;
+      board.classList.toggle('old', old);
+      // As many times as fit beside the camera: three, then two, then one
+      Array.prototype.forEach.call(board.querySelectorAll('.bl-r'), function (cell, i) {
+        for (var n = 2; n >= 1 && cell.scrollWidth > cell.clientWidth + 1; n--) cell.innerHTML = timesHtml(rows[i], n);
+        board.children[i].setAttribute('aria-label', spoken(rows[i], cell.textContent.split('\u00b7').length));
+      });
+    }
+    p.setAttribute('aria-label', 'Buses at ' + (parts ? parts[1] : name) + (data && data.l ? ', stop ' + data.l : '') + (old ? ', times from ' + Math.floor(age / 60000) + ' minutes ago' : '') + '. Tap to close.');
+  }
+
   function draw() {
+    if (BOARD) { drawBoard(); return; }
     if (Date.now() < flashUntil) {    // "Stop B" | "High Street"
       var name = (data && data.n) || '', parts = name.match(/^(.*) \((.*)\)$/);
       L.innerHTML = '<span class="s">' + esc(parts ? parts[2] : name) + '</span>';
@@ -1259,6 +1368,7 @@ ${'<'}script>
   /* Move to the next (1) or previous (-1) route */
   function go(step) {
     var n = buses().length;
+    if (BOARD) return;                                      // the board shows every route at once
     if (n < 2) return;
     idx = (idx + step + n) % n;
     var cls = step > 0 ? 'out' : 'back';
@@ -1273,6 +1383,8 @@ ${'<'}script>
      with a matching CSS transition so it still looks smooth, and not at all
      while the screen is off. */
   function tick() {
+    // The board closes itself after BusBoardSecs (not while a finger is on it)
+    if (BOARD && closeAt && !down && Date.now() >= closeAt) { closeAt = 0; runTask('Bus Island', { busfrom: 'island', busisland: 'close' }); }
     var several = buses().length > 1;
     var step = several ? 250 : 1000;
     if (!document.hidden) {
@@ -1293,7 +1405,10 @@ ${'<'}script>
                                 (decideSwipe, shared with scripts/swipe.js); the
                                 island follows your finger and fades, and gives a
                                 small buzz once the swipe is long enough
-       long press             = the next nearby stop (Bus Island)
+       long press             = the next nearby stop (Bus Island); the board, if
+                                open, stays open for it
+       tap                    = open the stop board, or close it (Bus Island)
+       swipe up (board open)  = close it
      Pointer capture keeps following the finger after it leaves the 30 dp
      island, and a gesture is judged on release OR cancel (Android can cancel
      a touch near the top of the screen). */
@@ -1334,7 +1449,14 @@ ${'<'}script>
     var dx = lx - sx, dy = ly - sy, wasArmed = armed;
     armed = false;
     settle();
+    if (BOARD && BOARD_SECS > 0) closeAt = Date.now() + BOARD_SECS * 1000;   // touched: the board's time starts again
     if (held) return;
+    // A tap opens the stop board, or closes it; a swipe up closes it (4.42). Not on the status bar chip.
+    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
+      if (!document.body.classList.contains('chip')) runTask('Bus Island', { busfrom: 'island', busisland: BOARD ? 'close' : 'open' });
+      return;
+    }
+    if (BOARD && dy <= -30 && Math.abs(dy) > Math.abs(dx)) { runTask('Bus Island', { busfrom: 'island', busisland: 'close' }); return; }
     if (Math.abs(dx) <= Math.abs(dy)) return;                  // mostly up or down: not a swipe
     var what = decideSwipe(dx, Date.now() - t0);
     if (what === 'dismiss') runTask('Bus End');
@@ -1370,6 +1492,7 @@ ${'<'}script>
   setInterval(read, 1000);
   setInterval(draw, 15000);
   read();
+  if (BOARD && BOARD_SECS > 0) closeAt = Date.now() + BOARD_SECS * 1000;
   tick();
 {{END_SCRIPT}}
 </body>
@@ -1384,6 +1507,8 @@ var html = fill(PAGE, {
   SHAPE: CHIP ? 'chip' : 'island',
   PREVIEW: PREVIEW ? 'true' : 'false',
   BORDER: global('BusBorder') === 'on' ? 'true' : 'false',
+  BOARD: BOARD ? 'true' : 'false', BOARD_ROWS: BOARD_ROWS, BOARD_MINE: BOARD_MINE ? 'true' : 'false', BOARD_SECS: BOARD_SECS,
+  ROUTE_ORDER: ROUTE_ORDER, WINH: WINH, LINE: LINE,
   DATA: '%' + DATA_VAR,                      // split so Tasker doesn't fill it in here
   END_SCRIPT: '</' + 'script>'        // split for the same reason as above, for the HTML parser
 });
@@ -1392,6 +1517,7 @@ var html = fill(PAGE, {
    A rounded clip at both ends of the modifier list keeps the WebView's
    corners see-through whichever way Tasker stacks modifiers. The
    WebView must not be darkened, or it paints a dark rectangle. */
+var CLIP = BOARD ? '20' : '50';                         // the board's corners are 20 dp, as its page draws them
 var buslayout = JSON.stringify({
   name: 'Bus Pill',
   defaultDisplayMode: 'Overlay',
@@ -1399,8 +1525,8 @@ var buslayout = JSON.stringify({
     type: 'Box', id: 'root',
     modifiers: [
       { type: 'FillSize' },
-      { type: 'Clip', shape: 'Rounded', radius: '50' },
-      { type: 'Clip', shape: 'Rounded', radius: '50' }
+      { type: 'Clip', shape: 'Rounded', radius: CLIP },
+      { type: 'Clip', shape: 'Rounded', radius: CLIP }
     ],
     children: [{
       type: 'WebView', id: 'pillweb', content: html,
@@ -1439,6 +1565,7 @@ var buslayout = JSON.stringify({
     o = o || {};
     var x = { k: k, d: d, t: now + min * 60000, st: o.st || 'live' };
     if (o.t2 !== undefined) { x.t2 = now + o.t2 * 60000; x.st2 = o.st2 || 'live'; }
+    if (o.t3 !== undefined) { x.t3 = now + o.t3 * 60000; x.st3 = 'live'; }
     if (o.mine) x.mine = true;
     if (o.idle) x.idle = true;
     return x;
@@ -1459,6 +1586,10 @@ var buslayout = JSON.stringify({
     { id: 'you', label: 'Riding', stop: 'D',
       note: '<b>On the 517, coming up to Wexley</b>, where you change. Your own bus is left off: the island shows only what you could change to, the 566 and the next 517, whose badge is idle grey so it doesn’t look like yours. Bus Status says which bus you’re on and when you’ll get there.',
       b: function (now) { return [bus(now, '566', 'Fernleigh Village', 8, { t2: 21 }), bus(now, '517', 'Holbry', 18, { idle: true })]; } },
+    { id: 'board', label: 'Stop board', stop: 'D', board: true,
+      note: '<b>Tapped open (4.42).</b> The island grows down into the stop board: every bus at the stop, your routes first in Settings order, then the stop’s other routes, soonest first, with outlined badges. The camera gap runs down the middle, routes to its left and times to its right. Tap again or swipe up to close it; it closes by itself after 10 s.',
+      b: function (now) { return [bus(now, '566', 'Fernleigh Village', 5, { t2: 17, t3: 29 }), bus(now, '517', 'Holbry', 14, { t2: 33 })]; },
+      a: function (now) { return [{ k: '289', d: 'Ordwick', t: [now + 3 * 60000, now + 15 * 60000] }, { k: '64', d: 'Thornacre Precinct', t: [now + 9 * 60000] }, { k: 'N68', d: 'Kelbury Bus Garage', t: [now + 26 * 60000] }]; } },
     { id: 'none', label: 'No buses', stop: 'B',
       note: '<b>Nothing listed</b> for your routes, live or from the timetable.',
       b: function () { return []; } }
@@ -1470,7 +1601,7 @@ var buslayout = JSON.stringify({
   function scen() { var id = val('nowScen'); return SCEN.filter(function (s) { return s.id === id; })[0]; }
   function dataNow() {
     var sc = scen(), st = STOPS[sc.stop], now = Date.now();
-    return { u: now, r: 45000, rot: 6000, s: st.s, n: st.n, l: st.l, b: sc.b(now, +val('nowLetters')) };
+    return { u: now, r: 45000, rot: 6000, s: st.s, n: st.n, l: st.l, b: sc.b(now, +val('nowLetters')), a: sc.a ? sc.a(now) : [] };
   }
   function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
   var frame = $('nowFrame');
@@ -1479,10 +1610,13 @@ var buslayout = JSON.stringify({
     cache[st.s] = { r: st.r };
     var G = { BusStyle: val('nowStyle') === 'chip' ? 'chip' : 'pill', BusDestLetters: val('nowLetters'), BusBorder: $('nowBorder').checked ? 'on' : 'off',
       BusScreenW: '448', BusCameraX: '224', BusIslandY: '9', BusRoutes: '517,566', BusStateStopId: st.s,
-      BusCacheStops: JSON.stringify(cache), BusStateIslandData: JSON.stringify(data) };
+      BusCacheStops: JSON.stringify(cache), BusStateIslandData: JSON.stringify(data),
+      BusStateBoard: sc.board ? '1' : '0', BusBoardSecs: '0' };
     var out = islandShow(function (k) { return G[k]; }, function () {});
     frame.style.left = out.busx + 'px'; frame.style.top = out.busy + 'px';
     frame.style.width = out.busww + 'px'; frame.style.height = out.bush + 'px';
+    $('nowStage').style.height = Math.max(128, out.busy + out.bush + 16) + 'px';      // the stop board is taller
+    fitNow();
     frame.srcdoc = out.html.split('%BusStateIslandData').join(esc(JSON.stringify(data)));
     $('scenNote').innerHTML = sc.note;
     $('nowWin').innerHTML = [['Display mode', 'Overlay'], ['Show Over Everything', 'On'], ['X', out.busx + ' dp'], ['Y', out.busy + ' dp'],
@@ -1496,7 +1630,7 @@ var buslayout = JSON.stringify({
   function fitNow() {
     var s = $('nowWrap').clientWidth / 448;
     $('nowStage').style.transform = 'scale(' + s + ')';
-    $('nowWrap').style.height = (128 * s) + 'px';
+    $('nowWrap').style.height = ((parseFloat($('nowStage').style.height) || 128) * s) + 'px';
   }
 
   // ---- Timeline: each version's island, drawn with the real page's classes ------------------------
@@ -1547,10 +1681,25 @@ var buslayout = JSON.stringify({
     v428: { ring: 'D', letters: 3, right: 'now', k: '517', d: 'You', dCls: 'mine', m: '2 min', dots: 2 },
     v429: { ring: 'D', letters: 3, right: 'now', k: '517', d: 'You', m: '2 min', dots: 2 },
     v430: { ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', m: '8', m2: '21', dots: 2 },
-    v431: { ring: 'D', letters: 3, right: 'now', k: '517', idle: true, d: 'Holbry', m: '18 min', dots: 2, on: 1 }
+    v431: { ring: 'D', letters: 3, right: 'now', k: '517', idle: true, d: 'Holbry', m: '18 min', dots: 2, on: 1 },
+    v442: { board: true, ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', dots: 2,
+      rows: [['517', '', 'Holbry', '14', '33'], ['566', '', 'Fernleigh Village', '5', '17 · 29'], ['289', 'other', 'Ordwick', '3', '15'], ['64', 'other', 'Thornacre Precinct', '9 min', '']] }
   };
+  // The stop board as tapped open (4.42): the island's width, a line per route, the camera gap down the middle
+  function boardHtml(f) {
+    var PAD = 9, GAP = 42, L = leftFor(f), R = RIGHT[f.right](f.dots || 1), W = PAD + L + GAP + R + PAD;
+    var x = Math.round(224 - GAP / 2 - L - PAD);
+    var line = function (cls, left, right) { return '<div class="row' + cls + '"><span class="h" style="width:' + L + 'px">' + left + '</span><span class="g" style="width:' + GAP + 'px"></span><span class="h" style="width:' + R + 'px">' + right + '</span></div>'; };
+    return '<div class="isl board" style="left:' + x + 'px;top:9px;width:' + W + 'px;padding:0 ' + PAD + 'px 8px">' +
+      line(' top', '<span class="sl">' + f.ring + '</span><span class="s" style="font-weight:700">Wexley / …</span>', '<span class="age">now</span>') +
+      f.rows.map(function (r) {
+        return line('', '<span class="b' + (r[1] ? ' ' + r[1] : '') + '">' + r[0] + '</span><span class="d">' + r[2] + '</span>',
+          '<span class="m">' + r[3] + '</span>' + (r[4] ? '<span class="m2">· ' + r[4] + ' min</span>' : ''));
+      }).join('') + '</div>';
+  }
   // Newest first, only the versions that changed how the island looks: [version, date, look, what changed]
   var VERSIONS = [
+    ['4.42', '8 Oct', 'v442', 'Tap the island and it grows down into the stop board: every bus at the stop, your routes first and then the stop\u2019s other routes soonest first, with the camera gap running down the middle. Tap again or swipe up to close it; it closes by itself after 10 s.'],
     ['4.31', '7 Oct', 'v431', 'While you ride, later buses on your own route keep their place and time but get a grey badge, the island\u2019s idle colour, so the next 517 never looks like yours.'],
     ['4.30', '7 Oct', 'v430', 'While you ride, your own bus leaves the island, so it shows only the buses you could change to; Bus Status says which bus you’re on.'],
     ['4.29', '7 Oct', 'v429', 'Your bus keeps its You label but loses the light blue, so it’s the same quiet grey as any destination.'],
@@ -1569,8 +1718,8 @@ var buslayout = JSON.stringify({
   var tl = $('tl');
   tl.innerHTML = VERSIONS.map(function (v) {
     if (v[0] === 'gap') return '<li class="gap-note">' + v[1] + '</li>';
-    var look = LOOK[v[2]], h = look.notification ? 150 : 48;
-    var inner = look.notification ? notificationHtml() : islandHtml(look);
+    var look = LOOK[v[2]], h = look.notification ? 150 : look.board ? 170 : 48;
+    var inner = look.notification ? notificationHtml() : look.board ? boardHtml(look) : islandHtml(look);
     return '<li class="ver" data-version="' + v[0].replace(/^V/, '') + '">' +
       '<header><span class="num">' + (/^V/.test(v[0]) ? v[0] : 'V' + v[0]) + '</span><span class="date">' + v[1] + '</span>' +
       '<span class="tag ' + (look.notification ? 'off">No island yet' : 'on">Island changed') + '</span></header><p>' + v[3] + '</p>' +

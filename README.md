@@ -22,6 +22,7 @@ Data comes from the [TfL Unified API](https://api-portal.tfl.gov.uk/). Built and
 
 - Live arrivals for your routes at the nearest stop, in a pill around the camera hole, or as a small chip in the status bar.
 - Several routes at a stop take turns, and you can swipe between them.
+- Tap the pill for the stop board: every bus at the stop, your routes first, then the others by whichever comes soonest, with the camera gap running down the middle.
 - Falls back to the published timetable when TfL has no live prediction for a route (it only predicts about 30 minutes ahead) or can't be reached.
 - Starts by itself at a saved stop and ends when you walk away.
 - Leaving work: once your phone drops off the office Wi-Fi and you start moving, it shows the next buses from your nearest saved stop, so you can see them on the way. (Home, both or neither, in Settings.)
@@ -69,6 +70,7 @@ The pill appears by itself when you reach a saved stop and slow down or stop the
 | Short swipe left or right (24 dp or more, short of a dismiss) | Next or previous route |
 | Long swipe left or right: 90 dp, or a quick 60 dp fling | Dismiss (the pill follows your finger and fades as you go) |
 | Long press | Switch to the next nearby stop, usually the one across the road |
+| Tap | Open the stop board below the pill: every bus at the stop, by route. Tap again or swipe up to close it; it closes by itself after 10 s |
 
 The first time the pill appears, a message explains the gestures. The phone gives a short tick when a swipe is long enough to dismiss, and vibrates when the pill is dismissed or a long press switches stop.
 

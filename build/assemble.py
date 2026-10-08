@@ -72,11 +72,27 @@ def show_settings():
     x = set_str(x, 11, '600000')      # closes itself after 10 minutes, so this task can't wait for ever
     return deco(x, 'Show the settings screen (waits until it is closed; closes itself after 10 minutes)', cont=True)
 
-def show_preview():
-    x = set_str(set_str(T['SHOW'], 1, '%buslayout'), 2, 'buspreview')
+def show_preview(secs=6, name='buspreview', label=None):
+    x = set_str(set_str(T['SHOW'], 1, '%buslayout'), 2, name)
     x = set_str(set_str(set_str(set_str(x, 4, '%busx'), 5, '%busy'), 6, '%busww'), 7, '%bush')
-    x = set_str(x, 11, '6000')
-    return deco(x, 'Show it for 6 seconds', cont=True)
+    x = set_str(x, 11, str(secs * 1000))
+    return deco(x, label or f'Show it for {secs} seconds', cont=True)
+
+PREVIEW_SCENES = ['buspreview', 'buspreview2']
+
+def preview_steps(build_label):
+    # The island for 3 seconds, then the stop board tapped open below it for 4 (4.42; the island only
+    # for the status bar chip, which has no board). Two names, so the board never waits on the
+    # island's window closing.
+    return [
+        js('island_show.js', build_label),
+        show_preview(3, 'buspreview', 'Show the island for 3 seconds'),
+        deco(set_int(T['WAIT'], 1, 3), 'Wait 3 seconds'),
+        varset('%busboard', 'yes', 'Then the stop board, as if tapped open'),
+        deco(js('island_show.js', 'Build the island with its stop board'), None, ('%BusStyle', 3, 'chip')),
+        deco(show_preview(4, 'buspreview2', 'Show the stop board for 4 seconds'), None, ('%BusStyle', 3, 'chip')),
+        deco(set_int(T['WAIT'], 1, 4), 'Wait 4 seconds', ('%BusStyle', 3, 'chip')),
+    ]
 
 def update_slider(element, value, label):
     # Update Scene v2 (481): change one property of one element on the open settings screen
@@ -136,7 +152,7 @@ def request_positions(mode, cond=None):
         deco(set_str(set_str(T['VARSET'], 0, '%BusStatePush'), 1, f'GPS, {what}'), '   GPS worked', ('%BusStatePush', 2, 'not requested'))]
 
 PROFILES = ['Bus Moved', 'Bus Screen On', 'Bus Hide When Sideways']
-VERSION = '4.41'
+VERSION = '4.42'
 BUILD = VERSION + '.' + time.strftime('%Y%m%d%H%M')     # changes with every build
 
 def profile_status(name, on, label, cond=None):
@@ -186,7 +202,21 @@ def dismiss_island(label, cond=None):
 
 def clear_displays():
     return [*dismiss_island('Clear the island'),
-            varset('%BusStateIslandShown', '0', 'Island not showing')]
+            varset('%BusStateIslandShown', '0', 'Island not showing'),
+            varset('%BusStateBoard', '0', 'Stop board closed (4.42)')]
+
+def island_steps(build_label):
+    # Show the island (or show it again, at a new size): the new one on top first, then the old one goes
+    return [
+      *orientation_check(),
+      stop('Phone is sideways: keep the island hidden for now', ('%busfullnow', 2, 'yes')),
+      js('island_show.js', build_label),
+      js('island_swap.js', 'Which scene name this time? (the other one from last time)'),
+      show_island(),
+      deco(set_int(set_int(T['WAIT'], 0, 300), 1, 0), 'Let it fade in over the old one', ('%busoldscene', 3, 'none')),
+      deco(set_str(T['DISMISS'], 0, '%busoldscene'), 'Now remove the old one', ('%busoldscene', 3, 'none'), cont=True),
+      varset('%BusStateIslandShown', '1', 'Island showing'),
+    ]
 
 TASKS = [
  (73, 'Bus', [
@@ -212,15 +242,14 @@ TASKS = [
     js('settings_open.js', 'Build the settings screen'),
     show_settings(),
     dismiss('buspreview', 'Remove the preview island, if showing'),
+    dismiss('buspreview2', '   and the preview stop board'),
     js('settings_save.js', 'Save what changed (however the screen was closed)'),
     mkdir('Download/Tasker-bus-trip-data', 'Record trips on: make sure its folder is there (Downloads/Tasker-bus-trip-data)', ('%BusRecord', 2, 'on')),
     flash('%busmsg', 'Say what was saved, if anything', ('%busmsg', 3, 'none')),
-    if_('%buspreview', 2, 'yes', 'Preview on screen was tapped: show the island or status bar for 6 seconds, then reopen Settings'),
+    if_('%buspreview', 2, 'yes', 'Preview on screen was tapped: show the island for 3 seconds and its stop board for 4 (or the status bar chip for 3), then reopen Settings'),
       varset('%busaction', 'preview', 'Preview'),
       js('settings_button.js', 'Sample times and the island size just saved'),
-      js('island_show.js', 'Build the island or status bar chip (whichever Show as says)'),
-      show_preview(),
-      deco(set_int(T['WAIT'], 1, 6), 'Wait 6 seconds'),
+      *preview_steps('Build the island or status bar chip (whichever Show as says)'),
       perform('Bus Refresh', 'A countdown is running: put its real times back', ('%BusStateRunning', 2, '1')),
     endif(),
     if_('%busstopschanged', 2, 'yes', 'Stops or routes changed?'),
@@ -235,8 +264,7 @@ TASKS = [
  (75, 'Bus Settings Button', [
     js('settings_button.js', 'What was tapped?'),
     if_('%buspreview', 2, 'yes', 'Preview'),
-      js('island_show.js', 'Build the island with the unsaved values and sample times'),
-      show_preview(),
+      *preview_steps('Build the island with the unsaved values and sample times'),
     endif(),
     java('busint', 'android.content.Intent', 'new {android.content.Intent} (String)', '%busintent', 'Open a settings page: the intent', ('%busintent', 2, 'android*')),
     java('busu', 'android.net.Uri', 'parse {android.net.Uri} (String)', '%busuri', 'For Tasker specifically', ('%busuri', 2, 'package*')),
@@ -297,6 +325,7 @@ TASKS = [
     endif(),
     stop('Stop if Bus End was used', ('%BusStateRunning', 3, '1')),
     varset('%busrefby', '%caller1', 'Who asked for this refresh (scripts can\'t read %caller1)'),
+    varset('%busrefpar', '%par1', '   and why (open or close: the stop board; scripts can\'t read %par1)'),
     js('fetch_due.js', 'Fetched these times under 20 s ago? (Bus Loop and the screen coming on can both ask at once)'),
     if_('%busfresh', 3, 'yes', 'Not fetched in the last 20 s (fetch new times, build the departures and buzz)'),
     js('tt_check.js', 'Timetable for this stop today? (only fetched once a day per stop)'),
@@ -317,16 +346,9 @@ TASKS = [
     deco(set_int(set_int(T['WAIT'], 0, 200), 1, 0), '   pause', ('%busbuzz', 2, 'yes')),
     vibrate(200, '   buzz (three in all)', ('%busbuzz', 2, 'yes')),
     endif(),
-    if_('%BusStateIslandShown', 3, '1', 'Island not up yet: show it (after that it updates itself)'),
-      *orientation_check(),
-      stop('Phone is sideways: keep the island hidden for now', ('%busfullnow', 2, 'yes')),
-      js('island_show.js', 'Build the island'),
-      js('island_swap.js', 'Which scene name this time? (the other one from last time)'),
-      show_island(),
-      deco(set_int(set_int(T['WAIT'], 0, 300), 1, 0), 'Let it fade in over the old one', ('%busoldscene', 3, 'none')),
-      deco(set_str(T['DISMISS'], 0, '%busoldscene'), 'Now remove the old one', ('%busoldscene', 3, 'none'), cont=True),
-      varset('%BusStateIslandShown', '1', 'Island showing'),
-      flash('Swipe the island for the next route. Hold it for the other side of the road. Swipe it right across to dismiss it.',
+    if_('%BusStateIslandShown', 3, '1', 'Island not up yet, or to be drawn again (2): show it (after that it updates itself)'),
+      *island_steps('Build the island'),
+      flash('Tap the island for every bus at the stop. Swipe it for the next route. Hold it for the other side of the road. Swipe it right across to dismiss it.',
             'First time only: how to use the island', ('%BusStateHintShown', 3, '1')),
       varset('%BusStateHintShown', '1', 'Hint shown'),
     endif(),
@@ -363,7 +385,14 @@ TASKS = [
     stop('That was all', ('%busisland', 2, 'buzz')),
     vibrate(20, 'Held on the island: confirm with a vibration', ('%busisland', 2, 'switch')),
     deco(js('opposite.js', 'Switch to the next nearby stop'), None, ('%busisland', 2, 'switch')),
-    perform('Bus Refresh', 'Refresh now', ('%busisland', 2, 'switch')),
+    # %busisland "open" (a tap) or "close" (a tap, a swipe up, or BusBoardSecs passing): the stop board
+    # (4.42). Bus Refresh then shows the island again, in the same place and width, at the board's
+    # height or back to its own, the new one on top before the old one goes (2: showing, draw again).
+    # It only fetches new times if the last were fetched 20 s or more ago.
+    deco(varset('%BusStateBoard', '1', 'Tapped: open the stop board'), None, ('%busisland', 2, 'open')),
+    deco(varset('%BusStateBoard', '0', 'Close the stop board'), None, ('%busisland', 2, 'close')),
+    deco(varset('%BusStateIslandShown', '2', 'Draw the island again, at its new height'), None, ('%busisland', 2, 'open/close')),
+    perform('Bus Refresh', 'Refresh now: the other stop, or the island with or without its board', ('%busisland', 2, 'switch/open/close'), par1='%busisland'),
  ]),
  (62, 'Bus Watch', [
     # One task for every check: a position pushed by Android (the Bus Moved profile), the screen

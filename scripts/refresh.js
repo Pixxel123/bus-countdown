@@ -186,6 +186,8 @@ deps.forEach(function (x) {
   if (!seen[x.k]) { seen[x.k] = Object.assign({}, x); perRoute.push(seen[x.k]); }
   // (TfL sometimes lists the same bus twice: a time within a minute of the first is the same bus)
   else if (seen[x.k].t2 === undefined && x.t - seen[x.k].t >= 60000) { seen[x.k].t2 = x.t; seen[x.k].st2 = x.st; }
+  // and a third for the stop board (4.42; the island itself shows two)
+  else if (seen[x.k].t2 !== undefined && seen[x.k].t3 === undefined && x.t - seen[x.k].t2 >= 60000) { seen[x.k].t3 = x.t; seen[x.k].st3 = x.st; }
 });
 
 // One bus at a time: only the soonest bus at the stop, whatever its route, can buzz. Within 5 minutes
@@ -244,7 +246,7 @@ var shape = (get('BusStyle') === 'chip' ? 'c' : 'i') + routesHere(perRoute.lengt
 // (The right half always has room for "~88 · ~88 min", so times, timetable "~" and second times
 // coming and going never change the size, and never redraw the island.)
 if (get('BusStateIslandShown') === '1' && get('BusStateIslandShape') !== '' && get('BusStateIslandShape') !== shape) {
-  setGlobal('BusStateIslandShown', '0');
+  setGlobal('BusStateIslandShown', '2');        // showing, but to be drawn again (so the old one is removed)
 }
 setGlobal('BusStateIslandData', JSON.stringify({
   u: now,                                                       // when this data arrived

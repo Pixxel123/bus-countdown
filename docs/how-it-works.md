@@ -25,6 +25,8 @@ flowchart TD
     P -->|"long swipe"| K
     P -->|"hold"| N["Bus Island<br/>next saved stop"]
     N --> R
+    P -->|"tap"| SB["Bus Island<br/>stop board open or closed"]
+    SB -->|"shows it again,<br/>taller or back"| P
 ```
 
 <details>
@@ -184,7 +186,9 @@ Earlier versions used an invisible overlay to watch for the status bar being hid
 ## Known limitations
 
 - While the settings screen is open, the Bus Settings task waits for it to close, and Tasker holds back lower-priority tasks meanwhile (even a task that's only waiting holds back lower ones). So the Bus menu opens Settings at priority 6: above Bus Loop (5), so it opens during a countdown, and below the tasks that handle positions and refreshes (performed at 7 to 11), so those carry on. While Settings is open, the countdown's own loop pauses and picks up again when you close it. The screen closes itself after 10 minutes if it's left open (for example after pressing Home), and opening Settings again replaces a copy that's still waiting.
-- Vertical swipes on the pill aren't used. Android intercepts them near the top of the screen.
+- Vertical swipes on the pill aren't used, apart from a swipe up to close the stop board: Android intercepts swipes down near the top of the screen, so the board opens with a tap.
+- The stop board's lines are counted when it opens. A route that turns up while it's open waits for the next opening, and one that goes leaves an empty line.
+- The stop board's corners are clipped at 20 by Tasker's Scene V2 Clip. If Tasker reads that as a percentage rather than dp, the corners come out rounder than the board draws them.
 - The timetable fallback uses the standard weekday, Saturday or Sunday timetable. It doesn't know about diversions or engineering works.
 - Android sometimes returns an old saved location, especially indoors. Locations more than 3 minutes old are rejected, and GPS is forced on for a second attempt.
 - A task started by hand in Tasker runs at top priority and can't wait for a task it calls, so each task only calls another as its last step. Bus Loop, which starts at low priority, is the exception.

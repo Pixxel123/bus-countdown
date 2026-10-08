@@ -4,6 +4,22 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.42] - 2026-10-08
+
+### Added
+
+- The stop board. Tap the island and it grows down into a board of every bus at the stop: your routes first, in Settings order, then the stop's other routes, soonest first, with outlined badges, up to 8 lines. It's the island's own width, and the camera gap runs down the middle, with routes to its left and times to its right ("2 · 8 · 19 min", as many as fit). The first line is the stop and how old its times are. Tap again or swipe up to close it; it closes by itself after 10 seconds, unless your finger is on it. A long press still switches stop, and the board stays open for the new one.
+- Settings: what the stop board shows (all routes, or yours only) and when it closes (after 10 or 30 seconds, or only when tapped). Preview shows the island for 3 seconds and then its stop board for 4.
+
+### Changed
+
+- Bus Refresh keeps a third time for each of your routes, for the board.
+- Opening or closing the board shows the island again, the new one on top before the old one goes. It only fetches new times if the last were fetched 20 seconds or more ago.
+
+### Fixed
+
+- Drawing the island again at a new size (switching to a stop with a different number of your routes) now removes the old one.
+
 ## [4.41] - 2026-10-08
 
 ### Added

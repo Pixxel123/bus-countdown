@@ -12,8 +12,9 @@
 /* @include loc */
 var now = Date.now();
 var lastAt = parseInt(get('BusStateFetchAt'), 10) || 0;
-// Only the two automatic callers are held back: switching stop, a preview in Settings, or running
+// Only the automatic callers are held back: switching stop, a preview in Settings, or running
 // Bus Refresh by hand always fetches. (%caller1 isn't visible to scripts: Bus Refresh copies it into
 // %busrefby first.)
-var auto = /^task=Bus (Loop|Wake)$/.test(loc('busrefby'));
+// The stop board opening or closing (4.42) is held back too: it shows the times just fetched.
+var auto = /^task=Bus (Loop|Wake)$/.test(loc('busrefby')) || /^(open|close)$/.test(loc('busrefpar'));
 var busfresh = auto && get('BusStateFetchStop') === get('BusStateStopId') && now - lastAt >= 0 && now - lastAt < 20000 ? 'yes' : 'no';
