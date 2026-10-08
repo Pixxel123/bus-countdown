@@ -4,6 +4,10 @@
 //   declares comes back as a task local. Here each script runs in its own Node vm context with the
 //   same shape, a fake clock, and a plain object standing in for Tasker's global variables.
 'use strict';
+// The scripts tell the time as the phone does, in UK time, and the tests expect UK times. GitHub's
+// runners (and any computer set to another time zone) use something else, so the tests always run
+// on UK time, whatever the computer's clock is set to
+process.env.TZ = 'Europe/London';
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
