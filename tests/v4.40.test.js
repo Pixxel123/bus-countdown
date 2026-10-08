@@ -94,3 +94,23 @@ test('a stop you never got to doesn\'t count: heading for it, the countdown ends
   const out = ride(g, [[5, -300], [25, -100], [45, 160]]);
   assert.ok(!out.some((o) => /on a bus from High St/.test(o.why)));
 });
+
+// ---- 3. Off the bus at the stop by work: no countdown for 15 minutes, not 5 ----------------------
+test('Thursday 09:26, walking in past the stop by work 6 minutes after getting off: no countdown', () => {
+  const out = replay(day('thu-8-oct-morning.jsonl')).out;
+  const after = out.filter((o) => o.k === 'check' && clock(o) >= '09:20:00');
+  assert.ok(after.length >= 15);
+  assert.deepStrictEqual(after.filter((o) => o.action !== 'none').map((o) => clock(o) + ' ' + o.action), [], 'on the phone (4.38) it started at 09:28');
+  assert.match(after.find((o) => clock(o) === '09:26:38').why, /off the bus at Corvel Lodge School \(adj\), by work: no countdown/);
+});
+
+test('15 minutes after the last bus, the stop by work starts as normal again', () => {
+  const g = world();
+  g.BusStateRunning = '0'; g.TRUN = ''; g.BusStateTrip = '{"s":"idle"}'; g.BusStateWindow = '[]';
+  g.BusWorkAt = JSON.stringify({ lat: +(BASE + m(150)).toFixed(6), lon: LON, n: 10 });
+  const still = (at) => [[at, 0], [at + 20, 0], [at + 40, 0], [at + 60, 0]];
+  g.BusStateLastBusAt = String(T0 - 13 * 60000);      // still under 15 minutes a minute later
+  assert.ok(!ride(g, still(0)).some((o) => o.state === 'atstop'), 'within 15 minutes: you\'ve arrived');
+  const g2 = Object.assign(world(), { BusStateRunning: '0', TRUN: '', BusStateTrip: '{"s":"idle"}', BusStateWindow: '[]', BusWorkAt: g.BusWorkAt, BusStateLastBusAt: String(T0 - 16 * 60000) });
+  assert.ok(ride(g2, still(0)).some((o) => o.state === 'atstop'), 'after 15 minutes: walking up to catch one');
+});

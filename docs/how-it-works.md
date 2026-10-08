@@ -56,7 +56,7 @@ flowchart TD
 - "Walked away" means more than three times the stop's arrival distance (150 to 250 m) once you've been at the stop, or 200 m further than the closest you got if you haven't reached it yet. Moving at bus speed away from the stop also counts: two positions in a row, or one once you're past the end distance.
 - Checks from Bus Wake and Bus Loop don't wait for the next scheduled check.
 - "Not snoozed": after you swipe a countdown away (`%BusStateSnooze`), nothing starts again by itself until you've been to that stop and left it (150 m past the closest you came, clear of all your stops), or for 30 minutes.
-- Stops by home or work (within 400 m of where Bus Watch has learned they are): on a bus towards one, or within 5 minutes of getting off a bus, it doesn't pop up, since that's where you get off. Walking up to it to catch a bus, it starts as normal; a stop where you change buses always shows.
+- Stops by home or work (within 400 m of where Bus Watch has learned they are): on a bus towards one, or within 15 minutes of getting off a bus, it doesn't pop up, since that's where you get off. Walking up to it to catch a bus, it starts as normal; a stop where you change buses always shows.
 
 ### Each refresh
 

@@ -9,6 +9,7 @@ Each release's project file is attached to its [GitHub release](../../releases).
 ### Fixed
 
 - Getting on a bus is seen however the countdown ended. Once you've left a stop you'd got to, being 150 m or more along a route that calls there, faster than walking on average since you left, means you got on a bus there, and Bus Watch works out which one. On Tuesday the countdown at Corvel Lodge ended on its own just before the 517 came, so the ride to Wexley never knew its bus, and the 517 stayed on the island there as only "probably" yours. On Wednesday, off the tram at Kiln Street and onto the 566, the ride counted as still being on the tram.
+- The stop by home or work stays quiet for 15 minutes after you get off a bus, not 5. On Thursday you got off by work at 09:20, and walking in past the stop at 09:26 started its countdown, until the work Wi-Fi ended it.
 
 ## [4.39] - 2026-10-08
 

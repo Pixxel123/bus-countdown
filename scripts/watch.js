@@ -214,10 +214,15 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     win.forEach(function (w) { var dt = (fixT - w.t) / 1000; if (dt >= 90) best = Math.max(best, (st.d - metres(w.lat, w.lon, st.lat, st.lon)) / dt); });
     return best;
   };
-  // On a bus lately (in the last 5 minutes): BusStateLastBusAt. Used to tell getting off at the stop
-  // by home or work (no countdown) from walking up to it to catch one
+  // On a bus lately (in the last 5 minutes): BusStateLastBusAt. Used to keep the bus you got on, and
+  // (with 15 minutes, below) to tell getting off at the stop by home or work from walking up to it
   if (bus) setGlobal('BusStateLastBusAt', String(now));
   var byBusLately = now - (parseInt(get('BusStateLastBusAt'), 10) || 0) < 5 * 60000;
+  // Getting off at the stop by home or work: 15 minutes, not 5 (4.40). On Thursday you got off by
+  // work at 09:20, and walking in past the stop at 09:26 started its countdown, until the work Wi-Fi
+  // ended it at 09:29. Walking out to that stop to catch a bus within 15 minutes of arriving by bus is
+  // rare; a run by hand still starts it.
+  var offBusLately = now - (parseInt(get('BusStateLastBusAt'), 10) || 0) < 15 * 60000;
   if (trip.s === 'atstop' && tripStop) {
     var away = trend(tripStop.lat, tripStop.lon);
     if (bus && away > 1 && tripStop.d > tripStop.r * 0.5) {
@@ -328,7 +333,7 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     }
     var arrival = insideStops.filter(function (st) { return !justLeft(st); })[0];
     if (arrival && (snoozed && !byHand)) why = 'snoozed: you swiped it away; it comes back once you\u2019ve been to that stop and left it, or at ' + new Date(snoozedAt + 30 * 60000).toTimeString().slice(0, 5);
-    else if (arrival && byBusLately && !byHand && homeOrWork(arrival)) why = 'off the bus at ' + arrival.n + ', by ' + homeOrWork(arrival) + ': no countdown (you\u2019ve arrived)';
+    else if (arrival && offBusLately && !byHand && homeOrWork(arrival)) why = 'off the bus at ' + arrival.n + ', by ' + homeOrWork(arrival) + ': no countdown (you\u2019ve arrived)';
     else if (arrival && !slow && !byHand) { why = 'passing by at ' + Math.round(speed * 3.6) + ' km/h: waits until you slow down (or stay put for 30 s)'; busdwell = 'yes'; }
     else if (arrival) {
       busaction = 'start'; why = settled && speed > 0.8 ? 'start (you have stayed put, though the GPS speed reads ' + Math.round(speed * 3.6) + ' km/h)' : 'start';
