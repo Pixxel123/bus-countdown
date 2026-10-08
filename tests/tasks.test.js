@@ -124,7 +124,10 @@ test('every Perform Task of Bus End passes why it ended, as Bus End expects', ()
 });
 
 test('Bus End copies %par1 into %busreason before its script runs', () => {
-  const [first, second] = rawActions('Bus End');
+  // (4.43: after the island has gone, so the step just before the script)
+  const acts = rawActions('Bus End');
+  const at = acts.findIndex((a) => /^Note it in the debugging log/.test(labelOf(a)));
+  const [first, second] = [acts[at - 1], acts[at]];
   assert.match(first, /<code>547<\/code>/);
   assert.match(first, /<Str sr="arg0" ve="3">%busreason<\/Str>/);
   assert.match(first, /<Str sr="arg1" ve="3">%par1<\/Str>/);
@@ -142,7 +145,8 @@ test('Bus Watch stops before getting a fix when staying put far away, and only t
 
 test('Bus Start and Bus Settings create the recordings folder when Record trips is on', () => {
   for (const name of ['Bus Start', 'Bus Settings']) {
-    const mk = rawActions(name).filter((a) => /<code>409<\/code>/.test(a));
+    // (Others, after each script that records, make sure of it on a new day: record_steps, 4.43)
+    const mk = rawActions(name).filter((a) => /<code>409<\/code>/.test(a) && !/%busrecappend/.test(a));
     assert.strictEqual(mk.length, 1, name);
     assert.match(mk[0], /<Str sr="arg0" ve="3">Download\/Tasker-bus-trip-data<\/Str>/);
     assert.match(mk[0], /<lhs>%BusRecord<\/lhs><op>2<\/op><rhs>on<\/rhs>/);

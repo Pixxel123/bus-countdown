@@ -46,6 +46,19 @@ function run(name, { globals = {}, locals = {}, now = Date.now() } = {}) {
   }, locals);
   vm.createContext(ctx);
   vm.runInContext(src, ctx, { filename: name });
+  // What the steps after a recording script do on the phone (4.43, record_steps in build/assemble.py):
+  // write the lines it collected, starting the file afresh on a new day, then mark the day started,
+  // or keep why the write failed
+  if (typeof ctx.busrecfile === 'string' && ctx.busrecfile) {
+    try {
+      ctx.writeFile(ctx.busrecfile, ctx.busrecline + '\n', ctx.busrecappend !== 'false');
+      globals.BusRecordErr = '';
+      if (ctx.busrecappend === 'false') globals.BusRecordDay = ctx.busrecday;
+    } catch (e) {
+      const d = new (clockAt(now))();
+      globals.BusRecordErr = String(d.getHours()).padStart(2, '0') + '.' + String(d.getMinutes()).padStart(2, '0') + ' ' + e.message;
+    }
+  }
   return ctx;
 }
 

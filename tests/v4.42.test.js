@@ -24,7 +24,7 @@ test('open, it is the island\'s own width and place, taller by a line per route'
   assert.strictEqual(+open.bush, 30 + 4 * 26 + 8, 'the stop line, then 2 of yours and 2 others');
   assert.match(open.html, /var BOARD = true;/);
   assert.match(closed.html, /var BOARD = false;/);
-  assert.strictEqual(JSON.parse(open.buslayout).root.modifiers[1].radius, '20');
+  assert.strictEqual(JSON.parse(open.buslayout).root.modifiers.find((m) => m.type === 'Clip').radius, '20');
 });
 
 test('up to 8 lines; "your routes only" leaves the others out; the chip has no board', () => {
@@ -37,8 +37,11 @@ test('up to 8 lines; "your routes only" leaves the others out; the chip has no b
 test('the page: yours in Settings order, then the others; a tap opens or closes it; a swipe up closes it; it closes itself', () => {
   const src = compose(fs.readFileSync(path.join(__dirname, '..', 'scripts', 'island_show.js'), 'utf8'));
   assert.match(show({ BusStateBoard: '1' }).html, /var ROUTE_ORDER = \["517","566"\];/);
-  assert.match(src, /busisland: BOARD \? 'close' : 'open'/);
-  assert.match(src, /if \(BOARD && dy <= -30 && Math\.abs\(dy\) > Math\.abs\(dx\)\) \{ runTask\('Bus Island', \{ busfrom: 'island', busisland: 'close' \}\)/);
+  // (4.43: closing goes through closeBoard)
+  // (4.43: the board grows out of the island when the bridge can resize its window; else as before)
+  assert.match(src, /if \(BOARD\) closeBoard\(\);\s*else if \(!document\.body\.classList\.contains\('chip'\) && !\(CAN_GROW && growBoard\(\)\)\) \{ waitFor\('board'\); runTask\('Bus Island', \{ busfrom: 'island', busisland: 'open' \}\)/);
+  assert.match(src, /function closeBoard\(\) \{\s*if \(CAN_GROW\) \{ shrinkBoard\(\); return; \}\s*waitFor\('board'\); runTask\('Bus Island', \{ busfrom: 'island', busisland: 'close' \}\);\s*\}/);
+  assert.match(src, /if \(BOARD && dy <= -30 && Math\.abs\(dy\) > Math\.abs\(dx\)\) \{ closeBoard\(\); return; \}/);
   assert.match(src, /if \(BOARD && closeAt && !down && Date\.now\(\) >= closeAt\)/, 'not while a finger is on it');
   assert.match(show({ BusStateBoard: '1', BusBoardSecs: '30' }).html, /BOARD_SECS = 30;/);
   assert.match(show({ BusStateBoard: '1', BusBoardSecs: '0' }).html, /BOARD_SECS = 0;/);
@@ -65,15 +68,19 @@ const steps = (body) => [...body.matchAll(/<Action sr="act\d+" ve="7">([\s\S]*?)
 test('Bus Island: open sets the board on, close off, and both have Bus Refresh draw the island again, as its last step', () => {
   const s = steps(taskBody('Bus Island'));
   const sets = s.filter((x) => x.code === 547).map((x) => [x.args[0], x.args[1], x.cond]);
-  assert.deepStrictEqual(sets, [['%BusStateBoard', '1', '%busisland 2 open'], ['%BusStateBoard', '0', '%busisland 2 close'], ['%BusStateIslandShown', '2', '%busisland 2 open/close']]);
+  // (4.43: a board the page grew itself, busgrow yes, is only noted; Bus Refresh then just fetches if due)
+  assert.deepStrictEqual(sets, [['%BusStateBoard', '1', '%busisland 2 open'], ['%BusStateBoard', '0', '%busisland 2 close'],
+    ['%busdo', '%busisland', ''], ['%busdo', '%busisland-grown', '%busgrow 2 yes'],
+    ['%BusStateBoardSelf', '1', '%busdo 2 open-grown'], ['%BusStateBoardSelf', '0', '%busdo 2 open'],
+    ['%BusStateIslandShown', '2', '%busdo 2 open/close']]);
   const last = s[s.length - 1];
   assert.strictEqual(last.code, 130);
-  assert.deepStrictEqual([last.args[0], last.args[2], last.cond], ['Bus Refresh', '%busisland', '%busisland 2 switch/open/close']);
+  assert.deepStrictEqual([last.args[0], last.args[2], last.cond], ['Bus Refresh', '%busisland', '%busdo 2 switch/open/close/open-grown']);
 });
 
 test('drawing it again removes the old one (2: showing, draw again); Bus End closes the board', () => {
   const g = { BusStateIslandShown: '2', BusStateIslandScene: 'buspill' };
-  const r = run('island_swap.js', { globals: g });
+  const r = run('island_show.js', { globals: g });
   assert.deepStrictEqual([r.busnewscene, r.busoldscene], ['buspill2', 'buspill']);
   const end = steps(taskBody('Bus End')).filter((x) => x.code === 547).map((x) => x.args[0] + '=' + x.args[1]);
   assert.ok(end.includes('%BusStateBoard=0'));

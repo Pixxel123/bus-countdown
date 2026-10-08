@@ -4,6 +4,29 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.43] - 2026-10-08
+
+### Added
+
+- The stop board grows out of the island and tucks back into it. Tap the island and its own window grows down into the board over 0.4 s: the stop's name fades in and the rows drop in one after another. Closing, the rows fade and the board tucks back up in a quarter of a second. No new window is drawn for it any more, and a route coming or going while it's open resizes it.
+- A swipe moves the whole island with your finger, and it fades as it nears the point where letting go dismisses it. Let go there and it's gone at once; short of it, it slides back to its place.
+
+### Changed
+
+- Opening the stop board never waits for TfL. It opens with the times there are and, if they're 20 seconds old or more, fetches new ones straight after, and the board updates itself. Closing never fetches. An open took about 1 s, and 1.8 to 3.4 s when the times were older than 20 seconds; it now takes about half a second either way, and closing about a third of a second.
+- With several of your routes at the stop, a quick flick only ever changes route: dismissing takes a long, deliberate drag (130 dp), and the fade only starts past where a route change ends. With one route it's as before: 90 dp, or a quick 60 dp flick.
+- Switching stop with a long press shows the new stop at once, with its times if they were fetched in the last 3 minutes, and gets its live times before anything else: 1 to 2 s instead of 4 to 5. The timetable is only fetched for your routes TfL has no live time for, after the island is shown.
+- The island answers every touch straight away: its words dim while Tasker works on a tap or a long press.
+- Swiping the island away removes it before anything else, and a refresh under way is stopped, so it can't come back.
+- The island fades in only when it first appears. Redrawing or removing it no longer fades.
+- Fewer scripts run each time the island is drawn (each costs about 0.3 s on the phone): the scene name is picked inside `island_show.js`, and the board doesn't check which way up the phone is.
+- The trip recorder's lines are written by Tasker steps straight after each script, not from inside it.
+
+### Fixed
+
+- A long press as a refresh was writing to the trip recorder (the screen coming on, say) hung both for 45 seconds, and the stop never switched. On Thursday at 14:27 the island stayed on the old stop.
+- A swipe could be left hanging half-way out, the countdown never ending, when Android didn't say the finger had lifted. Losing the touch now counts as letting go too, and a finger that neither moves nor lifts for 2 seconds is let go without acting on it.
+
 ## [4.42] - 2026-10-08
 
 ### Added

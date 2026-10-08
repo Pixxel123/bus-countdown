@@ -100,12 +100,77 @@ def update_slider(element, value, label):
                 f'<Str sr="arg2" ve="3">value</Str><Str sr="arg3" ve="3">{value}</Str><Int sr="arg4" val="0"/><Str sr="arg5" ve="3"/></Action>',
                 label, ('%busrebuild', 2, 'yes'), cont=True)
 
-def orientation_check():
+def fetch_steps():
+    # Fetch the stop's live times, build the departures, record them and buzz (Bus Refresh: before
+    # drawing the island, or, when the stop board opens, after, 4.43)
+    return [
+      http('https://api.tfl.gov.uk/StopPoint/%BusStateStopId/Arrivals?app_key=%TflKey', 'Ask TfL for live arrivals'),
+      js('refresh.js', 'Build the departures: live times, timetable where there are none'),
+      *record_steps(),
+      stop('No live data and no timetable: keep showing the last times', ('%busnodata', 2, 'yes')),
+      # A bus within 5 minutes (before the island steps, so it buzzes even with the phone sideways):
+      # three short buzzes (on two refreshes in a row; see refresh.js)
+      vibrate(200, 'A bus within 5 minutes: buzz', ('%busbuzz', 2, 'yes')),
+      deco(set_int(set_int(T['WAIT'], 0, 200), 1, 0), '   pause', ('%busbuzz', 2, 'yes')),
+      vibrate(200, '   buzz', ('%busbuzz', 2, 'yes')),
+      deco(set_int(set_int(T['WAIT'], 0, 200), 1, 0), '   pause', ('%busbuzz', 2, 'yes')),
+      vibrate(200, '   buzz (three in all)', ('%busbuzz', 2, 'yes')),
+    ]
+
+def clear_var(name, label, cond=None):
+    # Variable Clear (549)
+    x = (f'<Action sr="act0" ve="7"><code>549</code><Str sr="arg0" ve="3">{e(name)}</Str>'
+         '<Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>')
+    return deco(x, label, cond)
+
+def record_steps():
+    # The trip recorder's lines, written straight after the script that recorded them (4.43; see
+    # scripts/shared/record.js). A script writing the file itself makes Tasker run the write as a task
+    # of its own, and a script waiting on that while another script was running hung both for 45 s.
+    # Java's FileWriter writes from this task instead. A new day starts the file afresh (busrecappend
+    # false), in a folder made sure of first; once that's written, the day counts as started
+    # (BusRecordDay) and the new file is announced to Android's media index, so the Files app lists
+    # it. A failed write is kept in BusRecordErr for Bus Status, and the next line tries again.
+    ok, new = ('%errmsg', 2, 'untouched'), ('%busrecappend', 2, 'false')
+    return [
+      if_('%busrecfile', 2, 'Download/*', 'Trip recorder on: write what was just recorded'),
+        mkdir('Download/Tasker-bus-trip-data', '   A new day: make sure its folder is there', new),
+        varset('%errmsg', 'untouched', '   Clear the last error, to spot a new one'),
+        java('busrecw', 'java.io.FileWriter', 'new {java.io.FileWriter} (String, boolean)', ['/sdcard/%busrecfile', '%busrecappend'],
+             '   Open the file (on a new day, start it afresh)'),
+        java('', 'busrecw', 'write {} (String)', '%busrecline', '   Write the lines', ok),
+        java('busrecnl', 'java.lang.System', 'lineSeparator {String} ()', '', '   Android\'s line break', ok),
+        java('', 'busrecw', 'write {} (String)', 'busrecnl', '   Write it after the last line', ok),
+        # Closed whether or not the write worked, so a failed write doesn't leave it open
+        java('', 'busrecw', 'close {} ()', '', '   Close the file'),
+        if_('%errmsg', 2, 'untouched', '   Did it work?'),
+          clear_var('%BusRecordErr', '      No write error to report'),
+          deco(varset('%BusRecordDay', '%busrecday', '      A new day: it has started'), None, new),
+          java('busscanpath', 'java.lang.String', 'new {java.lang.String} (String)', '/sdcard/%busrecfile',
+               '      A new file: announce it to the media index, so the Files app lists it', new),
+          java('busscanlist', 'busscanpath', 'split {String[]} (String)', ',', '         Its path, as a list of one', new),
+          java('', 'android.media.MediaScannerConnection',
+               'scanFile {} (android.content.Context, String[], String[], android.media.MediaScannerConnection$OnScanCompletedListener)',
+               ['CONTEXT', 'busscanlist', 'null', 'null'], '         Ask Android to scan it', new),
+        else_(),
+          varset('%BusRecordErr', '%TIME %errmsg', '      Failed: keep why, for Bus Status (the next line tries again)'),
+        endif(),
+        # Tasker hands a task's variables to every script in it: left set, a second recording script in
+        # the same task (Bus Watch: wifi_save.js, then watch.js) would add to these lines and write them
+        # again, and on a new day start the file afresh a second time, losing the setup
+        clear_var('%busrecline', '   Done: forget the lines'),
+        clear_var('%busrecfile', '      the file'),
+        clear_var('%busrecappend', '      whether to start it afresh'),
+        clear_var('%busrecday', '      and the day'),
+      endif(),
+    ]
+
+def orientation_check(cond=None):
     # Android's configuration text says "port" or "land"
     return [
-        java('confres', 'CONTEXT', 'getResources {Resources} ()', '', 'Which way up is the phone? (screen settings)'),
-        java('%busconfig', 'confres', 'getConfiguration {Object} ()', '', '   As text'),
-        js('fullscreen.js', 'Sideways or upright?'),
+        java('confres', 'CONTEXT', 'getResources {Resources} ()', '', 'Which way up is the phone? (screen settings)', cond),
+        java('%busconfig', 'confres', 'getConfiguration {Object} ()', '', '   As text', cond),
+        deco(js('fullscreen.js', 'Sideways or upright?'), None, cond),
     ]
 
 def wifi_name():
@@ -152,7 +217,7 @@ def request_positions(mode, cond=None):
         deco(set_str(set_str(T['VARSET'], 0, '%BusStatePush'), 1, f'GPS, {what}'), '   GPS worked', ('%BusStatePush', 2, 'not requested'))]
 
 PROFILES = ['Bus Moved', 'Bus Screen On', 'Bus Hide When Sideways']
-VERSION = '4.42'
+VERSION = '4.43'
 BUILD = VERSION + '.' + time.strftime('%Y%m%d%H%M')     # changes with every build
 
 def profile_status(name, on, label, cond=None):
@@ -185,15 +250,18 @@ def vibrate(ms, label, cond=None):
 def list_dialog(items, title, label, multi, cond=None):
     return deco(set_str(set_str(set_int(T['LIST'], 1, 1 if multi else 0), 2, title), 3, items), label, cond, cont=True)
 
-# The island is shown under one of two scene names, buspill and buspill2, taking turns (island_swap.js
-# picks which). A redraw shows the new one on top first, then removes the old one, so there's never a
-# moment with no island, even if a refresh is interrupted part-way through.
+# The island is shown under one of two scene names, buspill and buspill2, taking turns (island_show.js
+# picks which, with shared/sceneSwap.js). A redraw shows the new one on top first, then removes the old
+# one, so there's never a moment with no island, even if a refresh is interrupted part-way through.
 ISLAND_SCENES = ['buspill', 'buspill2']
 
 def show_island():
     x = set_str(T['SHOW'], 1, '%buslayout')
     x = set_str(set_str(set_str(set_str(x, 4, '%busx'), 5, '%busy'), 6, '%busww'), 7, '%bush')
     x = set_str(x, 2, '%busnewscene')
+    # Show and dismiss animations (4.43): fading in only when the island first appears (busanim, from
+    # island_show.js), and never fading out, so a redraw or a dismissal is immediate. Both used to fade.
+    x = set_str(set_str(x, 9, '%busanim'), 10, 'None')
     return deco(x, 'Show it around the camera (on top of the old one, if any)', cont=True)
 
 def dismiss_island(label, cond=None):
@@ -205,17 +273,23 @@ def clear_displays():
             varset('%BusStateIslandShown', '0', 'Island not showing'),
             varset('%BusStateBoard', '0', 'Stop board closed (4.42)')]
 
-def island_steps(build_label):
-    # Show the island (or show it again, at a new size): the new one on top first, then the old one goes
+def island_steps(build_label, then=()):
+    # Show the island (or show it again, at a new size): the new one on top first, then the old one goes.
+    # then: more steps for when it has been shown
     return [
-      *orientation_check(),
-      stop('Phone is sideways: keep the island hidden for now', ('%busfullnow', 2, 'yes')),
-      js('island_show.js', build_label),
-      js('island_swap.js', 'Which scene name this time? (the other one from last time)'),
-      show_island(),
-      deco(set_int(set_int(T['WAIT'], 0, 300), 1, 0), 'Let it fade in over the old one', ('%busoldscene', 3, 'none')),
-      deco(set_str(T['DISMISS'], 0, '%busoldscene'), 'Now remove the old one', ('%busoldscene', 3, 'none'), cont=True),
-      varset('%BusStateIslandShown', '1', 'Island showing'),
+      # Not when the stop board opens or closes: that was a tap on the island, so it's showing, and
+      # the phone is upright (each JavaScriptlet costs about 0.3 s on the phone, 4.43)
+      *orientation_check(('%busrefpar', 3, 'open/close')),
+      # Sideways: skip the drawing, but not what comes after it in the task (4.43: it used to stop the
+      # task here, and the timetable check now comes after the island)
+      if_('%busfullnow', 3, 'yes', 'Upright: show the island (sideways: keep it hidden for now)'),
+        js('island_show.js', build_label + ', and pick which scene name to show it under (the other one from last time)'),
+        show_island(),
+        deco(set_int(set_int(T['WAIT'], 0, '%busfadems', var=True), 1, 0), 'Let it fade in over the old one (not when the stop board closes: it goes at once)', ('%busoldscene', 3, 'none')),
+        deco(set_str(T['DISMISS'], 0, '%busoldscene'), 'Now remove the old one', ('%busoldscene', 3, 'none'), cont=True),
+        varset('%BusStateIslandShown', '1', 'Island showing'),
+        *then,
+      endif(),
     ]
 
 TASKS = [
@@ -289,6 +363,7 @@ TASKS = [
     deco(set_int(T['GETLOC'], 9, 1), '   Too old: try again with GPS', ('%busstale', 2, 'yes'), cont=True),
     *cache_refresh(),
     js('start.js', 'My saved stops nearby'),
+    *record_steps(),
     flash('%busproblem', 'Say why nothing started', ('%busok', 3, 'yes')),
     stop('Nothing to show: stop here', ('%busok', 3, 'yes')),
     stoptask('Bus Loop', 'End any countdown already running'),
@@ -326,31 +401,45 @@ TASKS = [
     stop('Stop if Bus End was used', ('%BusStateRunning', 3, '1')),
     varset('%busrefby', '%caller1', 'Who asked for this refresh (scripts can\'t read %caller1)'),
     varset('%busrefpar', '%par1', '   and why (open or close: the stop board; scripts can\'t read %par1)'),
-    js('fetch_due.js', 'Fetched these times under 20 s ago? (Bus Loop and the screen coming on can both ask at once)'),
+    # Closing the stop board never fetches (4.43): it shows the times it had, and the next refresh
+    # brings new ones. That saves a script (about 0.3 s) on every close.
+    deco(varset('%busfresh', 'yes', 'Closing the stop board: no new times needed'), None, ('%busrefpar', 2, 'close')),
+    deco(js('fetch_due.js', 'Fetched these times under 20 s ago? (Bus Loop and the screen coming on can both ask at once)'), None, ('%busrefpar', 3, 'close')),
+    # Opening the stop board never waits for TfL (4.43): it's drawn with the times there are, and if
+    # those are 20 s old or more they're fetched straight after, and the board updates itself. Before,
+    # an open usually waited 0.7 to 2.3 s for TfL, as the times were most often older than that.
+    deco(varset('%busafter', '%busfresh', 'Opening the stop board: fetch after drawing it, if the times are due'), None, ('%busrefpar', 2, 'open')),
+    deco(varset('%busfresh', 'yes', '   so not before'), None, ('%busrefpar', 2, 'open')),
     if_('%busfresh', 3, 'yes', 'Not fetched in the last 20 s (fetch new times, build the departures and buzz)'),
-    js('tt_check.js', 'Timetable for this stop today? (only fetched once a day per stop)'),
-    if_('%busttfetch', 2, 'yes', 'Not yet: fetch it'),
-      deco(set_str(T['FOR'], 1, '1:%busttcount'), 'For each of my routes here'),
-        js('tt_route.js', 'Which route'),
-        http('https://api.tfl.gov.uk/Line/%busttroute/Timetable/%BusStateStopId?app_key=%TflKey', 'Ask TfL for its timetable'),
-        js('tt_store.js', "Keep today's departures"),
-      T['ENDFOR'],
-    endif(),
-    http('https://api.tfl.gov.uk/StopPoint/%BusStateStopId/Arrivals?app_key=%TflKey', 'Ask TfL for live arrivals (last, so its answer is the one read next)'),
-    js('refresh.js', 'Build the departures: live times, timetable where there are none'),
-    stop('No live data and no timetable: keep showing the last times', ('%busnodata', 2, 'yes')),
-    # A bus within 5 minutes (before the island steps, so it buzzes even with the phone sideways): three short buzzes (on two refreshes in a row; see refresh.js)
-    vibrate(200, 'A bus within 5 minutes: buzz', ('%busbuzz', 2, 'yes')),
-    deco(set_int(set_int(T['WAIT'], 0, 200), 1, 0), '   pause', ('%busbuzz', 2, 'yes')),
-    vibrate(200, '   buzz', ('%busbuzz', 2, 'yes')),
-    deco(set_int(set_int(T['WAIT'], 0, 200), 1, 0), '   pause', ('%busbuzz', 2, 'yes')),
-    vibrate(200, '   buzz (three in all)', ('%busbuzz', 2, 'yes')),
+      *fetch_steps(),
     endif(),
     if_('%BusStateIslandShown', 3, '1', 'Island not up yet, or to be drawn again (2): show it (after that it updates itself)'),
-      *island_steps('Build the island'),
-      flash('Tap the island for every bus at the stop. Swipe it for the next route. Hold it for the other side of the road. Swipe it right across to dismiss it.',
-            'First time only: how to use the island', ('%BusStateHintShown', 3, '1')),
-      varset('%BusStateHintShown', '1', 'Hint shown'),
+      *island_steps('Build the island', then=[
+        flash('Tap the island for every bus at the stop. Swipe it for the next route. Hold it for the other side of the road. Swipe it right across to dismiss it.',
+              'First time only: how to use the island', ('%BusStateHintShown', 3, '1')),
+        varset('%BusStateHintShown', '1', 'Hint shown'),
+      ]),
+    endif(),
+    if_('%busafter', 2, 'no', 'The stop board is open: now fetch its times, as they were due (it updates itself)'),
+      *fetch_steps(),
+      varset('%busfresh', 'no', '   Times were just fetched'),
+      # A different number of routes at the stop: refresh.js asks for the board at its new height
+      if_('%BusStateIslandShown', 3, '1', '   The board needs more or fewer lines: draw it again'),
+        *island_steps('Build the board again'),
+      endif(),
+    endif(),
+    # The timetable, once the island shows the live times (4.43): fetching it first, one request per
+    # route, held up a stop switch by about 2 s. Only your routes TfL has no live time for right now,
+    # once a day per stop; the next refresh shows their timetable times.
+    if_('%busfresh', 3, 'yes', 'Times were just fetched: timetable needed too? (after the island, so it never holds it up)'),
+      js('tt_check.js', 'Timetable for this stop today, for routes with no live time? (once a day per stop)'),
+      if_('%busttfetch', 2, 'yes', 'Not yet: fetch it'),
+        deco(set_str(T['FOR'], 1, '1:%busttcount'), 'For each of those routes'),
+          js('tt_route.js', 'Which route'),
+          http('https://api.tfl.gov.uk/Line/%busttroute/Timetable/%BusStateStopId?app_key=%TflKey', 'Ask TfL for its timetable'),
+          js('tt_store.js', "Keep today's departures"),
+        T['ENDFOR'],
+      endif(),
     endif(),
  ]),
  (79, 'Bus Wake', [
@@ -365,18 +454,29 @@ TASKS = [
     *request_positions('var'),
     *wifi_name(),
     js('wifi_save.js', 'Remember it for the other tasks'),
+    *record_steps(),
     js('glance_check.js', 'At work, in the heads-up window, with no countdown running?'),
     perform('Bus Start', 'Heads-up: show my stop\'s next buses for a minute', ('%busglance', 2, 'yes'), par1='glance'),
     perform('Bus Refresh', 'Screen on during a countdown: fresh times now (none were fetched while it was off)', ('%BusStateRunning', 2, '1')),
     perform('Bus Watch', 'Screen on: check now (starts a countdown at a stop, or ends one if you\'ve walked away)', None, par1='wake'),
  ]),
  (32, 'Bus End', [
-    varset('%busreason', '%par1', 'Why it ended, from the task that ended it (scripts can\'t read %par1)'),
-    js('end_log.js', 'Note it in the debugging log, with why (and, if you swiped it, snooze)'),
+    # Everything you see and feel first, then the notes (4.43): the island used to stay up for the
+    # script and the trip recorder before it went. The loop, and a refresh already under way, are
+    # stopped before the island goes, so neither can draw it again meanwhile.
     vibrate(40, 'Dismissed from the island: confirm with a vibration', ('%busfrom', 2, 'island')),
+    # Swiped away: the snooze first, before the countdown ends, so a check arriving now (a position
+    # pushed, the screen coming on) can't start it again at the stop just dismissed. end_log.js keeps
+    # the same, a moment later.
+    deco(varset('%BusStateSnooze', '{"stop":"%BusStateStopId","at":%TIMEMS}', 'Swiped away: snooze this stop'), None, ('%busfrom', 2, 'island')),
+    deco(varset('%BusStateTrip', '{"s":"left","stop":"%BusStateStopId","since":%TIMEMS}', '   and count it as left'), None, ('%busfrom', 2, 'island')),
     varset('%BusStateRunning', '0', 'Tell Bus Loop and Bus Refresh to finish'),
     stoptask('Bus Loop', 'End the refresh loop'),
+    stoptask('Bus Refresh', '   and any refresh under way (it could draw the island again)'),
     *clear_displays(),
+    varset('%busreason', '%par1', 'Why it ended, from the task that ended it (scripts can\'t read %par1)'),
+    js('end_log.js', 'Note it in the debugging log, with why (and, if you swiped it, snooze)'),
+    *record_steps(),
  ]),
  (31, 'Bus Island', [
     # Everything the island's gestures ask of Tasker, except ending (that's Bus End). The page passes
@@ -391,8 +491,15 @@ TASKS = [
     # It only fetches new times if the last were fetched 20 s or more ago.
     deco(varset('%BusStateBoard', '1', 'Tapped: open the stop board'), None, ('%busisland', 2, 'open')),
     deco(varset('%BusStateBoard', '0', 'Close the stop board'), None, ('%busisland', 2, 'close')),
-    deco(varset('%BusStateIslandShown', '2', 'Draw the island again, at its new height'), None, ('%busisland', 2, 'open/close')),
-    perform('Bus Refresh', 'Refresh now: the other stop, or the island with or without its board', ('%busisland', 2, 'switch/open/close'), par1='%busisland'),
+    # The page grew the board out of the island's own window, or tucked it back (busgrow yes, 4.43):
+    # nothing to draw. Opening, Bus Refresh still fetches the times if they're due (the board shows
+    # them as they come, and resizes itself for a route more or fewer); closing needs nothing more.
+    varset('%busdo', '%busisland', 'What to do: as asked'),
+    deco(varset('%busdo', '%busisland-grown', '   but the page has already grown or shrunk the board'), None, ('%busgrow', 2, 'yes')),
+    deco(varset('%BusStateBoardSelf', '1', 'The page keeps the open board the right size'), None, ('%busdo', 2, 'open-grown')),
+    deco(varset('%BusStateBoardSelf', '0', '   or Bus Refresh does (drawn as a new window)'), None, ('%busdo', 2, 'open')),
+    deco(varset('%BusStateIslandShown', '2', 'Draw the island again, at its new height'), None, ('%busdo', 2, 'open/close')),
+    perform('Bus Refresh', 'Refresh now: the other stop, or the island with or without its board (or only the times, for a board the page grew)', ('%busdo', 2, 'switch/open/close/open-grown'), par1='%busisland'),
  ]),
  (62, 'Bus Watch', [
     # One task for every check: a position pushed by Android (the Bus Moved profile), the screen
@@ -404,6 +511,7 @@ TASKS = [
     deco(set_str(set_str(T['VARSET'], 0, '%buscaller'), 1, 'profile=loop'), 'Started by Bus Loop: no positions pushed lately', ('%par1', 2, 'loop')),
     *wifi_name(),
     js('wifi_save.js', 'Remember it for the other tasks'),
+    *record_steps(),
     # Pushed: read the position Android just sent (its own copy in the message is unreadable)
     varset('%busmovedok', 'yes', 'Assume a position will be found'),
     java('buslm', 'CONTEXT', 'getSystemService {Object} (String)', 'location', 'Pushed: Android location service', ('%buscaller', 2, 'profile=moved')),
@@ -428,6 +536,7 @@ TASKS = [
     js('place_record.js', 'On home or work Wi-Fi? Remember where it is'),
     stop('On home or work Wi-Fi: nothing more to check', ('%busdue', 2, 'no')),
     js('watch.js', 'Where are you in the trip? Move it on'),
+    *record_steps(),
     # %buscaller, not %caller1: runs from a profile or another task are all marked profile=...
     flash('%busnote', 'Say what it found and why (only when run by hand)', ('%buscaller', 3, 'profile*')),
     *request_positions('var', ('%buspushmode', 3, 'none')),

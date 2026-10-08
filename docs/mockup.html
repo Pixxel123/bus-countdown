@@ -1003,7 +1003,9 @@ function islandShow(global, setGlobal) {
    only feeds it data through the global BusStateIslandData.
    Output: buslayout (the Scene V2 layout), busx / busy (its left edge
            and top), busww / bush (its width and height), all used by the
-           Show Scene V2 action that follows
+           Show Scene V2 action that follows; and, except for Bus Settings'
+           preview, busnewscene / busoldscene (which scene name to show it
+           under, and which to remove afterwards)
    ================================================================== */
 // Bus Settings' preview passes unsaved slider values as busprevgap / busprevy,
 // and its own sample departures in the global named by busdatavar
@@ -1021,6 +1023,12 @@ function routesHere(showing) {
   var stop = null; try { stop = JSON.parse(get('BusCacheStops') || '{}')[get('BusStateStopId')]; } catch (e) {}
   var here = stop && stop.r ? stop.r.filter(function (r) { return mine.indexOf(r) > -1; }).length : 0;
   return Math.max(1, here, showing || 0);
+}
+// How many lines the stop board has: your routes, then the stop's other routes unless Settings says
+// yours only (mineOnly), at least 1 and at most 8. Shared by island_show.js, which draws it that tall,
+// and refresh.js, which draws it again when that changes (4.43).
+function boardRows(mine, others, mineOnly) {
+  return Math.max(1, Math.min(8, mine + (mineOnly ? 0 : others)));
 }
 var DATA_VAR = loc('busdatavar') || 'BusStateIslandData';
 var PREVIEW = DATA_VAR !== 'BusStateIslandData';
@@ -1043,9 +1051,11 @@ var LINE = 26;                                          // each line of the boar
 var BOARD_ROWS = 0;
 if (BOARD) {
   var boardData = {}; try { boardData = JSON.parse(global(DATA_VAR)) || {}; } catch (e) {}
-  BOARD_ROWS = Math.max(1, Math.min(8, (boardData.b || []).length + (BOARD_MINE ? 0 : (boardData.a || []).length)));
+  BOARD_ROWS = boardRows((boardData.b || []).length, (boardData.a || []).length, BOARD_MINE);
 }
 var WINH = BOARD ? H + BOARD_ROWS * LINE + 8 : H;       // the window's height: the island, or the island and its board
+// How many lines it was drawn with, so a refresh that changes that draws it again (refresh.js, 4.43)
+if (BOARD && !PREVIEW) setGlobal('BusStateBoardRows', String(BOARD_ROWS));
 var ROUTE_ORDER = JSON.stringify((global('BusRoutes') || '').split(',').map(function (r) { return r.trim(); }).filter(String));
 var LEFT = 40;                                          // left half: set below, once the data is read
 
@@ -1118,6 +1128,8 @@ var PAGE = String.raw`<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
   /* Transparent page: the black island is the only thing drawn */
+  /* (Heights in px. Viewport units come out as 0 in this web view, which hid the whole island: test build 13.
+     A board the page grows sets them itself, setHeight.) */
   html, body { margin: 0; height: {{WINH}}px; width: {{TOTAL}}px; background: transparent; overflow: hidden;
                -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
   body { font-family: system-ui, Roboto, sans-serif; }
@@ -1126,11 +1138,22 @@ var PAGE = String.raw`<!doctype html>
   /* The stop board (4.42): the same black shape, taller. Its first line is still left half | camera gap
      | right half (now the stop and how old the times are), and every line below keeps the same three
      columns, so the camera gap runs the whole way down: routes to its left, times to its right */
-  body.board #p { height: {{WINH}}px; flex-wrap: wrap; align-content: flex-start; border-radius: 20px; }
+  /* (As tall as the page: when the board grows out of the island, its window reveals it as it grows, 4.43) */
+  body.board #p { height: 100%; flex-wrap: wrap; align-content: flex-start; border-radius: 20px; }
   body.board #L, body.board #g, body.board #R { height: {{H}}px; }
   #board { display: none; flex: 0 0 100%; }
   body.board #board { display: block; }
   .bl { display: flex; align-items: center; height: {{LINE}}px; }
+  /* Growing out of the island (4.43): the rows fade and drop in one after another; closing, they fade
+     first and the board tucks back up into the island. Material 3's emphasized decelerate. */
+  .bl { transition: opacity .22s linear, transform .32s cubic-bezier(0.05, 0.7, 0.1, 1); }
+  .bl:nth-child(2) { transition-delay: 40ms; } .bl:nth-child(3) { transition-delay: 80ms; }
+  .bl:nth-child(4) { transition-delay: 120ms; } .bl:nth-child(5) { transition-delay: 160ms; }
+  .bl:nth-child(6) { transition-delay: 200ms; } .bl:nth-child(7) { transition-delay: 240ms; }
+  .bl:nth-child(8) { transition-delay: 280ms; }
+  body.entering .bl { opacity: 0; transform: translateY(-8px); transition: none; }
+  body.leaving .bl { opacity: 0; transition: opacity 90ms linear; transition-delay: 0ms; }
+  #p.swap .h { opacity: 0; }
   .bl .h { height: {{LINE}}px; }
   .bl .bl-l { width: {{LEFT}}px; } .bl .bl-g { flex: none; width: {{GAP}}px; } .bl .bl-r { width: {{RIGHT}}px; }
   .bl .d { font-size: 12.5px; }
@@ -1159,6 +1182,13 @@ var PAGE = String.raw`<!doctype html>
   body.chip #g::before { content: ''; width: 1px; height: 12px; background: rgba(255,255,255,.45); }
   #R { flex: none; width: {{RIGHT}}px; }  /* minutes + dots: just wide enough (see RIGHT above) */
   #p.out .h  { opacity: 0; transform: translateX(-6px); }   /* slide to next route */
+  /* A tap, a hold or a swipe up has gone to Tasker (4.43): the words dim straight away, so the touch is
+     seen to have counted, until the island is drawn again (the board opening or closing) or the new
+     stop's times arrive. Dismissing fades the whole island out at once, before Bus End removes it. */
+  #p.wait .h, #p.wait #board { opacity: .45; transition: opacity .1s; }
+  /* Swiped far enough that letting go will dismiss it (4.43; the window itself follows the finger) */
+  #p.armed .h, #p.armed #board { opacity: .45; }
+  #p.gone { opacity: 0 !important; transition: opacity .12s !important; }
   #p.back .h { opacity: 0; transform: translateX(6px); }    /* slide to previous */
 
   /* Countdown border: an SVG outline laid over the island */
@@ -1199,6 +1229,7 @@ ${'<'}!-- Tasker replaces this with the live bus data, and again on every refres
 ${'<'}script>
   // Fixed when the island first appears
   var LEFT = {{LEFT}}, GAP = {{GAP}}, PAD = {{PAD}};
+  var H = {{H}}, LINE = {{LINE}};  // the island's height and each board line's, dp (the board grows to H + lines * LINE + 8)
   var HOLD = 550;             // ms held = long press
   var DEFAULT_ROTATE = 6000;  // ms per route if the data doesn't say
 
@@ -1221,8 +1252,73 @@ ${'<'}script>
   // Tasks started from the island get busfrom=island, so they give a short vibration
   // (Android's web view ignores navigator.vibrate, so Tasker's Vibrate action does it)
   function runTask(name, vars) {
-    if (IS_PREVIEW || !window.Tasker || !Tasker.runTask) return;
-    Tasker.runTask({ name: name, variables: vars || { busfrom: 'island' } });
+    if (IS_PREVIEW || !window.Tasker || !Tasker.runTask) return null;
+    return Tasker.runTask({ name: name, variables: vars || { busfrom: 'island' } });
+  }
+  // The island's own window (4.43): Tasker's bridge can move it and remove it straight from here
+  var CAN_MOVE = !IS_PREVIEW && !!window.Tasker && typeof Tasker.moveOverlayBy === 'function';
+  var BUSX = {{BUSX}};             // its left edge, dp (where a swipe that isn't far enough puts it back)
+
+  /* Waiting on Tasker (4.43): dim the words, or (gone) hide the island, until it's drawn again; if
+     nothing has happened after 4 s (the task didn't run), put it back */
+  var waitTimer = null, waitingFor = '';
+  function waitFor(what, cls) {
+    waitingFor = what;
+    (cls || 'wait').split(' ').forEach(function (c) { p.classList.add(c); });
+    clearTimeout(waitTimer);
+    waitTimer = setTimeout(function () { waitingFor = ''; p.classList.remove('wait', 'gone', 'armed'); settle(); windowBack(); }, 4000);
+  }
+  /* The stop board grows out of the island's own window, and tucks back into it (4.43): the page
+     resizes its window through Tasker's bridge and fills it, so the black shape is the window itself,
+     and the rows fade and drop in. Tasker is only told afterwards, to note it and fetch fresh times if
+     they're due: no new window is drawn. Without the bridge (or in Settings' preview), the board is
+     drawn as a new window by Bus Refresh, as before. */
+  var CAN_GROW = !IS_PREVIEW && !!window.Tasker && typeof Tasker.updateOverlayConfig === 'function' &&
+    !document.body.classList.contains('chip');
+  function lines() { return Math.max(1, Math.min(8, buses().length + (BOARD_MINE ? 0 : ((data && data.a) || []).length))); }
+  // The page's own height, px (= dp here): the board's when it grows, so its window uncovers it as it
+  // grows; the island's once it has tucked back
+  function setHeight(h) { document.documentElement.style.height = document.body.style.height = h + 'px'; }
+  // The window's new height (dp), animated by Tasker over ms with one of its easing curves (Linear,
+  // EaseIn, EaseOut, EaseInOut, Overshoot, Bounce). The bridge reads these keys (from Tasker 6.7.6's
+  // own code: the manual doesn't name them) and drops any error, so this can't tell if it worked.
+  function resizeWindow(h, ms, easing) {
+    try { Tasker.updateOverlayConfig({ height: String(h), configTransitionMs: ms, configTransitionEasing: easing }); return true; } catch (e) { return false; }
+  }
+  function growBoard() {
+    var rows = lines();
+    setHeight(H + rows * LINE + 8);
+    if (!resizeWindow(H + rows * LINE + 8, 400, 'EaseOut')) { setHeight(H); return false; }
+    BOARD = true; BOARD_ROWS = rows; boardOrder = null; boardHtmlNow = '';
+    document.body.classList.add('board', 'entering'); ring.classList.add('off'); p.classList.add('swap');
+    setTimeout(function () {               // the stop's name fades in, then the rows drop in one by one
+      draw(); p.classList.remove('swap');
+      requestAnimationFrame(function () { requestAnimationFrame(function () { document.body.classList.remove('entering'); }); });
+    }, 110);
+    if (BOARD_SECS > 0) closeAt = Date.now() + BOARD_SECS * 1000;
+    runTask('Bus Island', { busfrom: 'island', busisland: 'open', busgrow: 'yes' });
+    return true;
+  }
+  function shrinkBoard() {
+    closeAt = 0;
+    document.body.classList.add('leaving'); p.classList.add('swap');      // the rows and the name fade first
+    setTimeout(function () {
+      if (!resizeWindow(H, 260, 'EaseIn')) {                               // couldn't: drawn as a new window instead
+        document.body.classList.remove('leaving'); p.classList.remove('swap');
+        waitFor('board'); runTask('Bus Island', { busfrom: 'island', busisland: 'close' });
+        return;
+      }
+      setTimeout(function () {                                             // an island again
+        BOARD = false; setHeight(H); document.body.classList.remove('board', 'leaving'); if (BORDER) ring.classList.remove('off');
+        idx = 0; start = Date.now(); draw(); p.classList.remove('swap');
+      }, 260);
+      runTask('Bus Island', { busfrom: 'island', busisland: 'close', busgrow: 'yes' });
+    }, 80);
+  }
+  // Closing the board (a tap, a swipe up, or its time running out)
+  function closeBoard() {
+    if (CAN_GROW) { shrinkBoard(); return; }
+    waitFor('board'); runTask('Bus Island', { busfrom: 'island', busisland: 'close' });
   }
 
   /* New data from Tasker */
@@ -1232,12 +1328,19 @@ ${'<'}script>
     raw = t;
     try { data = JSON.parse(t); } catch (e) { return; }
     if (data.s !== lastStop) {        // stop changed: flash its name, restart at the first route
+      if (waitingFor === 'switch') { waitingFor = ''; clearTimeout(waitTimer); p.classList.remove('wait'); }
       if (lastStop !== null) { flashUntil = Date.now() + 1200; setTimeout(draw, 1250); }
       lastStop = data.s;
       idx = 0;
     }
     if (idx >= buses().length) idx = 0;
     start = Date.now();
+    // A board this page grew: new times with a route more or fewer resize its window to fit (4.43)
+    if (BOARD && CAN_GROW && lines() !== BOARD_ROWS) {
+      BOARD_ROWS = lines(); boardHtmlNow = '';
+      setHeight(H + BOARD_ROWS * LINE + 8);
+      resizeWindow(H + BOARD_ROWS * LINE + 8, 200, 'EaseOut');
+    }
     draw();
   }
 
@@ -1307,13 +1410,13 @@ ${'<'}script>
     var name = (data && data.n) || '', parts = name.match(/^(.*) \((.*)\)$/);
     var age = data && data.u ? Date.now() - data.u : 0, old = age > 2 * ((data && data.r) || 45000);
     L.innerHTML = (data && data.l ? '<span class="sl" aria-label="Stop ' + esc(data.l) + '">' + esc(data.l) + '</span>' : '') + '<span class="s">' + esc(parts ? parts[1] : name) + '</span>';
-    R.innerHTML = '<span class="age' + (old ? ' old' : '') + '">' + (age < 30000 ? 'now' : age < 60000 ? '&lt;1 min' : Math.floor(age / 60000) + ' min' + (old ? ' old' : '')) + '</span>';
+    R.innerHTML = '<span class="age' + (old ? ' old' : '') + '">' + (data && data.w ? '\u2026' : age < 30000 ? 'now' : age < 60000 ? '&lt;1 min' : Math.floor(age / 60000) + ' min' + (old ? ' old' : '')) + '</span>';
     var rows = boardRows(), html = '';
     rows.forEach(function (r) {
       html += '<div class="bl" role="listitem"><span class="h bl-l"><span class="b' + (r.other ? ' other' : r.idle ? ' idle' : '') + '">' + esc(r.k) + '</span>' +
         '<span class="d' + (r.st === 'sched' ? ' sched' : '') + '">' + esc(r.d) + '</span></span><span class="bl-g"></span><span class="h bl-r">' + timesHtml(r, 3) + '</span></div>';
     });
-    if (!rows.length) html = '<div class="bl" role="listitem"><span class="h bl-l"><span class="d">No buses due</span></span></div>';
+    if (!rows.length) html = '<div class="bl" role="listitem"><span class="h bl-l"><span class="d">' + (data && data.w ? 'Getting times\u2026' : 'No buses due') + '</span></span></div>';
     if (html + old !== boardHtmlNow) {
       boardHtmlNow = html + old;
       board.innerHTML = html;
@@ -1329,7 +1432,8 @@ ${'<'}script>
 
   function draw() {
     if (BOARD) { drawBoard(); return; }
-    if (Date.now() < flashUntil) {    // "Stop B" | "High Street"
+    // (and while a stop just switched to waits for its times, 4.43: w)
+    if (Date.now() < flashUntil || (data && data.w)) {    // "Stop B" | "High Street"
       var name = (data && data.n) || '', parts = name.match(/^(.*) \((.*)\)$/);
       L.innerHTML = '<span class="s">' + esc(parts ? parts[2] : name) + '</span>';
       R.innerHTML = '<span class="s">' + esc(parts ? parts[1] : '') + '</span>';
@@ -1383,8 +1487,9 @@ ${'<'}script>
      with a matching CSS transition so it still looks smooth, and not at all
      while the screen is off. */
   function tick() {
+    if (down && !held && Date.now() - movedAt > 2000) letGo();
     // The board closes itself after BusBoardSecs (not while a finger is on it)
-    if (BOARD && closeAt && !down && Date.now() >= closeAt) { closeAt = 0; runTask('Bus Island', { busfrom: 'island', busisland: 'close' }); }
+    if (BOARD && closeAt && !down && Date.now() >= closeAt) { closeAt = 0; closeBoard(); }
     var several = buses().length > 1;
     var step = several ? 250 : 1000;
     if (!document.hidden) {
@@ -1424,66 +1529,162 @@ ${'<'}script>
      The island · What a sideways swipe means
      Shared, word for word, by the island's page (island_show.js) and the
      tests. dx: sideways movement in dp (negative = left); ms: how long it
-     took. Route change: from 24 dp. Dismiss: from 90 dp, or from 60 dp if
-     it's a fast fling (0.6 dp per ms or more). Anything shorter: nothing.
-     Returns 'next', 'previous', 'dismiss' or 'none'.
+     took; several: the island has more than one route to swipe through.
+     Route change: from 24 dp. Dismiss: from 90 dp, or from 60 dp if it's a
+     fast fling (0.6 dp per ms or more). With several routes (4.43), only a
+     long, deliberate drag dismisses: from 130 dp, however fast, since a
+     quick flick is how you move to the next route. Anything shorter:
+     nothing. Returns 'next', 'previous', 'dismiss' or 'none'.
      ================================================================== */
-  function decideSwipe(dx, ms) {
+  var SWIPE_DISMISS = 90;
+  var SWIPE_DISMISS_SEVERAL = 130;
+  function decideSwipe(dx, ms, several) {
     var dist = Math.abs(dx); var speed = dist / Math.max(1, ms);
     if (dist < 24) return 'none';
-    if (dist >= 90 || (dist >= 60 && speed >= 0.6)) return 'dismiss';
+    if (several ? dist >= SWIPE_DISMISS_SEVERAL : (dist >= SWIPE_DISMISS || (dist >= 60 && speed >= 0.6))) return 'dismiss';
     return dx < 0 ? 'next' : 'previous';
   }
-  var sx = 0, sy = 0, lx = 0, ly = 0, t0 = 0, down = false, held = false, armed = false, holdTimer = null;
-  function follow(dx) {                  // past 24 dp the island follows your finger, fading towards 90 dp
+  var sx = 0, sy = 0, lx = 0, ly = 0, t0 = 0, down = false, held = false, armed = false, holdTimer = null, movedAt = 0;
+  /* A sideways swipe moves the island's whole window with your finger (4.43). Before, only what's
+     drawn inside it moved, uncovering the window's own near-black fill: the "blank island". Where the
+     finger is on the screen comes from screenX, if Android's web view reports it that way: checked
+     on the first swipe (WIN: '' not yet known, 'yes', or 'no', and then the old way is used). */
+  var WIN = '', ssx = 0, lsx = 0, winMoved = 0, off0 = 0, firstMoveAt = 0;
+  function swipeDx() { return WIN !== 'no' && CAN_MOVE ? lsx - ssx : lx - sx; }
+  function moveWindow(to) {        // to: where the window should be, CSS px from its place
+    var by = to - winMoved;
+    if (!by) return;
+    try { Tasker.moveOverlayBy(Math.round(by * (window.devicePixelRatio || 1)), 0); if (!winMoved) firstMoveAt = Date.now(); winMoved = to; } catch (e) { WIN = 'no'; }
+  }
+  /* The whole window fades as it nears the dismissal point: fully there up to 24 dp, a quarter at 90 dp
+     (4.43). Through the scene variable busalpha (the layout's Alpha modifier), at most 30 times a
+     second, and only when it changes enough to see. */
+  var fadeNow = -1, fadeAt = 0;   // not yet set: the first call always sets it
+  function fadeWindow(a, now) {
+    if (!CAN_MOVE || typeof Tasker.setVariable !== 'function') return;
+    a = Math.round(a * 20) / 20;
+    if (a === fadeNow || (!now && Date.now() - fadeAt < 33)) return;
+    try { Tasker.setVariable('busalpha', String(a)); fadeNow = a; fadeAt = Date.now(); } catch (e) {}
+  }
+  // Several routes to swipe through (not on the board, which shows them all): dismissing takes a long,
+  // deliberate drag, and the fade only starts once past where a route change ends (4.43)
+  function several() { return !BOARD && buses().length > 1; }
+  function fadeFor(dx) {
+    var from = several() ? SWIPE_DISMISS : 24, to = several() ? SWIPE_DISMISS_SEVERAL : SWIPE_DISMISS;
+    return 1 - 0.75 * Math.max(0, Math.min(1, (Math.abs(dx) - from) / (to - from)));
+  }
+  function windowBack() {          // a swipe that wasn't far enough: back to its place, quickly
+    fadeWindow(1, true);
+    if (!winMoved) return;
+    try {
+      if (BUSX >= 0 && typeof Tasker.updateOverlayConfig === 'function') Tasker.updateOverlayConfig({ x: String(BUSX), configTransitionMs: 150, configTransitionEasing: 'EaseOut' });
+      else Tasker.moveOverlayBy(Math.round(-winMoved * (window.devicePixelRatio || 1)), 0);
+    } catch (e) {}
+    winMoved = 0;
+  }
+  function follow(dx) {                  // past 24 dp what's in the island follows your finger, fading as the window would (fadeFor)
     var past = Math.max(0, Math.abs(dx) - 24) * (dx < 0 ? -1 : 1);
     p.style.transition = 'none';
     p.style.transform = 'translateX(' + Math.max(-120, Math.min(120, past)) + 'px)';
-    p.style.opacity = String(Math.max(0.35, 1 - Math.max(0, Math.abs(dx) - 24) / 110));
+    p.style.opacity = String(fadeFor(dx));
   }
   function settle() { p.style.transition = 'transform .15s, opacity .15s'; p.style.transform = ''; p.style.opacity = '1'; }
+  // A finger that has neither moved nor lifted for 2 s (tick): let go of the gesture without acting on
+  // it, the island back in its place. Judging it from where it was last seen dismissed a countdown
+  // when you only paused past the dismissal point to think (4.43).
+  function letGo() {
+    clearTimeout(holdTimer);
+    if (!down) return;
+    down = false; armed = false;
+    p.classList.remove('armed');
+    windowBack();
+    settle();
+  }
   function judge() {
     clearTimeout(holdTimer);
     if (!down) return;
     down = false;
-    var dx = lx - sx, dy = ly - sy, wasArmed = armed;
+    var dx = swipeDx(), dy = ly - sy, wasArmed = armed;
     armed = false;
+    p.classList.remove('armed');
+    // Swiped away (4.43): the island's window goes at once, from here, and Bus End does the rest. Before,
+    // it stayed up, blank, until Bus End had started and removed it.
+    if (!held && Math.abs(dx) > Math.abs(dy) && decideSwipe(dx, Date.now() - t0, several()) === 'dismiss') {
+      // (Its window moved with the finger: it stays as it is until the window goes, as hiding what's
+      // in it would show the window's blank fill. Otherwise what's in it slides out and fades.)
+      if (!winMoved) { p.style.transition = 'transform .15s ease-in, opacity .15s'; p.style.transform = 'translateX(' + (dx < 0 ? -160 : 160) + 'px)'; }
+      waitFor('end', winMoved ? 'armed' : 'gone');
+      var ended = runTask('Bus End'), gone = false;
+      // The window goes only once Tasker has taken Bus End: removed without it, the countdown would
+      // carry on with no island, and nothing would draw one again. Meanwhile, and if Tasker never
+      // takes it, the window is only made invisible, and waitFor puts it back after 4 s.
+      var dismiss = function () {
+        if (gone || IS_PREVIEW || !window.Tasker || typeof Tasker.dismissLayout !== 'function') return;
+        gone = true;
+        try { Tasker.dismissLayout(Tasker.getCurrentScreenId()); } catch (e) {}
+      };
+      if (ended && ended.then) ended.then(dismiss, function () {});
+      setTimeout(function () { if (!gone) fadeWindow(0, true); }, 250);
+      return;
+    }
+    windowBack();
     settle();
     if (BOARD && BOARD_SECS > 0) closeAt = Date.now() + BOARD_SECS * 1000;   // touched: the board's time starts again
     if (held) return;
     // A tap opens the stop board, or closes it; a swipe up closes it (4.42). Not on the status bar chip.
     if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
-      if (!document.body.classList.contains('chip')) runTask('Bus Island', { busfrom: 'island', busisland: BOARD ? 'close' : 'open' });
+      if (BOARD) closeBoard();
+      else if (!document.body.classList.contains('chip') && !(CAN_GROW && growBoard())) { waitFor('board'); runTask('Bus Island', { busfrom: 'island', busisland: 'open' }); }
       return;
     }
-    if (BOARD && dy <= -30 && Math.abs(dy) > Math.abs(dx)) { runTask('Bus Island', { busfrom: 'island', busisland: 'close' }); return; }
+    if (BOARD && dy <= -30 && Math.abs(dy) > Math.abs(dx)) { closeBoard(); return; }
     if (Math.abs(dx) <= Math.abs(dy)) return;                  // mostly up or down: not a swipe
-    var what = decideSwipe(dx, Date.now() - t0);
-    if (what === 'dismiss') runTask('Bus End');
-    else if (what === 'next') go(1);
+    var what = decideSwipe(dx, Date.now() - t0, several());
+    if (what === 'next') go(1);
     else if (what === 'previous') go(-1);
   }
   p.addEventListener('pointerdown', function (e) {
-    sx = lx = e.clientX; sy = ly = e.clientY; t0 = Date.now(); down = true; held = false; armed = false;
+    sx = lx = e.clientX; sy = ly = e.clientY; t0 = movedAt = Date.now(); down = true; held = false; armed = false;
+    ssx = lsx = e.screenX; off0 = e.screenX - e.clientX; winMoved = 0; firstMoveAt = 0;
     try { p.setPointerCapture(e.pointerId); } catch (err) {}
     holdTimer = setTimeout(function () {
       held = true;
+      waitFor('switch');
       runTask('Bus Island', { busfrom: 'island', busisland: 'switch' });
     }, HOLD);
   });
   p.addEventListener('pointermove', function (e) {
     if (!down) return;
-    lx = e.clientX; ly = e.clientY;
-    var dx = lx - sx;
+    lx = e.clientX; ly = e.clientY; lsx = e.screenX; movedAt = Date.now();
+    // Is screenX really on the screen (Tasker's own drag handles take it to be)? Once the window has
+    // had time to move (200 ms: touches come every 8 ms, and a move takes a frame or two), screenX must
+    // differ from clientX by more than it did at the start. If it doesn't, put the window back and move
+    // what's inside instead. (Checking after 3 touches, 25 ms, was too soon: the first test said no.)
+    if (WIN === '' && Math.abs(winMoved) >= 20 && Date.now() - firstMoveAt >= 200) {
+      if (Math.abs(e.screenX - e.clientX - off0) >= Math.abs(winMoved) / 2) WIN = 'yes';
+      else { WIN = 'no'; windowBack(); }
+    }
+    var dx = swipeDx();
     if (Math.abs(dx) > 10 || Math.abs(ly - sy) > 10) clearTimeout(holdTimer);
     if (held) return;
-    var nowArmed = decideSwipe(dx, 1e9) === 'dismiss';            // far enough to dismiss even slowly (90 dp)
+    var nowArmed = decideSwipe(dx, 1e9, several()) === 'dismiss';  // far enough to dismiss even slowly (90 dp; 130 with several routes)
     if (nowArmed && !armed) runTask('Bus Island', { busfrom: 'island', busisland: 'buzz' });                // a tick when letting go will dismiss
     armed = nowArmed;
-    if (Math.abs(dx) > 10) follow(dx);
+    p.classList.toggle('armed', armed);
+    if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(ly - sy)) {
+      if (CAN_MOVE && WIN !== 'no') { moveWindow(dx); fadeWindow(fadeFor(dx)); } else follow(dx);
+    }
   });
-  p.addEventListener('pointerup', function (e) { lx = e.clientX; ly = e.clientY; judge(); });
+  p.addEventListener('pointerup', function (e) { lx = e.clientX; ly = e.clientY; lsx = e.screenX; judge(); });
   p.addEventListener('pointercancel', judge);
+  // Sometimes neither comes: on Thursday 8 Oct a swipe away was left hanging half-way out, the page
+  // still taking the finger to be down, and the countdown never ended. So losing the pointer, and the
+  // touch itself ending, count as letting go too, and tick() lets go of a finger that has neither
+  // moved nor lifted for 2 s, putting the island back (letGo, 4.43). judge() runs once per gesture,
+  // however many of these arrive.
+  p.addEventListener('lostpointercapture', judge);
+  document.addEventListener('touchend', judge);
+  document.addEventListener('touchcancel', judge);
   p.addEventListener('contextmenu', function (e) { e.preventDefault(); });
 
   // Start: watch for new data, keep minutes current, animate the border
@@ -1493,6 +1694,9 @@ ${'<'}script>
   setInterval(draw, 15000);
   read();
   if (BOARD && BOARD_SECS > 0) closeAt = Date.now() + BOARD_SECS * 1000;
+  // Fully there, whatever a swipe left the fade at in an earlier island (4.43); a moment after the
+  // page has started, so nothing here can hold it up
+  setTimeout(function () { try { fadeWindow(1, true); } catch (e) {} }, 1000);
   tick();
 {{END_SCRIPT}}
 </body>
@@ -1507,6 +1711,7 @@ var html = fill(PAGE, {
   SHAPE: CHIP ? 'chip' : 'island',
   PREVIEW: PREVIEW ? 'true' : 'false',
   BORDER: global('BusBorder') === 'on' ? 'true' : 'false',
+  BUSX: busx,
   BOARD: BOARD ? 'true' : 'false', BOARD_ROWS: BOARD_ROWS, BOARD_MINE: BOARD_MINE ? 'true' : 'false', BOARD_SECS: BOARD_SECS,
   ROUTE_ORDER: ROUTE_ORDER, WINH: WINH, LINE: LINE,
   DATA: '%' + DATA_VAR,                      // split so Tasker doesn't fill it in here
@@ -1517,7 +1722,10 @@ var html = fill(PAGE, {
    A rounded clip at both ends of the modifier list keeps the WebView's
    corners see-through whichever way Tasker stacks modifiers. The
    WebView must not be darkened, or it paints a dark rectangle. */
-var CLIP = BOARD ? '20' : '50';                         // the board's corners are 20 dp, as its page draws them
+// The board's corners are 20 dp, as its page draws them. The same for the island (4.43, so the board
+// can grow out of it in the same window): its corners can't be rounder than half its height, so it's
+// still a pill
+var CLIP = '20';
 var buslayout = JSON.stringify({
   name: 'Bus Pill',
   defaultDisplayMode: 'Overlay',
@@ -1525,6 +1733,11 @@ var buslayout = JSON.stringify({
     type: 'Box', id: 'root',
     modifiers: [
       { type: 'FillSize' },
+      // Fading as a swipe nears the point where letting go dismisses it (4.43): the whole window, its
+      // near-black fill included, from the scene variable busalpha that the page sets as it moves.
+      // Only applied once the page has set it below 1, so a Tasker without it shows the island as before.
+      // ('%' and the name are joined here, or Tasker would fill in the variable in this script.)
+      { type: 'Alpha', value: '%' + 'busalpha', applyWhen: '%' + 'busalpha < 1' },
       { type: 'Clip', shape: 'Rounded', radius: CLIP },
       { type: 'Clip', shape: 'Rounded', radius: CLIP }
     ],
@@ -1535,6 +1748,27 @@ var buslayout = JSON.stringify({
     }]
   }
 });
+
+/* ---- Which scene name (not for Bus Settings' preview, which has its own) ---- */
+if (!PREVIEW) {
+  // Which scene name to show the island under this time. The island takes turns between two scene
+  // names, so a redraw can show the new one on top before removing the old without a gap or a flash.
+  // If the refresh is interrupted part-way, the old island is still there. 1: showing; 2: showing, to
+  // be drawn again at a new size (a new stop, or the stop board opening or closing, 4.42), so the old
+  // one must go too. (Until 4.42 a redraw set 0, so the old one wasn't removed.) Its own script until
+  // 4.43: each JavaScriptlet costs about 0.3 s on the phone, so it now runs inside island_show.js.
+  // Output: busnewscene (show under this), busoldscene (then remove this, or 'none' if nothing was showing)
+  var showing = /^[12]$/.test(get('BusStateIslandShown')) ? (get('BusStateIslandScene') || 'buspill') : '';
+  var busnewscene = showing === 'buspill' ? 'buspill2' : 'buspill';
+  var busoldscene = showing || 'none';
+  setGlobal('BusStateIslandScene', busnewscene);
+}
+// How long the new island fades in over the old one before that's removed (ms): not at all when the
+// stop board closes (4.43), so the board goes the moment the island is drawn on top of it
+var busfadems = loc('busrefpar') === 'close' ? '0' : '300';
+// Fade in only when the island first appears; a redraw (the board opening or closing, a new size)
+// shows at once over the old one (4.43)
+var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
   return { html: html, busx: +busx, busy: +busy, busww: +busww, bush: +bush };
 }
 </script>

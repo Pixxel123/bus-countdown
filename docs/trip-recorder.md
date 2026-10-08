@@ -4,7 +4,7 @@ Part of the [Bus Countdown](../README.md) documentation.
 
 For tuning against real journeys. With **Record trips** on (Bus Settings › Countdown; off unless you turn it on), each day goes to a file in the Tasker-bus-trip-data folder in Downloads (`Download/Tasker-bus-trip-data` on the phone's storage): `bus-trip-Mon.jsonl` to `bus-trip-Sun.jsonl`, one per weekday, each started afresh when its day comes round again, so a week is kept. Every line is one JSON record:
 
-A day only counts as started once its first line is really written; if that fails, the next line tries again, with the setup. Bus Status shows how many lines today's file has and when the last was written, as Tasker reads it, and the last write error if there was one (4.38). Each new file is announced to Android's media index, so the Files app lists it.
+Since 4.43 the scripts only collect their lines, and Tasker steps straight after each one write them (a script writing the file itself made Tasker run the write as a separate task, which could hang two scripts for 45 seconds). A day only counts as started once its first line is really written; if that fails, the next line tries again, with the setup. Bus Status shows how many lines today's file has and when the last was written, as Tasker reads it, and the last write error if there was one (4.38). Each new file is announced to Android's media index, so the Files app lists it.
 
 | Kind | What it holds |
 |---|---|

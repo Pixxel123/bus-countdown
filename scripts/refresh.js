@@ -7,11 +7,13 @@
      { k: label (route), d: destination, t: due (ms), st: status }
      st = live | sched (timetable) | late | cancel (late/cancel: trains, V5)
    Output: busnodata = yes when there's nothing at all to show
+           busliveroutes = your routes with a live time (for tt_check.js)
            BusStateIslandData (global, read live by the island)
    ================================================================== */
 /* @include get */
 /* @include loc */
 /* @include routesHere */
+/* @include boardRows */
 /* @include debugLog */
 /* @include record */
 /* @include matchBus */
@@ -80,6 +82,8 @@ if (keptNow.length) debugLog('TfL dropped ' + keptNow.join(', ') + ': kept on it
 var d0 = new Date(); var nowMin = d0.getHours() * 60 + d0.getMinutes() + d0.getSeconds() / 60;
 var tt = JSON.parse(get('BusCacheTimetable') || '{}')[get('BusStateStopId')];
 var liveRoutes = deps.map(function (x) { return x.k; });
+// For tt_check.js, after the island: only routes with no live time need the timetable (4.43)
+var busliveroutes = liveRoutes.join(',');
 Object.keys((tt && tt.r) || {}).forEach(function (route) {
   var saved = tt.r[route];
   if (liveRoutes.indexOf(route) > -1 || mine.indexOf(route) < 0 || !saved || !saved.t) return;
@@ -227,13 +231,7 @@ if (busbuzz === 'yes') {
 record('tfl', { stop: get('BusStateStopId'), code: code, you: yourBus ? yourBus.v : undefined, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
   b: deps.map(function (x) { return [x.k, x.v || '', Math.round((x.t - now) / 1000), x.kept ? 'k' : x.st === 'sched' ? 's' : 'l']; }),
   o: otherBuses.length ? otherBuses.map(function (x) { return [x.k, x.v, Math.round((x.t - now) / 1000), x.d]; }) : undefined });   // the stop's other routes (4.41)
-// The stop's letter, from its TfL indicator ("Stop B" -> B, "Stop BK" -> BK). Stops without one
-// (indicators like "opp" or "->N", or none at all) get no letter, and the island shows none.
-function stopLetter(name) {
-  var m = /\(([^)]*)\)\s*$/.exec(name || ''); var ind = m ? m[1].trim() : '';
-  var l = /^stop\s+([a-z][a-z0-9]?)$/i.exec(ind);
-  return l ? l[1].toUpperCase() : '';
-}
+/* @include stopLetter */
 var busletter = stopLetter(get('BusStateStopName'));
 
 // The island's size depends on how many of your routes this stop has (one dot each, whether or not
@@ -248,7 +246,14 @@ var shape = (get('BusStyle') === 'chip' ? 'c' : 'i') + routesHere(perRoute.lengt
 if (get('BusStateIslandShown') === '1' && get('BusStateIslandShape') !== '' && get('BusStateIslandShape') !== shape) {
   setGlobal('BusStateIslandShown', '2');        // showing, but to be drawn again (so the old one is removed)
 }
-setGlobal('BusStateIslandData', JSON.stringify({
+// The stop board, open, has a line for each route (island_show.js keeps how many it was drawn with):
+// a route coming or going draws it again at its new height (4.43: it now opens before fetching)
+var rowsNow = boardRows(perRoute.length, otherRoutes.length, get('BusBoardRoutes') === 'mine');
+// (Not for a board the page grew out of the island itself: it resizes its own window, 4.43)
+if (get('BusStateBoard') === '1' && get('BusStateBoardSelf') !== '1' && get('BusStateIslandShown') === '1' && get('BusStateBoardRows') !== '' && get('BusStateBoardRows') !== String(rowsNow)) {
+  setGlobal('BusStateIslandShown', '2');
+}
+var islandData = {
   u: now,                                                       // when this data arrived
   r: 1000 * normalWait,                                         // the usual time between refreshes: border and fading
   rot: Math.round(1000 * (parseFloat(get('BusRotate')) || 6)),  // time per route: border with several
@@ -256,7 +261,14 @@ setGlobal('BusStateIslandData', JSON.stringify({
   l: busletter,                                                 // its letter ("B", "BK"), or "" for none
   b: perRoute,
   a: otherRoutes                                                // the stop's other routes: { k, d, t: [up to 3 times] } (4.41)
-}));
+};
+setGlobal('BusStateIslandData', JSON.stringify(islandData));
+// Each stop's last island data, for the 4 stops fetched most recently (4.43): a long press shows the
+// stop it switches to at once, with these times if they're under 3 minutes old (opposite.js)
+var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) {}
+byStop[islandData.s] = islandData;
+setGlobal('BusStateIslandByStop', JSON.stringify(Object.keys(byStop).sort(function (a, b) { return byStop[b].u - byStop[a].u; }).slice(0, 4)
+  .reduce(function (o, k) { o[k] = byStop[k]; return o; }, {})));
 
 // Chip: "25 in 5 min" in the status bar, plain lines when it's opened
 function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sched' ? '~' : '') + (m < 1 ? (x.st === 'sched' ? '1' : 'now') : m); }

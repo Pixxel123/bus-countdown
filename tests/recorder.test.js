@@ -73,11 +73,17 @@ test('a recorded day replays, and matches what was decided on the phone', () => 
   assert.match(out, /4 positions replayed; 0 decided differently/);
 });
 
-test('the first line of a day also makes sure the folder exists', () => {
+test('the first line of a day also makes sure the folder exists, and announces the new file (Tasker\'s steps after the script, 4.43)', () => {
   delete files[FILE];
-  const calls = [];
-  run('end_log.js', { now: at, globals: { BusRecord: 'on', BusRecordDay: 'x', BusStateStopId: 'S' }, locals: { busfrom: 'island', shell: (c) => calls.push(c) } });
-  assert.strictEqual(calls[0], 'mkdir -p /sdcard/Download/Tasker-bus-trip-data');
-  assert.match(calls[1], /^am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:\/\/\/sdcard\/Download\/Tasker-bus-trip-data\/bus-trip-\w{3}\.jsonl$/, 'and the new file is announced to the media index');
+  const g = { BusRecord: 'on', BusRecordDay: 'x', BusStateStopId: 'S' };
+  const r = run('end_log.js', { now: at, globals: g, locals: { busfrom: 'island' } });
+  assert.strictEqual(r.busrecappend, 'false', 'a new day starts the file afresh');
   assert.ok(files[FILE]);
+  const xml = fs.readFileSync(path.join(__dirname, '..', 'Bus_Countdown.prj.xml'), 'utf8');
+  const end = [...xml.matchAll(/<Task sr="task\d+">([\s\S]*?)<\/Task>/g)].map((x) => x[1]).find((b) => b.includes('<nme>Bus End</nme>'));
+  const after = end.slice(end.indexOf('Note it in the debugging log'));
+  const mk = [...after.matchAll(/<Action sr="act\d+" ve="7">([\s\S]*?)<\/Action>/g)].map((x) => x[1]).find((a) => /<code>409<\/code>/.test(a));
+  assert.match(mk, /<Str sr="arg0" ve="3">Download\/Tasker-bus-trip-data<\/Str>/);
+  assert.match(mk, /<lhs>%busrecappend<\/lhs><op>2<\/op><rhs>false<\/rhs>/, 'on a new day');
+  assert.match(after, /MediaScannerConnection/);
 });

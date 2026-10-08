@@ -65,12 +65,12 @@ test('the island is sized for every one of your routes at the stop, not just the
 
 test('redraws take turns between two scene names; the first show has nothing to remove', () => {
   const g = {};
-  const first = run('island_swap.js', { globals: g });
+  const first = run('island_show.js', { globals: g });
   assert.deepStrictEqual([first.busnewscene, first.busoldscene], ['buspill', 'none']);
   g.BusStateIslandShown = '1';
-  const second = run('island_swap.js', { globals: g });
+  const second = run('island_show.js', { globals: g });
   assert.deepStrictEqual([second.busnewscene, second.busoldscene], ['buspill2', 'buspill']);
-  const third = run('island_swap.js', { globals: g });
+  const third = run('island_show.js', { globals: g });
   assert.deepStrictEqual([third.busnewscene, third.busoldscene], ['buspill', 'buspill2']);
 });
 
