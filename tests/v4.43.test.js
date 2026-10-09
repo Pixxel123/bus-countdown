@@ -8,7 +8,7 @@ const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('fs');
 const path = require('path');
-const { run } = require('./harness');
+const { runPage, run } = require('./harness');
 
 const xml = fs.readFileSync(path.join(__dirname, '..', 'Bus_Countdown.prj.xml'), 'utf8');
 const taskBody = (name) => [...xml.matchAll(/<Task sr="task\d+">([\s\S]*?)<\/Task>/g)].map((m) => m[1]).find((b) => b.includes(`<nme>${name}</nme>`));
@@ -211,7 +211,8 @@ test('a swipe moves the island\'s whole window with the finger, and a swipe away
   assert.match(src, /var CAN_MOVE = !IS_PREVIEW && !!window\.Tasker && typeof Tasker\.moveOverlayBy === 'function';/);
   assert.match(src, /else \{ WIN = 'no'; windowBack\(\); \}/);
   // Not far enough: back to its place (its left edge, dp)
-  assert.match(src, /Tasker\.updateOverlayConfig\(\{ x: String\(BUSX\), configTransitionMs: 150, configTransitionEasing: 'EaseOut' \}\)/);
+  // (X_NOW: further left for a wider board; growing, a width and place too: 4.47)
+  assert.match(src, /Tasker\.updateOverlayConfig\(\{ x: String\(X_NOW\), configTransitionMs: 150, configTransitionEasing: 'EaseOut' \}\)/);
   const g = { BusRoutes: '517', BusScreenW: '448', BusCameraX: '224', BusStateIslandData: JSON.stringify({ b: [{ k: '517' }] }) };
   const r = run('island_show.js', { globals: g });
   assert.match(r.html, new RegExp('var BUSX = ' + r.busx + ';'));
@@ -324,11 +325,11 @@ test('the board grows out of the island\'s own window and tucks back into it, th
   const grow = src.slice(src.indexOf('function growBoard()'), src.indexOf('function shrinkBoard()'));
   const shrink = src.slice(src.indexOf('function shrinkBoard()'), src.indexOf('function closeBoard()'));
   // Opening: the window to the board's height over 400 ms, then Tasker told (no new window)
-  assert.match(grow, /resizeWindow\(H \+ rows \* LINE \+ 8, 400, 'EaseOut'\)/);
+  assert.match(grow, /resizeWindow\(H \+ rows \* LINE \+ 8, 400, 'EaseOut'[,)]/);
   assert.match(grow, /runTask\('Bus Island', \{ busfrom: 'island', busisland: 'open', busgrow: 'yes' \}\)/);
   assert.match(grow, /document\.body\.classList\.add\('board', 'entering'\)/);
   // Closing: the rows fade first, then the window back to the island's height over 260 ms
-  assert.match(shrink, /classList\.add\('leaving'\)[\s\S]*resizeWindow\(H, 260, 'EaseIn'\)/);
+  assert.match(shrink, /classList\.add\('leaving'\)[\s\S]*resizeWindow\(H, 260, 'EaseIn'[,)]/);
   assert.match(shrink, /busisland: 'close', busgrow: 'yes'/);
   // Couldn't resize: drawn as a new window instead
   assert.match(shrink, /waitFor\('board'\); runTask\('Bus Island', \{ busfrom: 'island', busisland: 'close' \}\);/);
@@ -357,48 +358,9 @@ test('refresh.js leaves resizing a grown board to its page', () => {
 });
 
 // ---- The page's own script, run ----------------------------------------------------------------------
-// The tests above read the page's source; this runs its script against a stand-in document and Tasker
-// bridge, so a name the page uses but never declares fails here, not on the phone (test build 14:
-// "ReferenceError: H is not defined" on every tap, so the board never opened).
-function runPage(globals) {
-  const vm = require('vm');
-  const r = run('island_show.js', { globals });
-  const script = r.html.slice(r.html.indexOf('<script>') + 8, r.html.lastIndexOf('</script>'));
-  const classes = () => { const set = new Set(); return { set, add: (...c) => c.forEach((x) => set.add(x)), remove: (...c) => c.forEach((x) => set.delete(x)),
-    toggle: (c, on) => { const v = on === undefined ? !set.has(c) : on; if (v) set.add(c); else set.delete(c); return v; }, contains: (c) => set.has(c) }; };
-  const els = {};
-  const el = (id) => els[id] || (els[id] = { id, style: {}, innerHTML: '', textContent: '', children: [], classList: classes(), attrs: {}, listeners: {},
-    setAttribute(k, v) { this.attrs[k] = v; }, getAttribute(k) { return this.attrs[k]; },
-    addEventListener(t, f) { (this.listeners[t] = this.listeners[t] || []).push(f); }, querySelectorAll: () => [],
-    setPointerCapture() {}, releasePointerCapture() {}, offsetWidth: 200, offsetHeight: 36, scrollWidth: 0, clientWidth: 100 });
-  el('d').textContent = globals.BusStateIslandData;
-  const calls = [], timers = [];
-  const plain = (x) => JSON.parse(JSON.stringify(x));   // (objects made in the page's own context)
-  const Tasker = {
-    runTask: (o) => { calls.push(['runTask', plain(o)]); return Promise.resolve({}); },
-    updateOverlayConfig: (c) => calls.push(['updateOverlayConfig', plain(c)]),
-    moveOverlayBy: (x, y) => calls.push(['moveOverlayBy', x, y]),
-    setVariable: (k, v) => calls.push(['setVariable', k, v]),
-    dismissLayout: () => calls.push(['dismissLayout']), getCurrentScreenId: () => 'buspill', flash: () => {},
-  };
-  const ctx = {
-    Tasker, document: { getElementById: el, body: el('body'), documentElement: el('html'), hidden: false, addEventListener() {} },
-    devicePixelRatio: 3, addEventListener() {}, requestAnimationFrame: (f) => timers.push([0, f]),
-    setTimeout: (f, ms) => { timers.push([ms || 0, f]); return timers.length; }, clearTimeout() {}, setInterval() {},
-    MutationObserver: class { observe() {} }, JSON, Math, Date, String, Number, Array, Object, parseInt, parseFloat, Promise,
-  };
-  ctx.window = ctx;
-  vm.createContext(ctx);
-  vm.runInContext(script, ctx, { filename: 'island page' });
-  const flush = (upTo) => { for (let i = 0; i < 20; i++) { const due = timers.filter((t) => t[0] <= upTo); if (!due.length) return; due.forEach((t) => timers.splice(timers.indexOf(t), 1)); due.forEach((t) => t[1]()); } };
-  const tap = () => {
-    const p = el('p');
-    p.listeners.pointerdown.forEach((f) => f({ clientX: 100, clientY: 18, screenX: 100, screenY: 18, pointerId: 1 }));
-    p.listeners.pointerup.forEach((f) => f({ clientX: 100, clientY: 18, screenX: 100, screenY: 18, pointerId: 1 }));
-  };
-  return { calls, flush, tap, body: el('body') };
-}
-
+// The tests above read the page's source; runPage (in the harness, 4.47) runs its script against a
+// stand-in document and Tasker bridge, so a name the page uses but never declares fails here, not on
+// the phone (test build 14: "ReferenceError: H is not defined" on every tap, so the board never opened).
 test('the page, run: a tap grows the board out of the island and a second tap tucks it back', () => {
   const data = { u: Date.now(), r: 45000, rot: 6000, s: 'KH', n: 'Kiln Street (Stop KH)', l: 'KH',
     b: [{ k: '517', d: 'Holbry', t: Date.now() + 5 * 60000, st: 'live' }], a: [{ k: '289', d: 'Fernleigh', t: [Date.now() + 7 * 60000] }] };

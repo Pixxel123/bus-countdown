@@ -65,4 +65,44 @@ function run(name, { globals = {}, locals = {}, now = Date.now() } = {}) {
 // Metres to degrees of latitude, for building positions along a north-south road
 const m = (metres) => metres / 111320;
 
-module.exports = { run, clockAt, m, SCRIPTS, compose, files };
+// The island's page, run against a stand-in document and Tasker bridge (from tests/v4.43.test.js, 4.47)
+function runPage(globals, now) {
+  const vm = require('vm');
+  const r = run('island_show.js', { globals, now });
+  const script = r.html.slice(r.html.indexOf('<script>') + 8, r.html.lastIndexOf('</script>'));
+  const classes = () => { const set = new Set(); return { set, add: (...c) => c.forEach((x) => set.add(x)), remove: (...c) => c.forEach((x) => set.delete(x)),
+    toggle: (c, on) => { const v = on === undefined ? !set.has(c) : on; if (v) set.add(c); else set.delete(c); return v; }, contains: (c) => set.has(c) }; };
+  const els = {};
+  const el = (id) => els[id] || (els[id] = { id, style: { setProperty(k, v) { this[k] = v; } }, innerHTML: '', textContent: '', children: [], classList: classes(), attrs: {}, listeners: {},
+    setAttribute(k, v) { this.attrs[k] = v; }, getAttribute(k) { return this.attrs[k]; },
+    addEventListener(t, f) { (this.listeners[t] = this.listeners[t] || []).push(f); }, querySelectorAll: () => [],
+    setPointerCapture() {}, releasePointerCapture() {}, offsetWidth: 200, offsetHeight: 36, scrollWidth: 0, clientWidth: 100 });
+  el('d').textContent = globals.BusStateIslandData;
+  const calls = [], timers = [];
+  const plain = (x) => JSON.parse(JSON.stringify(x));   // (objects made in the page's own context)
+  const Tasker = {
+    runTask: (o) => { calls.push(['runTask', plain(o)]); return Promise.resolve({}); },
+    updateOverlayConfig: (c) => calls.push(['updateOverlayConfig', plain(c)]),
+    moveOverlayBy: (x, y) => calls.push(['moveOverlayBy', x, y]),
+    setVariable: (k, v) => calls.push(['setVariable', k, v]),
+    dismissLayout: () => calls.push(['dismissLayout']), getCurrentScreenId: () => 'buspill', flash: () => {},
+  };
+  const ctx = {
+    Tasker, document: { getElementById: el, body: el('body'), documentElement: el('html'), hidden: false, addEventListener() {} },
+    devicePixelRatio: 3, addEventListener() {}, requestAnimationFrame: (f) => timers.push([0, f]),
+    setTimeout: (f, ms) => { timers.push([ms || 0, f]); return timers.length; }, clearTimeout() {}, setInterval() {},
+    MutationObserver: class { observe() {} }, JSON, Math, Date: now ? clockAt(now) : Date, String, Number, Array, Object, parseInt, parseFloat, Promise,
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(script, ctx, { filename: 'island page' });
+  const flush = (upTo) => { for (let i = 0; i < 20; i++) { const due = timers.filter((t) => t[0] <= upTo); if (!due.length) return; due.forEach((t) => timers.splice(timers.indexOf(t), 1)); due.forEach((t) => t[1]()); } };
+  const tap = () => {
+    const p = el('p');
+    p.listeners.pointerdown.forEach((f) => f({ clientX: 100, clientY: 18, screenX: 100, screenY: 18, pointerId: 1 }));
+    p.listeners.pointerup.forEach((f) => f({ clientX: 100, clientY: 18, screenX: 100, screenY: 18, pointerId: 1 }));
+  };
+  return { calls, flush, tap, body: el('body'), html: el('html'), dataEl: el('d'), ctx };
+}
+
+module.exports = { run, runPage, clockAt, m, SCRIPTS, compose, files };

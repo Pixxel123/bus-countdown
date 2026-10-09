@@ -1050,7 +1050,7 @@ function islandShow(global, setGlobal) {
       note: '<b>On the 517, coming up to Wexley</b>, where you change. Your own bus is left off: the island shows only what you could change to, the 566 and the next 517, whose badge is idle grey so it doesn’t look like yours. Bus Status says which bus you’re on and when you’ll get there.',
       b: function (now) { return [bus(now, '566', 'Fernleigh Village', 8, { t2: 21 }), bus(now, '517', 'Holbry', 18, { idle: true })]; } },
     { id: 'board', label: 'Stop board', stop: 'D', board: true,
-      note: '<b>Tapped open (4.42).</b> The island grows down into the stop board: every bus at the stop, your routes first in Settings order, then the stop’s other routes, soonest first, with outlined badges. The camera gap runs down the middle, routes to its left and times to its right. Tap again or swipe up to close it; it closes by itself after 10 s.',
+      note: '<b>Tapped open (4.42).</b> The island grows down into the stop board: every bus at the stop, your routes first in Settings order, then the stop’s other routes, soonest first, with outlined badges. The camera gap runs down the middle, routes to its left and times to its right. Tap again or swipe up to close it; it closes by itself after 10 s. Since 4.47 it widens a little when its lines need it, here for the 566’s three times.',
       b: function (now) { return [bus(now, '566', 'Fernleigh Village', 5, { t2: 17, t3: 29 }), bus(now, '517', 'Holbry', 14, { t2: 33 })]; },
       a: function (now) { return [{ k: '289', d: 'Ordwick', t: [now + 3 * 60000, now + 15 * 60000] }, { k: '64', d: 'Thornacre Precinct', t: [now + 9 * 60000] }, { k: 'N68', d: 'Kelbury Bus Garage', t: [now + 26 * 60000] }]; } },
     { id: 'none', label: 'No buses', stop: 'B',
@@ -1147,13 +1147,21 @@ function islandShow(global, setGlobal) {
     v429: { ring: 'D', letters: 3, right: 'now', k: '517', d: 'You', m: '2 min', dots: 2 },
     v430: { ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', m: '8', m2: '21', dots: 2 },
     v431: { ring: 'D', letters: 3, right: 'now', k: '517', idle: true, d: 'Holbry', m: '18 min', dots: 2, on: 1 },
+    v447: { board: true, wide: true, ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2,
+      rows: [['517', '', 'Holbry', '14', '33 · 52'], ['566', '', 'Fernleigh Village', '5', '17 · 29'], ['289', 'other', 'Ordwick', '3', '15 · 27'], ['N68', 'other', 'Kelbury Bus Garage', '26 min', '']] },
     v446: { ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
     v442: { board: true, ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', dots: 2,
       rows: [['517', '', 'Holbry', '14', '33'], ['566', '', 'Fernleigh Village', '5', '17 · 29'], ['289', 'other', 'Ordwick', '3', '15'], ['64', 'other', 'Thornacre Precinct', '9 min', '']] }
   };
-  // The stop board as tapped open (4.42): the island's width, a line per route, the camera gap down the middle
+  // The stop board as tapped open (4.42): the island's width, a line per route, the camera gap down the middle.
+  // 4.47 (wide: true): a little wider when its lines need it, for three times or a wider badge
   function boardHtml(f) {
-    var PAD = 9, GAP = 42, L = leftFor(f), R = RIGHT[f.right](f.dots || 1), W = PAD + L + GAP + R + PAD;
+    var PAD = 9, GAP = 42, L = leftFor(f), R = RIGHT[f.right](f.dots || 1, f);
+    if (f.wide) f.rows.forEach(function (r) {
+      L = Math.max(L, tw(r[0], '700 13px system-ui, Roboto, sans-serif') + 14 + 6 + tw('Sutton Road Station'.slice(0, f.letters || 3) + '…', '400 12.5px system-ui, Roboto, sans-serif') + 2);
+      R = Math.max(R, tw(r[3]) + (r[4] ? tw(' · ' + r[4] + ' min', '600 12px system-ui, Roboto, sans-serif') : 0) + 4);
+    });
+    var W = PAD + L + GAP + R + PAD;
     var x = Math.round(224 - GAP / 2 - L - PAD);
     var line = function (cls, left, right) { return '<div class="row' + cls + '"><span class="h" style="width:' + L + 'px">' + left + '</span><span class="g" style="width:' + GAP + 'px"></span><span class="h" style="width:' + R + 'px">' + right + '</span></div>'; };
     return '<div class="isl board" style="left:' + x + 'px;top:9px;width:' + W + 'px;padding:0 ' + PAD + 'px 8px">' +
@@ -1165,6 +1173,7 @@ function islandShow(global, setGlobal) {
   }
   // Newest first, only the versions that changed how the island looks: [version, date, look, what changed]
   var VERSIONS = [
+    ['4.47', '9 Oct', 'v447', 'The stop board widens a little when its lines need it: room for three times on a route and for a wider route badge (N68), growing outwards from the camera gap as it grows down. Tucked back in, it\u2019s the island at its own width again.'],
     ['4.46', '9 Oct', 'v446', 'Fitted to its times: just wide enough for the widest showing, with the route dots always 10 dp clear of them. It grows the moment the times need more room, so nothing is cut short, and shrinks only after two refreshes in a row with 8 dp or more to spare, its right end moving while the camera gap stays put.'],
     ['4.42', '8 Oct', 'v442', 'Tap the island and it grows down into the stop board: every bus at the stop, your routes first and then the stop\u2019s other routes soonest first, with the camera gap running down the middle. Tap again or swipe up to close it; it closes by itself after 10 s.'],
     ['4.31', '7 Oct', 'v431', 'While you ride, later buses on your own route keep their place and time but get a grey badge, the island\u2019s idle colour, so the next 517 never looks like yours.'],

@@ -17,9 +17,10 @@ const show = (g) => run('island_show.js', { globals: Object.assign({ BusRoutes: 
   BusStateIslandData: JSON.stringify(data()) }, g), now: AT });
 
 // ---- 1. The island page --------------------------------------------------------------------------
-test('open, it is the island\'s own width and place, taller by a line per route', () => {
+test('open, it is in the island\'s place, at least as wide, taller by a line per route', () => {
   const closed = show({ BusStateBoard: '0' }); const open = show({ BusStateBoard: '1' });
-  assert.deepStrictEqual([open.busww, open.busx, open.busy], [closed.busww, closed.busx, closed.busy], 'it only grows downwards');
+  assert.strictEqual(open.busy, closed.busy, 'it grows downwards');
+  assert.ok(+open.busww >= +closed.busww && +open.busx <= +closed.busx, 'and only wider if its lines need it (4.47)');
   assert.strictEqual(+closed.bush, 30);
   assert.strictEqual(+open.bush, 30 + 4 * 26 + 8, 'the stop line, then 2 of yours and 2 others');
   assert.match(open.html, /var BOARD = true;/);

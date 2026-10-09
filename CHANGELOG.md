@@ -4,6 +4,12 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.47] - 2026-10-09
+
+### Changed
+
+- The stop board widens a little when its lines need it: enough for three times on a route ("12 · 24 · 37 min") and for a route badge wider than the island's (N68), so its destination still shows. It grows outwards from the camera gap, as it grows down out of the island, and stops 8 dp short of the screen's edges. Tucking it back in goes back to the island at its own fitted width.
+
 ## [4.46] - 2026-10-09
 
 ### Changed

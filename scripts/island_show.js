@@ -24,7 +24,7 @@ var CHIP = global('BusStyle') === 'chip';
 var H = CHIP ? 24 : (parseInt(global('BusIslandH'), 10) || 30);                   // island height (30 unless BusIslandH is set)
 var GAP = CHIP ? 13 : (parseInt(loc('busprevgap') || global('BusIslandGap'), 10) || 42);   // space over the camera
 var PAD = Math.round(H * 0.3);                          // inner padding at each end
-// The stop board (4.42): a tap on the island opens it below the island, the same width, with every
+// The stop board (4.42): a tap on the island opens it below the island, as wide or a little wider (4.47), with every
 // bus at the stop by route: yours first, in Settings order, then the stop's other routes, soonest
 // first (Bus Refresh's data.a), up to 8 lines. Bus Island keeps whether it's open in BusStateBoard and
 // shows the island again; Bus Settings' preview asks for it with busboard = yes. Not for the status
@@ -89,8 +89,23 @@ if (!PREVIEW) setGlobal('BusStateIslandShape', (CHIP ? 'c' : 'i') + routes + (le
    overrides the screen width this script's web view measures. */
 var screenW = parseInt(global('BusScreenW'), 10) || (typeof screen !== 'undefined' && Math.round(screen.width)) || 448;
 if (!PREVIEW) setGlobal('BusStateScreenW', String(screenW));
-var busww = String(PAD + LEFT + GAP + RIGHT + PAD);                          // window width, dp
 var camX = parseInt(global('BusCameraX'), 10) || screenW / 2;            // camera centre (Bus Find Camera finds it)
+// The island's own halves, for the page to go back to when its board tucks back in (4.47)
+var ISLAND_LEFT = LEFT;
+var ISLAND_RIGHT = RIGHT;
+// The stop board (4.47): a little wider than the island when its lines need it (boardWidths). This is
+// for a board drawn as a new window; one the page grows out of the island works it out the same way.
+if (BOARD) {
+  var bw = boardWidths({ left: LEFT, right: RIGHT },
+    (boardData.b || []).map(function (b) {
+      return { t: [b.t].concat(b.t2 !== undefined ? [b.t2] : [], b.t3 !== undefined ? [b.t3] : []), st: b.st, sts: [b.st, b.st2, b.st3] };
+    }).concat(BOARD_MINE ? [] : (boardData.a || []).map(function (o) { return { t: (o.t || []).slice(0, 3), st: 'live' }; })).slice(0, BOARD_ROWS),
+    (boardData.b || []).concat(BOARD_MINE ? [] : (boardData.a || [])).slice(0, BOARD_ROWS).map(function (x) { return x.k; }),
+    { cam: camX, screen: screenW, gap: GAP, pad: PAD, letters: letters, now: Date.now() });
+  LEFT = bw.left;
+  RIGHT = bw.right;
+}
+var busww = String(PAD + LEFT + GAP + RIGHT + PAD);                          // window width, dp
 var busx = String(Math.round(camX - GAP / 2 - LEFT - PAD));               // window's left edge, dp: gap over the camera
 if (CHIP) busx = String(parseInt(global('BusChipX'), 10) >= 0 ? parseInt(global('BusChipX'), 10) : 76);   // right of the clock
 // Where the window goes (read by the Show Scene V2 action that follows)
@@ -112,7 +127,7 @@ var PAGE = String.raw`<!doctype html>
   /* (Heights in px. Viewport units come out as 0 in this web view, which hid the whole island: test build 13.
      A board the page grows sets them itself, setHeight.) */
   /* The widths as variables, so the page can fit itself to its times (4.46) */
-  :root { --right: {{RIGHT}}px; --total: {{TOTAL}}px; }
+  :root { --left: {{LEFT}}px; --right: {{RIGHT}}px; --total: {{TOTAL}}px; }
   html, body { margin: 0; height: {{WINH}}px; width: var(--total); background: transparent; overflow: hidden;
                -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
   body { font-family: system-ui, Roboto, sans-serif; }
@@ -138,7 +153,7 @@ var PAGE = String.raw`<!doctype html>
   body.leaving .bl { opacity: 0; transition: opacity 90ms linear; transition-delay: 0ms; }
   #p.swap .h { opacity: 0; }
   .bl .h { height: {{LINE}}px; }
-  .bl .bl-l { width: {{LEFT}}px; } .bl .bl-g { flex: none; width: {{GAP}}px; } .bl .bl-r { width: var(--right); }
+  .bl .bl-l { width: var(--left); } .bl .bl-g { flex: none; width: {{GAP}}px; } .bl .bl-r { width: var(--right); }
   .bl .d { font-size: 12.5px; }
   .bl .m2 { font-size: 12px; }
   .b.other { background: transparent; box-shadow: inset 0 0 0 1.5px #5A6376; color: #D5DAE3; }   /* not one of your routes */
@@ -158,7 +173,7 @@ var PAGE = String.raw`<!doctype html>
        font-size: 14px; white-space: nowrap; touch-action: none; }
   .h { display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden;
        transition: opacity .18s, transform .18s; }
-  #L { flex: none; width: {{LEFT}}px; }   /* route + destination: fixed width */
+  #L { flex: none; width: var(--left); }   /* route + destination: fixed width */
   #g { flex: none; width: {{GAP}}px; }    /* empty, sits over the camera */
   /* Status bar chip: a thin pipe between the route and the minutes */
   body.chip #g { display: flex; justify-content: center; }
@@ -265,14 +280,25 @@ var PAGE = String.raw`<!doctype html>
   // The window's new height (dp), animated by Tasker over ms with one of its easing curves (Linear,
   // EaseIn, EaseOut, EaseInOut, Overshoot, Bounce). The bridge reads these keys (from Tasker 6.7.6's
   // own code: the manual doesn't name them) and drops any error, so this can't tell if it worked.
-  function resizeWindow(h, ms, easing) {
-    try { Tasker.updateOverlayConfig({ height: String(h), configTransitionMs: ms, configTransitionEasing: easing }); return true; } catch (e) { return false; }
+  function resizeWindow(h, ms, easing, w, x) {
+    var c = { height: String(h), configTransitionMs: ms, configTransitionEasing: easing };
+    if (w) { c.width = String(w); c.x = String(x); }        // a wider board, and back (4.47)
+    try { Tasker.updateOverlayConfig(c); return true; } catch (e) { return false; }
+  }
+  // The board's halves for these lines (4.47): the island's, or a little wider when they need it
+  function boardFit() {
+    var rows = boardRows();
+    return boardWidths({ left: ISLAND_LEFT, right: ISLAND_RIGHT }, rows, rows.map(function (r) { return r.k; }),
+      { cam: CAMX, screen: SCREENW, gap: GAP, pad: PAD, letters: LETTERS, now: Date.now() });
   }
   function growBoard() {
     var rows = lines();
+    BOARD_ROWS = rows; boardOrder = null;
+    var bw = boardFit(), wider = bw.left !== LEFT || bw.right !== RIGHT_NOW;
     setHeight(H + rows * LINE + 8);
-    if (!resizeWindow(H + rows * LINE + 8, 400, 'EaseOut')) { setHeight(H); return false; }
-    BOARD = true; BOARD_ROWS = rows; boardOrder = null; boardHtmlNow = '';
+    if (!resizeWindow(H + rows * LINE + 8, 400, 'EaseOut', wider && PAD + bw.left + GAP + bw.right + PAD, islandX(bw.left))) { setHeight(H); return false; }
+    if (wider) { X_NOW = islandX(bw.left); setWidths(bw.left, bw.right); }
+    BOARD = true; boardHtmlNow = '';
     document.body.classList.add('board', 'entering'); ring.classList.add('off'); p.classList.add('swap');
     setTimeout(function () {               // the stop's name fades in, then the rows drop in one by one
       draw(); p.classList.remove('swap');
@@ -286,13 +312,15 @@ var PAGE = String.raw`<!doctype html>
     closeAt = 0;
     document.body.classList.add('leaving'); p.classList.add('swap');      // the rows and the name fade first
     setTimeout(function () {
-      if (!resizeWindow(H, 260, 'EaseIn')) {                               // couldn't: drawn as a new window instead
+      var wider = LEFT !== ISLAND_LEFT || RIGHT_NOW !== ISLAND_RIGHT;     // back to the island's own width too (4.47)
+      if (!resizeWindow(H, 260, 'EaseIn', wider && PAD + ISLAND_LEFT + GAP + ISLAND_RIGHT + PAD, islandX(ISLAND_LEFT))) {   // couldn't: drawn as a new window instead
         document.body.classList.remove('leaving'); p.classList.remove('swap');
         waitFor('board'); runTask('Bus Island', { busfrom: 'island', busisland: 'close' });
         return;
       }
       setTimeout(function () {                                             // an island again
         BOARD = false; setHeight(H); document.body.classList.remove('board', 'leaving'); if (BORDER) ring.classList.remove('off');
+        if (wider) { X_NOW = islandX(ISLAND_LEFT); setWidths(ISLAND_LEFT, ISLAND_RIGHT); }
         idx = 0; start = Date.now(); draw(); p.classList.remove('swap');
       }, 260);
       runTask('Bus Island', { busfrom: 'island', busisland: 'close', busgrow: 'yes' });
@@ -305,15 +333,26 @@ var PAGE = String.raw`<!doctype html>
      page is as wide as its window): if it didn't change, or there's no bridge, Bus Island has it
      drawn again at the new width instead, the new one on top before the old one goes. */
   var RIGHT_NOW = {{RIGHT}}, fitTimer = null;
-  var CAN_FIT = !IS_PREVIEW && !!window.Tasker && typeof Tasker.updateOverlayConfig === 'function';
-  function totalFor(r) { return PAD + LEFT + GAP + r + PAD; }
-  function setRight(r) {
-    RIGHT_NOW = r;
-    document.documentElement.style.setProperty('--right', r + 'px');
-    document.documentElement.style.setProperty('--total', totalFor(r) + 'px');
+  // The island's own halves (a board drawn as a new window may be wider, 4.47), and where the window's
+  // left edge is now (a wider board's is further left); the camera's middle and the screen's width
+  var ISLAND_LEFT = {{ISLAND_LEFT}}, ISLAND_RIGHT = {{ISLAND_RIGHT}}, X_NOW = {{BUSX}};
+  var CAMX = {{CAMX}}, SCREENW = {{SCREENW}}, LETTERS = {{LETTERS}};
+  /* @include islandFit */
+  function islandX(left) { return Math.round(CAMX - GAP / 2 - left - PAD); }
+  function setWidths(left, right) {
+    LEFT = left; RIGHT_NOW = right;
+    document.documentElement.style.setProperty('--left', left + 'px');
+    document.documentElement.style.setProperty('--right', right + 'px');
+    document.documentElement.style.setProperty('--total', totalFor(right) + 'px');
     if (BORDER && !BOARD) drawRing();
   }
+  var CAN_FIT = !IS_PREVIEW && !!window.Tasker && typeof Tasker.updateOverlayConfig === 'function';
+  function totalFor(r) { return PAD + LEFT + GAP + r + PAD; }
+  function setRight(r) { setWidths(LEFT, r); }
   function fitTo(r) {
+    // The board open: the island's width for when it closes; the board itself only ever grows for it
+    if (BOARD) { ISLAND_RIGHT = r; if (r <= RIGHT_NOW) return; }
+    else ISLAND_RIGHT = r;
     if (!(r > 0) || r === RIGHT_NOW) return;
     var was = RIGHT_NOW, tracks = Math.abs(window.innerWidth - totalFor(was)) <= 2;
     clearTimeout(fitTimer);
@@ -573,7 +612,7 @@ var PAGE = String.raw`<!doctype html>
     fadeWindow(1, true);
     if (!winMoved) return;
     try {
-      if (BUSX >= 0 && typeof Tasker.updateOverlayConfig === 'function') Tasker.updateOverlayConfig({ x: String(BUSX), configTransitionMs: 150, configTransitionEasing: 'EaseOut' });
+      if (X_NOW >= 0 && typeof Tasker.updateOverlayConfig === 'function') Tasker.updateOverlayConfig({ x: String(X_NOW), configTransitionMs: 150, configTransitionEasing: 'EaseOut' });
       else Tasker.moveOverlayBy(Math.round(-winMoved * (window.devicePixelRatio || 1)), 0);
     } catch (e) {}
     winMoved = 0;
@@ -707,7 +746,7 @@ var html = fill(PAGE, {
   SHAPE: CHIP ? 'chip' : 'island',
   PREVIEW: PREVIEW ? 'true' : 'false',
   BORDER: global('BusBorder') === 'on' ? 'true' : 'false',
-  BUSX: busx,
+  BUSX: busx, ISLAND_LEFT: ISLAND_LEFT, ISLAND_RIGHT: ISLAND_RIGHT, CAMX: camX, SCREENW: screenW, LETTERS: CHIP ? 3 : letters,
   BOARD: BOARD ? 'true' : 'false', BOARD_ROWS: BOARD_ROWS, BOARD_MINE: BOARD_MINE ? 'true' : 'false', BOARD_SECS: BOARD_SECS,
   ROUTE_ORDER: ROUTE_ORDER, WINH: WINH, LINE: LINE,
   DATA: '%' + DATA_VAR,                      // split so Tasker doesn't fill it in here
