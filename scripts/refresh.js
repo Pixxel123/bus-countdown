@@ -236,6 +236,7 @@ record('tfl', { stop: get('BusStateStopId'), code: code, you: yourBus ? yourBus.
   b: deps.map(function (x) { return [x.k, x.v || '', Math.round((x.t - now) / 1000), x.kept ? 'k' : x.st === 'sched' ? 's' : 'l']; }),
   o: otherBuses.length ? otherBuses.map(function (x) { return [x.k, x.v, Math.round((x.t - now) / 1000), x.d]; }) : undefined });   // the stop's other routes (4.41)
 /* @include stopLetter */
+/* @include nextStop */
 var busletter = stopLetter(get('BusStateStopName'));
 
 // The island's size depends on how many of your routes this stop has (one dot each, whether or not
@@ -286,7 +287,10 @@ var islandData = {
   b: perRoute,
   a: otherRoutes                                                // the stop's other routes: { k, d, t: [up to 3 times] } (4.41)
 };
-setGlobal('BusStateIslandData', JSON.stringify(Object.assign({}, islandData, { fit: want })));   // fit: the right half's width (4.46)
+// nx (4.56): the stop a long press goes to, as opposite.js would show it, so the page switches to it the
+// moment a hold is long enough instead of waiting for Tasker (not kept in BusStateIslandByStop below)
+var nextHere = nextStop(now, islandData);
+setGlobal('BusStateIslandData', JSON.stringify(Object.assign({}, islandData, { fit: want }, nextHere ? { nx: nextHere.d } : {})));   // fit: the right half's width (4.46)
 // Each stop's last island data, for the 4 stops fetched most recently (4.43): a long press shows the
 // stop it switches to at once, with these times if they're under 3 minutes old (opposite.js)
 var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) {}

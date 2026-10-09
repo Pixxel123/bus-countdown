@@ -46,7 +46,7 @@ module.exports = [
   {
     // Shared pieces are used by the scripts that include them, and can use each other's helpers
     files: ['scripts/shared/*.js'],
-    languageOptions: { globals: { get: 'readonly', loc: 'readonly', metres: 'readonly', bearingTo: 'readonly' } },
+    languageOptions: { globals: { get: 'readonly', loc: 'readonly', metres: 'readonly', bearingTo: 'readonly', stopLetter: 'readonly' } },
     rules: { 'no-unused-vars': 'off' },
   },
 ];

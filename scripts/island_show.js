@@ -190,6 +190,7 @@ var PAGE = String.raw`<!doctype html>
   #p.armed .h, #p.armed #board { opacity: .45; }
   #p.gone { opacity: 0 !important; transition: opacity .12s !important; }
   #p.back .h { opacity: 0; transform: translateX(6px); }    /* slide to previous */
+  #p.arrive .h { opacity: 0; transform: translateX(6px); transition: none; }   /* a stop switched to slides in (4.56) */
 
   /* Countdown border: an SVG outline laid over the island */
   #ring { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
@@ -234,7 +235,6 @@ var PAGE = String.raw`<!doctype html>
   // ms held = long press (4.48: 450, from 550, so a switch comes 0.1 s sooner; not Android's own 400,
   // as a tap on the island can last half a second)
   var HOLD = 450;
-  var NAME_MS = 600;          // a stop just switched to, with its times: how long its name shows (4.48)
   var DEFAULT_ROTATE = 6000;  // ms per route if the data doesn't say
 
   var data = null, raw = '', idx = 0, start = Date.now(), lastStop = null, flashUntil = 0;
@@ -420,13 +420,19 @@ var PAGE = String.raw`<!doctype html>
     var t = dataEl.textContent.trim();
     if (t === raw) return;
     raw = t;
+    var was = data;
     try { data = JSON.parse(t); } catch (e) { return; }
-    if (data.s !== lastStop) {        // stop changed: flash its name, restart at the first route
+    // Only the stop a long press goes to changed (its times just got ready, prefetch_store.js, 4.56):
+    // kept for a hold, with nothing to draw, and the route's turn carries on
+    if (was && withoutNext(was) === withoutNext(data)) return;
+    if (data.s !== lastStop) {        // stop changed: restart at the first route
       if (waitingFor === 'switch') { waitingFor = ''; clearTimeout(waitTimer); p.classList.remove('wait'); }
-      // With its times here already, the name shows in the left half for 0.6 s and the times at once
-      // (4.48: the whole island showed the name for 1.2 s, two thirds of a switch's wait)
-      var nameMs = buses().length ? NAME_MS : 1200;
-      if (lastStop !== null) { flashUntil = Date.now() + nameMs; setTimeout(draw, nameMs + 50); }
+      // With its times here already, its route and times slide in at once (4.56: 4.48 showed its name
+      // on the left for 0.6 s first, which said nothing the destination didn't). Without, its name.
+      if (lastStop !== null) {
+        if (buses().length) arrive();
+        else { flashUntil = Date.now() + 1200; setTimeout(draw, 1250); }
+      }
       lastStop = data.s;
       idx = 0;
     }
@@ -440,6 +446,23 @@ var PAGE = String.raw`<!doctype html>
       resizeWindow(H + BOARD_ROWS * LINE + 8, 200, 'EaseOut');
     }
     draw();
+  }
+
+  function withoutNext(d) { var c = {}; for (var k in d) { if (k !== 'nx') c[k] = d[k]; } return JSON.stringify(c); }
+  // A stop switched to (4.56): its route and times slide in, as a route does when you swipe
+  function arrive() {
+    p.classList.add('arrive');
+    requestAnimationFrame(function () { requestAnimationFrame(function () { p.classList.remove('arrive'); }); });
+  }
+  // A hold (4.56): the stop it goes to came with the data (nx, from refresh.js), so show it now, then
+  // have Tasker make it the current stop (opposite.js), whose update for the same stop changes nothing
+  // here. Without it (one stop, or the board open), wait for Tasker as before.
+  function switchHere() {
+    if (BOARD || !data || !data.nx || data.nx.s === data.s) return false;
+    data = data.nx; lastStop = data.s; idx = 0; start = Date.now(); flashUntil = 0;
+    if (buses().length) arrive();
+    draw();
+    return true;
   }
 
   /* Right half: minutes, plus one dot per route when there are several */
@@ -549,8 +572,6 @@ var PAGE = String.raw`<!doctype html>
                     '<span class="b' + (b.idle ? ' idle' : '') + '">' + esc(b.k) + '</span><span class="d' + (b.st === 'sched' ? ' sched' : '') + '">' + esc(b.d) + '</span>';
       R.innerHTML = rightHtml(b, idx);
       if (R.scrollWidth > R.clientWidth + 1) R.innerHTML = rightHtml(b, idx, true);   // too wide: just the first time
-      // A stop just switched to (4.48): its name on the left ("Stop B · High Street"), its times already on the right
-      if (naming) L.innerHTML = '<span class="s">' + esc(parts ? parts[2] + ' · ' + parts[1] : name) + '</span>';
     }
     drawRing();
   }
@@ -732,7 +753,7 @@ var PAGE = String.raw`<!doctype html>
     try { p.setPointerCapture(e.pointerId); } catch (err) {}
     holdTimer = setTimeout(function () {
       held = true;
-      waitFor('switch');
+      if (!switchHere()) waitFor('switch');
       runTask('Bus Island', { busfrom: 'island', busisland: 'switch' });
     }, HOLD);
   });

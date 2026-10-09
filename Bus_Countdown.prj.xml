@@ -1,8 +1,8 @@
 <TaskerData sr="" dvi="1" tv="6.7.6-beta">
 	<dmetric>1344.0,2992.0</dmetric>
 	<Profile sr="prof72" ve="2">
-		<cdate>1791545865477</cdate>
-		<edate>1791545865477</edate>
+		<cdate>1791548451139</cdate>
+		<edate>1791548451139</edate>
 		<flags>8</flags>
 		<id>72</id>
 		<mid0>79</mid0>
@@ -14,8 +14,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof74" ve="2">
-		<cdate>1791545865477</cdate>
-		<edate>1791545865477</edate>
+		<cdate>1791548451139</cdate>
+		<edate>1791548451139</edate>
 		<flags>8</flags>
 		<id>74</id>
 		<mid0>62</mid0>
@@ -33,8 +33,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof73" ve="2">
-		<cdate>1791545865477</cdate>
-		<edate>1791545865477</edate>
+		<cdate>1791548451139</cdate>
+		<edate>1791548451139</edate>
 		<flags>8</flags>
 		<id>73</id>
 		<mid0>59</mid0>
@@ -46,14 +46,14 @@
 		</State>
 	</Profile>
 	<Project sr="proj0" ve="2">
-		<cdate>1791545865477</cdate>
+		<cdate>1791548451139</cdate>
 		<name>Bus Countdown</name>
 		<pids>72,73,74</pids>
 		<tids>73,74,75,77,78,80,76,38,60,59,79,32,31,62,72</tids>
 	</Project>
 	<Task sr="task73">
-		<cdate>1791545865477</cdate>
-		<edate>1791545865477</edate>
+		<cdate>1791548451139</cdate>
+		<edate>1791548451139</edate>
 		<id>73</id>
 		<nme>Bus</nme>
 		<pri>6</pri>
@@ -178,11 +178,11 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.55.202610091237</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task74">
-		<cdate>1791545865477</cdate>
-		<edate>1791545865477</edate>
+		<cdate>1791548451139</cdate>
+		<edate>1791548451139</edate>
 		<id>74</id>
 		<nme>Bus Settings</nme>
 		<pri>6</pri>
@@ -201,7 +201,7 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.55.202610091237</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>First run? · Camera not measured yet</label>
@@ -1588,8 +1588,8 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buslive</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task75">
-		<cdate>1791545865478</cdate>
-		<edate>1791545865478</edate>
+		<cdate>1791548451140</cdate>
+		<edate>1791548451140</edate>
 		<id>75</id>
 		<nme>Bus Settings Button</nme>
 		<pri>6</pri>
@@ -1721,8 +1721,8 @@ if (buspreview === 'yes') {
 			<label>Open it · Shows the Android settings page</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">startActivity {} (android.content.Intent)</Str><Str sr="arg3" ve="3">busint</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busintent</lhs><op>2</op><rhs>android*</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task77">
-		<cdate>1791545865478</cdate>
-		<edate>1791545865478</edate>
+		<cdate>1791548451140</cdate>
+		<edate>1791548451140</edate>
 		<id>77</id>
 		<nme>Bus Position</nme>
 		<pri>6</pri>
@@ -2157,6 +2157,7 @@ var PAGE = String.raw`&lt;!doctype html&gt;
   #p.armed .h, #p.armed #board { opacity: .45; }
   #p.gone { opacity: 0 !important; transition: opacity .12s !important; }
   #p.back .h { opacity: 0; transform: translateX(6px); }    /* slide to previous */
+  #p.arrive .h { opacity: 0; transform: translateX(6px); transition: none; }   /* a stop switched to slides in (4.56) */
 
   /* Countdown border: an SVG outline laid over the island */
   #ring { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
@@ -2201,7 +2202,6 @@ var PAGE = String.raw`&lt;!doctype html&gt;
   // ms held = long press (4.48: 450, from 550, so a switch comes 0.1 s sooner; not Android's own 400,
   // as a tap on the island can last half a second)
   var HOLD = 450;
-  var NAME_MS = 600;          // a stop just switched to, with its times: how long its name shows (4.48)
   var DEFAULT_ROTATE = 6000;  // ms per route if the data doesn't say
 
   var data = null, raw = '', idx = 0, start = Date.now(), lastStop = null, flashUntil = 0;
@@ -2450,13 +2450,19 @@ var PAGE = String.raw`&lt;!doctype html&gt;
     var t = dataEl.textContent.trim();
     if (t === raw) return;
     raw = t;
+    var was = data;
     try { data = JSON.parse(t); } catch (e) { return; }
-    if (data.s !== lastStop) {        // stop changed: flash its name, restart at the first route
+    // Only the stop a long press goes to changed (its times just got ready, prefetch_store.js, 4.56):
+    // kept for a hold, with nothing to draw, and the route's turn carries on
+    if (was &amp;&amp; withoutNext(was) === withoutNext(data)) return;
+    if (data.s !== lastStop) {        // stop changed: restart at the first route
       if (waitingFor === 'switch') { waitingFor = ''; clearTimeout(waitTimer); p.classList.remove('wait'); }
-      // With its times here already, the name shows in the left half for 0.6 s and the times at once
-      // (4.48: the whole island showed the name for 1.2 s, two thirds of a switch's wait)
-      var nameMs = buses().length ? NAME_MS : 1200;
-      if (lastStop !== null) { flashUntil = Date.now() + nameMs; setTimeout(draw, nameMs + 50); }
+      // With its times here already, its route and times slide in at once (4.56: 4.48 showed its name
+      // on the left for 0.6 s first, which said nothing the destination didn't). Without, its name.
+      if (lastStop !== null) {
+        if (buses().length) arrive();
+        else { flashUntil = Date.now() + 1200; setTimeout(draw, 1250); }
+      }
       lastStop = data.s;
       idx = 0;
     }
@@ -2470,6 +2476,23 @@ var PAGE = String.raw`&lt;!doctype html&gt;
       resizeWindow(H + BOARD_ROWS * LINE + 8, 200, 'EaseOut');
     }
     draw();
+  }
+
+  function withoutNext(d) { var c = {}; for (var k in d) { if (k !== 'nx') c[k] = d[k]; } return JSON.stringify(c); }
+  // A stop switched to (4.56): its route and times slide in, as a route does when you swipe
+  function arrive() {
+    p.classList.add('arrive');
+    requestAnimationFrame(function () { requestAnimationFrame(function () { p.classList.remove('arrive'); }); });
+  }
+  // A hold (4.56): the stop it goes to came with the data (nx, from refresh.js), so show it now, then
+  // have Tasker make it the current stop (opposite.js), whose update for the same stop changes nothing
+  // here. Without it (one stop, or the board open), wait for Tasker as before.
+  function switchHere() {
+    if (BOARD || !data || !data.nx || data.nx.s === data.s) return false;
+    data = data.nx; lastStop = data.s; idx = 0; start = Date.now(); flashUntil = 0;
+    if (buses().length) arrive();
+    draw();
+    return true;
   }
 
   /* Right half: minutes, plus one dot per route when there are several */
@@ -2579,8 +2602,6 @@ var PAGE = String.raw`&lt;!doctype html&gt;
                     '&lt;span class="b' + (b.idle ? ' idle' : '') + '"&gt;' + esc(b.k) + '&lt;/span&gt;&lt;span class="d' + (b.st === 'sched' ? ' sched' : '') + '"&gt;' + esc(b.d) + '&lt;/span&gt;';
       R.innerHTML = rightHtml(b, idx);
       if (R.scrollWidth &gt; R.clientWidth + 1) R.innerHTML = rightHtml(b, idx, true);   // too wide: just the first time
-      // A stop just switched to (4.48): its name on the left ("Stop B · High Street"), its times already on the right
-      if (naming) L.innerHTML = '&lt;span class="s"&gt;' + esc(parts ? parts[2] + ' · ' + parts[1] : name) + '&lt;/span&gt;';
     }
     drawRing();
   }
@@ -2780,7 +2801,7 @@ var PAGE = String.raw`&lt;!doctype html&gt;
     try { p.setPointerCapture(e.pointerId); } catch (err) {}
     holdTimer = setTimeout(function () {
       held = true;
-      waitFor('switch');
+      if (!switchHere()) waitFor('switch');
       runTask('Bus Island', { busfrom: 'island', busisland: 'switch' });
     }, HOLD);
   });
@@ -3029,8 +3050,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task78">
-		<cdate>1791545865478</cdate>
-		<edate>1791545865478</edate>
+		<cdate>1791548451140</cdate>
+		<edate>1791548451140</edate>
 		<id>78</id>
 		<nme>Bus Position Set</nme>
 		<pri>6</pri>
@@ -3048,8 +3069,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task80">
-		<cdate>1791545865478</cdate>
-		<edate>1791545865478</edate>
+		<cdate>1791548451140</cdate>
+		<edate>1791548451140</edate>
 		<id>80</id>
 		<nme>Bus Position Done</nme>
 		<pri>6</pri>
@@ -3154,8 +3175,8 @@ var busmsg = changed.length ? 'Saved: ' + changed.join(', ') : 'none';
 		</Action>
 	</Task>
 	<Task sr="task76">
-		<cdate>1791545865478</cdate>
-		<edate>1791545865478</edate>
+		<cdate>1791548451140</cdate>
+		<edate>1791548451140</edate>
 		<id>76</id>
 		<nme>Bus Find Camera</nme>
 		<pri>6</pri>
@@ -3288,8 +3309,8 @@ if (!r || !dens || !w) {
 			<label>Reset position: move the open screen's height slider · Shows the new value straight away</label><Str sr="arg0" ve="3">bussettings</Str><Str sr="arg1" ve="3">sl_y</Str><Str sr="arg2" ve="3">value</Str><Str sr="arg3" ve="3">%BusIslandY</Str><Int sr="arg4" val="0"/><Str sr="arg5" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrebuild</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task38">
-		<cdate>1791545865478</cdate>
-		<edate>1791545865478</edate>
+		<cdate>1791548451140</cdate>
+		<edate>1791548451140</edate>
 		<id>38</id>
 		<nme>Bus Start</nme>
 		<pri>6</pri>
@@ -3307,7 +3328,7 @@ if (!r || !dens || !w) {
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.55.202610091237</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>Settings: fill in defaults, check TflKey and BusRoutes · Resets empty or invalid settings</label>
@@ -4149,8 +4170,8 @@ record(busok === 'yes' ? 'start' : 'nostart', { stop: get('BusStateStopId'), nam
 		</Action>
 	</Task>
 	<Task sr="task60">
-		<cdate>1791545865478</cdate>
-		<edate>1791545865478</edate>
+		<cdate>1791548451140</cdate>
+		<edate>1791548451140</edate>
 		<id>60</id>
 		<nme>Bus Loop</nme>
 		<pri>6</pri>
@@ -4490,8 +4511,8 @@ var buspushm = get('BusStatePushM') || '30';
 		</Action>
 	</Task>
 	<Task sr="task59">
-		<cdate>1791545865478</cdate>
-		<edate>1791545865478</edate>
+		<cdate>1791548451140</cdate>
+		<edate>1791548451140</edate>
 		<id>59</id>
 		<nme>Bus Refresh</nme>
 		<pri>6</pri>
@@ -5128,6 +5149,21 @@ function stopLetter(name) {
   var l = /^stop\s+([a-z][a-z0-9]?)$/i.exec(ind);
   return l ? l[1].toUpperCase() : '';
 }
+// The stop a long press goes to, and what the island shows for it (4.56): the next of the stops Bus
+// Start found (usually the one across the road), wrapping round, with its island data if that's under
+// 3 minutes old, or else its name, waiting for times (w). Shared by opposite.js, which switches to it,
+// and refresh.js and prefetch_store.js, which hand it to the island's page (nx) so a hold shows it at
+// once. at: the time; cur: the island's data now (its refresh and rotation times are kept). null with
+// fewer than two stops.
+function nextStop(at, cur) {
+  var stops = []; try { stops = JSON.parse(get('BusStateNearbyStops') || '[]') || []; } catch (e) { stops = []; }
+  if (stops.length &lt; 2) return null;
+  var i = ((parseInt(get('BusStateStopIndex'), 10) || 0) + 1) % stops.length;
+  var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) { byStop = {}; }
+  var was = byStop[stops[i].id];
+  return { i: i, stop: stops[i], d: was &amp;&amp; at - was.u &lt; 3 * 60000 ? was
+    : { u: at, r: cur.r, rot: cur.rot, s: stops[i].id, n: stops[i].name, l: stopLetter(stops[i].name), b: [], a: [], w: 1 } };
+}
 var busletter = stopLetter(get('BusStateStopName'));
 
 // The island's size depends on how many of your routes this stop has (one dot each, whether or not
@@ -5178,7 +5214,10 @@ var islandData = {
   b: perRoute,
   a: otherRoutes                                                // the stop's other routes: { k, d, t: [up to 3 times] } (4.41)
 };
-setGlobal('BusStateIslandData', JSON.stringify(Object.assign({}, islandData, { fit: want })));   // fit: the right half's width (4.46)
+// nx (4.56): the stop a long press goes to, as opposite.js would show it, so the page switches to it the
+// moment a hold is long enough instead of waiting for Tasker (not kept in BusStateIslandByStop below)
+var nextHere = nextStop(now, islandData);
+setGlobal('BusStateIslandData', JSON.stringify(Object.assign({}, islandData, { fit: want }, nextHere ? { nx: nextHere.d } : {})));   // fit: the right half's width (4.46)
 // Each stop's last island data, for the 4 stops fetched most recently (4.43): a long press shows the
 // stop it switches to at once, with these times if they're under 3 minutes old (opposite.js)
 var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) {}
@@ -5637,6 +5676,7 @@ var PAGE = String.raw`&lt;!doctype html&gt;
   #p.armed .h, #p.armed #board { opacity: .45; }
   #p.gone { opacity: 0 !important; transition: opacity .12s !important; }
   #p.back .h { opacity: 0; transform: translateX(6px); }    /* slide to previous */
+  #p.arrive .h { opacity: 0; transform: translateX(6px); transition: none; }   /* a stop switched to slides in (4.56) */
 
   /* Countdown border: an SVG outline laid over the island */
   #ring { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
@@ -5681,7 +5721,6 @@ var PAGE = String.raw`&lt;!doctype html&gt;
   // ms held = long press (4.48: 450, from 550, so a switch comes 0.1 s sooner; not Android's own 400,
   // as a tap on the island can last half a second)
   var HOLD = 450;
-  var NAME_MS = 600;          // a stop just switched to, with its times: how long its name shows (4.48)
   var DEFAULT_ROTATE = 6000;  // ms per route if the data doesn't say
 
   var data = null, raw = '', idx = 0, start = Date.now(), lastStop = null, flashUntil = 0;
@@ -5930,13 +5969,19 @@ var PAGE = String.raw`&lt;!doctype html&gt;
     var t = dataEl.textContent.trim();
     if (t === raw) return;
     raw = t;
+    var was = data;
     try { data = JSON.parse(t); } catch (e) { return; }
-    if (data.s !== lastStop) {        // stop changed: flash its name, restart at the first route
+    // Only the stop a long press goes to changed (its times just got ready, prefetch_store.js, 4.56):
+    // kept for a hold, with nothing to draw, and the route's turn carries on
+    if (was &amp;&amp; withoutNext(was) === withoutNext(data)) return;
+    if (data.s !== lastStop) {        // stop changed: restart at the first route
       if (waitingFor === 'switch') { waitingFor = ''; clearTimeout(waitTimer); p.classList.remove('wait'); }
-      // With its times here already, the name shows in the left half for 0.6 s and the times at once
-      // (4.48: the whole island showed the name for 1.2 s, two thirds of a switch's wait)
-      var nameMs = buses().length ? NAME_MS : 1200;
-      if (lastStop !== null) { flashUntil = Date.now() + nameMs; setTimeout(draw, nameMs + 50); }
+      // With its times here already, its route and times slide in at once (4.56: 4.48 showed its name
+      // on the left for 0.6 s first, which said nothing the destination didn't). Without, its name.
+      if (lastStop !== null) {
+        if (buses().length) arrive();
+        else { flashUntil = Date.now() + 1200; setTimeout(draw, 1250); }
+      }
       lastStop = data.s;
       idx = 0;
     }
@@ -5950,6 +5995,23 @@ var PAGE = String.raw`&lt;!doctype html&gt;
       resizeWindow(H + BOARD_ROWS * LINE + 8, 200, 'EaseOut');
     }
     draw();
+  }
+
+  function withoutNext(d) { var c = {}; for (var k in d) { if (k !== 'nx') c[k] = d[k]; } return JSON.stringify(c); }
+  // A stop switched to (4.56): its route and times slide in, as a route does when you swipe
+  function arrive() {
+    p.classList.add('arrive');
+    requestAnimationFrame(function () { requestAnimationFrame(function () { p.classList.remove('arrive'); }); });
+  }
+  // A hold (4.56): the stop it goes to came with the data (nx, from refresh.js), so show it now, then
+  // have Tasker make it the current stop (opposite.js), whose update for the same stop changes nothing
+  // here. Without it (one stop, or the board open), wait for Tasker as before.
+  function switchHere() {
+    if (BOARD || !data || !data.nx || data.nx.s === data.s) return false;
+    data = data.nx; lastStop = data.s; idx = 0; start = Date.now(); flashUntil = 0;
+    if (buses().length) arrive();
+    draw();
+    return true;
   }
 
   /* Right half: minutes, plus one dot per route when there are several */
@@ -6059,8 +6121,6 @@ var PAGE = String.raw`&lt;!doctype html&gt;
                     '&lt;span class="b' + (b.idle ? ' idle' : '') + '"&gt;' + esc(b.k) + '&lt;/span&gt;&lt;span class="d' + (b.st === 'sched' ? ' sched' : '') + '"&gt;' + esc(b.d) + '&lt;/span&gt;';
       R.innerHTML = rightHtml(b, idx);
       if (R.scrollWidth &gt; R.clientWidth + 1) R.innerHTML = rightHtml(b, idx, true);   // too wide: just the first time
-      // A stop just switched to (4.48): its name on the left ("Stop B · High Street"), its times already on the right
-      if (naming) L.innerHTML = '&lt;span class="s"&gt;' + esc(parts ? parts[2] + ' · ' + parts[1] : name) + '&lt;/span&gt;';
     }
     drawRing();
   }
@@ -6260,7 +6320,7 @@ var PAGE = String.raw`&lt;!doctype html&gt;
     try { p.setPointerCapture(e.pointerId); } catch (err) {}
     holdTimer = setTimeout(function () {
       held = true;
-      waitFor('switch');
+      if (!switchHere()) waitFor('switch');
       runTask('Bus Island', { busfrom: 'island', busisland: 'switch' });
     }, HOLD);
   });
@@ -6920,6 +6980,21 @@ function stopLetter(name) {
   var l = /^stop\s+([a-z][a-z0-9]?)$/i.exec(ind);
   return l ? l[1].toUpperCase() : '';
 }
+// The stop a long press goes to, and what the island shows for it (4.56): the next of the stops Bus
+// Start found (usually the one across the road), wrapping round, with its island data if that's under
+// 3 minutes old, or else its name, waiting for times (w). Shared by opposite.js, which switches to it,
+// and refresh.js and prefetch_store.js, which hand it to the island's page (nx) so a hold shows it at
+// once. at: the time; cur: the island's data now (its refresh and rotation times are kept). null with
+// fewer than two stops.
+function nextStop(at, cur) {
+  var stops = []; try { stops = JSON.parse(get('BusStateNearbyStops') || '[]') || []; } catch (e) { stops = []; }
+  if (stops.length &lt; 2) return null;
+  var i = ((parseInt(get('BusStateStopIndex'), 10) || 0) + 1) % stops.length;
+  var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) { byStop = {}; }
+  var was = byStop[stops[i].id];
+  return { i: i, stop: stops[i], d: was &amp;&amp; at - was.u &lt; 3 * 60000 ? was
+    : { u: at, r: cur.r, rot: cur.rot, s: stops[i].id, n: stops[i].name, l: stopLetter(stops[i].name), b: [], a: [], w: 1 } };
+}
 var busletter = stopLetter(get('BusStateStopName'));
 
 // The island's size depends on how many of your routes this stop has (one dot each, whether or not
@@ -6970,7 +7045,10 @@ var islandData = {
   b: perRoute,
   a: otherRoutes                                                // the stop's other routes: { k, d, t: [up to 3 times] } (4.41)
 };
-setGlobal('BusStateIslandData', JSON.stringify(Object.assign({}, islandData, { fit: want })));   // fit: the right half's width (4.46)
+// nx (4.56): the stop a long press goes to, as opposite.js would show it, so the page switches to it the
+// moment a hold is long enough instead of waiting for Tasker (not kept in BusStateIslandByStop below)
+var nextHere = nextStop(now, islandData);
+setGlobal('BusStateIslandData', JSON.stringify(Object.assign({}, islandData, { fit: want }, nextHere ? { nx: nextHere.d } : {})));   // fit: the right half's width (4.46)
 // Each stop's last island data, for the 4 stops fetched most recently (4.43): a long press shows the
 // stop it switches to at once, with these times if they're under 3 minutes old (opposite.js)
 var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) {}
@@ -7437,6 +7515,7 @@ var PAGE = String.raw`&lt;!doctype html&gt;
   #p.armed .h, #p.armed #board { opacity: .45; }
   #p.gone { opacity: 0 !important; transition: opacity .12s !important; }
   #p.back .h { opacity: 0; transform: translateX(6px); }    /* slide to previous */
+  #p.arrive .h { opacity: 0; transform: translateX(6px); transition: none; }   /* a stop switched to slides in (4.56) */
 
   /* Countdown border: an SVG outline laid over the island */
   #ring { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
@@ -7481,7 +7560,6 @@ var PAGE = String.raw`&lt;!doctype html&gt;
   // ms held = long press (4.48: 450, from 550, so a switch comes 0.1 s sooner; not Android's own 400,
   // as a tap on the island can last half a second)
   var HOLD = 450;
-  var NAME_MS = 600;          // a stop just switched to, with its times: how long its name shows (4.48)
   var DEFAULT_ROTATE = 6000;  // ms per route if the data doesn't say
 
   var data = null, raw = '', idx = 0, start = Date.now(), lastStop = null, flashUntil = 0;
@@ -7730,13 +7808,19 @@ var PAGE = String.raw`&lt;!doctype html&gt;
     var t = dataEl.textContent.trim();
     if (t === raw) return;
     raw = t;
+    var was = data;
     try { data = JSON.parse(t); } catch (e) { return; }
-    if (data.s !== lastStop) {        // stop changed: flash its name, restart at the first route
+    // Only the stop a long press goes to changed (its times just got ready, prefetch_store.js, 4.56):
+    // kept for a hold, with nothing to draw, and the route's turn carries on
+    if (was &amp;&amp; withoutNext(was) === withoutNext(data)) return;
+    if (data.s !== lastStop) {        // stop changed: restart at the first route
       if (waitingFor === 'switch') { waitingFor = ''; clearTimeout(waitTimer); p.classList.remove('wait'); }
-      // With its times here already, the name shows in the left half for 0.6 s and the times at once
-      // (4.48: the whole island showed the name for 1.2 s, two thirds of a switch's wait)
-      var nameMs = buses().length ? NAME_MS : 1200;
-      if (lastStop !== null) { flashUntil = Date.now() + nameMs; setTimeout(draw, nameMs + 50); }
+      // With its times here already, its route and times slide in at once (4.56: 4.48 showed its name
+      // on the left for 0.6 s first, which said nothing the destination didn't). Without, its name.
+      if (lastStop !== null) {
+        if (buses().length) arrive();
+        else { flashUntil = Date.now() + 1200; setTimeout(draw, 1250); }
+      }
       lastStop = data.s;
       idx = 0;
     }
@@ -7750,6 +7834,23 @@ var PAGE = String.raw`&lt;!doctype html&gt;
       resizeWindow(H + BOARD_ROWS * LINE + 8, 200, 'EaseOut');
     }
     draw();
+  }
+
+  function withoutNext(d) { var c = {}; for (var k in d) { if (k !== 'nx') c[k] = d[k]; } return JSON.stringify(c); }
+  // A stop switched to (4.56): its route and times slide in, as a route does when you swipe
+  function arrive() {
+    p.classList.add('arrive');
+    requestAnimationFrame(function () { requestAnimationFrame(function () { p.classList.remove('arrive'); }); });
+  }
+  // A hold (4.56): the stop it goes to came with the data (nx, from refresh.js), so show it now, then
+  // have Tasker make it the current stop (opposite.js), whose update for the same stop changes nothing
+  // here. Without it (one stop, or the board open), wait for Tasker as before.
+  function switchHere() {
+    if (BOARD || !data || !data.nx || data.nx.s === data.s) return false;
+    data = data.nx; lastStop = data.s; idx = 0; start = Date.now(); flashUntil = 0;
+    if (buses().length) arrive();
+    draw();
+    return true;
   }
 
   /* Right half: minutes, plus one dot per route when there are several */
@@ -7859,8 +7960,6 @@ var PAGE = String.raw`&lt;!doctype html&gt;
                     '&lt;span class="b' + (b.idle ? ' idle' : '') + '"&gt;' + esc(b.k) + '&lt;/span&gt;&lt;span class="d' + (b.st === 'sched' ? ' sched' : '') + '"&gt;' + esc(b.d) + '&lt;/span&gt;';
       R.innerHTML = rightHtml(b, idx);
       if (R.scrollWidth &gt; R.clientWidth + 1) R.innerHTML = rightHtml(b, idx, true);   // too wide: just the first time
-      // A stop just switched to (4.48): its name on the left ("Stop B · High Street"), its times already on the right
-      if (naming) L.innerHTML = '&lt;span class="s"&gt;' + esc(parts ? parts[2] + ' · ' + parts[1] : name) + '&lt;/span&gt;';
     }
     drawRing();
   }
@@ -8060,7 +8159,7 @@ var PAGE = String.raw`&lt;!doctype html&gt;
     try { p.setPointerCapture(e.pointerId); } catch (err) {}
     holdTimer = setTimeout(function () {
       held = true;
-      waitFor('switch');
+      if (!switchHere()) waitFor('switch');
       runTask('Bus Island', { busfrom: 'island', busisland: 'switch' });
     }, HOLD);
   });
@@ -8480,7 +8579,9 @@ var busttstop = busprestop;
      for stops it has shown), so opposite.js shows its times the moment
      you hold the island: your routes' next three times and the stop's
      other routes, live times only (Bus Refresh adds the timetable's a
-     moment later).
+     moment later);
+   - and (4.56) as the island's nx, so its page shows it the moment you
+     hold the island, without waiting for Tasker.
    A failed fetch keeps the last.
    Output: busliveroutes (your routes with a live time there, for
            tt_check.js: the timetable is only needed for the others)
@@ -8498,6 +8599,21 @@ function stopLetter(name) {
   var m = /\(([^)]*)\)\s*$/.exec(name || ''); var ind = m ? m[1].trim() : '';
   var l = /^stop\s+([a-z][a-z0-9]?)$/i.exec(ind);
   return l ? l[1].toUpperCase() : '';
+}
+// The stop a long press goes to, and what the island shows for it (4.56): the next of the stops Bus
+// Start found (usually the one across the road), wrapping round, with its island data if that's under
+// 3 minutes old, or else its name, waiting for times (w). Shared by opposite.js, which switches to it,
+// and refresh.js and prefetch_store.js, which hand it to the island's page (nx) so a hold shows it at
+// once. at: the time; cur: the island's data now (its refresh and rotation times are kept). null with
+// fewer than two stops.
+function nextStop(at, cur) {
+  var stops = []; try { stops = JSON.parse(get('BusStateNearbyStops') || '[]') || []; } catch (e) { stops = []; }
+  if (stops.length &lt; 2) return null;
+  var i = ((parseInt(get('BusStateStopIndex'), 10) || 0) + 1) % stops.length;
+  var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) { byStop = {}; }
+  var was = byStop[stops[i].id];
+  return { i: i, stop: stops[i], d: was &amp;&amp; at - was.u &lt; 3 * 60000 ? was
+    : { u: at, r: cur.r, rot: cur.rot, s: stops[i].id, n: stops[i].name, l: stopLetter(stops[i].name), b: [], a: [], w: 1 } };
 }
 var now = Date.now();
 var busliveroutes = '';
@@ -8535,6 +8651,13 @@ if (loc('http_response_code') === '200' &amp;&amp; loc('busprestop')) {
     // The 4 stops with the newest times, as refresh.js keeps them
     setGlobal('BusStateIslandByStop', JSON.stringify(Object.keys(byStop).sort(function (a, b) { return byStop[b].u - byStop[a].u; }).slice(0, 4)
       .reduce(function (o, k) { o[k] = byStop[k]; return o; }, {})));
+    // The island's page gets them too (4.56: nx, as refresh.js hands it), so a hold shows these times
+    // at once. Only nx changes, in its place, so the page doesn't restart the route's turn.
+    var nextHere = nextStop(now, cur);
+    if (nextHere &amp;&amp; nextHere.stop.id === loc('busprestop') &amp;&amp; cur.s) {
+      cur.nx = nextHere.d;
+      setGlobal('BusStateIslandData', JSON.stringify(cur));
+    }
   } catch (e) {}
 }
 </Str>
@@ -8699,40 +8822,40 @@ setGlobal('BusCacheTimetable', JSON.stringify(tt));
 		</Action>
 	</Task>
 	<Task sr="task79">
-		<cdate>1791545865480</cdate>
-		<edate>1791545865480</edate>
+		<cdate>1791548451142</cdate>
+		<edate>1791548451142</edate>
 		<id>79</id>
 		<nme>Bus Wake</nme>
 		<pri>6</pri>
 		<Action sr="act0" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.55.202610091237</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.55.202610091237</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
 		<Action sr="act2" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.55.202610091237</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
 		<Action sr="act3" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.55.202610091237</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
 		<Action sr="act4" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.55.202610091237</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
 		<Action sr="act5" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.55.202610091237</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
 		<Action sr="act6" ve="7">
 			<code>547</code>
 			<label>This build · Version and build time</label>
 			<Str sr="arg0" ve="3">%busbuild</Str>
-			<Str sr="arg1" ve="3">4.55.202610091237</Str>
+			<Str sr="arg1" ve="3">4.56.202610091320</Str>
 			<Int sr="arg2" val="0"/>
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.55.202610091237</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
 		<Action sr="act7" ve="7">
 			<code>129</code>
 			<label>Remember it was done for this build · BusStateVersion</label>
@@ -8758,11 +8881,11 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.55.202610091237</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
 		<Action sr="act8" ve="7">
 			<code>548</code>
 			<label>Say so · A short message</label>
-			<Str sr="arg0" ve="3">Bus countdown 4.55: profiles switched on</Str>
+			<Str sr="arg0" ve="3">Bus countdown 4.56: profiles switched on</Str>
 			<Int sr="arg1" val="0"/>
 			<Str sr="arg10" ve="3"/>
 			<Int sr="arg11" val="1"/>
@@ -8778,7 +8901,7 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg7" ve="3"/>
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.55.202610091237</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
 		<Action sr="act9" ve="7">
 			<code>137</code>
 			<label>Only asked to switch the profiles: done · Started by another task with par1 "profiles"</label>
@@ -9140,8 +9263,8 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 		</Action>
 	</Task>
 	<Task sr="task32">
-		<cdate>1791545865480</cdate>
-		<edate>1791545865480</edate>
+		<cdate>1791548451142</cdate>
+		<edate>1791548451142</edate>
 		<id>32</id>
 		<nme>Bus End</nme>
 		<pri>6</pri>
@@ -9402,8 +9525,8 @@ setGlobal('BusStateMatch', '');
 		</Action>
 	</Task>
 	<Task sr="task31">
-		<cdate>1791545865480</cdate>
-		<edate>1791545865480</edate>
+		<cdate>1791548451142</cdate>
+		<edate>1791548451142</edate>
 		<id>31</id>
 		<nme>Bus Island</nme>
 		<pri>6</pri>
@@ -9428,7 +9551,13 @@ setGlobal('BusStateMatch', '');
    times if they were fetched under 3 minutes ago (they count down from
    then), until Bus Refresh brings fresh ones. Until then it kept showing
    the old stop for the 4 to 5 s the fetch took.
+   4.56: the island's page has usually switched by itself already (from nx,
+   which refresh.js hands it); this makes it the current stop, with the
+   one after it as its nx, so another hold switches straight back.
    ================================================================== */
+// A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
+// name, starting with %)
+function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
 // The stop's letter, from its TfL indicator ("Stop B" -&gt; B, "Stop BK" -&gt; BK). Stops without one
 // (indicators like "opp" or "-&gt;N", or none at all) get no letter, and the island shows none. Shared
 // by refresh.js and, for the stop a long press switches to, opposite.js (4.43).
@@ -9437,19 +9566,31 @@ function stopLetter(name) {
   var l = /^stop\s+([a-z][a-z0-9]?)$/i.exec(ind);
   return l ? l[1].toUpperCase() : '';
 }
+// The stop a long press goes to, and what the island shows for it (4.56): the next of the stops Bus
+// Start found (usually the one across the road), wrapping round, with its island data if that's under
+// 3 minutes old, or else its name, waiting for times (w). Shared by opposite.js, which switches to it,
+// and refresh.js and prefetch_store.js, which hand it to the island's page (nx) so a hold shows it at
+// once. at: the time; cur: the island's data now (its refresh and rotation times are kept). null with
+// fewer than two stops.
+function nextStop(at, cur) {
+  var stops = []; try { stops = JSON.parse(get('BusStateNearbyStops') || '[]') || []; } catch (e) { stops = []; }
+  if (stops.length &lt; 2) return null;
+  var i = ((parseInt(get('BusStateStopIndex'), 10) || 0) + 1) % stops.length;
+  var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) { byStop = {}; }
+  var was = byStop[stops[i].id];
+  return { i: i, stop: stops[i], d: was &amp;&amp; at - was.u &lt; 3 * 60000 ? was
+    : { u: at, r: cur.r, rot: cur.rot, s: stops[i].id, n: stops[i].name, l: stopLetter(stops[i].name), b: [], a: [], w: 1 } };
+}
 var stops = JSON.parse(global('BusStateNearbyStops') || '[]');
 if (stops.length) {
-  var i = (parseInt(global('BusStateStopIndex'), 10) + 1) % stops.length;
-  setGlobal('BusStateStopIndex', String(i));
-  setGlobal('BusStateStopId', stops[i].id);
-  setGlobal('BusStateStopName', stops[i].name);
-  setGlobal('BusStateStopDistance', String(stops[i].dist));
-  var byStop = {}; try { byStop = JSON.parse(global('BusStateIslandByStop') || '{}') || {}; } catch (e) {}
   var cur = {}; try { cur = JSON.parse(global('BusStateIslandData') || '{}') || {}; } catch (e) {}
-  var was = byStop[stops[i].id];
-  // w: waiting for its times (the island shows the stop's name until they come)
-  setGlobal('BusStateIslandData', JSON.stringify(was &amp;&amp; Date.now() - was.u &lt; 3 * 60000 ? was
-    : { u: Date.now(), r: cur.r, rot: cur.rot, s: stops[i].id, n: stops[i].name, l: stopLetter(stops[i].name), b: [], a: [], w: 1 }));
+  var next = nextStop(Date.now(), cur) || { i: 0, stop: stops[0], d: Object.assign({}, cur, { nx: undefined }) };
+  setGlobal('BusStateStopIndex', String(next.i));
+  setGlobal('BusStateStopId', next.stop.id);
+  setGlobal('BusStateStopName', next.stop.name);
+  setGlobal('BusStateStopDistance', String(next.stop.dist));
+  var after = nextStop(Date.now(), cur);
+  setGlobal('BusStateIslandData', JSON.stringify(after ? Object.assign({}, next.d, { nx: after.d }) : next.d));
 }
 </Str>
 			<Str sr="arg1" ve="3"/>
@@ -9550,8 +9691,8 @@ if (stops.length) {
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busdo</lhs><op>2</op><rhs>switch/open/close/open-grown/fit</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task62">
-		<cdate>1791545865480</cdate>
-		<edate>1791545865480</edate>
+		<cdate>1791548451142</cdate>
+		<edate>1791548451142</edate>
 		<id>62</id>
 		<nme>Bus Watch</nme>
 		<pri>6</pri>
@@ -11231,8 +11372,8 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busaction</lhs><op>2</op><rhs>stop</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task72">
-		<cdate>1791545865481</cdate>
-		<edate>1791545865481</edate>
+		<cdate>1791548451142</cdate>
+		<edate>1791548451142</edate>
 		<id>72</id>
 		<nme>Bus Status</nme>
 		<pri>6</pri>

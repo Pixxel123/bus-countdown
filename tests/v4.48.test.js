@@ -1,7 +1,8 @@
 // V4.48: a stop switched to with its times shows them at once, with its name on the left for 0.6 s
 // instead of over the whole island for 1.2 s; and a long press is 450 ms, not 550. (4.48 also sized the
 // island for Android's font size, which 4.50 took out, and drew Preview's island at its board's
-// width; Preview went in 4.52.)
+// width; Preview went in 4.52. 4.56 shows the stop's route at once, sliding in, rather than its name on
+// the left: see tests/v4.56.test.js.)
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert');
@@ -16,15 +17,12 @@ const G = (extra) => Object.assign({ BusRoutes: '517,566', BusDestLetters: '3', 
   BusStateBoard: '0', BusStateIslandData: JSON.stringify(KH) }, extra || {});
 
 // ---- 1. Switching stop ------------------------------------------------------------------------------
-test('the page, run: a stop switched to with its times shows them at once, its name on the left for 0.6 s', () => {
+test('the page, run: a stop switched to with its times shows them at once (4.56: with its route, not its name)', () => {
   const page = runPage(G(), AT);
   page.push(KJ);
-  assert.match(page.L.innerHTML, /Stop KJ · Kiln Street/);
   assert.match(page.R.innerHTML, /4/, 'its times already');
-  assert.doesNotMatch(page.R.innerHTML, /Kiln Street/);
-  page.advance(650);
-  assert.match(page.L.innerHTML, /566/, 'then its first route');
-  assert.doesNotMatch(page.L.innerHTML, /Kiln Street/);
+  assert.match(page.L.innerHTML, /566/, 'and its first route');
+  assert.doesNotMatch(page.L.innerHTML + page.R.innerHTML, /Kiln Street/);
 });
 
 test('the page, run: still waiting for its times, the whole island shows its name until they come', () => {

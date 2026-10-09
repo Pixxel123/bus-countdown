@@ -112,7 +112,8 @@ test('a long press shows the new stop at once: its times from under 3 minutes ag
   let g = Object.assign(base(), { BusStateIslandByStop: JSON.stringify({ KJ: recent }) });
   run('opposite.js', { globals: g, now: AT });
   assert.strictEqual(g.BusStateStopId, 'KJ');
-  assert.deepStrictEqual(JSON.parse(g.BusStateIslandData), recent);
+  const switched = JSON.parse(g.BusStateIslandData); delete switched.nx;   // (4.56: with the stop after it, for the page)
+  assert.deepStrictEqual(switched, recent);
   g = Object.assign(base(), { BusStateIslandByStop: JSON.stringify({ KJ: Object.assign({}, recent, { u: AT - 200000 }) }) });
   run('opposite.js', { globals: g, now: AT });
   const shown = JSON.parse(g.BusStateIslandData);

@@ -6,19 +6,21 @@
    times if they were fetched under 3 minutes ago (they count down from
    then), until Bus Refresh brings fresh ones. Until then it kept showing
    the old stop for the 4 to 5 s the fetch took.
+   4.56: the island's page has usually switched by itself already (from nx,
+   which refresh.js hands it); this makes it the current stop, with the
+   one after it as its nx, so another hold switches straight back.
    ================================================================== */
+/* @include get */
 /* @include stopLetter */
+/* @include nextStop */
 var stops = JSON.parse(global('BusStateNearbyStops') || '[]');
 if (stops.length) {
-  var i = (parseInt(global('BusStateStopIndex'), 10) + 1) % stops.length;
-  setGlobal('BusStateStopIndex', String(i));
-  setGlobal('BusStateStopId', stops[i].id);
-  setGlobal('BusStateStopName', stops[i].name);
-  setGlobal('BusStateStopDistance', String(stops[i].dist));
-  var byStop = {}; try { byStop = JSON.parse(global('BusStateIslandByStop') || '{}') || {}; } catch (e) {}
   var cur = {}; try { cur = JSON.parse(global('BusStateIslandData') || '{}') || {}; } catch (e) {}
-  var was = byStop[stops[i].id];
-  // w: waiting for its times (the island shows the stop's name until they come)
-  setGlobal('BusStateIslandData', JSON.stringify(was && Date.now() - was.u < 3 * 60000 ? was
-    : { u: Date.now(), r: cur.r, rot: cur.rot, s: stops[i].id, n: stops[i].name, l: stopLetter(stops[i].name), b: [], a: [], w: 1 }));
+  var next = nextStop(Date.now(), cur) || { i: 0, stop: stops[0], d: Object.assign({}, cur, { nx: undefined }) };
+  setGlobal('BusStateStopIndex', String(next.i));
+  setGlobal('BusStateStopId', next.stop.id);
+  setGlobal('BusStateStopName', next.stop.name);
+  setGlobal('BusStateStopDistance', String(next.stop.dist));
+  var after = nextStop(Date.now(), cur);
+  setGlobal('BusStateIslandData', JSON.stringify(after ? Object.assign({}, next.d, { nx: after.d }) : next.d));
 }

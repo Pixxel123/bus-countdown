@@ -9,7 +9,9 @@
      for stops it has shown), so opposite.js shows its times the moment
      you hold the island: your routes' next three times and the stop's
      other routes, live times only (Bus Refresh adds the timetable's a
-     moment later).
+     moment later);
+   - and (4.56) as the island's nx, so its page shows it the moment you
+     hold the island, without waiting for Tasker.
    A failed fetch keeps the last.
    Output: busliveroutes (your routes with a live time there, for
            tt_check.js: the timetable is only needed for the others)
@@ -17,6 +19,7 @@
 /* @include get */
 /* @include loc */
 /* @include stopLetter */
+/* @include nextStop */
 var now = Date.now();
 var busliveroutes = '';
 if (loc('http_response_code') === '200' && loc('busprestop')) {
@@ -53,5 +56,12 @@ if (loc('http_response_code') === '200' && loc('busprestop')) {
     // The 4 stops with the newest times, as refresh.js keeps them
     setGlobal('BusStateIslandByStop', JSON.stringify(Object.keys(byStop).sort(function (a, b) { return byStop[b].u - byStop[a].u; }).slice(0, 4)
       .reduce(function (o, k) { o[k] = byStop[k]; return o; }, {})));
+    // The island's page gets them too (4.56: nx, as refresh.js hands it), so a hold shows these times
+    // at once. Only nx changes, in its place, so the page doesn't restart the route's turn.
+    var nextHere = nextStop(now, cur);
+    if (nextHere && nextHere.stop.id === loc('busprestop') && cur.s) {
+      cur.nx = nextHere.d;
+      setGlobal('BusStateIslandData', JSON.stringify(cur));
+    }
   } catch (e) {}
 }

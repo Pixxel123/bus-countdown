@@ -290,7 +290,7 @@ h1{text-wrap:balance}
     <button type="button" id="viewSettings" aria-pressed="false">Settings</button>
   </div>
   <div id="nowView">
-    <p class="eyebrow">Version 4.48</p>
+    <p class="eyebrow">Version 4.56</p>
     <h1>The island as built</h1>
     <p class="lede">Drawn by the island's own page from the project, at true scale on the top edge of a Pixel 8 Pro, 448 dp wide. Swipe it sideways to change route; pick Stop board to see it tapped open. Sample times, refreshed every 45 seconds as on the phone.</p>
 
@@ -1270,6 +1270,7 @@ var PAGE = String.raw`<!doctype html>
   #p.armed .h, #p.armed #board { opacity: .45; }
   #p.gone { opacity: 0 !important; transition: opacity .12s !important; }
   #p.back .h { opacity: 0; transform: translateX(6px); }    /* slide to previous */
+  #p.arrive .h { opacity: 0; transform: translateX(6px); transition: none; }   /* a stop switched to slides in (4.56) */
 
   /* Countdown border: an SVG outline laid over the island */
   #ring { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
@@ -1314,7 +1315,6 @@ ${'<'}script>
   // ms held = long press (4.48: 450, from 550, so a switch comes 0.1 s sooner; not Android's own 400,
   // as a tap on the island can last half a second)
   var HOLD = 450;
-  var NAME_MS = 600;          // a stop just switched to, with its times: how long its name shows (4.48)
   var DEFAULT_ROTATE = 6000;  // ms per route if the data doesn't say
 
   var data = null, raw = '', idx = 0, start = Date.now(), lastStop = null, flashUntil = 0;
@@ -1563,13 +1563,19 @@ ${'<'}script>
     var t = dataEl.textContent.trim();
     if (t === raw) return;
     raw = t;
+    var was = data;
     try { data = JSON.parse(t); } catch (e) { return; }
-    if (data.s !== lastStop) {        // stop changed: flash its name, restart at the first route
+    // Only the stop a long press goes to changed (its times just got ready, prefetch_store.js, 4.56):
+    // kept for a hold, with nothing to draw, and the route's turn carries on
+    if (was && withoutNext(was) === withoutNext(data)) return;
+    if (data.s !== lastStop) {        // stop changed: restart at the first route
       if (waitingFor === 'switch') { waitingFor = ''; clearTimeout(waitTimer); p.classList.remove('wait'); }
-      // With its times here already, the name shows in the left half for 0.6 s and the times at once
-      // (4.48: the whole island showed the name for 1.2 s, two thirds of a switch's wait)
-      var nameMs = buses().length ? NAME_MS : 1200;
-      if (lastStop !== null) { flashUntil = Date.now() + nameMs; setTimeout(draw, nameMs + 50); }
+      // With its times here already, its route and times slide in at once (4.56: 4.48 showed its name
+      // on the left for 0.6 s first, which said nothing the destination didn't). Without, its name.
+      if (lastStop !== null) {
+        if (buses().length) arrive();
+        else { flashUntil = Date.now() + 1200; setTimeout(draw, 1250); }
+      }
       lastStop = data.s;
       idx = 0;
     }
@@ -1583,6 +1589,23 @@ ${'<'}script>
       resizeWindow(H + BOARD_ROWS * LINE + 8, 200, 'EaseOut');
     }
     draw();
+  }
+
+  function withoutNext(d) { var c = {}; for (var k in d) { if (k !== 'nx') c[k] = d[k]; } return JSON.stringify(c); }
+  // A stop switched to (4.56): its route and times slide in, as a route does when you swipe
+  function arrive() {
+    p.classList.add('arrive');
+    requestAnimationFrame(function () { requestAnimationFrame(function () { p.classList.remove('arrive'); }); });
+  }
+  // A hold (4.56): the stop it goes to came with the data (nx, from refresh.js), so show it now, then
+  // have Tasker make it the current stop (opposite.js), whose update for the same stop changes nothing
+  // here. Without it (one stop, or the board open), wait for Tasker as before.
+  function switchHere() {
+    if (BOARD || !data || !data.nx || data.nx.s === data.s) return false;
+    data = data.nx; lastStop = data.s; idx = 0; start = Date.now(); flashUntil = 0;
+    if (buses().length) arrive();
+    draw();
+    return true;
   }
 
   /* Right half: minutes, plus one dot per route when there are several */
@@ -1692,8 +1715,6 @@ ${'<'}script>
                     '<span class="b' + (b.idle ? ' idle' : '') + '">' + esc(b.k) + '</span><span class="d' + (b.st === 'sched' ? ' sched' : '') + '">' + esc(b.d) + '</span>';
       R.innerHTML = rightHtml(b, idx);
       if (R.scrollWidth > R.clientWidth + 1) R.innerHTML = rightHtml(b, idx, true);   // too wide: just the first time
-      // A stop just switched to (4.48): its name on the left ("Stop B · High Street"), its times already on the right
-      if (naming) L.innerHTML = '<span class="s">' + esc(parts ? parts[2] + ' · ' + parts[1] : name) + '</span>';
     }
     drawRing();
   }
@@ -1893,7 +1914,7 @@ ${'<'}script>
     try { p.setPointerCapture(e.pointerId); } catch (err) {}
     holdTimer = setTimeout(function () {
       held = true;
-      waitFor('switch');
+      if (!switchHere()) waitFor('switch');
       runTask('Bus Island', { busfrom: 'island', busisland: 'switch' });
     }, HOLD);
   });
@@ -2133,6 +2154,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
     return Math.max(40, ring + badge + 6 + dest + 2);
   }
   function islandHtml(f) {
+    var slide = f.arriving ? ';opacity:.55;transform:translateX(6px)' : '';   // 4.56: a stop switched to, sliding in
     var PAD = 9, GAP = 42, L = leftFor(f), R = f.rightW || RIGHT[f.right](f.dots || 1, f), W = PAD + L + GAP + R + PAD;
     var x = Math.round(224 - GAP / 2 - L - PAD);
     var dots = '';
@@ -2140,10 +2162,10 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
     var right = '<span class="m' + (f.mCls ? ' ' + f.mCls : '') + '">' + f.m + '</span>' + (f.m2 ? '<span class="m2">· ' + f.m2 + ' min</span>' : '') + (f.after ? '<span class="m2"> ' + f.after + '</span>' : '') + dots;
     var ring = f.border ? '<svg width="' + W + '" height="30" viewBox="0 0 ' + W + ' 30"><rect x="1" y="1" width="' + (W - 2) + '" height="28" rx="14" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"/></svg>' : '';
     return '<div class="isl' + (f.right === 'fit' ? ' fit' : '') + '" style="left:' + x + 'px;top:9px;width:' + W + 'px;padding:0 ' + PAD + 'px">' + ring +
-      '<span class="h" style="width:' + L + 'px">' + (f.name ? '<span class="s">' + f.name + '</span>' :   // 4.48: a stop just switched to
+      '<span class="h" style="width:' + L + 'px' + slide + '">' + (f.name ? '<span class="s">' + f.name + '</span>' :   // 4.48: a stop just switched to
       (f.ring ? '<span class="sl">' + f.ring + '</span>' : '') + '<span class="b' + (f.hollow ? ' hollow' : '') + (f.idle ? ' idle' : '') + '">' + f.k + '</span>' +
       '<span class="d' + (f.dCls ? ' ' + f.dCls : '') + '">' + f.d + '</span>') + '</span>' +
-      '<span class="g" style="width:' + GAP + 'px"></span><span class="h" style="width:' + R + 'px">' + right + '</span></div>';
+      '<span class="g" style="width:' + GAP + 'px"></span><span class="h" style="width:' + R + 'px' + slide + '">' + right + '</span></div>';
   }
   function notificationHtml() {
     return '<div class="ntf"><div class="nh">Tasker • now</div><div class="nt">Wexley / Thornacre Precinct (Stop D)</div>' +
@@ -2167,6 +2189,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
     v431: { ring: 'D', letters: 3, right: 'now', k: '517', idle: true, d: 'Holbry', m: '18 min', dots: 2, on: 1 },
     v447: { board: true, wide: true, ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2,
       rows: [['517', '', 'Holbry', '14', '33 · 52'], ['566', '', 'Fernleigh Village', '5', '17 · 29'], ['289', 'other', 'Ordwick', '3', '15 · 27'], ['N68', 'other', 'Kelbury Bus Garage', '26 min', '']] },
+    v456: { arriving: true, ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Wexley', m: '2', m2: '15', dots: 2 },
     v448: { name: 'Stop D · Wexley / Thornacre Precinct', ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
     v446: { ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
     v442: { board: true, ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', dots: 2,
@@ -2192,6 +2215,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
   }
   // Newest first, only the versions that changed how the island looks: [version, date, look, what changed]
   var VERSIONS = [
+    ['4.56', '9 Oct', 'v456', 'Hold the island for the other side of the road and it changes the moment the hold is long enough, its route and times sliding in. Before, it waited for Tasker, dimmed, then showed the stop\u2019s name on the left for 0.6 s.'],
     ['4.48', '9 Oct', 'v448', 'Hold the island for the other side of the road and its times show as soon as it changes, with the stop\u2019s name on the left for 0.6 s; before, the name filled the island for 1.2 s first.'],
     ['4.47', '9 Oct', 'v447', 'The stop board widens a little when its lines need it: room for three times on a route and for a wider route badge (N68), growing outwards from the camera gap as it grows down. Tucked back in, it\u2019s the island at its own width again.'],
     ['4.46', '9 Oct', 'v446', 'Fitted to its times: just wide enough for the widest showing, with the route dots always 10 dp clear of them. It grows the moment the times need more room, so nothing is cut short, and shrinks only after two refreshes in a row with 8 dp or more to spare, its right end moving while the camera gap stays put.'],

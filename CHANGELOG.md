@@ -4,6 +4,13 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.56] - 2026-10-09
+
+### Changed
+
+- Holding the island switches to the other side of the road the moment the hold is long enough. The island's page now carries the other stop's times (got ready after each refresh since 4.45), so it shows them itself, then has Tasker make that stop current. Before, it dimmed while it waited for Tasker, a quarter to half a second.
+- A stop switched to shows its route, destination and times at once, sliding in as a route does when you swipe. 4.48 showed the stop's name on the left for 0.6 s first, which on stops without a letter came out as "opp · Mar…", and said nothing the destination didn't. Measured on the phone, a switch took 1.6 s from finger down to the route showing; now the new side appears as the hold ends, 0.45 s, and has settled 0.2 s later. The name still fills the island while a stop's times are on their way.
+
 ## [4.55] - 2026-10-09
 
 ### Fixed
