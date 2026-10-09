@@ -117,7 +117,9 @@ test('Preview shows the island for 3 seconds, then its stop board for 4, with sa
   for (const task of ['Bus Settings', 'Bus Settings Button']) {
     const s = steps(taskBody(task));
     const shows = s.filter((x) => x.code === 479 && /^buspreview/.test(x.args[2] || ''));
-    assert.deepStrictEqual(shows.map((x) => [x.args[2], x.args[11], x.cond]), [['buspreview', '3000', ''], ['buspreview2', '4000', '%BusStyle 3 chip']], task);
+    // (4.51: the island stays until its board is on top of it; the chip, with no board, for 3 s as before)
+    assert.deepStrictEqual(shows.map((x) => [x.args[2], x.args[11] || '', x.cond]),
+      [['buspreview', '3000', '%BusStyle 2 chip'], ['buspreview', '', '%BusStyle 3 chip'], ['buspreview2', '4000', '%BusStyle 3 chip']], task);
     assert.ok(s.some((x) => x.code === 547 && x.args[0] === '%busboard' && x.args[1] === 'yes'), task + ': asks for the board');
   }
   assert.ok(steps(taskBody('Bus Settings')).some((x) => x.code === 480 && x.args[0] === 'buspreview2'), 'and it is removed if the screen closes while it shows');

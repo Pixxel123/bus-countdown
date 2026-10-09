@@ -72,10 +72,13 @@ def show_settings():
     x = set_str(x, 11, '600000')      # closes itself after 10 minutes, so this task can't wait for ever
     return deco(x, 'Show the settings screen (waits until it is closed; closes itself after 10 minutes)', cont=True)
 
-def show_preview(secs=6, name='buspreview', label=None):
+def show_preview(secs=6, name='buspreview', label=None, anim=None):
+    # secs None: no timeout (it stays until dismissed); anim: how it appears (the template fades it in)
     x = set_str(set_str(T['SHOW'], 1, '%buslayout'), 2, name)
     x = set_str(set_str(set_str(set_str(x, 4, '%busx'), 5, '%busy'), 6, '%busww'), 7, '%bush')
-    x = set_str(x, 11, str(secs * 1000))
+    x = set_str(x, 11, str(secs * 1000) if secs else '')
+    if anim:
+        x = set_str(set_str(x, 9, anim), 10, 'None')
     return deco(x, label or f'Show it for {secs} seconds', cont=True)
 
 PREVIEW_SCENES = ['buspreview', 'buspreview2']
@@ -83,15 +86,21 @@ PREVIEW_SCENES = ['buspreview', 'buspreview2']
 def preview_steps(build_label):
     # The island for 3 seconds, then the stop board tapped open below it for 4 (4.42; the island only
     # for the status bar chip, which has no board). Two names, so the board never waits on the
-    # island's window closing.
+    # island's window closing. The board is built while the island shows, appears on top of it at
+    # once, and only then the island goes (4.51): the island used to close itself after 3 s, fading,
+    # while the board was still being built, and the board then faded in, so the preview flashed.
+    chip, board = ('%BusStyle', 2, 'chip'), ('%BusStyle', 3, 'chip')
     return [
         js('island_show.js', build_label),
-        show_preview(3, 'buspreview', 'Show the island for 3 seconds'),
-        deco(set_int(T['WAIT'], 1, 3), 'Wait 3 seconds'),
+        deco(show_preview(3, 'buspreview', 'Show the island for 3 seconds'), None, chip),
+        deco(show_preview(None, 'buspreview', 'Show the island (until its board is on top of it, 4.51)'), None, board),
         varset('%busboard', 'yes', 'Then the stop board, as if tapped open'),
-        deco(js('island_show.js', 'Build the island with its stop board'), None, ('%BusStyle', 3, 'chip')),
-        deco(show_preview(4, 'buspreview2', 'Show the stop board for 4 seconds'), None, ('%BusStyle', 3, 'chip')),
-        deco(set_int(T['WAIT'], 1, 4), 'Wait 4 seconds', ('%BusStyle', 3, 'chip')),
+        deco(js('island_show.js', 'Build the island with its stop board (while the island shows, 4.51)'), None, board),
+        deco(set_int(T['WAIT'], 1, 3), 'Wait 3 seconds'),
+        deco(show_preview(4, 'buspreview2', 'Show the stop board for 4 seconds (at once, on top of the island)', anim='None'), None, board),
+        deco(set_int(set_int(T['WAIT'], 0, 250), 1, 0), '   Let it draw (a quarter of a second)', board),
+        deco(dismiss('buspreview', '   Then remove the island, under it (the board covers it already)'), None, board),
+        deco(set_int(T['WAIT'], 1, 4), 'Wait 4 seconds', board),
     ]
 
 def update_slider(element, value, label):
@@ -221,7 +230,7 @@ def request_positions(mode, cond=None):
         deco(set_str(set_str(T['VARSET'], 0, '%BusStatePush'), 1, f'GPS, {what}'), '   GPS worked', ('%BusStatePush', 2, 'not requested'))]
 
 PROFILES = ['Bus Moved', 'Bus Screen On', 'Bus Hide When Sideways']
-VERSION = '4.50'
+VERSION = '4.51'
 BUILD = VERSION + '.' + time.strftime('%Y%m%d%H%M')     # changes with every build
 
 def profile_status(name, on, label, cond=None):

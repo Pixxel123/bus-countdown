@@ -4,6 +4,12 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.51] - 2026-10-09
+
+### Fixed
+
+- Settings' preview flashes less as the stop board appears. The preview's island closed itself after 3 seconds, fading out, while the board was still being built, and the board then faded in. The board is now built while the island shows and appears on top of it at once, and only then does the island go. A short flash is left: the board is a new window, empty for about 0.2 s before its page draws. (4.48 matched their widths, which wasn't the cause.)
+
 ## [4.50] - 2026-10-09
 
 ### Fixed
