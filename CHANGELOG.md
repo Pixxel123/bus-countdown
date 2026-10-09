@@ -4,6 +4,12 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.55] - 2026-10-09
+
+### Fixed
+
+- The screen coming on at home or at work no longer gets a location fix once Bus Watch knows where that place is. The fix only refined `%BusHomeAt` or `%BusWorkAt`, which had stopped gaining weight after 10 positions, and getting it took up to 7 seconds, during which Tasker ran nothing else: a Text to Calendar chip copied just after unlocking at work appeared after 8 seconds instead of 2. Positions Android pushes there still refine it, and running Bus Watch by hand still checks.
+
 ## [4.54] - 2026-10-09
 
 ### Fixed

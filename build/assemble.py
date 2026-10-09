@@ -206,7 +206,7 @@ def request_positions(mode, cond=None):
         deco(set_str(set_str(T['VARSET'], 0, '%BusStatePush'), 1, f'GPS, {what}'), '   GPS worked', ('%BusStatePush', 2, 'not requested'))]
 
 PROFILES = ['Bus Moved', 'Bus Screen On', 'Bus Hide When Sideways']
-VERSION = '4.54'
+VERSION = '4.55'
 BUILD = VERSION + '.' + time.strftime('%Y%m%d%H%M')     # changes with every build
 
 def profile_status(name, on, label, cond=None):
@@ -555,7 +555,7 @@ TASKS = [
     js('watch_due.js', 'Home or work Wi-Fi? Really left it? (50 m away, or gone for two checks)'),
     perform('Bus End', 'On home or work Wi-Fi during a countdown: end it', ('%busend', 2, 'yes'), par1='wifi'),
     perform('Bus Start', 'Just left home or work Wi-Fi: show the next buses from your nearest stop', ('%busleave', 2, 'yes'), par1='leaving'),
-    stop('Staying put away from your stops: no new fix (there was one under 2 minutes ago)', ('%busquiet', 2, 'yes')),
+    stop('No new fix needed: staying put away from your stops, or on home or work Wi-Fi (there was one under 2 minutes ago, or that place already has 10 positions; 4.55)', ('%busquiet', 2, 'yes')),
     # Otherwise: fetch one
     deco(T['GETLOC'], 'Otherwise: get my location', ('%buscaller', 3, 'profile=moved'), cont=True),
     deco(js('loc_age.js', '   Is it recent? (Android sometimes hands back an old one)'), None, ('%buscaller', 3, 'profile=moved')),

@@ -85,7 +85,16 @@ if (busleave === 'yes') setGlobal('BusStateStartMode', 'leaving|' + Date.now());
 // (Tuesday evening, 39 screen-on checks in under an hour, sitting in the same place)
 var lastFix = 0; try { var winNow = JSON.parse(get('BusStateWindow') || '[]'); lastFix = winNow.length ? winNow[winNow.length - 1].t : 0; } catch (e) {}
 var quietFar = fromWake && !countdownOn && get('BusStatePushMode') === 'far' && Date.now() - lastFix < 120000;
-var busquiet = quietFar && !onHome && !onWork ? 'yes' : 'no';      // Bus Watch stops before getting a fix
+// On home or work Wi-Fi the fix is only used to refine where that place is (place_record.js), whose
+// running average stops gaining weight at 10 positions. Once it has them, the screen coming on doesn't
+// take one: getting it held Tasker for up to 7 seconds at every screen-on, and every other task with it
+// (4.55). Pushed positions still refine it, and a run by hand still checks.
+function learned(placeVar) {
+  var at = null; try { at = JSON.parse(get(placeVar) || 'null'); } catch (e) {}
+  return !!(at && at.lat && at.n >= 10);
+}
+var placeKnown = fromWake && (onHome ? learned('BusHomeAt') : onWork ? learned('BusWorkAt') : false);
+var busquiet = (quietFar && !onHome && !onWork) || placeKnown ? 'yes' : 'no';      // Bus Watch stops before getting a fix
 var why = get('BusPlaces') === '' ? 'no saved stops'
         : onHome ? 'on home Wi-Fi'
         : onWork ? 'on work Wi-Fi'
