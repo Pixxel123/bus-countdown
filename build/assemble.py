@@ -206,7 +206,7 @@ def request_positions(mode, cond=None):
         deco(set_str(set_str(T['VARSET'], 0, '%BusStatePush'), 1, f'GPS, {what}'), '   GPS worked', ('%BusStatePush', 2, 'not requested'))]
 
 PROFILES = ['Bus Moved', 'Bus Screen On', 'Bus Hide When Sideways']
-VERSION = '4.53'
+VERSION = '4.54'
 BUILD = VERSION + '.' + time.strftime('%Y%m%d%H%M')     # changes with every build
 
 def profile_status(name, on, label, cond=None):
@@ -471,6 +471,13 @@ TASKS = [
     deco(js('profiles_done.js', 'Remember it was done for this build'), None, ('%BusStateVersion', 3, BUILD)),
     flash(f'Bus countdown {VERSION}: profiles switched on', 'Say so', ('%busbuild', 2, BUILD)),
     stop('Only asked to switch the profiles: done', ('%par1', 2, 'profiles')),
+    # The screen came on with the live position editor still open (4.54): it was left when the screen
+    # went off, and its overlays show over the lock screen, so close it, as Cancel would
+    if_('%BusStateEditing', 3, '0', 'Live position editor left open when the screen went off? (close it, as Cancel; 4.54)'),
+      dismiss('busposition', '   Remove its panel (it showed over the lock screen)'),
+      dismiss('buspreview', '   and its island (sample times)'),
+      varset('%BusStateEditing', '0', '   The editing is over (a countdown\'s own island is shown again)'),
+    endif(),
     js('push_params.js', 'Positions: ask again at the current rate (Android forgets after a restart)'),
     *request_positions('var'),
     *wifi_name(),

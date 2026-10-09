@@ -4,6 +4,12 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.54] - 2026-10-09
+
+### Fixed
+
+- Adjust live no longer stays over the lock screen. Left open when the screen went off, its panel and island showed over the lock screen when it came back on; now they're closed as the screen comes on, as Cancel would, and a countdown's own island comes back.
+
 ## [4.53] - 2026-10-09
 
 ### Fixed

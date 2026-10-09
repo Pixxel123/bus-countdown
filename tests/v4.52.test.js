@@ -153,3 +153,14 @@ test('Bus Position Set is one step; Bus Position Done saves, removes both, redra
   const performs = done.filter((x) => code(x) === 130).map((x) => [str(x, 0), str(x, 2)]);
   assert.deepStrictEqual(performs, [['Bus Refresh', ''], ['Bus Settings', 'position']]);
 });
+
+// 4.54: left open when the screen went off, the editor showed over the lock screen; the screen coming on
+// (Bus Wake) closes it as Cancel would
+test('Bus Wake closes an editor left open, as Cancel would, after the profile switching and before the rest', () => {
+  const s = steps('Bus Wake');
+  const at = (re) => s.findIndex((x) => re.test(x));
+  const only = at(/Only asked to switch the profiles/), open = at(/<lhs>%BusStateEditing<\/lhs><op>3<\/op><rhs>0<\/rhs>/);
+  assert.ok(only > -1 && open === only + 1, 'straight after the profile switching');
+  assert.deepStrictEqual([str(s[open + 1], 0), str(s[open + 2], 0)], ['busposition', 'buspreview']);
+  assert.deepStrictEqual([str(s[open + 3], 0), str(s[open + 3], 1), code(s[open + 4])], ['%BusStateEditing', '0', 38]);
+});

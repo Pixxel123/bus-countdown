@@ -1,8 +1,8 @@
 <TaskerData sr="" dvi="1" tv="6.7.6-beta">
 	<dmetric>1344.0,2992.0</dmetric>
 	<Profile sr="prof72" ve="2">
-		<cdate>1791543410723</cdate>
-		<edate>1791543410723</edate>
+		<cdate>1791543670733</cdate>
+		<edate>1791543670733</edate>
 		<flags>8</flags>
 		<id>72</id>
 		<mid0>79</mid0>
@@ -14,8 +14,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof74" ve="2">
-		<cdate>1791543410723</cdate>
-		<edate>1791543410723</edate>
+		<cdate>1791543670733</cdate>
+		<edate>1791543670733</edate>
 		<flags>8</flags>
 		<id>74</id>
 		<mid0>62</mid0>
@@ -33,8 +33,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof73" ve="2">
-		<cdate>1791543410723</cdate>
-		<edate>1791543410723</edate>
+		<cdate>1791543670733</cdate>
+		<edate>1791543670733</edate>
 		<flags>8</flags>
 		<id>73</id>
 		<mid0>59</mid0>
@@ -46,14 +46,14 @@
 		</State>
 	</Profile>
 	<Project sr="proj0" ve="2">
-		<cdate>1791543410723</cdate>
+		<cdate>1791543670733</cdate>
 		<name>Bus Countdown</name>
 		<pids>72,73,74</pids>
 		<tids>73,74,75,77,78,80,76,38,60,59,79,32,31,62,72</tids>
 	</Project>
 	<Task sr="task73">
-		<cdate>1791543410723</cdate>
-		<edate>1791543410723</edate>
+		<cdate>1791543670733</cdate>
+		<edate>1791543670733</edate>
 		<id>73</id>
 		<nme>Bus</nme>
 		<pri>6</pri>
@@ -178,11 +178,11 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.53.202610091156</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.54.202610091201</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task74">
-		<cdate>1791543410723</cdate>
-		<edate>1791543410723</edate>
+		<cdate>1791543670733</cdate>
+		<edate>1791543670733</edate>
 		<id>74</id>
 		<nme>Bus Settings</nme>
 		<pri>6</pri>
@@ -201,7 +201,7 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.53.202610091156</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.54.202610091201</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>First run? · Camera not measured yet</label>
@@ -1588,8 +1588,8 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buslive</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task75">
-		<cdate>1791543410724</cdate>
-		<edate>1791543410724</edate>
+		<cdate>1791543670734</cdate>
+		<edate>1791543670734</edate>
 		<id>75</id>
 		<nme>Bus Settings Button</nme>
 		<pri>6</pri>
@@ -1721,8 +1721,8 @@ if (buspreview === 'yes') {
 			<label>Open it · Shows the Android settings page</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">startActivity {} (android.content.Intent)</Str><Str sr="arg3" ve="3">busint</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busintent</lhs><op>2</op><rhs>android*</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task77">
-		<cdate>1791543410724</cdate>
-		<edate>1791543410724</edate>
+		<cdate>1791543670734</cdate>
+		<edate>1791543670734</edate>
 		<id>77</id>
 		<nme>Bus Position</nme>
 		<pri>6</pri>
@@ -3029,8 +3029,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task78">
-		<cdate>1791543410724</cdate>
-		<edate>1791543410724</edate>
+		<cdate>1791543670734</cdate>
+		<edate>1791543670734</edate>
 		<id>78</id>
 		<nme>Bus Position Set</nme>
 		<pri>6</pri>
@@ -3048,8 +3048,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task80">
-		<cdate>1791543410724</cdate>
-		<edate>1791543410724</edate>
+		<cdate>1791543670734</cdate>
+		<edate>1791543670734</edate>
 		<id>80</id>
 		<nme>Bus Position Done</nme>
 		<pri>6</pri>
@@ -3154,8 +3154,8 @@ var busmsg = changed.length ? 'Saved: ' + changed.join(', ') : 'none';
 		</Action>
 	</Task>
 	<Task sr="task76">
-		<cdate>1791543410724</cdate>
-		<edate>1791543410724</edate>
+		<cdate>1791543670734</cdate>
+		<edate>1791543670734</edate>
 		<id>76</id>
 		<nme>Bus Find Camera</nme>
 		<pri>6</pri>
@@ -3288,8 +3288,8 @@ if (!r || !dens || !w) {
 			<label>Reset position: move the open screen's height slider · Shows the new value straight away</label><Str sr="arg0" ve="3">bussettings</Str><Str sr="arg1" ve="3">sl_y</Str><Str sr="arg2" ve="3">value</Str><Str sr="arg3" ve="3">%BusIslandY</Str><Int sr="arg4" val="0"/><Str sr="arg5" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrebuild</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task38">
-		<cdate>1791543410724</cdate>
-		<edate>1791543410724</edate>
+		<cdate>1791543670734</cdate>
+		<edate>1791543670734</edate>
 		<id>38</id>
 		<nme>Bus Start</nme>
 		<pri>6</pri>
@@ -3307,7 +3307,7 @@ if (!r || !dens || !w) {
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.53.202610091156</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.54.202610091201</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>Settings: fill in defaults, check TflKey and BusRoutes · Resets empty or invalid settings</label>
@@ -4149,8 +4149,8 @@ record(busok === 'yes' ? 'start' : 'nostart', { stop: get('BusStateStopId'), nam
 		</Action>
 	</Task>
 	<Task sr="task60">
-		<cdate>1791543410724</cdate>
-		<edate>1791543410724</edate>
+		<cdate>1791543670734</cdate>
+		<edate>1791543670734</edate>
 		<id>60</id>
 		<nme>Bus Loop</nme>
 		<pri>6</pri>
@@ -4490,8 +4490,8 @@ var buspushm = get('BusStatePushM') || '30';
 		</Action>
 	</Task>
 	<Task sr="task59">
-		<cdate>1791543410724</cdate>
-		<edate>1791543410724</edate>
+		<cdate>1791543670734</cdate>
+		<edate>1791543670734</edate>
 		<id>59</id>
 		<nme>Bus Refresh</nme>
 		<pri>6</pri>
@@ -8699,40 +8699,40 @@ setGlobal('BusCacheTimetable', JSON.stringify(tt));
 		</Action>
 	</Task>
 	<Task sr="task79">
-		<cdate>1791543410726</cdate>
-		<edate>1791543410726</edate>
+		<cdate>1791543670735</cdate>
+		<edate>1791543670735</edate>
 		<id>79</id>
 		<nme>Bus Wake</nme>
 		<pri>6</pri>
 		<Action sr="act0" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.53.202610091156</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.54.202610091201</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.53.202610091156</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.54.202610091201</rhs></Condition></ConditionList></Action>
 		<Action sr="act2" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.53.202610091156</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.54.202610091201</rhs></Condition></ConditionList></Action>
 		<Action sr="act3" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.53.202610091156</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.54.202610091201</rhs></Condition></ConditionList></Action>
 		<Action sr="act4" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.53.202610091156</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.54.202610091201</rhs></Condition></ConditionList></Action>
 		<Action sr="act5" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.53.202610091156</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.54.202610091201</rhs></Condition></ConditionList></Action>
 		<Action sr="act6" ve="7">
 			<code>547</code>
 			<label>This build · Version and build time</label>
 			<Str sr="arg0" ve="3">%busbuild</Str>
-			<Str sr="arg1" ve="3">4.53.202610091156</Str>
+			<Str sr="arg1" ve="3">4.54.202610091201</Str>
 			<Int sr="arg2" val="0"/>
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.53.202610091156</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.54.202610091201</rhs></Condition></ConditionList></Action>
 		<Action sr="act7" ve="7">
 			<code>129</code>
 			<label>Remember it was done for this build · BusStateVersion</label>
@@ -8758,11 +8758,11 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.53.202610091156</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.54.202610091201</rhs></Condition></ConditionList></Action>
 		<Action sr="act8" ve="7">
 			<code>548</code>
 			<label>Say so · A short message</label>
-			<Str sr="arg0" ve="3">Bus countdown 4.53: profiles switched on</Str>
+			<Str sr="arg0" ve="3">Bus countdown 4.54: profiles switched on</Str>
 			<Int sr="arg1" val="0"/>
 			<Str sr="arg10" ve="3"/>
 			<Int sr="arg11" val="1"/>
@@ -8778,7 +8778,7 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg7" ve="3"/>
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.53.202610091156</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.54.202610091201</rhs></Condition></ConditionList></Action>
 		<Action sr="act9" ve="7">
 			<code>137</code>
 			<label>Only asked to switch the profiles: done · Started by another task with par1 "profiles"</label>
@@ -8786,6 +8786,36 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg1" ve="3"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%par1</lhs><op>2</op><rhs>profiles</rhs></Condition></ConditionList></Action>
 		<Action sr="act10" ve="7">
+			<code>37</code>
+			<label>Live position editor left open when the screen went off? · Close it, as Cancel; 4.54</label>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateEditing</lhs><op>3</op><rhs>0</rhs></Condition></ConditionList></Action>
+		<Action sr="act11" ve="7">
+			<code>480</code>
+			<se>false</se>
+			<label>   Remove its panel · It showed over the lock screen</label>
+			<Str sr="arg0" ve="3">busposition</Str>
+		</Action>
+		<Action sr="act12" ve="7">
+			<code>480</code>
+			<se>false</se>
+			<label>   and its island · Sample times</label>
+			<Str sr="arg0" ve="3">buspreview</Str>
+		</Action>
+		<Action sr="act13" ve="7">
+			<code>547</code>
+			<label>   The editing is over · A countdown's own island is shown again</label>
+			<Str sr="arg0" ve="3">%BusStateEditing</Str>
+			<Str sr="arg1" ve="3">0</Str>
+			<Int sr="arg2" val="0"/>
+			<Int sr="arg3" val="0"/>
+			<Int sr="arg4" val="0"/>
+			<Int sr="arg5" val="3"/>
+			<Int sr="arg6" val="0"/>
+		</Action>
+		<Action sr="act14" ve="7">
+			<code>38</code>
+		</Action>
+		<Action sr="act15" ve="7">
 			<code>129</code>
 			<label>Positions: ask again at the current rate · Android forgets after a restart</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -8806,22 +8836,22 @@ var buspushm = get('BusStatePushM') || '30';
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act11" ve="7"><code>664</code>
+		<Action sr="act16" ve="7"><code>664</code>
 			<se>false</se>
 			<label>Tasker's package name · So the message Android sends goes to Tasker and nothing else</label><Str sr="arg0" ve="3">%bus_pkg</Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">getPackageName {String} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act12" ve="7"><code>664</code>
+		<Action sr="act17" ve="7"><code>664</code>
 			<se>false</se>
 			<label>Android location service · Android's LocationManager, which sends the positions</label><Str sr="arg0" ve="3">buslm</Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">getSystemService {Object} (String)</Str><Str sr="arg3" ve="3">location</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act13" ve="7"><code>664</code>
+		<Action sr="act18" ve="7"><code>664</code>
 			<se>false</se>
 			<label>The message each position comes in · Action net.buscountdown.MOVED, for Bus Moved</label><Str sr="arg0" ve="3">busmint</Str><Str sr="arg1" ve="3">android.content.Intent</Str><Str sr="arg2" ve="3">new {android.content.Intent} (String)</Str><Str sr="arg3" ve="3">net.buscountdown.MOVED</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act14" ve="7"><code>664</code>
+		<Action sr="act19" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Addressed to Tasker only · So no other app receives it</label><Str sr="arg0" ve="3">busmint</Str><Str sr="arg1" ve="3">busmint</Str><Str sr="arg2" ve="3">setPackage {Object} (String)</Str><Str sr="arg3" ve="3">%bus_pkg</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act15" ve="7"><code>664</code>
+		<Action sr="act20" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   The PendingIntent Android sends it with · Mutable, so Android can attach the position</label><Str sr="arg0" ve="3">busmpi</Str><Str sr="arg1" ve="3">android.app.PendingIntent</Str><Str sr="arg2" ve="3">getBroadcast {Object} (android.content.Context, int, android.content.Intent, int)</Str><Str sr="arg3" ve="3">CONTEXT</Str><Str sr="arg4" ve="3">7201</Str><Str sr="arg5" ve="3">busmint</Str><Str sr="arg6" ve="3">167772160</Str><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act16" ve="7">
+		<Action sr="act21" ve="7">
 			<code>547</code>
 			<label>Not requested yet · Set before asking, so a failed request is obvious in Bus Status</label>
 			<Str sr="arg0" ve="3">%BusStatePush</Str>
@@ -8832,7 +8862,7 @@ var buspushm = get('BusStatePushM') || '30';
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act17" ve="7">
+		<Action sr="act22" ve="7">
 			<code>547</code>
 			<label>Clear the last error, to spot a new one · A void method only reports failure as an error</label>
 			<Str sr="arg0" ve="3">%errmsg</Str>
@@ -8843,10 +8873,10 @@ var buspushm = get('BusStatePushM') || '30';
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act18" ve="7"><code>664</code>
+		<Action sr="act23" ve="7"><code>664</code>
 			<se>false</se>
 			<label>Ask Android for a position every %buspushm m · Fused: GPS, Wi-Fi and mobile</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">buslm</Str><Str sr="arg2" ve="3">requestLocationUpdates {} (String, long, float, android.app.PendingIntent)</Str><Str sr="arg3" ve="3">fused</Str><Str sr="arg4" ve="3">%buspushms</Str><Str sr="arg5" ve="3">%buspushm</Str><Str sr="arg6" ve="3">busmpi</Str><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act19" ve="7">
+		<Action sr="act24" ve="7">
 			<code>547</code>
 			<label>   It worked · Records which source is sending positions, for Bus Status</label>
 			<Str sr="arg0" ve="3">%BusStatePush</Str>
@@ -8857,10 +8887,10 @@ var buspushm = get('BusStatePushM') || '30';
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act20" ve="7"><code>664</code>
+		<Action sr="act25" ve="7"><code>664</code>
 			<se>false</se>
 			<label>If that failed: ask GPS instead · Only if Android refused the fused source</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">buslm</Str><Str sr="arg2" ve="3">requestLocationUpdates {} (String, long, float, android.app.PendingIntent)</Str><Str sr="arg3" ve="3">gps</Str><Str sr="arg4" ve="3">%buspushms</Str><Str sr="arg5" ve="3">%buspushm</Str><Str sr="arg6" ve="3">busmpi</Str><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStatePush</lhs><op>2</op><rhs>not requested</rhs></Condition></ConditionList></Action>
-		<Action sr="act21" ve="7">
+		<Action sr="act26" ve="7">
 			<code>547</code>
 			<label>   GPS worked · Records that positions are coming from GPS</label>
 			<Str sr="arg0" ve="3">%BusStatePush</Str>
@@ -8871,16 +8901,16 @@ var buspushm = get('BusStatePushM') || '30';
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStatePush</lhs><op>2</op><rhs>not requested</rhs></Condition></ConditionList></Action>
-		<Action sr="act22" ve="7"><code>664</code>
+		<Action sr="act27" ve="7"><code>664</code>
 			<se>false</se>
 			<label>Wi-Fi service · Android's WifiManager, to read which network you're on</label><Str sr="arg0" ve="3">buswifi</Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">getSystemService {Object} (String)</Str><Str sr="arg3" ve="3">wifi</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act23" ve="7"><code>664</code>
+		<Action sr="act28" ve="7"><code>664</code>
 			<se>false</se>
 			<label>Current connection · Details of the Wi-Fi connection, if there is one</label><Str sr="arg0" ve="3">buswinfo</Str><Str sr="arg1" ve="3">buswifi</Str><Str sr="arg2" ve="3">getConnectionInfo {Object} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act24" ve="7"><code>664</code>
+		<Action sr="act29" ve="7"><code>664</code>
 			<se>false</se>
 			<label>Its network name · The Wi-Fi network's name (SSID), or "unknown" when not connected</label><Str sr="arg0" ve="3">%busssid</Str><Str sr="arg1" ve="3">buswinfo</Str><Str sr="arg2" ve="3">getSSID {String} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act25" ve="7">
+		<Action sr="act30" ve="7">
 			<code>129</code>
 			<label>Remember it for the other tasks · Saved as BusStateWifi</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -8947,14 +8977,14 @@ if (wifiNow !== wifiBefore) {
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act26" ve="7">
+		<Action sr="act31" ve="7">
 			<code>37</code>
 			<label>Trip recorder on: write what was just recorded · Scripts no longer write the file themselves: Tasker ran that as a task of its own, and two scripts at once could hang each other for 45 s</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecfile</lhs><op>2</op><rhs>Download/*</rhs></Condition></ConditionList></Action>
-		<Action sr="act27" ve="7"><code>409</code>
+		<Action sr="act32" ve="7"><code>409</code>
 			<se>false</se>
 			<label>   A new day: make sure its folder is there · Download/Tasker-bus-trip-data, in case it was deleted since</label><Str sr="arg0" ve="3">Download/Tasker-bus-trip-data</Str><Int sr="arg1" val="1"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act28" ve="7">
+		<Action sr="act33" ve="7">
 			<code>547</code>
 			<label>   Clear the last error, to spot a new one · A void method only reports failure as an error</label>
 			<Str sr="arg0" ve="3">%errmsg</Str>
@@ -8965,28 +8995,28 @@ if (wifiNow !== wifiBefore) {
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act29" ve="7"><code>664</code>
+		<Action sr="act34" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Open the file · On a new day, start it afresh</label><Str sr="arg0" ve="3">busrecw</Str><Str sr="arg1" ve="3">java.io.FileWriter</Str><Str sr="arg2" ve="3">new {java.io.FileWriter} (String, boolean)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3">%busrecappend</Str><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act30" ve="7"><code>664</code>
+		<Action sr="act35" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Write the lines · Every line the script recorded: the setup first on a new day</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">%busrecline</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act31" ve="7"><code>664</code>
+		<Action sr="act36" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Android's line break · So the file always ends with a complete line</label><Str sr="arg0" ve="3">busrecnl</Str><Str sr="arg1" ve="3">java.lang.System</Str><Str sr="arg2" ve="3">lineSeparator {String} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act32" ve="7"><code>664</code>
+		<Action sr="act37" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Write it after the last line · Ends the last line</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">busrecnl</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act33" ve="7"><code>664</code>
+		<Action sr="act38" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Close the file · Saves it</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">close {} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act34" ve="7">
+		<Action sr="act39" ve="7">
 			<code>37</code>
 			<label>   Did it work? · An error from any of the steps above leaves Tasker's last error changed</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act35" ve="7"><code>549</code>
+		<Action sr="act40" ve="7"><code>549</code>
 			<label>   No write error to report · Bus Status shows the last write error, if there was one</label><Str sr="arg0" ve="3">%BusRecordErr</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act36" ve="7">
+		<Action sr="act41" ve="7">
 			<code>547</code>
 			<label>   A new day: it has started · Once its first line is really written; if that failed, the next line starts the file again, with the setup</label>
 			<Str sr="arg0" ve="3">%BusRecordDay</Str>
@@ -8997,19 +9027,19 @@ if (wifiNow !== wifiBefore) {
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act37" ve="7"><code>664</code>
+		<Action sr="act42" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   A new file: announce it to the media index, so the Files app lists it · Files written straight to storage aren't listed until Android's media scanner has seen them</label><Str sr="arg0" ve="3">busscanpath</Str><Str sr="arg1" ve="3">java.lang.String</Str><Str sr="arg2" ve="3">new {java.lang.String} (String)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act38" ve="7"><code>664</code>
+		<Action sr="act43" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Its path, as a list of one · The scanner takes a list of paths</label><Str sr="arg0" ve="3">busscanlist</Str><Str sr="arg1" ve="3">busscanpath</Str><Str sr="arg2" ve="3">split {String[]} (String)</Str><Str sr="arg3" ve="3">,</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act39" ve="7"><code>664</code>
+		<Action sr="act44" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Ask Android to scan it · MediaScannerConnection.scanFile, with no type and no reply wanted</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">android.media.MediaScannerConnection</Str><Str sr="arg2" ve="3">scanFile {} (android.content.Context, String[], String[], android.media.MediaScannerConnection$OnScanCompletedListener)</Str><Str sr="arg3" ve="3">CONTEXT</Str><Str sr="arg4" ve="3">busscanlist</Str><Str sr="arg5" ve="3">null</Str><Str sr="arg6" ve="3">null</Str><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act40" ve="7">
+		<Action sr="act45" ve="7">
 			<code>43</code>
 		</Action>
-		<Action sr="act41" ve="7">
+		<Action sr="act46" ve="7">
 			<code>547</code>
 			<label>   Failed: keep why, for Bus Status · The next line tries again</label>
 			<Str sr="arg0" ve="3">%BusRecordErr</Str>
@@ -9020,21 +9050,21 @@ if (wifiNow !== wifiBefore) {
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act42" ve="7">
-			<code>38</code>
-		</Action>
-		<Action sr="act43" ve="7"><code>549</code>
-			<label>   Done: forget the lines · Another script in the same task starts with nothing collected</label><Str sr="arg0" ve="3">%busrecline</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act44" ve="7"><code>549</code>
-			<label>   the file · Cleared too</label><Str sr="arg0" ve="3">%busrecfile</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act45" ve="7"><code>549</code>
-			<label>   whether to start it afresh · Cleared too</label><Str sr="arg0" ve="3">%busrecappend</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act46" ve="7"><code>549</code>
-			<label>   and the day · Cleared too</label><Str sr="arg0" ve="3">%busrecday</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
 		<Action sr="act47" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act48" ve="7">
+		<Action sr="act48" ve="7"><code>549</code>
+			<label>   Done: forget the lines · Another script in the same task starts with nothing collected</label><Str sr="arg0" ve="3">%busrecline</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
+		<Action sr="act49" ve="7"><code>549</code>
+			<label>   the file · Cleared too</label><Str sr="arg0" ve="3">%busrecfile</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
+		<Action sr="act50" ve="7"><code>549</code>
+			<label>   whether to start it afresh · Cleared too</label><Str sr="arg0" ve="3">%busrecappend</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
+		<Action sr="act51" ve="7"><code>549</code>
+			<label>   and the day · Cleared too</label><Str sr="arg0" ve="3">%busrecday</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
+		<Action sr="act52" ve="7">
+			<code>38</code>
+		</Action>
+		<Action sr="act53" ve="7">
 			<code>129</code>
 			<label>At work, in the heads-up window, with no countdown running? · On work Wi-Fi, in the set window</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -9063,7 +9093,7 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act49" ve="7">
+		<Action sr="act54" ve="7">
 			<code>130</code>
 			<label>Heads-up: show my stop's next buses for a minute · A one-minute countdown; it carries on if you leave the office Wi-Fi</label>
 			<Str sr="arg0" ve="3">Bus Start</Str>
@@ -9078,7 +9108,7 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busglance</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act50" ve="7">
+		<Action sr="act55" ve="7">
 			<code>130</code>
 			<label>Screen on during a countdown: fresh times now · None were fetched while it was off</label>
 			<Str sr="arg0" ve="3">Bus Refresh</Str>
@@ -9093,7 +9123,7 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateRunning</lhs><op>2</op><rhs>1</rhs></Condition></ConditionList></Action>
-		<Action sr="act51" ve="7">
+		<Action sr="act56" ve="7">
 			<code>130</code>
 			<label>Screen on: check now · Starts a countdown at a stop, or ends one if you've walked away</label>
 			<Str sr="arg0" ve="3">Bus Watch</Str>
@@ -9110,8 +9140,8 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 		</Action>
 	</Task>
 	<Task sr="task32">
-		<cdate>1791543410726</cdate>
-		<edate>1791543410726</edate>
+		<cdate>1791543670735</cdate>
+		<edate>1791543670735</edate>
 		<id>32</id>
 		<nme>Bus End</nme>
 		<pri>6</pri>
@@ -9372,8 +9402,8 @@ setGlobal('BusStateMatch', '');
 		</Action>
 	</Task>
 	<Task sr="task31">
-		<cdate>1791543410726</cdate>
-		<edate>1791543410726</edate>
+		<cdate>1791543670735</cdate>
+		<edate>1791543670735</edate>
 		<id>31</id>
 		<nme>Bus Island</nme>
 		<pri>6</pri>
@@ -9520,8 +9550,8 @@ if (stops.length) {
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busdo</lhs><op>2</op><rhs>switch/open/close/open-grown/fit</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task62">
-		<cdate>1791543410726</cdate>
-		<edate>1791543410726</edate>
+		<cdate>1791543670735</cdate>
+		<edate>1791543670735</edate>
 		<id>62</id>
 		<nme>Bus Watch</nme>
 		<pri>6</pri>
@@ -11192,8 +11222,8 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busaction</lhs><op>2</op><rhs>stop</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task72">
-		<cdate>1791543410726</cdate>
-		<edate>1791543410726</edate>
+		<cdate>1791543670736</cdate>
+		<edate>1791543670736</edate>
 		<id>72</id>
 		<nme>Bus Status</nme>
 		<pri>6</pri>
