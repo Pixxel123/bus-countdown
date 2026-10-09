@@ -72,36 +72,12 @@ def show_settings():
     x = set_str(x, 11, '600000')      # closes itself after 10 minutes, so this task can't wait for ever
     return deco(x, 'Show the settings screen (waits until it is closed; closes itself after 10 minutes)', cont=True)
 
-def show_preview(secs=6, name='buspreview', label=None, anim=None):
-    # secs None: no timeout (it stays until dismissed); anim: how it appears (the template fades it in)
-    x = set_str(set_str(T['SHOW'], 1, '%buslayout'), 2, name)
-    x = set_str(set_str(set_str(set_str(x, 4, '%busx'), 5, '%busy'), 6, '%busww'), 7, '%bush')
-    x = set_str(x, 11, str(secs * 1000) if secs else '')
-    if anim:
-        x = set_str(set_str(x, 9, anim), 10, 'None')
-    return deco(x, label or f'Show it for {secs} seconds', cont=True)
-
-PREVIEW_SCENES = ['buspreview', 'buspreview2']
-
-def preview_steps(build_label):
-    # The island for 3 seconds, then the stop board tapped open below it for 4 (4.42; the island only
-    # for the status bar chip, which has no board). Two names, so the board never waits on the
-    # island's window closing. The board is built while the island shows, appears on top of it at
-    # once, and only then the island goes (4.51): the island used to close itself after 3 s, fading,
-    # while the board was still being built, and the board then faded in, so the preview flashed.
-    chip, board = ('%BusStyle', 2, 'chip'), ('%BusStyle', 3, 'chip')
-    return [
-        js('island_show.js', build_label),
-        deco(show_preview(3, 'buspreview', 'Show the island for 3 seconds'), None, chip),
-        deco(show_preview(None, 'buspreview', 'Show the island (until its board is on top of it, 4.51)'), None, board),
-        varset('%busboard', 'yes', 'Then the stop board, as if tapped open'),
-        deco(js('island_show.js', 'Build the island with its stop board (while the island shows, 4.51)'), None, board),
-        deco(set_int(T['WAIT'], 1, 3), 'Wait 3 seconds'),
-        deco(show_preview(4, 'buspreview2', 'Show the stop board for 4 seconds (at once, on top of the island)', anim='None'), None, board),
-        deco(set_int(set_int(T['WAIT'], 0, 250), 1, 0), '   Let it draw (a quarter of a second)', board),
-        deco(dismiss('buspreview', '   Then remove the island, under it (the board covers it already)'), None, board),
-        deco(set_int(T['WAIT'], 1, 4), 'Wait 4 seconds', board),
-    ]
+def show_overlay(name, label, x='%busx', y='%busy', w='%busww', h='%bush', anim='FadeIn', secs=600):
+    # An overlay that stays until dismissed, or for 10 minutes at most, so it's never left behind (4.52)
+    x_ = set_str(set_str(T['SHOW'], 1, '%buslayout'), 2, name)
+    x_ = set_str(set_str(set_str(set_str(x_, 4, x), 5, y), 6, w), 7, h)
+    x_ = set_str(set_str(set_str(x_, 9, anim), 10, 'None'), 11, str(secs * 1000))
+    return deco(x_, label, cont=True)
 
 def update_slider(element, value, label):
     # Update Scene v2 (481): change one property of one element on the open settings screen
@@ -230,7 +206,7 @@ def request_positions(mode, cond=None):
         deco(set_str(set_str(T['VARSET'], 0, '%BusStatePush'), 1, f'GPS, {what}'), '   GPS worked', ('%BusStatePush', 2, 'not requested'))]
 
 PROFILES = ['Bus Moved', 'Bus Screen On', 'Bus Hide When Sideways']
-VERSION = '4.51'
+VERSION = '4.52'
 BUILD = VERSION + '.' + time.strftime('%Y%m%d%H%M')     # changes with every build
 
 def profile_status(name, on, label, cond=None):
@@ -326,19 +302,12 @@ TASKS = [
     http('https://api.tfl.gov.uk/StopPoint/?lat=%gl_latitude&lon=%gl_longitude&stopTypes=NaptanPublicBusCoachTram&radius=400&app_key=%TflKey', 'Stops within 400 m and their routes'),
     *permission_checks(),
     *wifi_name(),
+    varset('%busstartpage', '%par1', 'Which page to open on (the live position editor reopens it on Position, 4.52; scripts can\'t read %par1)'),
     js('settings_open.js', 'Build the settings screen'),
     show_settings(),
-    dismiss('buspreview', 'Remove the preview island, if showing'),
-    dismiss('buspreview2', '   and the preview stop board'),
     js('settings_save.js', 'Save what changed (however the screen was closed)'),
     mkdir('Download/Tasker-bus-trip-data', 'Record trips on: make sure its folder is there (Downloads/Tasker-bus-trip-data)', ('%BusRecord', 2, 'on')),
     flash('%busmsg', 'Say what was saved, if anything', ('%busmsg', 3, 'none')),
-    if_('%buspreview', 2, 'yes', 'Preview on screen was tapped: show the island for 3 seconds and its stop board for 4 (or the status bar chip for 3), then reopen Settings'),
-      varset('%busaction', 'preview', 'Preview'),
-      js('settings_button.js', 'Sample times and the island size just saved'),
-      *preview_steps('Build the island or status bar chip (whichever Show as says)'),
-      perform('Bus Refresh', 'A countdown is running: put its real times back', ('%BusStateRunning', 2, '1')),
-    endif(),
     if_('%busstopschanged', 2, 'yes', 'Stops or routes changed?'),
       *cache_refresh(),
       js('settings_opposite.js', 'The stop across the road, for each stop just added'),
@@ -346,18 +315,42 @@ TASKS = [
       deco(js('settings_opposite_apply.js', 'Save the ones ticked'), None, ('%busoppask', 2, 'yes')),
       flash('%busoppmsg', 'Say what was saved', ('%busoppask', 2, 'yes')),
     endif(),
-    perform('Bus Settings', 'After a preview: open Settings again (priority 6, as from the menu)', ('%buspreview', 2, 'yes'), pri=6),
+    perform('Bus Position', 'Adjust live was tapped: the live position editor (4.52; it reopens Settings when done)', ('%buslive', 2, 'yes'), pri=11),
  ]),
  (75, 'Bus Settings Button', [
     js('settings_button.js', 'What was tapped?'),
-    if_('%buspreview', 2, 'yes', 'Preview'),
-      *preview_steps('Build the island with the unsaved values and sample times'),
-    endif(),
     java('busint', 'android.content.Intent', 'new {android.content.Intent} (String)', '%busintent', 'Open a settings page: the intent', ('%busintent', 2, 'android*')),
     java('busu', 'android.net.Uri', 'parse {android.net.Uri} (String)', '%busuri', 'For Tasker specifically', ('%busuri', 2, 'package*')),
     java('busint', 'busint', 'setData {android.content.Intent} (android.net.Uri)', 'busu', 'Attach it', ('%busuri', 2, 'package*')),
     java('busint', 'busint', 'addFlags {android.content.Intent} (int)', '268435456', 'Open as a new screen', ('%busintent', 2, 'android*')),
     java('', 'CONTEXT', 'startActivity {} (android.content.Intent)', 'busint', 'Open it', ('%busintent', 2, 'android*')),
+ ]),
+ (77, 'Bus Position', [
+    # Settings' live position editor (4.52): the island where it goes, with sample times, and a panel of
+    # sliders at the bottom of the screen that move it as they slide. Nothing waits here: the panel's
+    # sliders run Bus Position Set, and its Done and Cancel run Bus Position Done.
+    *dismiss_island("Hide a countdown's own island while editing (it stays hidden until Done or Cancel)"),
+    varset('%BusStateIslandShown', '0', '   So it is drawn again afterwards (when the editor closes)'),
+    varset('%busaction', 'preview', 'Sample times (Bus Settings Button makes them)'),
+    js('settings_button.js', 'Sample times and the island size saved (as the preview had them)'),
+    varset('%buslive', 'yes', 'Drawn live (its page follows the sliders)'),
+    js('island_show.js', 'Build the island or status bar chip (whichever Show as says)'),
+    show_overlay('buspreview', 'Show it where it goes (for 10 minutes at most)'),
+    js('position_open.js', 'Build the panel of sliders (and start the island where it is)'),
+    show_overlay('busposition', 'Show the panel at the bottom of the screen (for 10 minutes at most)'),
+ ]),
+ (78, 'Bus Position Set', [
+    # A slider moved: just the one step, so the island follows straight away. The values that moved
+    # come across as locals; one not moved yet comes across as its name, which the island ignores.
+    varset('%BusStatePrevPos', '%set_gap,%set_y,%set_cx', 'Pass the sliders to the island (its page moves itself)'),
+ ]),
+ (80, 'Bus Position Done', [
+    js('position_save.js', 'Save the position, or not (Done saves the sliders that moved; Cancel nothing)'),
+    dismiss('busposition', 'Remove the panel (the editor is over)'),
+    dismiss('buspreview', '   and the island (sample times)'),
+    flash('%busmsg', 'Say what was saved, if anything', ('%busmsg', 3, 'none')),
+    perform('Bus Refresh', "A countdown is running: draw its island again (where it now goes)", ('%BusStateRunning', 2, '1'), pri=11),
+    perform('Bus Settings', 'Open Settings again, on the Position page (priority 6, as from the menu)', pri=6, par1='position'),
  ]),
  (76, 'Bus Find Camera', [
     *find_camera(),
@@ -595,7 +588,8 @@ def task_block(tid, name, acts):
 # older copy of itself, so opening Settings again works even if a previous screen was left open.
 # 59 Bus Refresh: turning the phone (the Bus Hide When Sideways profile) or a new refresh replaces
 # one under way, so hiding the island is never lost to a refresh that's still running.
-COLLISION = {74: 1, 59: 1}
+# 78 Bus Position Set: a slider moving runs it many times a second; the newest values win.
+COLLISION = {74: 1, 59: 1, 78: 1}
 
 NOW = str(int(time.time() * 1000))
 def profile(pid, name, fh, fm, th, tm, ssid, inverted):

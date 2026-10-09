@@ -30,7 +30,7 @@ const allPerforms = tasks.flatMap((t) => t.performs.map((p) => Object.assign({ c
 // ---- Collision handling: every task, deliberately ---------------------------------------------
 const EXPECTED_COLLISION = {
   'Bus': ['abort new', 'the menu: a second tap while it is open does nothing'],
-  'Bus Settings': ['abort existing', 'opening Settings again (or reopening after a preview) replaces the open screen'],
+  'Bus Settings': ['abort existing', 'opening Settings again (or reopening after the live position editor) replaces the open screen'],
   'Bus Settings Button': ['abort new', 'one tap at a time'],
   'Bus Find Camera': ['abort new', 'one measurement at a time'],
   'Bus Start': ['abort new', 'a countdown already starting wins; the second start is not needed'],
@@ -41,6 +41,9 @@ const EXPECTED_COLLISION = {
   'Bus Wake': ['abort new', 'screen on twice in quick succession needs one check; switching profiles once is enough'],
   'Bus Status': ['abort new', 'one report at a time (Status, or Debugging with par1 copy)'],
   'Bus Island': ['abort new', 'one tick, or one stop switch, per gesture'],
+  'Bus Position': ['abort new', 'one live position editor at a time (4.52)'],
+  'Bus Position Set': ['abort existing', 'a slider moving runs it many times a second: the newest values win'],
+  'Bus Position Done': ['abort new', 'Done or Cancel, once: a second tap while it saves does nothing'],
 };
 
 test('every task has a deliberate collision setting', () => {
@@ -85,7 +88,6 @@ test('what Bus Loop starts runs straight away, ahead of the loop itself', () => 
 // without thinking about the order things happen in.
 const MID_TASK_PERFORMS = {
   'Bus Settings -> Bus Wake': 'only to switch the profiles after an import: nothing in Settings depends on it',
-  'Bus Settings -> Bus Refresh': 'after a preview: puts real times back while the screen reopens',
   'Bus Start -> Bus Wake': 'only to switch the profiles after an import: independent of starting the countdown',
   'Bus Loop -> Bus End': 'time is up: the loop stops on its next step anyway',
   'Bus Loop -> Bus Watch': 'safety net: the check runs while the loop goes on to refresh',
@@ -104,9 +106,11 @@ test('no task is performed with a priority outside Tasker\'s range', () => {
   assert.deepStrictEqual(allPerforms.filter((p) => p.priority < 0 || p.priority > 50).map((p) => `${p.caller} -> ${p.target}`), []);
 });
 
-test('only Bus Settings starts itself, and only because it replaces itself', () => {
+test('no task starts itself, and Bus Settings replaces an open screen', () => {
+  // (Bus Settings used to start itself again after a preview; since 4.52 the live position editor's
+  // Bus Position Done reopens it)
   const selfStarts = allPerforms.filter((p) => p.caller === p.target).map((p) => p.caller);
-  assert.deepStrictEqual([...new Set(selfStarts)], ['Bus Settings']);
+  assert.deepStrictEqual([...new Set(selfStarts)], []);
   assert.strictEqual(byName['Bus Settings'].collision, 'abort existing');
 });
 

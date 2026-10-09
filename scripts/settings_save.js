@@ -4,7 +4,9 @@
    a control you didn't touch has no variable, so its setting is kept.
    Output: busmsg (confirmation), busstopschanged (yes: stops or routes
            changed, so the next steps refresh the stop lists and add the stops
-           across the road), BusTempOpposite (saved stops and their routes)
+           across the road), BusTempOpposite (saved stops and their routes),
+           buslive (yes: Adjust live was tapped, so the live position
+           editor opens next, 4.52)
    ================================================================== */
 /* @include get */
 /* @include loc */
@@ -127,7 +129,7 @@ if (true) {
   if (!get('TflKey') || !get('BusRoutes')) notes.push('A TfL key and at least one route at a stop are needed');
   busmsg = notes.length ? notes.join('. ') : 'none';               // "none": nothing to say, no message
 }
-var buspreview = loc('bus_preview') === 'yes' ? 'yes' : 'no';     // Preview on screen was tapped
+var buslive = loc('bus_live') === 'yes' ? 'yes' : 'no';          // Adjust live was tapped (4.52)
 setGlobal('BusTempSettings', '');
 setGlobal('BusTempTicks', '');
 setGlobal('BusTempChanged', '');

@@ -1,11 +1,11 @@
 // V4.48: a stop switched to with its times shows them at once, with its name on the left for 0.6 s
-// instead of over the whole island for 1.2 s; a long press is 450 ms, not 550; and Settings' preview
-// draws the island at its board's width, so the board appears over it without a step. (4.48 also
-// sized the island for Android's font size; 4.50 took that out: see tests/v4.50.test.js.)
+// instead of over the whole island for 1.2 s; and a long press is 450 ms, not 550. (4.48 also sized the
+// island for Android's font size, which 4.50 took out, and drew Preview's island at its board's
+// width; Preview went in 4.52.)
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert');
-const { run, runPage } = require('./harness');
+const { runPage } = require('./harness');
 
 const AT = Date.UTC(2026, 9, 9, 11, 0, 0);
 const min = (m) => AT + m * 60000;
@@ -45,17 +45,4 @@ test('the page, run: a long press is 450 ms', () => {
   assert.ok(!switched(page), 'not yet');
   page.flush(450);
   assert.ok(switched(page));
-});
-
-// ---- 2. Settings' preview ---------------------------------------------------------------------------
-test('preview: the island is drawn at its board\'s width and place, so the board appears over it without a step', () => {
-  const LONG = stop('preview', 'Preview (Stop B)', [{ k: '566', d: 'Wexley', t: min(12), st: 'live', t2: min(24), t3: min(37) }]);
-  const g = G({ BusStatePreviewData: JSON.stringify(LONG) });
-  const preview = (board) => run('island_show.js', { now: AT, globals: Object.assign({}, g), locals: { busdatavar: 'BusStatePreviewData', busboard: board ? 'yes' : 'no' } });
-  const island = preview(false), board = preview(true);
-  assert.deepStrictEqual([island.busww, island.busx], [board.busww, board.busx]);
-  assert.ok(+island.bush < +board.bush, 'the island is still its own height');
-  // A real island keeps its own width (the page grows its board out of it)
-  const real = run('island_show.js', { now: AT, globals: G({ BusStateIslandData: JSON.stringify(LONG) }) });
-  assert.ok(+real.busww < +board.busww);
 });

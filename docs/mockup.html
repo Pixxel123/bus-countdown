@@ -1098,6 +1098,8 @@ function boardRows(mine, others, mineOnly) {
 }
 var DATA_VAR = loc('busdatavar') || 'BusStateIslandData';
 var PREVIEW = DATA_VAR !== 'BusStateIslandData';
+// Settings' live position editor (4.52): the preview's island follows the sliders (see readPos)
+var LIVE = PREVIEW && loc('buslive') === 'yes';
 // Show as Status bar (BusStyle = chip): the same page and gestures, drawn as a small chip in the
 // status bar to the right of the clock (BusChipX dp from the left), with the route and minutes only
 var CHIP = global('BusStyle') === 'chip';
@@ -1115,16 +1117,10 @@ var BOARD_MINE = global('BusBoardRoutes') === 'mine';
 var BOARD_SECS = parseInt(global('BusBoardSecs'), 10); if (!(BOARD_SECS >= 0)) BOARD_SECS = 10;
 var LINE = 26;                                          // each line of the board, dp
 var BOARD_ROWS = 0;
-// Settings' preview shows the island and then its board, drawn as a new window over it: the island is
-// drawn at the board's width, so the board appears over it without a step at its ends (4.48)
-var AS_BOARD = BOARD || (PREVIEW && !CHIP);
-var boardData = {};
-var sizeRows = 0;
-if (AS_BOARD) {
-  try { boardData = JSON.parse(global(DATA_VAR)) || {}; } catch (e) {}
-  sizeRows = boardRows((boardData.b || []).length, (boardData.a || []).length, BOARD_MINE);
+if (BOARD) {
+  var boardData = {}; try { boardData = JSON.parse(global(DATA_VAR)) || {}; } catch (e) {}
+  BOARD_ROWS = boardRows((boardData.b || []).length, (boardData.a || []).length, BOARD_MINE);
 }
-if (BOARD) BOARD_ROWS = sizeRows;
 var WINH = BOARD ? H + BOARD_ROWS * LINE + 8 : H;       // the window's height: the island, or the island and its board
 // How many lines it was drawn with, so a refresh that changes that draws it again (refresh.js, 4.43)
 if (BOARD && !PREVIEW) setGlobal('BusStateBoardRows', String(BOARD_ROWS));
@@ -1181,13 +1177,12 @@ var ISLAND_LEFT = LEFT;
 var ISLAND_RIGHT = RIGHT;
 // The stop board (4.47): a little wider than the island when its lines need it (boardWidths). This is
 // for a board drawn as a new window; one the page grows out of the island works it out the same way.
-// (And for the preview's island, 4.48: see AS_BOARD.)
-if (AS_BOARD) {
+if (BOARD) {
   var bw = boardWidths({ left: LEFT, right: RIGHT },
     (boardData.b || []).map(function (b) {
       return { t: [b.t].concat(b.t2 !== undefined ? [b.t2] : [], b.t3 !== undefined ? [b.t3] : []), st: b.st, sts: [b.st, b.st2, b.st3] };
-    }).concat(BOARD_MINE ? [] : (boardData.a || []).map(function (o) { return { t: (o.t || []).slice(0, 3), st: 'live' }; })).slice(0, sizeRows),
-    (boardData.b || []).concat(BOARD_MINE ? [] : (boardData.a || [])).slice(0, sizeRows).map(function (x) { return x.k; }),
+    }).concat(BOARD_MINE ? [] : (boardData.a || []).map(function (o) { return { t: (o.t || []).slice(0, 3), st: 'live' }; })).slice(0, BOARD_ROWS),
+    (boardData.b || []).concat(BOARD_MINE ? [] : (boardData.a || [])).slice(0, BOARD_ROWS).map(function (x) { return x.k; }),
     { cam: camX, screen: screenW, gap: GAP, pad: PAD, letters: letters, now: Date.now() });
   LEFT = bw.left;
   RIGHT = bw.right;
@@ -1214,7 +1209,7 @@ var PAGE = String.raw`<!doctype html>
   /* (Heights in px. Viewport units come out as 0 in this web view, which hid the whole island: test build 13.
      A board the page grows sets them itself, setHeight.) */
   /* The widths as variables, so the page can fit itself to its times (4.46) */
-  :root { --left: {{LEFT}}px; --right: {{RIGHT}}px; --total: {{TOTAL}}px; }
+  :root { --left: {{LEFT}}px; --right: {{RIGHT}}px; --total: {{TOTAL}}px; --gap: {{GAP}}px; }   /* the gap too, for the live editor (4.52) */
   html, body { margin: 0; height: {{WINH}}px; width: var(--total); background: transparent; overflow: hidden;
                -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
   body { font-family: system-ui, Roboto, sans-serif; }
@@ -1240,7 +1235,7 @@ var PAGE = String.raw`<!doctype html>
   body.leaving .bl { opacity: 0; transition: opacity 90ms linear; transition-delay: 0ms; }
   #p.swap .h { opacity: 0; }
   .bl .h { height: {{LINE}}px; }
-  .bl .bl-l { width: var(--left); } .bl .bl-g { flex: none; width: {{GAP}}px; } .bl .bl-r { width: var(--right); }
+  .bl .bl-l { width: var(--left); } .bl .bl-g { flex: none; width: var(--gap); } .bl .bl-r { width: var(--right); }
   .bl .d { font-size: 12.5px; }
   .bl .m2 { font-size: 12px; }
   .b.other { background: transparent; box-shadow: inset 0 0 0 1.5px #5A6376; color: #D5DAE3; }   /* not one of your routes */
@@ -1261,7 +1256,7 @@ var PAGE = String.raw`<!doctype html>
   .h { display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden;
        transition: opacity .18s, transform .18s; }
   #L { flex: none; width: var(--left); }   /* route + destination: fixed width */
-  #g { flex: none; width: {{GAP}}px; }    /* empty, sits over the camera */
+  #g { flex: none; width: var(--gap); }    /* empty, sits over the camera */
   /* Status bar chip: a thin pipe between the route and the minutes */
   body.chip #g { display: flex; justify-content: center; }
   body.chip #g::before { content: ''; width: 1px; height: 12px; background: rgba(255,255,255,.45); }
@@ -1306,6 +1301,7 @@ var PAGE = String.raw`<!doctype html>
 <body class="{{SHAPE}}">
 ${'<'}!-- Tasker replaces this with the live bus data, and again on every refresh -->
 <div id="d" hidden>{{DATA}}</div>
+<div id="pos" hidden>{{POS}}</div>
 <div id="p">
   <svg id="ring"><rect id="track"/><rect id="prog"/></svg>
   <div class="h" id="L"></div><div id="g"></div><div class="h" id="R"></div>
@@ -1501,6 +1497,31 @@ ${'<'}script>
     CAN_FIT = false; runTask('Bus Island', { busisland: 'fit' });
     return true;
   }
+  /* Settings' live position editor (4.52): the sliders' values arrive in #pos ("gap,top,chip x", from
+     BusStatePrevPos, set by Bus Position Set as they move), and the page moves and resizes its own
+     window to match, with no new window. A slider not moved yet sends its name, not a number: that
+     part is left as it is. */
+  var LIVE = {{LIVE}}, LIVE_CHIP = {{CHIP_FLAG}}, posEl = $('pos'), posRaw = '';
+  function readPos() {
+    var t = posEl.textContent.trim();
+    if (!LIVE || t === posRaw) return;
+    posRaw = t;
+    var v = t.split(',');
+    var num = function (x, lo, hi) { var n = Math.round(parseFloat(x)); return n >= lo && n <= hi ? n : null; };
+    var g = num(v[0], 26, 80), y = num(v[1], 0, 24), cx = num(v[2], 0, 200), c = {};
+    if (LIVE_CHIP) { if (cx !== null) c.x = String(cx); }
+    else if (g !== null && g !== GAP) {
+      GAP = g;
+      document.documentElement.style.setProperty('--gap', g + 'px');
+      setWidths(LEFT, RIGHT_NOW);
+      c.width = String(totalFor(RIGHT_NOW)); c.x = String(islandX(LEFT));
+    }
+    if (y !== null) c.y = String(LIVE_CHIP ? y + 3 : y);
+    if (!Object.keys(c).length || !window.Tasker || typeof Tasker.updateOverlayConfig !== 'function') return;
+    c.configTransitionMs = 0;
+    try { Tasker.updateOverlayConfig(c); } catch (e) {}
+  }
+  if (LIVE) new MutationObserver(readPos).observe(posEl, { childList: true, characterData: true, subtree: true });
   function islandX(left) { return Math.round(CAMX - GAP / 2 - left - PAD); }
   function setWidths(left, right) {
     LEFT = left; RIGHT_NOW = right;
@@ -1938,6 +1959,8 @@ var html = fill(PAGE, {
   BOARD: BOARD ? 'true' : 'false', BOARD_ROWS: BOARD_ROWS, BOARD_MINE: BOARD_MINE ? 'true' : 'false', BOARD_SECS: BOARD_SECS,
   ROUTE_ORDER: ROUTE_ORDER, WINH: WINH, LINE: LINE,
   DATA: '%' + DATA_VAR,                      // split so Tasker doesn't fill it in here
+  POS: LIVE ? '%' + 'BusStatePrevPos' : '',  // the live editor's sliders (4.52), split the same way
+  LIVE: LIVE ? 'true' : 'false', CHIP_FLAG: CHIP ? 'true' : 'false',
   END_SCRIPT: '</' + 'script>'        // split for the same reason as above, for the HTML parser
 });
 

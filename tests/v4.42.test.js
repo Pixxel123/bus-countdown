@@ -106,7 +106,8 @@ test('the settings screen has both choices, and saves only known values', () => 
   assert.match(g.BusTempChanged, /stop board closes when tapped/);
 });
 
-test('Preview shows the island for 3 seconds, then its stop board for 4, with sample other routes', () => {
+// (4.52: Preview is gone, replaced by the live position editor, which uses the same sample times)
+test('the sample times have other routes for the stop board, and it has a line for each', () => {
   const g = { BusRoutes: '517,566' };
   const r = run('settings_button.js', { globals: g, locals: { busaction: 'preview' }, now: AT });
   const sample = JSON.parse(g.BusStatePreviewData);
@@ -114,13 +115,4 @@ test('Preview shows the island for 3 seconds, then its stop board for 4, with sa
   assert.deepStrictEqual(sample.a.map((x) => x.k), ['130', '64']);
   const board = run('island_show.js', { globals: Object.assign({}, g, { BusDestLetters: '6' }), locals: { busdatavar: r.busdatavar, busboard: 'yes' }, now: AT });
   assert.strictEqual(+board.bush, 30 + 4 * 26 + 8);
-  for (const task of ['Bus Settings', 'Bus Settings Button']) {
-    const s = steps(taskBody(task));
-    const shows = s.filter((x) => x.code === 479 && /^buspreview/.test(x.args[2] || ''));
-    // (4.51: the island stays until its board is on top of it; the chip, with no board, for 3 s as before)
-    assert.deepStrictEqual(shows.map((x) => [x.args[2], x.args[11] || '', x.cond]),
-      [['buspreview', '3000', '%BusStyle 2 chip'], ['buspreview', '', '%BusStyle 3 chip'], ['buspreview2', '4000', '%BusStyle 3 chip']], task);
-    assert.ok(s.some((x) => x.code === 547 && x.args[0] === '%busboard' && x.args[1] === 'yes'), task + ': asks for the board');
-  }
-  assert.ok(steps(taskBody('Bus Settings')).some((x) => x.code === 480 && x.args[0] === 'buspreview2'), 'and it is removed if the screen closes while it shows');
 });

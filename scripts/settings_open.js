@@ -151,8 +151,12 @@ var setup = !get('TflKey') || !get('BusRoutes');   // first run: show the note a
 // page showing is the screen variable bus_page; every page is in the layout, shown or hidden.
 var PAGE_VAR = 'bus_page';
 var PAGES = ['stops', 'countdown', 'wifi', 'island', 'position', 'setup'];
-function onPage(pg) { return '%' + PAGE_VAR + ' == "' + pg + '"'; }
-var ON_MAIN = PAGES.map(function (pg) { return '%' + PAGE_VAR + ' != "' + pg + '"'; }).join(' & ');
+// Opening on a page of its own (busstartpage, 4.52: back from the live position editor, on Position):
+// that page also shows while bus_page is still empty, and the main page doesn't. If the screen gives
+// an unset variable as its name rather than empty, neither applies, and it opens on the main page.
+var START = PAGES.indexOf(loc('busstartpage')) > -1 ? loc('busstartpage') : '';
+function onPage(pg) { return pg === START ? '(%' + PAGE_VAR + ' == "' + pg + '" | %' + PAGE_VAR + ' == "")' : '%' + PAGE_VAR + ' == "' + pg + '"'; }
+var ON_MAIN = PAGES.map(function (pg) { return '%' + PAGE_VAR + ' != "' + pg + '"'; }).join(' & ') + (START ? ' & %' + PAGE_VAR + ' != ""' : '');
 function page(pg, children) {
   return { type: 'Column', id: 'page_' + pg, showWhen: pg === 'main' ? ON_MAIN : onPage(pg), verticalArrangement: 'SpacedBy', spacing: '12',
            modifiers: [{ type: 'FillWidth' }], children: children };
@@ -406,11 +410,11 @@ var positionPage = [group(
   slider('Camera gap', 26, 80, 1, Math.min(80, Math.max(26, gap)), 'set_gap')
   .concat(slider('Top offset', 0, 24, 1, Math.min(24, y), 'set_y'))
   .concat(slider('Chip offset from left', 0, 200, 2, Math.min(200, parseInt(get('BusChipX'), 10) >= 0 ? parseInt(get('BusChipX'), 10) : 76), 'set_cx'))
-  // Preview closes this screen (saving) and shows the real island for 3 seconds, then its stop board
-  // for 4 (the status bar chip, which has no board, for 3), then reopens
-  // Settings. Showing it on top of the open screen did nothing, and left the screen unable to report
-  // that it had closed.
-  .concat([row([button('Preview', [setVar('bus_preview', 'yes'), { type: 'DismissLayout' }]),
+  // Adjust live (4.52, in place of Preview) closes this screen (saving) and shows the island where it
+  // goes, with sliders at the bottom of the screen that move it as they slide (Bus Position); Done
+  // there saves and reopens Settings on this page. Showing it on top of the open screen did nothing,
+  // and left the screen unable to report that it had closed.
+  .concat([row([button('Adjust live', [setVar('bus_live', 'yes'), { type: 'DismissLayout' }]),
                 // Reset position: measure the camera again and put the gap and height back to fit it.
                 // Clearing the two slider variables means closing the screen won't overwrite the reset.
                 button('Reset', [setVar('set_gap', ''), setVar('set_y', ''), runTask('Bus Find Camera', { busrebuild: 'yes' })])]),

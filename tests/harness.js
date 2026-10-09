@@ -67,9 +67,10 @@ const m = (metres) => metres / 111320;
 
 // The island's page, run against a stand-in document and Tasker bridge (from tests/v4.43.test.js, 4.47).
 // opts.scale (4.50): the web view's page zoom (visualViewport.scale); a test can change it later.
+// opts.locals (4.52): the building task's locals (busdatavar, buslive for the live position editor).
 function runPage(globals, now, opts = {}) {
   const vm = require('vm');
-  const r = run('island_show.js', { globals, now });
+  const r = run('island_show.js', { globals, now, locals: opts.locals || {} });
   const script = r.html.slice(r.html.indexOf('<script>') + 8, r.html.lastIndexOf('</script>'));
   const classes = () => { const set = new Set(); return { set, add: (...c) => c.forEach((x) => set.add(x)), remove: (...c) => c.forEach((x) => set.delete(x)),
     toggle: (c, on) => { const v = on === undefined ? !set.has(c) : on; if (v) set.add(c); else set.delete(c); return v; }, contains: (c) => set.has(c) }; };
@@ -111,9 +112,11 @@ function runPage(globals, now, opts = {}) {
   const advance = (ms) => { clock += ms; flush(ms); };
   // New data from Tasker, as when Bus Island or Bus Refresh sets it (4.48)
   const push = (d) => { el('d').textContent = typeof d === 'string' ? d : JSON.stringify(d); observed.forEach((f) => f()); };
+  // Text Tasker fills in elsewhere in the page (4.52: #pos, the live editor's sliders)
+  const setText = (id, t) => { el(id).textContent = t; observed.forEach((f) => f()); };
   // A finger held on the island for ms (4.48)
   const hold = (ms) => { el('p').listeners.pointerdown.forEach((f) => f({ clientX: 100, clientY: 18, screenX: 100, screenY: 18, pointerId: 1 })); flush(ms); };
-  return { calls, flush, tap, push, hold, advance, body: el('body'), html: el('html'), dataEl: el('d'), L: el('L'), R: el('R'), ctx };
+  return { calls, flush, tap, push, setText, hold, advance, body: el('body'), html: el('html'), dataEl: el('d'), L: el('L'), R: el('R'), ctx };
 }
 
 module.exports = { run, runPage, clockAt, m, SCRIPTS, compose, files };

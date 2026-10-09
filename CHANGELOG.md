@@ -4,6 +4,16 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.52] - 2026-10-09
+
+### Added
+
+- Settings › Island › Position › Adjust live: the island shows where it goes, with sliders at the bottom of the screen for the camera gap and the top offset (the offset from the left and the top for the status bar chip). It moves as you slide, without being drawn again: its page moves and resizes its own window. Done saves and reopens Settings on the Position page; Cancel leaves the position as it was. While it's open, a countdown's own island stays hidden, and it comes back where it now goes.
+
+### Removed
+
+- Preview, which Adjust live replaces (and its flash with it).
+
 ## [4.51] - 2026-10-09
 
 ### Fixed
