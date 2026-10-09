@@ -10,12 +10,18 @@
 //     route badge wider than the island's, but never closer than 8 dp to the screen's edges.
 //     island: { left, right }; rows: [{ t: [times], st, sts }]; keys: the routes; at: { cam (the
 //     camera's middle), screen (its width), gap, pad, letters, now }
+// Android's font size (4.48): the island's page draws its text at the size set in Android's Settings
+// (115% on the phone), but a canvas measures it at 100%, so the widths came out too narrow and the
+// times were cut short ("3 · 14 m"). The page measures the real size and keeps it in BusStateTextZoom, and
+// every width here is scaled by it. (The page sets TEXT_ZOOM itself, from what it measured.)
+var TEXT_ZOOM = 1;
+try { TEXT_ZOOM = Math.min(2, Math.max(0.8, parseFloat(global('BusStateTextZoom')) || 1)); } catch (e) { TEXT_ZOOM = 1; }
 function textWidth(t, font) {
   try {
     var ctx = document.createElement('canvas').getContext('2d');
     ctx.font = font || '700 14px system-ui, Roboto, sans-serif';   // default: the island's minutes
-    return Math.ceil(ctx.measureText(t).width);
-  } catch (e) { return Math.ceil(t.length * 8.4); }                // rough fallback
+    return Math.ceil(ctx.measureText(t).width * TEXT_ZOOM);
+  } catch (e) { return Math.ceil(t.length * 8.4 * TEXT_ZOOM); }    // rough fallback
 }
 function dotsWidth(n) { return n > 1 ? 10 + n * 4 + (n - 1) * 3 : 0; }
 function rightNeeded(buses, now) {

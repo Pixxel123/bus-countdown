@@ -4,6 +4,18 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.48] - 2026-10-09
+
+### Fixed
+
+- The island is sized for Android's font size. Its text is drawn at the size set in Android's Settings (115% on the phone), but its widths were measured at 100%, so since 4.46 the times could be cut short ("3 · 14 m") and the stop board's lines with them. A second after the island appears, its page measures the minutes it drew, and the first time they're drawn at another size than the island was sized for, the island is drawn again to fit; from then on it's sized for it.
+- In Settings' preview, the stop board no longer flashes as it appears over the island: the preview's island is drawn at its board's width, so their ends line up, as they did before the board could widen (4.47).
+
+### Changed
+
+- Switching to the other side of the road shows its times as soon as the island changes, with the stop's name on the left for 0.6 s ("Stop B · High Street"). The whole island used to show the name for 1.2 s first, two thirds of the wait. The name still fills the island while a stop's times are on their way.
+- A long press is 450 ms instead of 550, so a switch comes 0.1 s sooner. (Not Android's own 400: a tap on the island can last half a second.)
+
 ## [4.47] - 2026-10-09
 
 ### Changed

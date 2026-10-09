@@ -65,8 +65,10 @@ function run(name, { globals = {}, locals = {}, now = Date.now() } = {}) {
 // Metres to degrees of latitude, for building positions along a north-south road
 const m = (metres) => metres / 111320;
 
-// The island's page, run against a stand-in document and Tasker bridge (from tests/v4.43.test.js, 4.47)
-function runPage(globals, now) {
+// The island's page, run against a stand-in document and Tasker bridge (from tests/v4.43.test.js, 4.47).
+// opts.zoom (4.48): the size the page's web view draws text at (Android's font size), against a canvas
+// at 100%; without it, the page can't measure, as in a browser with no layout.
+function runPage(globals, now, opts = {}) {
   const vm = require('vm');
   const r = run('island_show.js', { globals, now });
   const script = r.html.slice(r.html.indexOf('<script>') + 8, r.html.lastIndexOf('</script>'));
@@ -78,7 +80,11 @@ function runPage(globals, now) {
     addEventListener(t, f) { (this.listeners[t] = this.listeners[t] || []).push(f); }, querySelectorAll: () => [],
     setPointerCapture() {}, releasePointerCapture() {}, offsetWidth: 200, offsetHeight: 36, scrollWidth: 0, clientWidth: 100 });
   el('d').textContent = globals.BusStateIslandData;
-  const calls = [], timers = [];
+  el('body').appendChild = el('body').removeChild = () => {};
+  const calls = [], timers = [], observed = [];
+  // The page's clock: fixed, unless a test moves it on (advance, 4.48)
+  let clock = now || Date.now();
+  const PageDate = class extends Date { constructor(...a) { if (a.length) super(...a); else super(clock); } static now() { return clock; } };
   const plain = (x) => JSON.parse(JSON.stringify(x));   // (objects made in the page's own context)
   const Tasker = {
     runTask: (o) => { calls.push(['runTask', plain(o)]); return Promise.resolve({}); },
@@ -88,10 +94,18 @@ function runPage(globals, now) {
     dismissLayout: () => calls.push(['dismissLayout']), getCurrentScreenId: () => 'buspill', flash: () => {},
   };
   const ctx = {
-    Tasker, document: { getElementById: el, body: el('body'), documentElement: el('html'), hidden: false, addEventListener() {} },
+    Tasker, document: { getElementById: el, body: el('body'), documentElement: el('html'), hidden: false, addEventListener() {},
+      // The island's minutes as drawn: 8 px a letter at 100%, as the canvas below measures them
+      querySelector: (sel) => (opts.zoom && sel === '#R .m' ? { textContent: '14 min', classList: classes(), getBoundingClientRect: () => ({ width: 6 * 8 * opts.zoom }) } : null),
+      createElement: (tag) => {
+        if (!opts.zoom) throw new Error('no layout');
+        if (tag === 'canvas') return { getContext: () => ({ font: '', measureText: (t) => ({ width: t.length * 8 }) }) };
+        const e = { style: {}, textContent: '', getBoundingClientRect: () => ({ width: e.textContent.length * 8 * opts.zoom }) };
+        return e;
+      } },
     devicePixelRatio: 3, addEventListener() {}, requestAnimationFrame: (f) => timers.push([0, f]),
     setTimeout: (f, ms) => { timers.push([ms || 0, f]); return timers.length; }, clearTimeout() {}, setInterval() {},
-    MutationObserver: class { observe() {} }, JSON, Math, Date: now ? clockAt(now) : Date, String, Number, Array, Object, parseInt, parseFloat, Promise,
+    MutationObserver: class { constructor(f) { observed.push(f); } observe() {} }, JSON, Math, Date: PageDate, String, Number, Array, Object, parseInt, parseFloat, Promise,
   };
   ctx.window = ctx;
   vm.createContext(ctx);
@@ -102,7 +116,13 @@ function runPage(globals, now) {
     p.listeners.pointerdown.forEach((f) => f({ clientX: 100, clientY: 18, screenX: 100, screenY: 18, pointerId: 1 }));
     p.listeners.pointerup.forEach((f) => f({ clientX: 100, clientY: 18, screenX: 100, screenY: 18, pointerId: 1 }));
   };
-  return { calls, flush, tap, body: el('body'), html: el('html'), dataEl: el('d'), ctx };
+  // Time passing: the clock moves on ms, and what was due by then runs (4.48)
+  const advance = (ms) => { clock += ms; flush(ms); };
+  // New data from Tasker, as when Bus Island or Bus Refresh sets it (4.48)
+  const push = (d) => { el('d').textContent = typeof d === 'string' ? d : JSON.stringify(d); observed.forEach((f) => f()); };
+  // A finger held on the island for ms (4.48)
+  const hold = (ms) => { el('p').listeners.pointerdown.forEach((f) => f({ clientX: 100, clientY: 18, screenX: 100, screenY: 18, pointerId: 1 })); flush(ms); };
+  return { calls, flush, tap, push, hold, advance, body: el('body'), html: el('html'), dataEl: el('d'), L: el('L'), R: el('R'), ctx };
 }
 
 module.exports = { run, runPage, clockAt, m, SCRIPTS, compose, files };

@@ -264,6 +264,7 @@ h1{text-wrap:balance}
 .isl .d.sched{font-style:italic}
 .isl .d.mine{color:#8FD3FF;font-weight:600}
 .isl .m{font-weight:700;flex:none}
+.isl .s{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .isl .m.due{color:#7FD6A4}
 .isl .m.sched{color:#9AA3B5;font-weight:600}
 .isl .m2{flex:none;margin-left:-2px;font-size:11px;font-weight:600;color:#9AA3B5;white-space:pre}
@@ -1123,8 +1124,9 @@ function islandShow(global, setGlobal) {
     var right = '<span class="m' + (f.mCls ? ' ' + f.mCls : '') + '">' + f.m + '</span>' + (f.m2 ? '<span class="m2">· ' + f.m2 + ' min</span>' : '') + (f.after ? '<span class="m2"> ' + f.after + '</span>' : '') + dots;
     var ring = f.border ? '<svg width="' + W + '" height="30" viewBox="0 0 ' + W + ' 30"><rect x="1" y="1" width="' + (W - 2) + '" height="28" rx="14" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"/></svg>' : '';
     return '<div class="isl' + (f.right === 'fit' ? ' fit' : '') + '" style="left:' + x + 'px;top:9px;width:' + W + 'px;padding:0 ' + PAD + 'px">' + ring +
-      '<span class="h" style="width:' + L + 'px">' + (f.ring ? '<span class="sl">' + f.ring + '</span>' : '') + '<span class="b' + (f.hollow ? ' hollow' : '') + (f.idle ? ' idle' : '') + '">' + f.k + '</span>' +
-      '<span class="d' + (f.dCls ? ' ' + f.dCls : '') + '">' + f.d + '</span></span>' +
+      '<span class="h" style="width:' + L + 'px">' + (f.name ? '<span class="s">' + f.name + '</span>' :   // 4.48: a stop just switched to
+      (f.ring ? '<span class="sl">' + f.ring + '</span>' : '') + '<span class="b' + (f.hollow ? ' hollow' : '') + (f.idle ? ' idle' : '') + '">' + f.k + '</span>' +
+      '<span class="d' + (f.dCls ? ' ' + f.dCls : '') + '">' + f.d + '</span>') + '</span>' +
       '<span class="g" style="width:' + GAP + 'px"></span><span class="h" style="width:' + R + 'px">' + right + '</span></div>';
   }
   function notificationHtml() {
@@ -1149,6 +1151,7 @@ function islandShow(global, setGlobal) {
     v431: { ring: 'D', letters: 3, right: 'now', k: '517', idle: true, d: 'Holbry', m: '18 min', dots: 2, on: 1 },
     v447: { board: true, wide: true, ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2,
       rows: [['517', '', 'Holbry', '14', '33 · 52'], ['566', '', 'Fernleigh Village', '5', '17 · 29'], ['289', 'other', 'Ordwick', '3', '15 · 27'], ['N68', 'other', 'Kelbury Bus Garage', '26 min', '']] },
+    v448: { name: 'Stop D · Wexley / Thornacre Precinct', ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
     v446: { ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
     v442: { board: true, ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', dots: 2,
       rows: [['517', '', 'Holbry', '14', '33'], ['566', '', 'Fernleigh Village', '5', '17 · 29'], ['289', 'other', 'Ordwick', '3', '15'], ['64', 'other', 'Thornacre Precinct', '9 min', '']] }
@@ -1173,6 +1176,7 @@ function islandShow(global, setGlobal) {
   }
   // Newest first, only the versions that changed how the island looks: [version, date, look, what changed]
   var VERSIONS = [
+    ['4.48', '9 Oct', 'v448', 'Hold the island for the other side of the road and its times show as soon as it changes, with the stop\u2019s name on the left for 0.6 s; before, the name filled the island for 1.2 s first. And it\u2019s sized for Android\u2019s font size, so a larger font no longer cuts the times short.'],
     ['4.47', '9 Oct', 'v447', 'The stop board widens a little when its lines need it: room for three times on a route and for a wider route badge (N68), growing outwards from the camera gap as it grows down. Tucked back in, it\u2019s the island at its own width again.'],
     ['4.46', '9 Oct', 'v446', 'Fitted to its times: just wide enough for the widest showing, with the route dots always 10 dp clear of them. It grows the moment the times need more room, so nothing is cut short, and shrinks only after two refreshes in a row with 8 dp or more to spare, its right end moving while the camera gap stays put.'],
     ['4.42', '8 Oct', 'v442', 'Tap the island and it grows down into the stop board: every bus at the stop, your routes first and then the stop\u2019s other routes soonest first, with the camera gap running down the middle. Tap again or swipe up to close it; it closes by itself after 10 s.'],

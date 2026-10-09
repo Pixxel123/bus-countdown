@@ -70,7 +70,9 @@ test('Bus Island: open sets the board on, close off, and both have Bus Refresh d
   const s = steps(taskBody('Bus Island'));
   const sets = s.filter((x) => x.code === 547).map((x) => [x.args[0], x.args[1], x.cond]);
   // (4.43: a board the page grew itself, busgrow yes, is only noted; Bus Refresh then just fetches if due)
+  // (4.48: the page found the island sized for another font size: kept, and drawn again as for fit)
   assert.deepStrictEqual(sets, [['%BusStateBoard', '1', '%busisland 2 open'], ['%BusStateBoard', '0', '%busisland 2 close'],
+    ['%BusStateTextZoom', '%buszoom', ''], ['%BusStateIslandRight', '0', ''], ['%busisland', 'fit', ''],
     ['%busdo', '%busisland', ''], ['%busdo', '%busisland-grown', '%busgrow 2 yes'],
     ['%BusStateBoardSelf', '1', '%busdo 2 open-grown'], ['%BusStateBoardSelf', '0', '%busdo 2 open'],
     ['%BusStateIslandShown', '2', '%busdo 2 open/close/fit']]);   // fit: 4.46
