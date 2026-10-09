@@ -144,9 +144,34 @@ function setVar(v, value) { return { type: 'SetVariable', variable: v, value: va
 // Choices apply straight away; text boxes, sliders, routes and distances are saved when the
 // screen closes (Done, or the back gesture).
 var setup = !get('TflKey') || !get('BusRoutes');   // first run: show the note at the top
-var children = [];
-children.push(text('Bus countdown', 24));
-if (setup) children.push(text('Add your TfL key under Setup, then pick routes at your stops.', 14, 'onSurfaceVariant'));
+
+// ---- Pages (4.44) -------------------------------------------------------
+// Laid out like Android's own Settings: a main page of entries, each opening a page of its own,
+// with the top bar's back arrow going back up (and, from the main page, saving and closing). The
+// page showing is the screen variable bus_page; every page is in the layout, shown or hidden.
+var PAGE_VAR = 'bus_page';
+var PAGES = ['stops', 'countdown', 'wifi', 'island', 'position', 'setup'];
+function onPage(pg) { return '%' + PAGE_VAR + ' == "' + pg + '"'; }
+var ON_MAIN = PAGES.map(function (pg) { return '%' + PAGE_VAR + ' != "' + pg + '"'; }).join(' & ');
+function page(pg, children) {
+  return { type: 'Column', id: 'page_' + pg, showWhen: pg === 'main' ? ON_MAIN : onPage(pg), verticalArrangement: 'SpacedBy', spacing: '12',
+           modifiers: [{ type: 'FillWidth' }], children: children };
+}
+// A group of rows, as Settings draws them: one rounded block
+function group(children) {
+  return { type: 'Card', id: id('grp'), style: 'Filled', modifiers: [{ type: 'FillWidth' }], children: [
+    { type: 'Column', id: id('col'), verticalArrangement: 'SpacedBy', spacing: '10',
+      modifiers: [{ type: 'FillWidth' }, { type: 'Padding', all: '16' }], children: children }] };
+}
+// An entry on the main page: its icon, its name and what it's set to now; a tap opens its page
+function entry(icon, title, summary, to) {
+  return { type: 'Row', id: id('ent'), verticalAlignment: 'Center', horizontalArrangement: 'SpacedBy', spacing: '16',
+    modifiers: [{ type: 'FillWidth' }, { type: 'Padding', horizontal: '16', vertical: '14' }],
+    eventHandlers: { handlers: [{ events: [{ type: 'click' }], actions: [setVar(PAGE_VAR, to)] }] },
+    children: [{ type: 'Image', id: id('ico'), url: 'icon:' + icon, tint: 'primary', modifiers: [{ type: 'Size', width: '24', height: '24' }] },
+      { type: 'Column', id: id('ec'), verticalArrangement: 'SpacedBy', spacing: '2', modifiers: [{ type: 'FillWidth' }],
+        children: [text(title, 17), text(summary, 14, 'onSurfaceVariant')] }] };
+}
 
 function wifiBlock(label, current, inVar, setting, clearable) {
   var parts = [input(label, current, inVar)];
@@ -342,18 +367,18 @@ var stopBlocks = [text('Tap the routes you use at each stop. \u21c4 switches to 
                   text('Your stops', 15, 'primary', { fontWeight: 'Bold' })].concat(yours,
                  [text('Stops near you', 15, 'primary', { fontWeight: 'Bold' })], others);
 if (stopsShown.length === 0) stopBlocks.push(text('No stops found near you. Open Settings again near a stop you use.', 14, 'onSurfaceVariant'));
-children.push(card('Stops and routes', stopBlocks));
+var stopsPage = [group(stopBlocks)];
 
-children.push(card('Countdown',
+var countdownPage = [group(
   choices('Update every', P.refresh, get('BusRefresh') || 45, 'BusRefresh')
   .concat(choices('Stop after', P.timeout, get('BusTimeout') || 30, 'BusTimeout'))
   .concat(choices('Rotate routes every', P.rotate, get('BusRotate') || 6, 'BusRotate'))
   .concat(choices('Manual start searches within', P.radius, get('BusRadius') || 300, 'BusRadius'))
   .concat(choices('Heading to a stop', [['Off', 'off'], ['Walking', 'walk'], ['Walking + bus', 'both']], get('BusApproach') || 'both', 'BusApproach'))
   .concat(choices('Minutes ahead', [['2', '2'], ['3', '3'], ['5', '5']], get('BusApproachMin') || '3', 'BusApproachMin'))
-  .concat(choices('Record trips (to Download, kept a week)', [['Off', 'off'], ['On', 'on']], get('BusRecord') || 'off', 'BusRecord'))));
+  .concat(choices('Record trips (to Download, kept a week)', [['Off', 'off'], ['On', 'on']], get('BusRecord') || 'off', 'BusRecord')))];
 
-children.push(card('Home and work Wi-Fi',
+var wifiPage = [group(
   wifiBlock('Home Wi-Fi', get('BusHomeWifi'), 'home_wifi', 'BusHomeWifi', false)
   .concat(wifiBlock('Work Wi-Fi', get('BusWorkWifi'), 'work_wifi', 'BusWorkWifi', true))
   .concat([text('No countdowns on these networks.', 13, 'onSurfaceVariant')])
@@ -361,19 +386,22 @@ children.push(card('Home and work Wi-Fi',
                   get('BusLeaveShow') || 'work', 'BusLeaveShow'))
   .concat(choices('Work heads-up (1 min when the screen turns on), from',
                   [['Off', 'off'], ['16:30', '16:30'], ['17:00', '17:00'], ['17:30', '17:30']], get('BusGlanceFrom') || '17:00', 'BusGlanceFrom'))
-  .concat(choices('until', [['17:30', '17:30'], ['18:00', '18:00'], ['18:30', '18:30'], ['19:00', '19:00']], get('BusGlanceTo') || '18:00', 'BusGlanceTo'))));
+  .concat(choices('until', [['17:30', '17:30'], ['18:00', '18:00'], ['18:30', '18:30'], ['19:00', '19:00']], get('BusGlanceTo') || '18:00', 'BusGlanceTo')))];
 
 // Island
 var gap = parseInt(get('BusIslandGap'), 10) || 42;
 var y = parseInt(get('BusIslandY'), 10); if (!(y >= 0)) y = 9;
-children.push(card('Island',
+var islandPage = [group(
   choices('Show as', P.style, get('BusStyle') || 'pill', 'BusStyle')
   .concat(choices('Countdown border', P.border, get('BusBorder') || 'off', 'BusBorder'))
   .concat(choices('Destination length', [['3 letters', '3'], ['6 letters', '6'], ['10 letters', '10']], get('BusDestLetters') || '3', 'BusDestLetters'))
   // The stop board (4.42): tap the island to see every bus at the stop
   .concat(choices('Tap for the stop board: show', [['All routes', 'all'], ['Your routes', 'mine']], get('BusBoardRoutes') || 'all', 'BusBoardRoutes'))
-  .concat(choices('Stop board closes', [['After 10 s', '10'], ['After 30 s', '30'], ['When tapped', '0']], get('BusBoardSecs') || '10', 'BusBoardSecs'))
-  .concat(slider('Camera gap', 26, 80, 1, Math.min(80, Math.max(26, gap)), 'set_gap'))
+  .concat(choices('Stop board closes', [['After 10 s', '10'], ['After 30 s', '30'], ['When tapped', '0']], get('BusBoardSecs') || '10', 'BusBoardSecs'))),
+  // Where the island sits is a page of its own, one level down
+  group([entry('CropFree', 'Position', 'Camera gap ' + gap + ' dp, ' + y + ' dp from the top', 'position')])];
+var positionPage = [group(
+  slider('Camera gap', 26, 80, 1, Math.min(80, Math.max(26, gap)), 'set_gap')
   .concat(slider('Top offset', 0, 24, 1, Math.min(24, y), 'set_y'))
   .concat(slider('Chip offset from left', 0, 200, 2, Math.min(200, parseInt(get('BusChipX'), 10) >= 0 ? parseInt(get('BusChipX'), 10) : 76), 'set_cx'))
   // Preview closes this screen (saving) and shows the real island for 3 seconds, then its stop board
@@ -384,7 +412,7 @@ children.push(card('Island',
                 // Reset position: measure the camera again and put the gap and height back to fit it.
                 // Clearing the two slider variables means closing the screen won't overwrite the reset.
                 button('Reset', [setVar('set_gap', ''), setVar('set_y', ''), runTask('Bus Find Camera', { busrebuild: 'yes' })])]),
-           text(get('BusCameraX') ? 'Reset re-measures the camera.' : 'Camera not measured yet. Tap Reset.', 13, 'onSurfaceVariant')])));
+           text(get('BusCameraX') ? 'Reset re-measures the camera.' : 'Camera not measured yet. Tap Reset.', 13, 'onSurfaceVariant')]))];
 
 // Setup and troubleshooting: the TfL key, and permissions (one line when they're all on)
 var tasker = 'net.dinglisch.android.taskerm';
@@ -396,20 +424,44 @@ var PERMS = rebuild && before.perms ? before.perms : [
   ['Battery unrestricted', loc('bp_battery') === 'true', 'app']
 ];
 var missing = PERMS.filter(function (p) { return !p[1]; });
-children.push(card('Setup', [input('TfL key', get('TflKey'), 'tfl_key')].concat(
+var setupPage = [group([input('TfL key', get('TflKey'), 'tfl_key')].concat(
   missing.length
     ? [text('Needed:', 13, 'onSurfaceVariant')].concat(missing.map(function (p) {
         return row([text(p[0], 15), button('Turn on', [runTask('Bus Settings Button', { busaction: p[2] })])]);
       }))
-    : [text('All permissions are on.', 14, 'primary')])));
+    : [text('All permissions are on.', 14, 'primary')]))];
 
-// Done: closes the screen. Closing any other way (the back gesture) saves too.
-children.push(row([{ type: 'Spacer', id: id('sp'), width: '1' }, button('Done', [setVar('bus_save', 'yes'), { type: 'DismissLayout' }])]));
+// ---- The main page: an entry for each page, saying what it's set to now ----
+var myStops = stopsShown.filter(function (st) { return st.saved && st.ticked.length; })
+  .map(function (st) { return String(st.name).replace(/\s*\([^)]*\)\s*$/, '') + ': ' + st.ticked.join(', '); });
+var label = function (list, current) { return list[closest(list, current)][0]; };
+var mainPage = (setup ? [text('Add your TfL key under Setup, then pick routes at your stops.', 14, 'onSurfaceVariant')] : []).concat([
+  group([entry('DirectionsBus', 'Stops and routes', myStops.length ? myStops.join('; ') : 'Pick the routes you use at your stops', 'stops')]),
+  group([entry('Timer', 'Countdown', 'Every ' + label(P.refresh, get('BusRefresh') || 45) + ', ends after ' + label(P.timeout, get('BusTimeout') || 30), 'countdown'),
+         entry('Wifi', 'Home and work', (get('BusHomeWifi') || 'No home Wi-Fi') + ' and ' + (get('BusWorkWifi') || 'no work Wi-Fi'), 'wifi'),
+         entry('Smartphone', 'Island', label(P.style, get('BusStyle') || 'pill') + ', the stop board closes ' +
+               ({ '10': 'after 10 s', '30': 'after 30 s', '0': 'when tapped' }[get('BusBoardSecs') || '10'] || 'after 10 s'), 'island')]),
+  group([entry('Key', 'Setup', !get('TflKey') ? 'Add your TfL key' : missing.length ? missing.length + ' permission' + (missing.length > 1 ? 's' : '') + ' needed' : 'TfL key added, all permissions on', 'setup')])]);
+
+// ---- The top bar: each page's title, and a back arrow that goes up a level ----
+var TITLES = { main: 'Bus Countdown', stops: 'Stops and routes', countdown: 'Countdown', wifi: 'Home and work', island: 'Island', position: 'Position', setup: 'Setup' };
+function back(when, actions) { return { type: 'IconButton', id: id('back'), icon: 'icon:ArrowBack', showWhen: when, eventHandlers: { handlers: [{ events: [{ type: 'click' }], actions: actions }] } }; }
+var topBar = { type: 'TopAppBar', id: 'top_bar',
+  title: [{ type: 'Box', id: 'titles', children: Object.keys(TITLES).map(function (pg) {
+    return text(TITLES[pg], 22, '', { showWhen: pg === 'main' ? ON_MAIN : onPage(pg) }); }) }],
+  // From the main page: save and close (as Done did). From Position: back to Island. Else: the main page.
+  navigationIcon: [{ type: 'Box', id: 'backs', children: [
+    back(ON_MAIN, [setVar('bus_save', 'yes'), { type: 'DismissLayout' }]),
+    back(onPage('position'), [setVar(PAGE_VAR, 'island')]),
+    back('!(' + ON_MAIN + ') & !(' + onPage('position') + ')', [setVar(PAGE_VAR, 'main')])] }] };
 
 var buslayout = JSON.stringify({
   name: 'Bus Settings', defaultDisplayMode: 'FullscreenWithResult',
-  root: { type: 'Column', id: 'root', verticalArrangement: 'SpacedBy', spacing: '12',
-          modifiers: [{ type: 'FillSize' }, { type: 'VerticalScroll' }, { type: 'Padding', all: '16' }], children: children }
+  root: { type: 'Scaffold', id: 'root', topBar: [topBar],
+    content: [{ type: 'Column', id: 'body', verticalArrangement: 'SpacedBy', spacing: '12',
+      modifiers: [{ type: 'FillSize' }, { type: 'VerticalScroll' }, { type: 'Padding', horizontal: '16', top: '4', bottom: '24' }],
+      children: [page('main', mainPage), page('stops', stopsPage), page('countdown', countdownPage), page('wifi', wifiPage),
+                 page('island', islandPage), page('position', positionPage), page('setup', setupPage)] }] }
 });
 
 // What was shown, so the save step knows the starting values

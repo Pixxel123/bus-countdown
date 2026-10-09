@@ -4,15 +4,15 @@ Part of the [Bus Countdown](../README.md) documentation: the settings screen, ev
 
 ## The settings screen
 
-Bus Settings opens a native Tasker screen (Scene V2), with the most used sections first:
+Bus Settings opens a native Tasker screen (Scene V2), laid out like Android's own Settings (4.44). The main page has an entry for each part, saying what it's set to now ("Every 45 s, ends after 30 min"); tap one to open its page. The top bar shows the page's name, and its back arrow goes up a level. On the main page it saves and closes the screen. The pages, most used first:
 
 - **Stops and routes.** Your stops, then other stops within 400 m. Tap the routes you want at each stop; a stop with a chosen route moves up under Your stops. Stops on both sides of a road share one entry showing one side at a time, with ⇄ to switch; each side says which way it goes. Stops you use get an arrival distance: 50, 100 or 200 m, or Custom (up to 200 m) (tap it, type the distance, then Use custom; tapping a preset hides the box again). Custom is always there, and filled only while a custom distance is in use, for example ✓ Custom 70 m. To take a saved stop off your list, tap Remove stop (Undo brings it back); it's removed when the screen closes, and isn't added back automatically as a stop across the road. Its routes stay if you use them at another stop.
 - **Countdown.** How often times update, when a countdown stops by itself, how long each route shows, how far Start countdown looks for stops, and whether (and how far ahead) to show a stop you're heading towards.
 - **Home and work Wi-Fi.** The two networks (with buttons to use the one you're on, or clear work), which of them shows your nearest stop's next buses when you leave it (work by default), and the heads-up window at work.
-- **Island.** Island or status bar, the optional border, how much of the destination to show (3, 6 or 10 letters), what the stop board shows and when it closes, the gap for the camera, the distance from the top, and where the status bar chip starts. Preview closes the settings, shows the real island for 3 seconds and then its stop board for 4 (the status bar chip, which has no board, for 3), then reopens them. Reset measures the camera again.
+- **Island.** Island or status bar, the optional border, how much of the destination to show (3, 6 or 10 letters), and what the stop board shows and when it closes. **Position**, a page of its own one level down, has the gap for the camera, the distance from the top, and where the status bar chip starts. Preview closes the settings, shows the real island for 3 seconds and then its stop board for 4 (the status bar chip, which has no board, for 3), then reopens them. Reset measures the camera again.
 - **Setup.** The TfL key, and permissions (one line when they're all on).
 
-Choices save as soon as you tap them. Text, sliders, routes and distances save when the screen closes, with Done or the back gesture. A message lists what changed.
+Choices save as soon as you tap them. Text, sliders, routes and distances save when the screen closes, with the back arrow on the main page or the back gesture. A message lists what changed.
 
 ## Settings
 

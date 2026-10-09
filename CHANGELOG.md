@@ -4,6 +4,12 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.44] - 2026-10-09
+
+### Changed
+
+- Settings is laid out like Android's own. The main page has an entry for each part (Stops and routes, Countdown, Home and work, Island, Setup), each saying what it's set to now, and a tap opens its page. The top bar shows the page's name, and its back arrow goes up a level; on the main page it saves and closes, as Done did. Where the island sits (the camera gap, the distance from the top and the chip's offset, with Preview and Reset) is a page of its own under Island.
+
 ## [4.43] - 2026-10-08
 
 ### Added

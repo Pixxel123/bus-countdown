@@ -50,7 +50,7 @@ Data comes from the [TfL Unified API](https://api-portal.tfl.gov.uk/). Built and
 2. In Tasker, long-press the project bar at the bottom, choose Import Project, and pick the file.
 3. Run the **Bus Settings** task.
 
-The first time, Bus Settings measures the camera cutout before opening. Enter your TfL key under Setup, set your home and work Wi-Fi, then under Stops and routes tap the routes you want at the stops you use. Stops within 400 m of you are listed with their routes. Tap Done. For each stop you've added, it then asks whether to save the stop across the road too, showing its name, letter and direction.
+The first time, Bus Settings measures the camera cutout before opening. Enter your TfL key under Setup, set your home and work Wi-Fi, then under Stops and routes tap the routes you want at the stops you use. Stops within 400 m of you are listed with their routes. Go back to the main page and tap its back arrow to save and close. For each stop you've added, it then asks whether to save the stop across the road too, showing its name, letter and direction.
 
 For day-to-day use, add the **Bus** task as a home screen shortcut or Quick Settings tile. It opens a menu: Start countdown (or End countdown while one is running), Settings, Status and Debugging.
 
