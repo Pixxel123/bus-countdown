@@ -1,5 +1,6 @@
-// The island never flashes when it updates: times changing never change its size (so it's never
-// redrawn for them), and when it is redrawn the new one is shown before the old one goes.
+// The island never flashes when it updates: it's fitted to its times, growing at once when they need
+// more room and shrinking only after two refreshes with room to spare, and resizes its own window to
+// do so (4.46); when it is redrawn the new one is shown before the old one goes.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert');
@@ -15,34 +16,64 @@ const at = Date.UTC(2026, 9, 5, 8, 0, 0);
 function refresh(g, arrivals) {
   run('refresh.js', { globals: g, now: at, locals: { http_response_code: '200', http_data: JSON.stringify(arrivals) } });
 }
-// Show the island once (as Bus Refresh does), then refresh with new data: was a redraw asked for?
-function redrawnAfter(first, next) {
-  const g = base();
+// Show the island once (as Bus Refresh does), then refresh with each new set of data in turn. 4.46:
+// grow now, shrink later. The page fits its own window to data.fit, so it's never drawn again for
+// that: after each refresh, the width the right half is to be (or 'same'), and whether it was redrawn.
+function widths(first, ...next) {
+  const g = base(); const out = [];
   refresh(g, first);
-  run('island_show.js', { globals: g, now: at });             // records the shape it was shown at
+  out.push(run('island_show.js', { globals: g, now: at }).RIGHT);
   g.BusStateIslandShown = '1';
-  refresh(g, next);
-  return g.BusStateIslandShown !== '1';
+  for (const n of next) {
+    const was = g.BusStateIslandRight;
+    refresh(g, n);
+    assert.strictEqual(g.BusStateIslandShown, '1', 'never drawn again for its width');
+    assert.strictEqual(JSON.parse(g.BusStateIslandData).fit, +g.BusStateIslandRight, 'the page is told');
+    out.push(g.BusStateIslandRight === was ? 'same' : +g.BusStateIslandRight);
+  }
+  return out;
 }
 const bus = (route, min) => ({ lineName: route, destinationName: route === '517' ? 'Holbry' : 'Fernleigh', timeToStation: min * 60 });
 
-test('times changing never redraw the island', () => {
-  assert.strictEqual(redrawnAfter([bus('517', 5), bus('566', 9)], [bus('517', 4), bus('566', 12)]), false);
+test('times counting down within the same width never change it', () => {
+  assert.deepStrictEqual(widths([bus('517', 12), bus('566', 9)], [bus('517', 11), bus('566', 8)], [bus('517', 10), bus('566', 7)]).slice(1), ['same', 'same']);
 });
-test('a second time appearing or going never redraws it', () => {
-  assert.strictEqual(redrawnAfter([bus('517', 5), bus('566', 9)], [bus('517', 5), bus('517', 12), bus('566', 9)]), false);
-  assert.strictEqual(redrawnAfter([bus('517', 5), bus('517', 12), bus('566', 9)], [bus('517', 5), bus('566', 9)]), false);
+test('it grows the moment the times need more room', () => {
+  const [w0, w1] = widths([bus('517', 5), bus('566', 9)], [bus('517', 4), bus('566', 12)]);
+  assert.ok(w1 > w0, `${w0} then ${w1}`);
 });
-test('a route switching to timetable times never redraws it', () => {
+test('it shrinks only after two refreshes in a row with 8 dp or more to spare', () => {
+  const big = [bus('517', 12), bus('517', 25), bus('566', 9)];                 // "12 · 25 min"
+  const small = [bus('517', 4), bus('566', 9)];
+  const w = widths(big, small, small, small);
+  assert.deepStrictEqual(w.slice(1).map((x) => x === 'same'), [true, false, true], 'kept once, then shrunk');
+  assert.ok(w[2] < w[0]);
+  // Needing the room again in between starts the count again
+  assert.deepStrictEqual(widths(big, small, big, small, small).slice(1).map((x) => x === 'same'), [true, true, true, false]);
+});
+test('a second time appearing, or a route coming back, grows it at once; going, shrinks it later', () => {
+  const two = [bus('517', 5), bus('517', 12), bus('566', 9)], one = [bus('517', 5), bus('566', 9)];
+  assert.ok(widths(one, two)[1] > widths(one)[0]);
+  assert.deepStrictEqual(widths(two, one).slice(1), ['same']);
+  assert.ok(widths([bus('517', 5)], one)[1] > widths([bus('517', 5)])[0], 'another dot');
+  assert.deepStrictEqual(widths(one, [bus('517', 5)]).slice(1), ['same']);
+});
+test('it never shrinks with the screen off or the stop board open', () => {
+  for (const extra of [{ SCREEN: 'off' }, { BusStateBoard: '1' }]) {
+    const g = Object.assign(base(), extra);
+    refresh(g, [bus('517', 12), bus('517', 25), bus('566', 9)]);
+    run('island_show.js', { globals: g, now: at }); g.BusStateIslandShown = '1';
+    const was = g.BusStateIslandRight;
+    for (let i = 0; i < 3; i++) refresh(g, [bus('517', 4), bus('566', 9)]);
+    assert.strictEqual(g.BusStateIslandRight, was, JSON.stringify(extra));
+  }
+});
+test('a route switching to timetable times grows it at once if "~" needs the room', () => {
   const g = base(); g.BusCacheTimetable = JSON.stringify({ S: { r: { '566': { t: [[480 + 7, 0], [480 + 27, 0]], n: ['Fernleigh'] } } } });
   refresh(g, [bus('517', 5), bus('566', 9)]);
   run('island_show.js', { globals: g, now: at }); g.BusStateIslandShown = '1';
   refresh(g, [bus('517', 4)]);                                 // 566 now from the timetable ("~")
-  assert.strictEqual(g.BusStateIslandShown, '1');
-});
-test('a route dropping out of the predictions, or coming back, never redraws it', () => {
-  assert.strictEqual(redrawnAfter([bus('517', 5), bus('566', 9)], [bus('517', 5)]), false);
-  assert.strictEqual(redrawnAfter([bus('517', 5)], [bus('517', 5), bus('566', 9)]), false);
+  assert.strictEqual(g.BusStateIslandShown, '1', 'not drawn again');
 });
 
 test('switching to a stop with a different number of your routes does redraw it', () => {
@@ -54,13 +85,21 @@ test('switching to a stop with a different number of your routes does redraw it'
   assert.strictEqual(g.BusStateIslandShown, '2', 'drawn again, and the old one removed (4.42; 0 left it up)');
 });
 
-test('the island is sized for every one of your routes at the stop, not just the ones showing', () => {
+test('drawn, it is as wide as Bus Refresh decided; the route dots are always 10 dp clear of the times', () => {
   const g = base();
-  refresh(g, [bus('517', 5)]);                                   // only the 517 has a time
-  const one = +run('island_show.js', { globals: g, now: at }).busww;
   refresh(g, [bus('517', 5), bus('566', 9)]);
-  const two = +run('island_show.js', { globals: g, now: at }).busww;
-  assert.strictEqual(one, two);
+  const r = run('island_show.js', { globals: g, now: at });
+  assert.strictEqual(r.RIGHT, Math.ceil('9 min'.length * 8.4) + 4 + 10 + 2 * 4 + 3);
+  assert.strictEqual(r.RIGHT, +g.BusStateIslandRight);
+  assert.match(r.html, /\.dots \{[^}]*padding-left: 4px;/, 'the dots\' 6 dp gap and 4 dp of their own');
+  assert.match(r.html, /#R \{ flex: none; width: var\(--right\); \}/, 'a width the page can change');
+});
+
+test('the page fits its own window to data.fit, or has it drawn again if it can\'t', () => {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'island_show.js'), 'utf8');
+  assert.match(src, /if \(data\.fit\) fitTo\(data\.fit\);/);
+  assert.match(src, /Tasker\.updateOverlayConfig\(\{ width: String\(totalFor\(r\)\), configTransitionMs: 200, configTransitionEasing: 'EaseOut' \}\)/);
+  assert.match(src, /if \(Math\.abs\(window\.innerWidth - totalFor\(r\)\) > 2\) \{ CAN_FIT = false; setRight\(r\); runTask\('Bus Island', \{ busisland: 'fit' \}\); \}/, 'checked afterwards');
 });
 
 test('redraws take turns between two scene names; the first show has nothing to remove', () => {

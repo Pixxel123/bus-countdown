@@ -43,8 +43,9 @@ test('the page shows a touch has counted straight away, and puts itself back if 
   const src = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'island_show.js'), 'utf8');
   // Every task the page starts, apart from the small buzz while swiping, dims or hides the island first
   const calls = [...src.matchAll(/(waitFor\([^;]*\);\s*(var ended = )?)?runTask\('Bus (Island|End)'(, \{[^}]*\})?\)/g)];
-  // (A board the page grows or shrinks itself needs no dimming: it moves at once)
-  const quiet = calls.filter((c) => !c[1] && !/busisland: 'buzz'|busgrow: 'yes'/.test(c[0]));
+  // (A board the page grows or shrinks itself needs no dimming: it moves at once; nor does drawing it
+  // again at a new width, 4.46, which nobody asked for)
+  const quiet = calls.filter((c) => !c[1] && !/busisland: 'buzz'|busgrow: 'yes'|busisland: 'fit'/.test(c[0]));
   assert.deepStrictEqual(quiet.map((c) => c[0]), []);
   assert.match(src, /waitFor\('end', winMoved \? 'armed' : 'gone'\);\s*var ended = runTask\('Bus End'\)/, 'dismissing hides it at once');
   assert.match(src, /waitTimer = setTimeout\(function \(\) \{ waitingFor = ''; p\.classList\.remove\('wait', 'gone', 'armed'\); settle\(\); windowBack\(\); \}, 4000\)/);
@@ -62,9 +63,9 @@ test('closing the stop board: no fetch, and the board goes as soon as the island
   assert.strictEqual(run('island_show.js', { globals: Object.assign({}, g, { BusStateBoard: '1' }), locals: { busrefpar: 'open' } }).busfadems, '300');
   const s = actions(taskBody('Bus Refresh'));
   const due = s.findIndex((a) => /Fetched these times under 20 s ago/.test(a.text));
-  assert.strictEqual(s[due].cond, '%busrefpar 3 close');
+  assert.strictEqual(s[due].cond, '%busrefpar 3 close/fit');   // (or drawing it at a new width, 4.46)
   assert.match(s[due - 1].text, /<Str sr="arg0" ve="3">%busfresh<\/Str>\s*<Str sr="arg1" ve="3">yes<\/Str>/);
-  assert.strictEqual(s[due - 1].cond, '%busrefpar 2 close');
+  assert.strictEqual(s[due - 1].cond, '%busrefpar 2 close/fit');
   assert.match(s.find((a) => /Let it fade in over the old one/.test(a.text)).text, /<Int sr="arg0"><var>%busfadems<\/var><\/Int>/);
 });
 
@@ -100,7 +101,8 @@ test('refresh.js says which routes had live times, and keeps each stop\'s island
   assert.strictEqual(r.busliveroutes, '517');
   const byStop = JSON.parse(g.BusStateIslandByStop);
   assert.deepStrictEqual(Object.keys(byStop).sort(), ['B', 'C', 'D', 'KH']);
-  assert.deepStrictEqual(byStop.KH, JSON.parse(g.BusStateIslandData));
+  const shown = JSON.parse(g.BusStateIslandData); delete shown.fit;   // (the width it's fitted to, 4.46, is the page's alone)
+  assert.deepStrictEqual(byStop.KH, shown);
 });
 
 test('a long press shows the new stop at once: its times from under 3 minutes ago, or its name while they come', () => {

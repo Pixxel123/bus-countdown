@@ -72,10 +72,10 @@ test('Bus Island: open sets the board on, close off, and both have Bus Refresh d
   assert.deepStrictEqual(sets, [['%BusStateBoard', '1', '%busisland 2 open'], ['%BusStateBoard', '0', '%busisland 2 close'],
     ['%busdo', '%busisland', ''], ['%busdo', '%busisland-grown', '%busgrow 2 yes'],
     ['%BusStateBoardSelf', '1', '%busdo 2 open-grown'], ['%BusStateBoardSelf', '0', '%busdo 2 open'],
-    ['%BusStateIslandShown', '2', '%busdo 2 open/close']]);
+    ['%BusStateIslandShown', '2', '%busdo 2 open/close/fit']]);   // fit: 4.46
   const last = s[s.length - 1];
   assert.strictEqual(last.code, 130);
-  assert.deepStrictEqual([last.args[0], last.args[2], last.cond], ['Bus Refresh', '%busisland', '%busdo 2 switch/open/close/open-grown']);
+  assert.deepStrictEqual([last.args[0], last.args[2], last.cond], ['Bus Refresh', '%busisland', '%busdo 2 switch/open/close/open-grown/fit']);
 });
 
 test('drawing it again removes the old one (2: showing, draw again); Bus End closes the board', () => {

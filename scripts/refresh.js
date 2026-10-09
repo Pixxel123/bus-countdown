@@ -13,6 +13,7 @@
 /* @include get */
 /* @include loc */
 /* @include routesHere */
+/* @include islandFit */
 /* @include boardRows */
 /* @include debugLog */
 /* @include record */
@@ -254,6 +255,26 @@ var rowsNow = boardRows(perRoute.length, otherRoutes.length, get('BusBoardRoutes
 if (get('BusStateBoard') === '1' && get('BusStateBoardSelf') !== '1' && get('BusStateIslandShown') === '1' && get('BusStateBoardRows') !== '' && get('BusStateBoardRows') !== String(rowsNow)) {
   setGlobal('BusStateIslandShown', '2');
 }
+// The right half's width (4.46): grow now, shrink later. The island grows the moment the times need
+// more room ("9 min" becoming "10 · 22 min", a timetable "~", another route), so nothing is ever cut
+// short; it shrinks only after two refreshes in a row with 8 dp or more to spare, with the screen on
+// and the stop board closed, so it doesn't keep changing size as times count down. Whenever it's
+// about to be drawn anyway (first shown, or drawn again) or at a new stop, it's simply fitted.
+// BusStateIslandRight is the width it's drawn at (island_show.js) or resizing itself to: the page
+// fits its own window to data.fit (or, if it can't, has Bus Island draw it again).
+var fitNow = rightNeeded(perRoute, now);
+var drawnAt = parseInt(get('BusStateIslandRight'), 10) || 0;
+var slack = parseInt(get('BusStateIslandSlack'), 10) || 0;
+var want = drawnAt;
+if (get('BusStateIslandShown') !== '1' || !drawnAt || get('BusStateIslandFitStop') !== get('BusStateStopId')) { want = fitNow; slack = 0; }
+else if (fitNow > drawnAt) { want = fitNow; slack = 0; }                                  // grow now
+else if (drawnAt - fitNow >= 8 && get('SCREEN') !== 'off' && get('BusStateBoard') !== '1') {
+  slack++;
+  if (slack >= 2) { want = fitNow; slack = 0; }                                           // shrink later
+} else slack = 0;
+setGlobal('BusStateIslandRight', String(want));
+setGlobal('BusStateIslandSlack', String(slack));
+setGlobal('BusStateIslandFitStop', get('BusStateStopId'));
 var islandData = {
   u: now,                                                       // when this data arrived
   r: 1000 * normalWait,                                         // the usual time between refreshes: border and fading
@@ -263,7 +284,7 @@ var islandData = {
   b: perRoute,
   a: otherRoutes                                                // the stop's other routes: { k, d, t: [up to 3 times] } (4.41)
 };
-setGlobal('BusStateIslandData', JSON.stringify(islandData));
+setGlobal('BusStateIslandData', JSON.stringify(Object.assign({}, islandData, { fit: want })));   // fit: the right half's width (4.46)
 // Each stop's last island data, for the 4 stops fetched most recently (4.43): a long press shows the
 // stop it switches to at once, with these times if they're under 3 minutes old (opposite.js)
 var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) {}

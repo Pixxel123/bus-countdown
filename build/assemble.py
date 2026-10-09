@@ -221,7 +221,7 @@ def request_positions(mode, cond=None):
         deco(set_str(set_str(T['VARSET'], 0, '%BusStatePush'), 1, f'GPS, {what}'), '   GPS worked', ('%BusStatePush', 2, 'not requested'))]
 
 PROFILES = ['Bus Moved', 'Bus Screen On', 'Bus Hide When Sideways']
-VERSION = '4.45'
+VERSION = '4.46'
 BUILD = VERSION + '.' + time.strftime('%Y%m%d%H%M')     # changes with every build
 
 def profile_status(name, on, label, cond=None):
@@ -407,8 +407,8 @@ TASKS = [
     varset('%busrefpar', '%par1', '   and why (open or close: the stop board; scripts can\'t read %par1)'),
     # Closing the stop board never fetches (4.43): it shows the times it had, and the next refresh
     # brings new ones. That saves a script (about 0.3 s) on every close.
-    deco(varset('%busfresh', 'yes', 'Closing the stop board: no new times needed'), None, ('%busrefpar', 2, 'close')),
-    deco(js('fetch_due.js', 'Fetched these times under 20 s ago? (Bus Loop and the screen coming on can both ask at once)'), None, ('%busrefpar', 3, 'close')),
+    deco(varset('%busfresh', 'yes', 'Closing the stop board, or drawing the island at a new width: no new times needed'), None, ('%busrefpar', 2, 'close/fit')),
+    deco(js('fetch_due.js', 'Fetched these times under 20 s ago? (Bus Loop and the screen coming on can both ask at once)'), None, ('%busrefpar', 3, 'close/fit')),
     # Opening the stop board never waits for TfL (4.43): it's drawn with the times there are, and if
     # those are 20 s old or more they're fetched straight after, and the board updates itself. Before,
     # an open usually waited 0.7 to 2.3 s for TfL, as the times were most often older than that.
@@ -517,8 +517,8 @@ TASKS = [
     deco(varset('%busdo', '%busisland-grown', '   but the page has already grown or shrunk the board'), None, ('%busgrow', 2, 'yes')),
     deco(varset('%BusStateBoardSelf', '1', 'The page keeps the open board the right size'), None, ('%busdo', 2, 'open-grown')),
     deco(varset('%BusStateBoardSelf', '0', '   or Bus Refresh does (drawn as a new window)'), None, ('%busdo', 2, 'open')),
-    deco(varset('%BusStateIslandShown', '2', 'Draw the island again, at its new height'), None, ('%busdo', 2, 'open/close')),
-    perform('Bus Refresh', 'Refresh now: the other stop, or the island with or without its board (or only the times, for a board the page grew)', ('%busdo', 2, 'switch/open/close/open-grown'), par1='%busisland'),
+    deco(varset('%BusStateIslandShown', '2', 'Draw the island again, at its new height (or width, when the page could not resize itself: fit)'), None, ('%busdo', 2, 'open/close/fit')),
+    perform('Bus Refresh', 'Refresh now: the other stop, or the island with or without its board (or only the times, for a board the page grew)', ('%busdo', 2, 'switch/open/close/open-grown/fit'), par1='%busisland'),
  ]),
  (62, 'Bus Watch', [
     # One task for every check: a position pushed by Android (the Bus Moved profile), the screen

@@ -268,6 +268,7 @@ h1{text-wrap:balance}
 .isl .m.sched{color:#9AA3B5;font-weight:600}
 .isl .m2{flex:none;margin-left:-2px;font-size:11px;font-weight:600;color:#9AA3B5;white-space:pre}
 .isl .dots{display:flex;gap:3px;flex:none;margin-left:auto}
+.isl.fit .dots{padding-left:4px}
 .isl .dots i{width:4px;height:4px;border-radius:2px;background:#5A6376}
 .isl .dots i.on{background:#fff}
 .isl svg{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
@@ -288,7 +289,7 @@ h1{text-wrap:balance}
     <button type="button" id="viewSettings" aria-pressed="false">Settings</button>
   </div>
   <div id="nowView">
-    <p class="eyebrow">Version 4.42</p>
+    <p class="eyebrow">Version 4.46</p>
     <h1>The island as built</h1>
     <p class="lede">Drawn by the island's own page from the project, at true scale on the top edge of a Pixel 8 Pro, 448 dp wide. Swipe it sideways to change route; pick Stop board to see it tapped open. Sample times, refreshed every 45 seconds as on the phone.</p>
 
@@ -352,7 +353,7 @@ h1{text-wrap:balance}
   </div>
 
   <div id="timelineView" hidden>
-    <p class="eyebrow">27 September to 8 October</p>
+    <p class="eyebrow">27 September to 9 October</p>
     <h1>Every change to the island</h1>
     <p class="lede">Newest first. Each card shows the island as that version drew it, with a sentence on what changed. Versions in between changed only what happens underneath, so they aren’t listed.</p>
     <ol class="tl" id="tl"></ol>
@@ -1024,6 +1025,40 @@ function routesHere(showing) {
   var here = stop && stop.r ? stop.r.filter(function (r) { return mine.indexOf(r) > -1; }).length : 0;
   return Math.max(1, here, showing || 0);
 }
+// The island's right half, fitted to its times (4.46). Used by Bus Refresh, to decide when the island
+// needs to grow or may shrink, and by the island's builder, to size it.
+//   textWidth(text, font): measured with the phone's own font (a rough guess if it can't measure)
+//   dotsWidth(n): the route dots, with 10 dp of space before them so they never touch the times
+//   rightNeeded(buses, now): the widest any route's times are right now ("5 · 17 min", "Due",
+//     "~6 min"), as the island shows them (see rightHtml in island_show.js), plus 4 dp and the dots:
+//     the room the right half needs
+function textWidth(t, font) {
+  try {
+    var ctx = document.createElement('canvas').getContext('2d');
+    ctx.font = font || '700 14px system-ui, Roboto, sans-serif';   // default: the island's minutes
+    return Math.ceil(ctx.measureText(t).width);
+  } catch (e) { return Math.ceil(t.length * 8.4); }                // rough fallback
+}
+function dotsWidth(n) { return n > 1 ? 10 + n * 4 + (n - 1) * 3 : 0; }
+function rightNeeded(buses, now) {
+  var SMALL = '600 11px system-ui, Roboto, sans-serif';
+  var fitMins = function (t) { var m = Math.round((t - now) / 60000); return m < 1 ? 'Due' : String(m); };
+  var widest = textWidth('Due');
+  (buses || []).forEach(function (b) {
+    var st = b.st || 'live';
+    var first = fitMins(b.t);
+    var pre = st === 'sched' ? '~' : '';
+    var w;
+    if (st === 'sched' && first === 'Due') first = '1';
+    if (st === 'cancel') w = textWidth('Cancelled');
+    else if (b.t2 !== undefined) {
+      var m2 = fitMins(b.t2); if (m2 === 'Due') m2 = '1';
+      w = textWidth(pre + first) + textWidth(' \u00b7 ' + (b.st2 === 'sched' ? '~' : '') + m2 + ' min', SMALL);
+    } else w = textWidth(pre + (first === 'Due' ? 'Due' : first + ' min'));
+    if (w > widest) widest = w;
+  });
+  return widest + 4 + dotsWidth((buses || []).length);
+}
 // How many lines the stop board has: your routes, then the stop's other routes unless Settings says
 // yours only (mineOnly), at least 1 and at most 8. Shared by island_show.js, which draws it that tall,
 // and refresh.js, which draws it again when that changes (4.43).
@@ -1059,28 +1094,23 @@ if (BOARD && !PREVIEW) setGlobal('BusStateBoardRows', String(BOARD_ROWS));
 var ROUTE_ORDER = JSON.stringify((global('BusRoutes') || '').split(',').map(function (r) { return r.trim(); }).filter(String));
 var LEFT = 40;                                          // left half: set below, once the data is read
 
-/* ---- Right half: always the same width -------------------------------
-   Measured with the phone's own font: room for the widest the times can
-   be ("~88 · ~88 min"), plus a dot for each of your routes at this stop
-   (routesHere), whether or not TfL has a time for it right now. So during
-   a countdown the size never changes: only switching to a stop with a
-   different number of your routes does (Bus Refresh then shows it again). */
+/* ---- Right half: fitted to the times (4.46) ---------------------------
+   Just wide enough for the widest of the times showing ("5 · 17 min",
+   "~12 min", "Due"), plus the route dots with 10 dp of space before
+   them, all measured with the phone's own font (islandFit). Bus Refresh
+   decides the width (BusStateIslandRight, and data.fit for a page
+   already showing): it grows the island as soon as the times need more
+   room, so nothing is ever cut short, and shrinks it only after two
+   refreshes in a row with 8 dp or more to spare, so it doesn't keep
+   changing size. The preview, and anything drawn before Bus Refresh has
+   decided, is fitted to its own data. */
 var showingNow = 1;
-try { showingNow = JSON.parse(global(DATA_VAR)).b.length; } catch (e) {}
+var fitData = [];
+try { fitData = JSON.parse(global(DATA_VAR)).b || []; showingNow = fitData.length; } catch (e) {}
 var routes = PREVIEW ? Math.max(1, showingNow) : routesHere(showingNow);
-function textWidth(t, font) {
-  try {
-    var ctx = document.createElement('canvas').getContext('2d');
-    ctx.font = font || '700 14px system-ui, Roboto, sans-serif';   // default: the island's minutes
-    return Math.ceil(ctx.measureText(t).width);
-  } catch (e) { return Math.ceil(t.length * 8.4); }                // rough fallback
-}
-// Room for two two-digit times ("88 · 88 min", the second smaller), so the size never changes for
-// times. Rarer, wider combinations (timetable "~" on both) show just the first time instead: the page
-// drops the second time whenever it wouldn't fit, so nothing is ever cut off. (4.14 reserved room for
-// "~88 · ~88 min", which made the island far wider than it usually needs to be.)
-var RIGHT = Math.max(textWidth('~88 min'), textWidth('88') + textWidth(' \u00b7 88 min', '600 11px system-ui, Roboto, sans-serif')) + 4 +
-  (routes > 1 ? 6 + routes * 4 + (routes - 1) * 3 : 0);
+var fitted = rightNeeded(fitData, Date.now());
+var RIGHT = PREVIEW ? fitted : (parseInt(global('BusStateIslandRight'), 10) || fitted);
+if (!PREVIEW) setGlobal('BusStateIslandRight', String(RIGHT));      // the width it's drawn at
 // The stop letter's ring: on the island it takes room from the destination; the chip grows to fit it
 var letter = '';
 try { letter = String(JSON.parse(global(DATA_VAR)).l || ''); } catch (e) {}
@@ -1130,7 +1160,9 @@ var PAGE = String.raw`<!doctype html>
   /* Transparent page: the black island is the only thing drawn */
   /* (Heights in px. Viewport units come out as 0 in this web view, which hid the whole island: test build 13.
      A board the page grows sets them itself, setHeight.) */
-  html, body { margin: 0; height: {{WINH}}px; width: {{TOTAL}}px; background: transparent; overflow: hidden;
+  /* The widths as variables, so the page can fit itself to its times (4.46) */
+  :root { --right: {{RIGHT}}px; --total: {{TOTAL}}px; }
+  html, body { margin: 0; height: {{WINH}}px; width: var(--total); background: transparent; overflow: hidden;
                -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
   body { font-family: system-ui, Roboto, sans-serif; }
 
@@ -1155,7 +1187,7 @@ var PAGE = String.raw`<!doctype html>
   body.leaving .bl { opacity: 0; transition: opacity 90ms linear; transition-delay: 0ms; }
   #p.swap .h { opacity: 0; }
   .bl .h { height: {{LINE}}px; }
-  .bl .bl-l { width: {{LEFT}}px; } .bl .bl-g { flex: none; width: {{GAP}}px; } .bl .bl-r { width: {{RIGHT}}px; }
+  .bl .bl-l { width: {{LEFT}}px; } .bl .bl-g { flex: none; width: {{GAP}}px; } .bl .bl-r { width: var(--right); }
   .bl .d { font-size: 12.5px; }
   .bl .m2 { font-size: 12px; }
   .b.other { background: transparent; box-shadow: inset 0 0 0 1.5px #5A6376; color: #D5DAE3; }   /* not one of your routes */
@@ -1170,7 +1202,7 @@ var PAGE = String.raw`<!doctype html>
   body.chip .m { font-size: 13px; }
   /* A fixed width, the same as the window's: as a plain flex box it stretched to the web page's
      width, which can be wider than the window, so its rounded right end was cut off */
-  #p { position: relative; display: flex; align-items: center; height: {{H}}px; width: {{TOTAL}}px; box-sizing: border-box;
+  #p { position: relative; display: flex; align-items: center; height: {{H}}px; width: var(--total); box-sizing: border-box;
        padding: 0 {{PAD}}px; border-radius: {{RADIUS}}px; background: #000; color: #fff;
        font-size: 14px; white-space: nowrap; touch-action: none; }
   .h { display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden;
@@ -1180,7 +1212,7 @@ var PAGE = String.raw`<!doctype html>
   /* Status bar chip: a thin pipe between the route and the minutes */
   body.chip #g { display: flex; justify-content: center; }
   body.chip #g::before { content: ''; width: 1px; height: 12px; background: rgba(255,255,255,.45); }
-  #R { flex: none; width: {{RIGHT}}px; }  /* minutes + dots: just wide enough (see RIGHT above) */
+  #R { flex: none; width: var(--right); }  /* minutes + dots: fitted to the times (see RIGHT above) */
   #p.out .h  { opacity: 0; transform: translateX(-6px); }   /* slide to next route */
   /* A tap, a hold or a swipe up has gone to Tasker (4.43): the words dim straight away, so the touch is
      seen to have counted, until the island is drawn again (the board opening or closing) or the new
@@ -1212,7 +1244,7 @@ var PAGE = String.raw`<!doctype html>
   .s { font-weight: 700; overflow: hidden; text-overflow: ellipsis; min-width: 0; }  /* stop name flash, "No buses" */
   /* Minutes start at a fixed spot just past the camera, and the dots sit at the far right: as
      routes rotate, "5 min" and "12 min" start in the same place and the dots don't jump */
-  .dots { display: flex; gap: 3px; flex: none; margin-left: auto; }
+  .dots { display: flex; gap: 3px; flex: none; margin-left: auto; padding-left: 4px; }   /* always 10 dp clear of the times (4.46) */
   .dots i { width: 4px; height: 4px; border-radius: 2px; background: #5A6376; }
   .dots i.on { background: #fff; }
 
@@ -1315,6 +1347,36 @@ ${'<'}script>
       runTask('Bus Island', { busfrom: 'island', busisland: 'close', busgrow: 'yes' });
     }, 80);
   }
+  /* Fitted to its times (4.46): Bus Refresh says how wide the right half should be (data.fit), and
+     the page widens or narrows its own window to match through the same bridge, the left edge and
+     the camera gap staying where they are. Growing, the times widen at once and the window opens to
+     show them; shrinking, the window closes in first. The window's width is checked afterwards (the
+     page is as wide as its window): if it didn't change, or there's no bridge, Bus Island has it
+     drawn again at the new width instead, the new one on top before the old one goes. */
+  var RIGHT_NOW = {{RIGHT}}, fitTimer = null;
+  var CAN_FIT = !IS_PREVIEW && !!window.Tasker && typeof Tasker.updateOverlayConfig === 'function';
+  function totalFor(r) { return PAD + LEFT + GAP + r + PAD; }
+  function setRight(r) {
+    RIGHT_NOW = r;
+    document.documentElement.style.setProperty('--right', r + 'px');
+    document.documentElement.style.setProperty('--total', totalFor(r) + 'px');
+    if (BORDER && !BOARD) drawRing();
+  }
+  function fitTo(r) {
+    if (!(r > 0) || r === RIGHT_NOW) return;
+    var was = RIGHT_NOW, tracks = Math.abs(window.innerWidth - totalFor(was)) <= 2;
+    clearTimeout(fitTimer);
+    if (!CAN_FIT || !tracks) { setRight(r); runTask('Bus Island', { busisland: 'fit' }); return; }
+    try { Tasker.updateOverlayConfig({ width: String(totalFor(r)), configTransitionMs: 200, configTransitionEasing: 'EaseOut' }); }
+    catch (e) { setRight(r); runTask('Bus Island', { busisland: 'fit' }); return; }
+    if (r > was) setRight(r);
+    fitTimer = setTimeout(function () {
+      if (r < was) setRight(r);
+      // Didn't take: drawn again at the new width instead
+      if (Math.abs(window.innerWidth - totalFor(r)) > 2) { CAN_FIT = false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); }
+    }, 420);
+  }
+
   // Closing the board (a tap, a swipe up, or its time running out)
   function closeBoard() {
     if (CAN_GROW) { shrinkBoard(); return; }
@@ -1335,6 +1397,7 @@ ${'<'}script>
     }
     if (idx >= buses().length) idx = 0;
     start = Date.now();
+    if (data.fit) fitTo(data.fit);    // a new width for the right half (4.46)
     // A board this page grew: new times with a route more or fewer resize its window to fit (4.43)
     if (BOARD && CAN_GROW && lines() !== BOARD_ROWS) {
       BOARD_ROWS = lines(); boardHtmlNow = '';
@@ -1875,7 +1938,9 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
     adaptive: function (n) { return 68 + dotsW(n); },                                   // V3 to 4.10: 68 dp and the dots
     two: function (n) { return 88 + dotsW(n); },                                        // 4.11: about 20 dp more, for "5 · 12 min"
     tilde: function (n) { return tw('~88') + tw(' · ~88 min', '600 11px system-ui, Roboto, sans-serif') + 4 + dotsW(n); },   // 4.14, 4.15
-    now: function (n) { return Math.max(tw('~88 min'), tw('88') + tw(' · 88 min', '600 11px system-ui, Roboto, sans-serif')) + 4 + dotsW(n); }
+    now: function (n) { return Math.max(tw('~88 min'), tw('88') + tw(' · 88 min', '600 11px system-ui, Roboto, sans-serif')) + 4 + dotsW(n); },   // 4.16 to 4.45
+    // 4.46: fitted to the times shown, and the dots 10 dp clear of them
+    fit: function (n, f) { return (f.m2 ? tw(f.m) + tw(' · ' + f.m2 + ' min', '600 11px system-ui, Roboto, sans-serif') : tw(f.m)) + 4 + (n > 1 ? 10 + n * 4 + (n - 1) * 3 : 0); }
   };
   function leftFor(f) {
     if (f.leftW) return f.leftW;
@@ -1885,13 +1950,13 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
     return Math.max(40, ring + badge + 6 + dest + 2);
   }
   function islandHtml(f) {
-    var PAD = 9, GAP = 42, L = leftFor(f), R = f.rightW || RIGHT[f.right](f.dots || 1), W = PAD + L + GAP + R + PAD;
+    var PAD = 9, GAP = 42, L = leftFor(f), R = f.rightW || RIGHT[f.right](f.dots || 1, f), W = PAD + L + GAP + R + PAD;
     var x = Math.round(224 - GAP / 2 - L - PAD);
     var dots = '';
     if ((f.dots || 1) > 1) { dots = '<span class="dots">'; for (var i = 0; i < f.dots; i++) dots += '<i' + (i === (f.on || 0) ? ' class="on"' : '') + '></i>'; dots += '</span>'; }
     var right = '<span class="m' + (f.mCls ? ' ' + f.mCls : '') + '">' + f.m + '</span>' + (f.m2 ? '<span class="m2">· ' + f.m2 + ' min</span>' : '') + (f.after ? '<span class="m2"> ' + f.after + '</span>' : '') + dots;
     var ring = f.border ? '<svg width="' + W + '" height="30" viewBox="0 0 ' + W + ' 30"><rect x="1" y="1" width="' + (W - 2) + '" height="28" rx="14" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"/></svg>' : '';
-    return '<div class="isl" style="left:' + x + 'px;top:9px;width:' + W + 'px;padding:0 ' + PAD + 'px">' + ring +
+    return '<div class="isl' + (f.right === 'fit' ? ' fit' : '') + '" style="left:' + x + 'px;top:9px;width:' + W + 'px;padding:0 ' + PAD + 'px">' + ring +
       '<span class="h" style="width:' + L + 'px">' + (f.ring ? '<span class="sl">' + f.ring + '</span>' : '') + '<span class="b' + (f.hollow ? ' hollow' : '') + (f.idle ? ' idle' : '') + '">' + f.k + '</span>' +
       '<span class="d' + (f.dCls ? ' ' + f.dCls : '') + '">' + f.d + '</span></span>' +
       '<span class="g" style="width:' + GAP + 'px"></span><span class="h" style="width:' + R + 'px">' + right + '</span></div>';
@@ -1916,6 +1981,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
     v429: { ring: 'D', letters: 3, right: 'now', k: '517', d: 'You', m: '2 min', dots: 2 },
     v430: { ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', m: '8', m2: '21', dots: 2 },
     v431: { ring: 'D', letters: 3, right: 'now', k: '517', idle: true, d: 'Holbry', m: '18 min', dots: 2, on: 1 },
+    v446: { ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
     v442: { board: true, ring: 'D', letters: 3, right: 'now', k: '566', d: 'Fernleigh Village', dots: 2,
       rows: [['517', '', 'Holbry', '14', '33'], ['566', '', 'Fernleigh Village', '5', '17 · 29'], ['289', 'other', 'Ordwick', '3', '15'], ['64', 'other', 'Thornacre Precinct', '9 min', '']] }
   };
@@ -1933,6 +1999,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
   }
   // Newest first, only the versions that changed how the island looks: [version, date, look, what changed]
   var VERSIONS = [
+    ['4.46', '9 Oct', 'v446', 'Fitted to its times: just wide enough for the widest showing, with the route dots always 10 dp clear of them. It grows the moment the times need more room, so nothing is cut short, and shrinks only after two refreshes in a row with 8 dp or more to spare, its right end moving while the camera gap stays put.'],
     ['4.42', '8 Oct', 'v442', 'Tap the island and it grows down into the stop board: every bus at the stop, your routes first and then the stop\u2019s other routes soonest first, with the camera gap running down the middle. Tap again or swipe up to close it; it closes by itself after 10 s.'],
     ['4.31', '7 Oct', 'v431', 'While you ride, later buses on your own route keep their place and time but get a grey badge, the island\u2019s idle colour, so the next 517 never looks like yours.'],
     ['4.30', '7 Oct', 'v430', 'While you ride, your own bus leaves the island, so it shows only the buses you could change to; Bus Status says which bus you’re on.'],

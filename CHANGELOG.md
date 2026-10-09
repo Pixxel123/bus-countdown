@@ -4,6 +4,13 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.46] - 2026-10-09
+
+### Changed
+
+- The island is fitted to its times: just wide enough for the widest showing, instead of always keeping room for "88 · 88 min". It grows the moment the times need more room (a second time appearing, "9" becoming "10", a timetable "~", a route coming back), so nothing is cut short, and shrinks only after two refreshes in a row with 8 dp or more to spare, with the screen on and the stop board closed, so it doesn't keep changing size. It resizes its own window to do it, as the stop board grows, so the camera gap stays put and only its right end moves; if the window doesn't change, it's drawn again at the new width instead.
+- The route dots always have 10 dp of space between them and the times.
+
 ## [4.45] - 2026-10-09
 
 ### Changed
