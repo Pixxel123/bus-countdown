@@ -44,8 +44,8 @@ test('the page shows a touch has counted straight away, and puts itself back if 
   // Every task the page starts, apart from the small buzz while swiping, dims or hides the island first
   const calls = [...src.matchAll(/(waitFor\([^;]*\);\s*(var ended = )?)?runTask\('Bus (Island|End)'(, \{[^}]*\})?\)/g)];
   // (A board the page grows or shrinks itself needs no dimming: it moves at once; nor does drawing it
-  // again at a new width, 4.46, or for Android's font size, 4.48, which nobody asked for)
-  const quiet = calls.filter((c) => !c[1] && !/busisland: 'buzz'|busgrow: 'yes'|busisland: 'fit'|busisland: 'zoom'/.test(c[0]));
+  // again at a new width, 4.46, which nobody asked for)
+  const quiet = calls.filter((c) => !c[1] && !/busisland: 'buzz'|busgrow: 'yes'|busisland: 'fit'/.test(c[0]));
   assert.deepStrictEqual(quiet.map((c) => c[0]), []);
   assert.match(src, /waitFor\('end', winMoved \? 'armed' : 'gone'\);\s*var ended = runTask\('Bus End'\)/, 'dismissing hides it at once');
   assert.match(src, /waitTimer = setTimeout\(function \(\) \{ waitingFor = ''; p\.classList\.remove\('wait', 'gone', 'armed'\); settle\(\); windowBack\(\); \}, 4000\)/);

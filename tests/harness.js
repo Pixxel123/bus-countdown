@@ -66,8 +66,7 @@ function run(name, { globals = {}, locals = {}, now = Date.now() } = {}) {
 const m = (metres) => metres / 111320;
 
 // The island's page, run against a stand-in document and Tasker bridge (from tests/v4.43.test.js, 4.47).
-// opts.zoom (4.48): the size the page's web view draws text at (Android's font size), against a canvas
-// at 100%; without it, the page can't measure, as in a browser with no layout.
+// opts.scale (4.50): the web view's page zoom (visualViewport.scale); a test can change it later.
 function runPage(globals, now, opts = {}) {
   const vm = require('vm');
   const r = run('island_show.js', { globals, now });
@@ -80,7 +79,6 @@ function runPage(globals, now, opts = {}) {
     addEventListener(t, f) { (this.listeners[t] = this.listeners[t] || []).push(f); }, querySelectorAll: () => [],
     setPointerCapture() {}, releasePointerCapture() {}, offsetWidth: 200, offsetHeight: 36, scrollWidth: 0, clientWidth: 100 });
   el('d').textContent = globals.BusStateIslandData;
-  el('body').appendChild = el('body').removeChild = () => {};
   const calls = [], timers = [], observed = [];
   // The page's clock: fixed, unless a test moves it on (advance, 4.48)
   let clock = now || Date.now();
@@ -94,15 +92,8 @@ function runPage(globals, now, opts = {}) {
     dismissLayout: () => calls.push(['dismissLayout']), getCurrentScreenId: () => 'buspill', flash: () => {},
   };
   const ctx = {
-    Tasker, document: { getElementById: el, body: el('body'), documentElement: el('html'), hidden: false, addEventListener() {},
-      // The island's minutes as drawn: 8 px a letter at 100%, as the canvas below measures them
-      querySelector: (sel) => (opts.zoom && sel === '#R .m' ? { textContent: '14 min', classList: classes(), getBoundingClientRect: () => ({ width: 6 * 8 * opts.zoom }) } : null),
-      createElement: (tag) => {
-        if (!opts.zoom) throw new Error('no layout');
-        if (tag === 'canvas') return { getContext: () => ({ font: '', measureText: (t) => ({ width: t.length * 8 }) }) };
-        const e = { style: {}, textContent: '', getBoundingClientRect: () => ({ width: e.textContent.length * 8 * opts.zoom }) };
-        return e;
-      } },
+    Tasker, document: { getElementById: el, body: el('body'), documentElement: el('html'), hidden: false, addEventListener() {} },
+    visualViewport: opts.scale ? { scale: opts.scale } : undefined,
     devicePixelRatio: 3, addEventListener() {}, requestAnimationFrame: (f) => timers.push([0, f]),
     setTimeout: (f, ms) => { timers.push([ms || 0, f]); return timers.length; }, clearTimeout() {}, setInterval() {},
     MutationObserver: class { constructor(f) { observed.push(f); } observe() {} }, JSON, Math, Date: PageDate, String, Number, Array, Object, parseInt, parseFloat, Promise,

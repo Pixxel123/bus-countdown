@@ -4,6 +4,13 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.50] - 2026-10-09
+
+### Fixed
+
+- The island's text no longer grows and moves right when the island widens. Since 4.46 the island widens its own window to fit its times (and since 4.47 the stop board widens a little), and the web view zoomed the whole page by the widths' ratio as it did: switching to a stop with more times made the text about 9% bigger, cut short at the island's end ("3 · 14 m"). The page's zoom is pinned at 100%, and if it's zoomed all the same, the island is drawn again at its new width.
+- 4.48's sizing for Android's font size is taken out: the island's text is never drawn at Android's font size, and the cut-short times it was meant to fix were this zoom.
+
 ## [4.49] - 2026-10-09
 
 ### Added

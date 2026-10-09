@@ -128,7 +128,7 @@ var bush = String(WINH);
 var PAGE = String.raw`<!doctype html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
 <style>
   /* Transparent page: the black island is the only thing drawn */
   /* (Heights in px. Viewport units come out as 0 in this web view, which hid the whole island: test build 13.
@@ -307,7 +307,7 @@ var PAGE = String.raw`<!doctype html>
     var bw = boardFit(), wider = bw.left !== LEFT || bw.right !== RIGHT_NOW;
     setHeight(H + rows * LINE + 8);
     if (!resizeWindow(H + rows * LINE + 8, 400, 'EaseOut', wider && PAD + bw.left + GAP + bw.right + PAD, islandX(bw.left))) { setHeight(H); return false; }
-    if (wider) { X_NOW = islandX(bw.left); setWidths(bw.left, bw.right); }
+    if (wider) { X_NOW = islandX(bw.left); setWidths(bw.left, bw.right); setTimeout(unzoom, 450); }   // (4.50)
     BOARD = true; boardHtmlNow = '';
     document.body.classList.add('board', 'entering'); ring.classList.add('off'); p.classList.add('swap');
     setTimeout(function () {               // the stop's name fades in, then the rows drop in one by one
@@ -330,7 +330,7 @@ var PAGE = String.raw`<!doctype html>
       }
       setTimeout(function () {                                             // an island again
         BOARD = false; setHeight(H); document.body.classList.remove('board', 'leaving'); if (BORDER) ring.classList.remove('off');
-        if (wider) { X_NOW = islandX(ISLAND_LEFT); setWidths(ISLAND_LEFT, ISLAND_RIGHT); }
+        if (wider) { X_NOW = islandX(ISLAND_LEFT); setWidths(ISLAND_LEFT, ISLAND_RIGHT); unzoom(); }   // (4.50)
         idx = 0; start = Date.now(); draw(); p.classList.remove('swap');
       }, 260);
       runTask('Bus Island', { busfrom: 'island', busisland: 'close', busgrow: 'yes' });
@@ -348,29 +348,16 @@ var PAGE = String.raw`<!doctype html>
   var ISLAND_LEFT = {{ISLAND_LEFT}}, ISLAND_RIGHT = {{ISLAND_RIGHT}}, X_NOW = {{BUSX}};
   var CAMX = {{CAMX}}, SCREENW = {{SCREENW}}, LETTERS = {{LETTERS}};
   /* @include islandFit */
-  // Android's font size, as this page draws its text (4.48): the minutes it has drawn, against a
-  // canvas's width for the same text, which is always 100%. Widths worked out here use it. If the
-  // island was sized for a different one, Bus Island keeps it (BusStateTextZoom) and has the island
-  // drawn again at the right width: once, as from then on it's sized for it. A second after it
-  // appears, so the Bus Refresh that drew it has finished with the old one (a new one aborts it).
-  var ZOOM_SIZED = {{ZOOM}};
-  TEXT_ZOOM = ZOOM_SIZED;
-  function measureZoom() {
-    try {
-      var el = document.querySelector('#R .m');                    // the island's own minutes (not a board's)
-      var text = el ? el.textContent : '';
-      if (!text) return ZOOM_SIZED;
-      var w = el.getBoundingClientRect().width;
-      var ctx = document.createElement('canvas').getContext('2d');
-      ctx.font = (el.classList.contains('sched') ? '600 ' : '700 ') + (document.body.classList.contains('chip') ? 13 : 14) + 'px system-ui, Roboto, sans-serif';
-      var c = ctx.measureText(text).width;
-      return w > 0 && c > 0 ? Math.min(2, Math.max(0.8, Math.round(w / c * 100) / 100)) : ZOOM_SIZED;
-    } catch (e) { return ZOOM_SIZED; }
+  // The web view zooms the page when its window widens through the bridge (4.50): by the widths'
+  // ratio, so the text grew and moved right and its end was cut short (4.46's fitting, 4.47's wider
+  // board). The viewport is pinned at scale 1 so it shouldn't; if it still has, the island is drawn
+  // again, as for a width the bridge couldn't set.
+  function zoomed() { return !!(window.visualViewport && visualViewport.scale > 1.01); }
+  function unzoom() {
+    if (!zoomed()) return false;
+    CAN_FIT = false; runTask('Bus Island', { busisland: 'fit' });
+    return true;
   }
-  setTimeout(function () {
-    TEXT_ZOOM = measureZoom();
-    if (Math.abs(TEXT_ZOOM - ZOOM_SIZED) >= 0.03) runTask('Bus Island', { busisland: 'zoom', buszoom: String(TEXT_ZOOM) });
-  }, 1000);
   function islandX(left) { return Math.round(CAMX - GAP / 2 - left - PAD); }
   function setWidths(left, right) {
     LEFT = left; RIGHT_NOW = right;
@@ -397,6 +384,7 @@ var PAGE = String.raw`<!doctype html>
       if (r < was) setRight(r);
       // Didn't take: drawn again at the new width instead
       if (Math.abs(window.innerWidth - totalFor(r)) > 2) { CAN_FIT = false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); }
+      else unzoom();                       // took, but zoomed the page (4.50)
     }, 420);
   }
 
@@ -787,7 +775,7 @@ var html = fill(PAGE, {
   BORDER: global('BusBorder') === 'on' ? 'true' : 'false',
   BUSX: busx, ISLAND_LEFT: ISLAND_LEFT, ISLAND_RIGHT: ISLAND_RIGHT, CAMX: camX, SCREENW: screenW, LETTERS: CHIP ? 3 : letters,
   BOARD: BOARD ? 'true' : 'false', BOARD_ROWS: BOARD_ROWS, BOARD_MINE: BOARD_MINE ? 'true' : 'false', BOARD_SECS: BOARD_SECS,
-  ROUTE_ORDER: ROUTE_ORDER, WINH: WINH, LINE: LINE, ZOOM: TEXT_ZOOM,
+  ROUTE_ORDER: ROUTE_ORDER, WINH: WINH, LINE: LINE,
   DATA: '%' + DATA_VAR,                      // split so Tasker doesn't fill it in here
   END_SCRIPT: '</' + 'script>'        // split for the same reason as above, for the HTML parser
 });

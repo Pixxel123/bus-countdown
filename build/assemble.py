@@ -221,7 +221,7 @@ def request_positions(mode, cond=None):
         deco(set_str(set_str(T['VARSET'], 0, '%BusStatePush'), 1, f'GPS, {what}'), '   GPS worked', ('%BusStatePush', 2, 'not requested'))]
 
 PROFILES = ['Bus Moved', 'Bus Screen On', 'Bus Hide When Sideways']
-VERSION = '4.49'
+VERSION = '4.50'
 BUILD = VERSION + '.' + time.strftime('%Y%m%d%H%M')     # changes with every build
 
 def profile_status(name, on, label, cond=None):
@@ -513,16 +513,6 @@ TASKS = [
     # The page grew the board out of the island's own window, or tucked it back (busgrow yes, 4.43):
     # nothing to draw. Opening, Bus Refresh still fetches the times if they're due (the board shows
     # them as they come, and resizes itself for a route more or fewer); closing needs nothing more.
-    # The page measured Android's font size and the island wasn't sized for it (4.48): keep it, fit
-    # the island afresh at that size and draw it again, as when the page couldn't resize itself (fit)
-    # Only when it isn't the size kept already: then drawing it again couldn't help, so it never repeats
-    if_('%busisland', 2, 'zoom', 'Font size (the page measured the one it draws at, 4.48)'),
-      if_('%buszoom', 3, '%BusStateTextZoom', '   Not the one the island was sized for? (drawing it again only helps then, so it never repeats)'),
-        varset('%BusStateTextZoom', '%buszoom', '      Keep it (for every island and refresh from now on)'),
-        varset('%BusStateIslandRight', '0', '      Fit the island afresh at that size (its widths measured again)'),
-        varset('%busisland', 'fit', '      Draw it again at its new width (as when the page could not resize itself)'),
-      endif(),
-    endif(),
     varset('%busdo', '%busisland', 'What to do: as asked'),
     deco(varset('%busdo', '%busisland-grown', '   but the page has already grown or shrunk the board'), None, ('%busgrow', 2, 'yes')),
     deco(varset('%BusStateBoardSelf', '1', 'The page keeps the open board the right size'), None, ('%busdo', 2, 'open-grown')),
