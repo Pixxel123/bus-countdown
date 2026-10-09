@@ -1,8 +1,8 @@
 <TaskerData sr="" dvi="1" tv="6.7.6-beta">
 	<dmetric>1344.0,2992.0</dmetric>
 	<Profile sr="prof72" ve="2">
-		<cdate>1791536191837</cdate>
-		<edate>1791536191837</edate>
+		<cdate>1791536399277</cdate>
+		<edate>1791536399277</edate>
 		<flags>8</flags>
 		<id>72</id>
 		<mid0>79</mid0>
@@ -14,8 +14,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof74" ve="2">
-		<cdate>1791536191837</cdate>
-		<edate>1791536191837</edate>
+		<cdate>1791536399277</cdate>
+		<edate>1791536399277</edate>
 		<flags>8</flags>
 		<id>74</id>
 		<mid0>62</mid0>
@@ -33,8 +33,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof73" ve="2">
-		<cdate>1791536191837</cdate>
-		<edate>1791536191837</edate>
+		<cdate>1791536399277</cdate>
+		<edate>1791536399277</edate>
 		<flags>8</flags>
 		<id>73</id>
 		<mid0>59</mid0>
@@ -46,14 +46,14 @@
 		</State>
 	</Profile>
 	<Project sr="proj0" ve="2">
-		<cdate>1791536191837</cdate>
+		<cdate>1791536399277</cdate>
 		<name>Bus Countdown</name>
 		<pids>72,73,74</pids>
 		<tids>73,74,75,76,38,60,59,79,32,31,62,72</tids>
 	</Project>
 	<Task sr="task73">
-		<cdate>1791536191837</cdate>
-		<edate>1791536191837</edate>
+		<cdate>1791536399277</cdate>
+		<edate>1791536399277</edate>
 		<id>73</id>
 		<nme>Bus</nme>
 		<pri>6</pri>
@@ -178,11 +178,11 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.44.202610090956</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.45.202610090959</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task74">
-		<cdate>1791536191837</cdate>
-		<edate>1791536191837</edate>
+		<cdate>1791536399277</cdate>
+		<edate>1791536399277</edate>
 		<id>74</id>
 		<nme>Bus Settings</nme>
 		<pri>6</pri>
@@ -201,7 +201,7 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.44.202610090956</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.45.202610090959</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>First run? · Camera not measured yet</label>
@@ -3363,8 +3363,8 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buspreview</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task75">
-		<cdate>1791536191838</cdate>
-		<edate>1791536191838</edate>
+		<cdate>1791536399277</cdate>
+		<edate>1791536399277</edate>
 		<id>75</id>
 		<nme>Bus Settings Button</nme>
 		<pri>6</pri>
@@ -5142,8 +5142,8 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<label>Open it · Shows the Android settings page</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">startActivity {} (android.content.Intent)</Str><Str sr="arg3" ve="3">busint</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busintent</lhs><op>2</op><rhs>android*</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task76">
-		<cdate>1791536191838</cdate>
-		<edate>1791536191838</edate>
+		<cdate>1791536399277</cdate>
+		<edate>1791536399277</edate>
 		<id>76</id>
 		<nme>Bus Find Camera</nme>
 		<pri>6</pri>
@@ -5276,8 +5276,8 @@ if (!r || !dens || !w) {
 			<label>Reset position: move the open screen's height slider · Shows the new value straight away</label><Str sr="arg0" ve="3">bussettings</Str><Str sr="arg1" ve="3">sl_y</Str><Str sr="arg2" ve="3">value</Str><Str sr="arg3" ve="3">%BusIslandY</Str><Int sr="arg4" val="0"/><Str sr="arg5" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrebuild</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task38">
-		<cdate>1791536191838</cdate>
-		<edate>1791536191838</edate>
+		<cdate>1791536399277</cdate>
+		<edate>1791536399277</edate>
 		<id>38</id>
 		<nme>Bus Start</nme>
 		<pri>6</pri>
@@ -5295,7 +5295,7 @@ if (!r || !dens || !w) {
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.44.202610090956</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.45.202610090959</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>Settings: fill in defaults, check TflKey and BusRoutes · Resets empty or invalid settings</label>
@@ -6137,8 +6137,8 @@ record(busok === 'yes' ? 'start' : 'nostart', { stop: get('BusStateStopId'), nam
 		</Action>
 	</Task>
 	<Task sr="task60">
-		<cdate>1791536191838</cdate>
-		<edate>1791536191838</edate>
+		<cdate>1791536399278</cdate>
+		<edate>1791536399278</edate>
 		<id>60</id>
 		<nme>Bus Loop</nme>
 		<pri>6</pri>
@@ -6478,8 +6478,8 @@ var buspushm = get('BusStatePushM') || '30';
 		</Action>
 	</Task>
 	<Task sr="task59">
-		<cdate>1791536191838</cdate>
-		<edate>1791536191838</edate>
+		<cdate>1791536399278</cdate>
+		<edate>1791536399278</edate>
 		<id>59</id>
 		<nme>Bus Refresh</nme>
 		<pri>6</pri>
@@ -6613,7 +6613,8 @@ setGlobal('BusStateFullscreenInfo', (busfullnow === 'yes' ? 'sideways' : 'uprigh
    updates its times about every 30 s, so the second fetch brings
    nothing new; it just wakes the radio again (4.34).
    Output: busfresh = yes (skip fetching; the island stays as it is)
-            / no (fetch)
+            / no (fetch) / cached (a long press to the stop got ready, 4.45:
+            use the times kept for it)
    ================================================================== */
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
@@ -6629,6 +6630,10 @@ var lastAt = parseInt(get('BusStateFetchAt'), 10) || 0;
 // The stop board opening or closing (4.42) is held back too: it shows the times just fetched.
 var auto = /^task=Bus (Loop|Wake)$/.test(loc('busrefby')) || /^(open|close)$/.test(loc('busrefpar'));
 var busfresh = auto &amp;&amp; get('BusStateFetchStop') === get('BusStateStopId') &amp;&amp; now - lastAt &gt;= 0 &amp;&amp; now - lastAt &lt; 20000 ? 'yes' : 'no';
+// A long press to the stop Bus Refresh got ready (4.45): its times, fetched under 90 s ago, are used
+// at once ("cached"), and nothing waits for TfL
+var ready = {}; try { ready = JSON.parse(get('BusStatePrefetch') || '{}') || {}; } catch (e) { ready = {}; }
+if (loc('busrefpar') === 'switch' &amp;&amp; ready.s === get('BusStateStopId') &amp;&amp; now - ready.at &gt;= 0 &amp;&amp; now - ready.at &lt; 90000) busfresh = 'cached';
 </Str>
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
@@ -6661,6 +6666,40 @@ var busfresh = auto &amp;&amp; get('BusStateFetchStop') === get('BusStateStopId'
 			<label>Not fetched in the last 20 s · Fetch new times, build the departures and buzz</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busfresh</lhs><op>3</op><rhs>yes</rhs></Condition></ConditionList></Action>
 		<Action sr="act18" ve="7">
+			<code>37</code>
+			<label>A long press to the stop that was got ready: its times are here already (4.45) · Bus Refresh keeps the next stop's times ready after each refresh, so switching sides needn't wait for TfL</label>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busfresh</lhs><op>2</op><rhs>cached</rhs></Condition></ConditionList></Action>
+		<Action sr="act19" ve="7">
+			<code>129</code>
+			<label>Use them, rather than wait for TfL · Turns the kept reply back into seconds away from now</label>
+			<Str sr="arg0" ve="3">/* ==================================================================
+   Bus Refresh · A long press to the stop got ready: use its times (4.45)
+   Turns BusStatePrefetch back into a TfL reply (seconds away from now),
+   for refresh.js to build the island from as if it had just arrived, so
+   the switch doesn't wait for TfL. Bus Loop's next refresh fetches fresh
+   times as usual (buscachedat tells refresh.js when these were fetched,
+   so its 20 s skip counts from then).
+   Output: http_response_code, http_data, buscachedat
+   ================================================================== */
+// A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
+// name, starting with %)
+function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+var ready = {}; try { ready = JSON.parse(get('BusStatePrefetch') || '{}') || {}; } catch (e) { ready = {}; }
+var now = Date.now();
+var http_response_code = '200';
+var http_data = JSON.stringify((ready.b || []).map(function (x) {
+  return { lineName: x[0], vehicleId: x[1], timeToStation: Math.round((x[2] - now) / 1000), destinationName: x[3] };
+}).filter(function (a) { return a.timeToStation &gt; -60; }));
+var buscachedat = String(ready.at || now);
+</Str>
+			<Str sr="arg1" ve="3"/>
+			<Int sr="arg2" val="1"/>
+			<Int sr="arg3" val="45"/>
+		</Action>
+		<Action sr="act20" ve="7">
+			<code>43</code>
+		</Action>
+		<Action sr="act21" ve="7">
 			<code>339</code>
 			<se>false</se>
 			<label>Ask TfL for live arrivals · Every bus TfL predicts at this stop, about 30 minutes ahead. Read by the next step</label>
@@ -6680,7 +6719,10 @@ var busfresh = auto &amp;&amp; get('BusStateFetchStop') === get('BusStateStopId'
 			<Int sr="arg8" val="15"/>
 			<Int sr="arg9" val="0"/>
 		</Action>
-		<Action sr="act19" ve="7">
+		<Action sr="act22" ve="7">
+			<code>38</code>
+		</Action>
+		<Action sr="act23" ve="7">
 			<code>129</code>
 			<label>Build the departures: live times, timetable where there are none · One line per route, for the island</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -6918,7 +6960,8 @@ if (yourBus) {
 }
 var busnodata = (code !== '200' &amp;&amp; !deps.length) ? 'yes' : 'no';
 // When these times arrived, for Bus Refresh's next run (fetch_due.js: a second fetch within 20 s is skipped)
-if (code === '200') { setGlobal('BusStateFetchAt', String(now)); setGlobal('BusStateFetchStop', get('BusStateStopId')); }
+if (code === '200') { setGlobal('BusStateFetchAt', loc('buscachedat') || String(now));   // (got ready earlier, 4.45: when fetched)
+  setGlobal('BusStateFetchStop', get('BusStateStopId')); }
 
 // Refresh less often while the next bus is far off: more than 10 minutes away, wait twice
 // BusRefresh (90 s by default) before the next fetch; closer than that, BusRefresh as normal.
@@ -6987,7 +7030,7 @@ if (busbuzz === 'yes') {
 }
 // Recorder: TfL's predictions as they came (route, vehicle, seconds away), for steadier times,
 // matching you to your bus, and spotting buses that have left
-record('tfl', { stop: get('BusStateStopId'), code: code, you: yourBus ? yourBus.v : undefined, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
+record('tfl', { stop: get('BusStateStopId'), code: code, you: yourBus ? yourBus.v : undefined, cached: loc('buscachedat') ? Math.round((now - parseInt(loc('buscachedat'), 10)) / 1000) : undefined, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
   b: deps.map(function (x) { return [x.k, x.v || '', Math.round((x.t - now) / 1000), x.kept ? 'k' : x.st === 'sched' ? 's' : 'l']; }),
   o: otherBuses.length ? otherBuses.map(function (x) { return [x.k, x.v, Math.round((x.t - now) / 1000), x.d]; }) : undefined });   // the stop's other routes (4.41)
 // The stop's letter, from its TfL indicator ("Stop B" -&gt; B, "Stop BK" -&gt; BK). Stops without one
@@ -7043,14 +7086,14 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act20" ve="7">
+		<Action sr="act24" ve="7">
 			<code>37</code>
 			<label>Trip recorder on: write what was just recorded · Scripts no longer write the file themselves: Tasker ran that as a task of its own, and two scripts at once could hang each other for 45 s</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecfile</lhs><op>2</op><rhs>Download/*</rhs></Condition></ConditionList></Action>
-		<Action sr="act21" ve="7"><code>409</code>
+		<Action sr="act25" ve="7"><code>409</code>
 			<se>false</se>
 			<label>   A new day: make sure its folder is there · Download/Tasker-bus-trip-data, in case it was deleted since</label><Str sr="arg0" ve="3">Download/Tasker-bus-trip-data</Str><Int sr="arg1" val="1"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act22" ve="7">
+		<Action sr="act26" ve="7">
 			<code>547</code>
 			<label>   Clear the last error, to spot a new one · A void method only reports failure as an error</label>
 			<Str sr="arg0" ve="3">%errmsg</Str>
@@ -7061,28 +7104,28 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act23" ve="7"><code>664</code>
-			<se>false</se>
-			<label>   Open the file · On a new day, start it afresh</label><Str sr="arg0" ve="3">busrecw</Str><Str sr="arg1" ve="3">java.io.FileWriter</Str><Str sr="arg2" ve="3">new {java.io.FileWriter} (String, boolean)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3">%busrecappend</Str><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act24" ve="7"><code>664</code>
-			<se>false</se>
-			<label>   Write the lines · Every line the script recorded: the setup first on a new day</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">%busrecline</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act25" ve="7"><code>664</code>
-			<se>false</se>
-			<label>   Android's line break · So the file always ends with a complete line</label><Str sr="arg0" ve="3">busrecnl</Str><Str sr="arg1" ve="3">java.lang.System</Str><Str sr="arg2" ve="3">lineSeparator {String} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act26" ve="7"><code>664</code>
-			<se>false</se>
-			<label>   Write it after the last line · Ends the last line</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">busrecnl</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
 		<Action sr="act27" ve="7"><code>664</code>
 			<se>false</se>
+			<label>   Open the file · On a new day, start it afresh</label><Str sr="arg0" ve="3">busrecw</Str><Str sr="arg1" ve="3">java.io.FileWriter</Str><Str sr="arg2" ve="3">new {java.io.FileWriter} (String, boolean)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3">%busrecappend</Str><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
+		<Action sr="act28" ve="7"><code>664</code>
+			<se>false</se>
+			<label>   Write the lines · Every line the script recorded: the setup first on a new day</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">%busrecline</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
+		<Action sr="act29" ve="7"><code>664</code>
+			<se>false</se>
+			<label>   Android's line break · So the file always ends with a complete line</label><Str sr="arg0" ve="3">busrecnl</Str><Str sr="arg1" ve="3">java.lang.System</Str><Str sr="arg2" ve="3">lineSeparator {String} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
+		<Action sr="act30" ve="7"><code>664</code>
+			<se>false</se>
+			<label>   Write it after the last line · Ends the last line</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">busrecnl</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
+		<Action sr="act31" ve="7"><code>664</code>
+			<se>false</se>
 			<label>   Close the file · Saves it</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">close {} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act28" ve="7">
+		<Action sr="act32" ve="7">
 			<code>37</code>
 			<label>   Did it work? · An error from any of the steps above leaves Tasker's last error changed</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act29" ve="7"><code>549</code>
+		<Action sr="act33" ve="7"><code>549</code>
 			<label>   No write error to report · Bus Status shows the last write error, if there was one</label><Str sr="arg0" ve="3">%BusRecordErr</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act30" ve="7">
+		<Action sr="act34" ve="7">
 			<code>547</code>
 			<label>   A new day: it has started · Once its first line is really written; if that failed, the next line starts the file again, with the setup</label>
 			<Str sr="arg0" ve="3">%BusRecordDay</Str>
@@ -7093,19 +7136,19 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act31" ve="7"><code>664</code>
+		<Action sr="act35" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   A new file: announce it to the media index, so the Files app lists it · Files written straight to storage aren't listed until Android's media scanner has seen them</label><Str sr="arg0" ve="3">busscanpath</Str><Str sr="arg1" ve="3">java.lang.String</Str><Str sr="arg2" ve="3">new {java.lang.String} (String)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act32" ve="7"><code>664</code>
+		<Action sr="act36" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Its path, as a list of one · The scanner takes a list of paths</label><Str sr="arg0" ve="3">busscanlist</Str><Str sr="arg1" ve="3">busscanpath</Str><Str sr="arg2" ve="3">split {String[]} (String)</Str><Str sr="arg3" ve="3">,</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act33" ve="7"><code>664</code>
+		<Action sr="act37" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Ask Android to scan it · MediaScannerConnection.scanFile, with no type and no reply wanted</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">android.media.MediaScannerConnection</Str><Str sr="arg2" ve="3">scanFile {} (android.content.Context, String[], String[], android.media.MediaScannerConnection$OnScanCompletedListener)</Str><Str sr="arg3" ve="3">CONTEXT</Str><Str sr="arg4" ve="3">busscanlist</Str><Str sr="arg5" ve="3">null</Str><Str sr="arg6" ve="3">null</Str><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act34" ve="7">
+		<Action sr="act38" ve="7">
 			<code>43</code>
 		</Action>
-		<Action sr="act35" ve="7">
+		<Action sr="act39" ve="7">
 			<code>547</code>
 			<label>   Failed: keep why, for Bus Status · The next line tries again</label>
 			<Str sr="arg0" ve="3">%BusRecordErr</Str>
@@ -7116,64 +7159,64 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act36" ve="7">
+		<Action sr="act40" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act37" ve="7"><code>549</code>
+		<Action sr="act41" ve="7"><code>549</code>
 			<label>   Done: forget the lines · Another script in the same task starts with nothing collected</label><Str sr="arg0" ve="3">%busrecline</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act38" ve="7"><code>549</code>
+		<Action sr="act42" ve="7"><code>549</code>
 			<label>   the file · Cleared too</label><Str sr="arg0" ve="3">%busrecfile</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act39" ve="7"><code>549</code>
+		<Action sr="act43" ve="7"><code>549</code>
 			<label>   whether to start it afresh · Cleared too</label><Str sr="arg0" ve="3">%busrecappend</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act40" ve="7"><code>549</code>
+		<Action sr="act44" ve="7"><code>549</code>
 			<label>   and the day · Cleared too</label><Str sr="arg0" ve="3">%busrecday</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act41" ve="7">
+		<Action sr="act45" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act42" ve="7">
+		<Action sr="act46" ve="7">
 			<code>137</code>
 			<label>No live data and no timetable: keep showing the last times · For example with no signal</label>
 			<Int sr="arg0" val="0"/>
 			<Str sr="arg1" ve="3"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busnodata</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act43" ve="7"><code>61</code>
-			<label>A bus within 5 minutes: buzz · Three 200 ms buzzes, on two refreshes in a row, then quiet</label><Int sr="arg0" val="200"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act44" ve="7">
-			<code>30</code>
-			<label>   pause · 200 ms between buzzes</label>
-			<Int sr="arg0" val="200"/>
-			<Int sr="arg1" val="0"/>
-			<Int sr="arg2" val="0"/>
-			<Int sr="arg3" val="0"/>
-			<Int sr="arg4" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act45" ve="7"><code>61</code>
-			<label>   buzz · The next of the three</label><Int sr="arg0" val="200"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act46" ve="7">
-			<code>30</code>
-			<label>   pause · 200 ms between buzzes</label>
-			<Int sr="arg0" val="200"/>
-			<Int sr="arg1" val="0"/>
-			<Int sr="arg2" val="0"/>
-			<Int sr="arg3" val="0"/>
-			<Int sr="arg4" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 		<Action sr="act47" ve="7"><code>61</code>
-			<label>   buzz (three in all) · The last of the three</label><Int sr="arg0" val="200"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
+			<label>A bus within 5 minutes: buzz · Three 200 ms buzzes, on two refreshes in a row, then quiet</label><Int sr="arg0" val="200"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 		<Action sr="act48" ve="7">
+			<code>30</code>
+			<label>   pause · 200 ms between buzzes</label>
+			<Int sr="arg0" val="200"/>
+			<Int sr="arg1" val="0"/>
+			<Int sr="arg2" val="0"/>
+			<Int sr="arg3" val="0"/>
+			<Int sr="arg4" val="0"/>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
+		<Action sr="act49" ve="7"><code>61</code>
+			<label>   buzz · The next of the three</label><Int sr="arg0" val="200"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
+		<Action sr="act50" ve="7">
+			<code>30</code>
+			<label>   pause · 200 ms between buzzes</label>
+			<Int sr="arg0" val="200"/>
+			<Int sr="arg1" val="0"/>
+			<Int sr="arg2" val="0"/>
+			<Int sr="arg3" val="0"/>
+			<Int sr="arg4" val="0"/>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
+		<Action sr="act51" ve="7"><code>61</code>
+			<label>   buzz (three in all) · The last of the three</label><Int sr="arg0" val="200"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
+		<Action sr="act52" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act49" ve="7">
+		<Action sr="act53" ve="7">
 			<code>37</code>
 			<label>Island not up yet, or to be drawn again · 2): show it (after that it updates itself</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateIslandShown</lhs><op>3</op><rhs>1</rhs></Condition></ConditionList></Action>
-		<Action sr="act50" ve="7"><code>664</code>
+		<Action sr="act54" ve="7"><code>664</code>
 			<se>false</se>
 			<label>Which way up is the phone? · Screen settings</label><Str sr="arg0" ve="3">confres</Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">getResources {Resources} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrefpar</lhs><op>3</op><rhs>open/close</rhs></Condition></ConditionList></Action>
-		<Action sr="act51" ve="7"><code>664</code>
+		<Action sr="act55" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   As text · So the script can read it</label><Str sr="arg0" ve="3">%busconfig</Str><Str sr="arg1" ve="3">confres</Str><Str sr="arg2" ve="3">getConfiguration {Object} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrefpar</lhs><op>3</op><rhs>open/close</rhs></Condition></ConditionList></Action>
-		<Action sr="act52" ve="7">
+		<Action sr="act56" ve="7">
 			<code>129</code>
 			<label>Sideways or upright? · From Android's own screen configuration ("port" or "land")</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -7199,11 +7242,11 @@ setGlobal('BusStateFullscreenInfo', (busfullnow === 'yes' ? 'sideways' : 'uprigh
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrefpar</lhs><op>3</op><rhs>open/close</rhs></Condition></ConditionList></Action>
-		<Action sr="act53" ve="7">
+		<Action sr="act57" ve="7">
 			<code>37</code>
 			<label>Upright: show the island · Sideways: keep it hidden for now</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busfullnow</lhs><op>3</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act54" ve="7">
+		<Action sr="act58" ve="7">
 			<code>129</code>
 			<label>Build the island, and pick which scene name to show it under · The other one from last time</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -7984,7 +8027,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act55" ve="7">
+		<Action sr="act59" ve="7">
 			<code>479</code>
 			<se>false</se>
 			<label>Show it around the camera · On top of the old one, if any</label>
@@ -8008,7 +8051,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg8" val="1"/>
 			<Str sr="arg9" ve="3">%busanim</Str>
 		</Action>
-		<Action sr="act56" ve="7">
+		<Action sr="act60" ve="7">
 			<code>30</code>
 			<label>Let it fade in over the old one · Not when the stop board closes: it goes at once</label>
 			<Int sr="arg0"><var>%busfadems</var></Int>
@@ -8017,13 +8060,13 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busoldscene</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act57" ve="7">
+		<Action sr="act61" ve="7">
 			<code>480</code>
 			<se>false</se>
 			<label>Now remove the old one · The new island is already showing on top</label>
 			<Str sr="arg0" ve="3">%busoldscene</Str>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busoldscene</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act58" ve="7">
+		<Action sr="act62" ve="7">
 			<code>547</code>
 			<label>Island showing · So later refreshes just update it, rather than drawing it again</label>
 			<Str sr="arg0" ve="3">%BusStateIslandShown</Str>
@@ -8034,7 +8077,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act59" ve="7">
+		<Action sr="act63" ve="7">
 			<code>548</code>
 			<label>First time only: how to use the island · A one-off message explaining the swipe and hold gestures</label>
 			<Str sr="arg0" ve="3">Tap the island for every bus at the stop. Swipe it for the next route. Hold it for the other side of the road. Swipe it right across to dismiss it.</Str>
@@ -8054,7 +8097,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateHintShown</lhs><op>3</op><rhs>1</rhs></Condition></ConditionList></Action>
-		<Action sr="act60" ve="7">
+		<Action sr="act64" ve="7">
 			<code>547</code>
 			<label>Hint shown · So the gestures message only appears once</label>
 			<Str sr="arg0" ve="3">%BusStateHintShown</Str>
@@ -8065,17 +8108,51 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act61" ve="7">
+		<Action sr="act65" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act62" ve="7">
+		<Action sr="act66" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act63" ve="7">
+		<Action sr="act67" ve="7">
 			<code>37</code>
 			<label>The stop board is open: now fetch its times, as they were due (it updates itself) · The board shows the new times as soon as they arrive, without being drawn again</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busafter</lhs><op>2</op><rhs>no</rhs></Condition></ConditionList></Action>
-		<Action sr="act64" ve="7">
+		<Action sr="act68" ve="7">
+			<code>37</code>
+			<label>A long press to the stop that was got ready: its times are here already (4.45) · Bus Refresh keeps the next stop's times ready after each refresh, so switching sides needn't wait for TfL</label>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busfresh</lhs><op>2</op><rhs>cached</rhs></Condition></ConditionList></Action>
+		<Action sr="act69" ve="7">
+			<code>129</code>
+			<label>Use them, rather than wait for TfL · Turns the kept reply back into seconds away from now</label>
+			<Str sr="arg0" ve="3">/* ==================================================================
+   Bus Refresh · A long press to the stop got ready: use its times (4.45)
+   Turns BusStatePrefetch back into a TfL reply (seconds away from now),
+   for refresh.js to build the island from as if it had just arrived, so
+   the switch doesn't wait for TfL. Bus Loop's next refresh fetches fresh
+   times as usual (buscachedat tells refresh.js when these were fetched,
+   so its 20 s skip counts from then).
+   Output: http_response_code, http_data, buscachedat
+   ================================================================== */
+// A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
+// name, starting with %)
+function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+var ready = {}; try { ready = JSON.parse(get('BusStatePrefetch') || '{}') || {}; } catch (e) { ready = {}; }
+var now = Date.now();
+var http_response_code = '200';
+var http_data = JSON.stringify((ready.b || []).map(function (x) {
+  return { lineName: x[0], vehicleId: x[1], timeToStation: Math.round((x[2] - now) / 1000), destinationName: x[3] };
+}).filter(function (a) { return a.timeToStation &gt; -60; }));
+var buscachedat = String(ready.at || now);
+</Str>
+			<Str sr="arg1" ve="3"/>
+			<Int sr="arg2" val="1"/>
+			<Int sr="arg3" val="45"/>
+		</Action>
+		<Action sr="act70" ve="7">
+			<code>43</code>
+		</Action>
+		<Action sr="act71" ve="7">
 			<code>339</code>
 			<se>false</se>
 			<label>Ask TfL for live arrivals · Every bus TfL predicts at this stop, about 30 minutes ahead. Read by the next step</label>
@@ -8095,7 +8172,10 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg8" val="15"/>
 			<Int sr="arg9" val="0"/>
 		</Action>
-		<Action sr="act65" ve="7">
+		<Action sr="act72" ve="7">
+			<code>38</code>
+		</Action>
+		<Action sr="act73" ve="7">
 			<code>129</code>
 			<label>Build the departures: live times, timetable where there are none · One line per route, for the island</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -8333,7 +8413,8 @@ if (yourBus) {
 }
 var busnodata = (code !== '200' &amp;&amp; !deps.length) ? 'yes' : 'no';
 // When these times arrived, for Bus Refresh's next run (fetch_due.js: a second fetch within 20 s is skipped)
-if (code === '200') { setGlobal('BusStateFetchAt', String(now)); setGlobal('BusStateFetchStop', get('BusStateStopId')); }
+if (code === '200') { setGlobal('BusStateFetchAt', loc('buscachedat') || String(now));   // (got ready earlier, 4.45: when fetched)
+  setGlobal('BusStateFetchStop', get('BusStateStopId')); }
 
 // Refresh less often while the next bus is far off: more than 10 minutes away, wait twice
 // BusRefresh (90 s by default) before the next fetch; closer than that, BusRefresh as normal.
@@ -8402,7 +8483,7 @@ if (busbuzz === 'yes') {
 }
 // Recorder: TfL's predictions as they came (route, vehicle, seconds away), for steadier times,
 // matching you to your bus, and spotting buses that have left
-record('tfl', { stop: get('BusStateStopId'), code: code, you: yourBus ? yourBus.v : undefined, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
+record('tfl', { stop: get('BusStateStopId'), code: code, you: yourBus ? yourBus.v : undefined, cached: loc('buscachedat') ? Math.round((now - parseInt(loc('buscachedat'), 10)) / 1000) : undefined, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
   b: deps.map(function (x) { return [x.k, x.v || '', Math.round((x.t - now) / 1000), x.kept ? 'k' : x.st === 'sched' ? 's' : 'l']; }),
   o: otherBuses.length ? otherBuses.map(function (x) { return [x.k, x.v, Math.round((x.t - now) / 1000), x.d]; }) : undefined });   // the stop's other routes (4.41)
 // The stop's letter, from its TfL indicator ("Stop B" -&gt; B, "Stop BK" -&gt; BK). Stops without one
@@ -8458,14 +8539,14 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act66" ve="7">
+		<Action sr="act74" ve="7">
 			<code>37</code>
 			<label>Trip recorder on: write what was just recorded · Scripts no longer write the file themselves: Tasker ran that as a task of its own, and two scripts at once could hang each other for 45 s</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecfile</lhs><op>2</op><rhs>Download/*</rhs></Condition></ConditionList></Action>
-		<Action sr="act67" ve="7"><code>409</code>
+		<Action sr="act75" ve="7"><code>409</code>
 			<se>false</se>
 			<label>   A new day: make sure its folder is there · Download/Tasker-bus-trip-data, in case it was deleted since</label><Str sr="arg0" ve="3">Download/Tasker-bus-trip-data</Str><Int sr="arg1" val="1"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act68" ve="7">
+		<Action sr="act76" ve="7">
 			<code>547</code>
 			<label>   Clear the last error, to spot a new one · A void method only reports failure as an error</label>
 			<Str sr="arg0" ve="3">%errmsg</Str>
@@ -8476,28 +8557,28 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act69" ve="7"><code>664</code>
+		<Action sr="act77" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Open the file · On a new day, start it afresh</label><Str sr="arg0" ve="3">busrecw</Str><Str sr="arg1" ve="3">java.io.FileWriter</Str><Str sr="arg2" ve="3">new {java.io.FileWriter} (String, boolean)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3">%busrecappend</Str><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act70" ve="7"><code>664</code>
+		<Action sr="act78" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Write the lines · Every line the script recorded: the setup first on a new day</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">%busrecline</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act71" ve="7"><code>664</code>
+		<Action sr="act79" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Android's line break · So the file always ends with a complete line</label><Str sr="arg0" ve="3">busrecnl</Str><Str sr="arg1" ve="3">java.lang.System</Str><Str sr="arg2" ve="3">lineSeparator {String} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act72" ve="7"><code>664</code>
+		<Action sr="act80" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Write it after the last line · Ends the last line</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">busrecnl</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act73" ve="7"><code>664</code>
+		<Action sr="act81" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Close the file · Saves it</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">close {} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act74" ve="7">
+		<Action sr="act82" ve="7">
 			<code>37</code>
 			<label>   Did it work? · An error from any of the steps above leaves Tasker's last error changed</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act75" ve="7"><code>549</code>
+		<Action sr="act83" ve="7"><code>549</code>
 			<label>   No write error to report · Bus Status shows the last write error, if there was one</label><Str sr="arg0" ve="3">%BusRecordErr</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act76" ve="7">
+		<Action sr="act84" ve="7">
 			<code>547</code>
 			<label>   A new day: it has started · Once its first line is really written; if that failed, the next line starts the file again, with the setup</label>
 			<Str sr="arg0" ve="3">%BusRecordDay</Str>
@@ -8508,19 +8589,19 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act77" ve="7"><code>664</code>
+		<Action sr="act85" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   A new file: announce it to the media index, so the Files app lists it · Files written straight to storage aren't listed until Android's media scanner has seen them</label><Str sr="arg0" ve="3">busscanpath</Str><Str sr="arg1" ve="3">java.lang.String</Str><Str sr="arg2" ve="3">new {java.lang.String} (String)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act78" ve="7"><code>664</code>
+		<Action sr="act86" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Its path, as a list of one · The scanner takes a list of paths</label><Str sr="arg0" ve="3">busscanlist</Str><Str sr="arg1" ve="3">busscanpath</Str><Str sr="arg2" ve="3">split {String[]} (String)</Str><Str sr="arg3" ve="3">,</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act79" ve="7"><code>664</code>
+		<Action sr="act87" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Ask Android to scan it · MediaScannerConnection.scanFile, with no type and no reply wanted</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">android.media.MediaScannerConnection</Str><Str sr="arg2" ve="3">scanFile {} (android.content.Context, String[], String[], android.media.MediaScannerConnection$OnScanCompletedListener)</Str><Str sr="arg3" ve="3">CONTEXT</Str><Str sr="arg4" ve="3">busscanlist</Str><Str sr="arg5" ve="3">null</Str><Str sr="arg6" ve="3">null</Str><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act80" ve="7">
+		<Action sr="act88" ve="7">
 			<code>43</code>
 		</Action>
-		<Action sr="act81" ve="7">
+		<Action sr="act89" ve="7">
 			<code>547</code>
 			<label>   Failed: keep why, for Bus Status · The next line tries again</label>
 			<Str sr="arg0" ve="3">%BusRecordErr</Str>
@@ -8531,29 +8612,29 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act82" ve="7">
+		<Action sr="act90" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act83" ve="7"><code>549</code>
+		<Action sr="act91" ve="7"><code>549</code>
 			<label>   Done: forget the lines · Another script in the same task starts with nothing collected</label><Str sr="arg0" ve="3">%busrecline</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act84" ve="7"><code>549</code>
+		<Action sr="act92" ve="7"><code>549</code>
 			<label>   the file · Cleared too</label><Str sr="arg0" ve="3">%busrecfile</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act85" ve="7"><code>549</code>
+		<Action sr="act93" ve="7"><code>549</code>
 			<label>   whether to start it afresh · Cleared too</label><Str sr="arg0" ve="3">%busrecappend</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act86" ve="7"><code>549</code>
+		<Action sr="act94" ve="7"><code>549</code>
 			<label>   and the day · Cleared too</label><Str sr="arg0" ve="3">%busrecday</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act87" ve="7">
+		<Action sr="act95" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act88" ve="7">
+		<Action sr="act96" ve="7">
 			<code>137</code>
 			<label>No live data and no timetable: keep showing the last times · For example with no signal</label>
 			<Int sr="arg0" val="0"/>
 			<Str sr="arg1" ve="3"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busnodata</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act89" ve="7"><code>61</code>
+		<Action sr="act97" ve="7"><code>61</code>
 			<label>A bus within 5 minutes: buzz · Three 200 ms buzzes, on two refreshes in a row, then quiet</label><Int sr="arg0" val="200"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act90" ve="7">
+		<Action sr="act98" ve="7">
 			<code>30</code>
 			<label>   pause · 200 ms between buzzes</label>
 			<Int sr="arg0" val="200"/>
@@ -8562,9 +8643,9 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act91" ve="7"><code>61</code>
+		<Action sr="act99" ve="7"><code>61</code>
 			<label>   buzz · The next of the three</label><Int sr="arg0" val="200"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act92" ve="7">
+		<Action sr="act100" ve="7">
 			<code>30</code>
 			<label>   pause · 200 ms between buzzes</label>
 			<Int sr="arg0" val="200"/>
@@ -8573,9 +8654,9 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act93" ve="7"><code>61</code>
+		<Action sr="act101" ve="7"><code>61</code>
 			<label>   buzz (three in all) · The last of the three</label><Int sr="arg0" val="200"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act94" ve="7">
+		<Action sr="act102" ve="7">
 			<code>547</code>
 			<label>   Times were just fetched · So the timetable check below runs</label>
 			<Str sr="arg0" ve="3">%busfresh</Str>
@@ -8586,17 +8667,17 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act95" ve="7">
+		<Action sr="act103" ve="7">
 			<code>37</code>
 			<label>   The board needs more or fewer lines: draw it again · A route came or went with the new times, so the board is drawn at its new height</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateIslandShown</lhs><op>3</op><rhs>1</rhs></Condition></ConditionList></Action>
-		<Action sr="act96" ve="7"><code>664</code>
+		<Action sr="act104" ve="7"><code>664</code>
 			<se>false</se>
 			<label>Which way up is the phone? · Screen settings</label><Str sr="arg0" ve="3">confres</Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">getResources {Resources} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrefpar</lhs><op>3</op><rhs>open/close</rhs></Condition></ConditionList></Action>
-		<Action sr="act97" ve="7"><code>664</code>
+		<Action sr="act105" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   As text · So the script can read it</label><Str sr="arg0" ve="3">%busconfig</Str><Str sr="arg1" ve="3">confres</Str><Str sr="arg2" ve="3">getConfiguration {Object} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrefpar</lhs><op>3</op><rhs>open/close</rhs></Condition></ConditionList></Action>
-		<Action sr="act98" ve="7">
+		<Action sr="act106" ve="7">
 			<code>129</code>
 			<label>Sideways or upright? · From Android's own screen configuration ("port" or "land")</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -8622,11 +8703,11 @@ setGlobal('BusStateFullscreenInfo', (busfullnow === 'yes' ? 'sideways' : 'uprigh
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrefpar</lhs><op>3</op><rhs>open/close</rhs></Condition></ConditionList></Action>
-		<Action sr="act99" ve="7">
+		<Action sr="act107" ve="7">
 			<code>37</code>
 			<label>Upright: show the island · Sideways: keep it hidden for now</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busfullnow</lhs><op>3</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act100" ve="7">
+		<Action sr="act108" ve="7">
 			<code>129</code>
 			<label>Build the board again, and pick which scene name to show it under · The other one from last time</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -9407,7 +9488,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act101" ve="7">
+		<Action sr="act109" ve="7">
 			<code>479</code>
 			<se>false</se>
 			<label>Show it around the camera · On top of the old one, if any</label>
@@ -9431,7 +9512,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg8" val="1"/>
 			<Str sr="arg9" ve="3">%busanim</Str>
 		</Action>
-		<Action sr="act102" ve="7">
+		<Action sr="act110" ve="7">
 			<code>30</code>
 			<label>Let it fade in over the old one · Not when the stop board closes: it goes at once</label>
 			<Int sr="arg0"><var>%busfadems</var></Int>
@@ -9440,13 +9521,13 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busoldscene</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act103" ve="7">
+		<Action sr="act111" ve="7">
 			<code>480</code>
 			<se>false</se>
 			<label>Now remove the old one · The new island is already showing on top</label>
 			<Str sr="arg0" ve="3">%busoldscene</Str>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busoldscene</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act104" ve="7">
+		<Action sr="act112" ve="7">
 			<code>547</code>
 			<label>Island showing · So later refreshes just update it, rather than drawing it again</label>
 			<Str sr="arg0" ve="3">%BusStateIslandShown</Str>
@@ -9457,20 +9538,20 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act105" ve="7">
+		<Action sr="act113" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act106" ve="7">
+		<Action sr="act114" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act107" ve="7">
+		<Action sr="act115" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act108" ve="7">
+		<Action sr="act116" ve="7">
 			<code>37</code>
 			<label>Times were just fetched: timetable needed too? · After the island, so it never holds it up</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busfresh</lhs><op>3</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act109" ve="7">
+		<Action sr="act117" ve="7">
 			<code>129</code>
 			<label>Timetable for this stop today, for routes with no live time? · Once a day per stop</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -9491,7 +9572,8 @@ function get(n) { var v = global(n); return (v === undefined || v === null || St
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
 
-var stopId = get('BusStateStopId');
+// The current stop, or the one a long press goes to while it's being got ready (busttstop, 4.45)
+var stopId = loc('busttstop') || get('BusStateStopId');
 var mine = get('BusRoutes').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
 var pool = JSON.parse(get('BusCacheStops') || '{}');
 var here = pool[stopId] ? pool[stopId].r.filter(function (r) { return mine.indexOf(r) &gt; -1; }) : mine;
@@ -9510,18 +9592,18 @@ setGlobal('BusTempTimetableRoutes', missing.join(','));
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act110" ve="7">
+		<Action sr="act118" ve="7">
 			<code>37</code>
 			<label>Not yet: fetch it · Once a day per stop: today's timetable for each of your routes there</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busttfetch</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act111" ve="7">
+		<Action sr="act119" ve="7">
 			<code>39</code>
 			<label>For each of those routes · Your routes at this stop with no live time and no timetable yet today</label>
 			<Str sr="arg0" ve="3">%i</Str>
 			<Str sr="arg1" ve="3">1:%busttcount</Str>
 			<Int sr="arg2" val="0"/>
 		</Action>
-		<Action sr="act112" ve="7">
+		<Action sr="act120" ve="7">
 			<code>129</code>
 			<label>Which route · The route this pass of the loop is about</label>
 			<Str sr="arg0" ve="3">/* Bus Refresh · Which route's timetable is this pass of the loop? (i = loop counter) */
@@ -9531,7 +9613,7 @@ var busttroute = global('BusTempTimetableRoutes').split(',')[parseInt(i, 10) - 1
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act113" ve="7">
+		<Action sr="act121" ve="7">
 			<code>339</code>
 			<se>false</se>
 			<label>Ask TfL for its timetable · For routes with no live prediction</label>
@@ -9551,7 +9633,7 @@ var busttroute = global('BusTempTimetableRoutes').split(',')[parseInt(i, 10) - 1
 			<Int sr="arg8" val="15"/>
 			<Int sr="arg9" val="0"/>
 		</Action>
-		<Action sr="act114" ve="7">
+		<Action sr="act122" ve="7">
 			<code>129</code>
 			<label>Keep today's departures · Stored per stop and route; fetched again tomorrow</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -9571,7 +9653,7 @@ function get(n) { var v = global(n); return (v === undefined || v === null || St
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
 
-var stopId = get('BusStateStopId'); var today = new Date().toDateString(); var day = new Date().getDay();
+var stopId = loc('busttstop') || get('BusStateStopId'); var today = new Date().toDateString(); var day = new Date().getDay();
 var trips = []; var names = [];
 var code = loc('http_response_code');
 
@@ -9618,51 +9700,340 @@ setGlobal('BusCacheTimetable', JSON.stringify(tt));
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act115" ve="7">
+		<Action sr="act123" ve="7">
 			<code>40</code>
 		</Action>
-		<Action sr="act116" ve="7">
+		<Action sr="act124" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act117" ve="7">
+		<Action sr="act125" ve="7">
+			<code>38</code>
+		</Action>
+		<Action sr="act126" ve="7">
+			<code>129</code>
+			<label>Get the stop a long press goes to ready? (not if its times are under 40 s old, there is no other stop, or the screen is off) · Only while a countdown is running, after the island is up</label>
+			<Str sr="arg0" ve="3">/* ==================================================================
+   Bus Refresh · Get the stop a long press goes to ready (4.45)
+   A long press switches to the next nearby stop (usually across the
+   road). Since 4.43 it shows that stop at once, with its times if they
+   were fetched in the last 3 minutes, and otherwise waits 1 to 2 s for
+   TfL. So after each refresh, while a countdown runs with the screen
+   on, the next stop's times are fetched as well (unless they're under
+   40 s old already): a long press then shows them straight away, and
+   Bus Refresh builds the island from them without waiting for TfL.
+   Output: busprefetch = yes / no, busprestop (the stop to get ready),
+           busttstop (the same, for the timetable steps)
+   ================================================================== */
+// A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
+// name, starting with %)
+function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+var stops = []; try { stops = JSON.parse(get('BusStateNearbyStops') || '[]'); } catch (e) { stops = []; }
+var next = stops.length &gt; 1 ? stops[((parseInt(get('BusStateStopIndex'), 10) || 0) + 1) % stops.length] : null;   // as opposite.js picks it
+if (next &amp;&amp; next.id === get('BusStateStopId')) next = null;
+var ready = {}; try { ready = JSON.parse(get('BusStatePrefetch') || '{}') || {}; } catch (e) { ready = {}; }
+var now = Date.now();
+var fresh = !!next &amp;&amp; ready.s === next.id &amp;&amp; now - ready.at &gt;= 0 &amp;&amp; now - ready.at &lt; 40000;
+var busprefetch = next &amp;&amp; get('BusStateRunning') === '1' &amp;&amp; get('SCREEN') !== 'off' &amp;&amp; !fresh ? 'yes' : 'no';
+var busprestop = next ? next.id : '';
+var busttstop = busprestop;
+</Str>
+			<Str sr="arg1" ve="3"/>
+			<Int sr="arg2" val="1"/>
+			<Int sr="arg3" val="45"/>
+		</Action>
+		<Action sr="act127" ve="7">
+			<code>137</code>
+			<label>Nothing to get ready · No other stop nearby, its times are fresh enough, or the screen is off</label>
+			<Int sr="arg0" val="0"/>
+			<Str sr="arg1" ve="3"/>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busprefetch</lhs><op>3</op><rhs>yes</rhs></Condition></ConditionList></Action>
+		<Action sr="act128" ve="7">
+			<code>339</code>
+			<se>false</se>
+			<label>Ask TfL for its live arrivals · For the stop a long press goes to: one extra small request per refresh while a countdown runs with the screen on</label>
+			<Bundle sr="arg0">
+				<Vals sr="val"/>
+			</Bundle>
+			<Int sr="arg1" val="0"/>
+			<Int sr="arg10" val="1"/>
+			<Int sr="arg11" val="0"/>
+			<Int sr="arg12" val="0"/>
+			<Str sr="arg2" ve="3">https://api.tfl.gov.uk/StopPoint/%busprestop/Arrivals?app_key=%TflKey</Str>
+			<Str sr="arg3" ve="3"/>
+			<Str sr="arg4" ve="3"/>
+			<Str sr="arg5" ve="3"/>
+			<Str sr="arg6" ve="3"/>
+			<Str sr="arg7" ve="3"/>
+			<Int sr="arg8" val="15"/>
+			<Int sr="arg9" val="0"/>
+		</Action>
+		<Action sr="act129" ve="7">
+			<code>129</code>
+			<label>Keep them for a long press · In BusStatePrefetch for up to 90 s, and as that stop's island data, so a long press shows its times at once</label>
+			<Str sr="arg0" ve="3">/* ==================================================================
+   Bus Refresh · Keep the next stop's times for a long press (4.45)
+   TfL's reply for the stop a long press goes to, kept two ways:
+   - BusStatePrefetch = { s: stop, at: when fetched, b: [[route, vehicle,
+     expected (ms), destination], ...] }, with each bus's expected time
+     (not seconds away), so Bus Refresh can build the island from it a
+     little later as if it had just arrived (prefetch_use.js);
+   - that stop's entry in BusStateIslandByStop (as refresh.js keeps it
+     for stops it has shown), so opposite.js shows its times the moment
+     you hold the island: your routes' next three times and the stop's
+     other routes, live times only (Bus Refresh adds the timetable's a
+     moment later).
+   A failed fetch keeps the last.
+   Output: busliveroutes (your routes with a live time there, for
+           tt_check.js: the timetable is only needed for the others)
+   ================================================================== */
+// A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
+// name, starting with %)
+function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
+// isn't set
+function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
+// The stop's letter, from its TfL indicator ("Stop B" -&gt; B, "Stop BK" -&gt; BK). Stops without one
+// (indicators like "opp" or "-&gt;N", or none at all) get no letter, and the island shows none. Shared
+// by refresh.js and, for the stop a long press switches to, opposite.js (4.43).
+function stopLetter(name) {
+  var m = /\(([^)]*)\)\s*$/.exec(name || ''); var ind = m ? m[1].trim() : '';
+  var l = /^stop\s+([a-z][a-z0-9]?)$/i.exec(ind);
+  return l ? l[1].toUpperCase() : '';
+}
+var now = Date.now();
+var busliveroutes = '';
+if (loc('http_response_code') === '200' &amp;&amp; loc('busprestop')) {
+  try {
+    var got = JSON.parse(http_data).map(function (b) { return [b.lineName, b.vehicleId || '', now + b.timeToStation * 1000, b.destinationName || '']; })
+      .sort(function (a, b) { return a[2] - b[2]; });
+    setGlobal('BusStatePrefetch', JSON.stringify({ s: loc('busprestop'), at: now, b: got }));
+    var mine = get('BusRoutes').split(',').map(function (s) { return s.trim(); });
+    // Your routes: the soonest bus on each, and the next two (a time within a minute of the one
+    // before is TfL listing the same bus twice), as refresh.js builds them
+    var perRoute = [];
+    var seen = {};
+    got.forEach(function (x) {
+      if (mine.indexOf(x[0]) &lt; 0) return;
+      var r = seen[x[0]];
+      if (!r) { seen[x[0]] = { k: x[0], d: x[3], t: x[2], st: 'live', v: x[1] }; perRoute.push(seen[x[0]]); }
+      else if (r.t2 === undefined &amp;&amp; x[2] - r.t &gt;= 60000) { r.t2 = x[2]; r.st2 = 'live'; }
+      else if (r.t2 !== undefined &amp;&amp; r.t3 === undefined &amp;&amp; x[2] - r.t2 &gt;= 60000) { r.t3 = x[2]; r.st3 = 'live'; }
+    });
+    busliveroutes = perRoute.map(function (r) { return r.k; }).join(',');
+    // The stop's other routes, soonest first: up to 8, three times each (as refresh.js, 4.41)
+    var others = [];
+    var byRoute = {};
+    got.forEach(function (x) {
+      if (mine.indexOf(x[0]) &gt;= 0) return;
+      if (!byRoute[x[0]]) { if (others.length &gt;= 8) return; byRoute[x[0]] = { k: x[0], d: x[3], t: [] }; others.push(byRoute[x[0]]); }
+      if (byRoute[x[0]].t.length &lt; 3) byRoute[x[0]].t.push(x[2]);
+    });
+    var stops = []; try { stops = JSON.parse(get('BusStateNearbyStops') || '[]'); } catch (e) { stops = []; }
+    var stop = stops.filter(function (s) { return s.id === loc('busprestop'); })[0] || { name: '' };
+    var cur = {}; try { cur = JSON.parse(get('BusStateIslandData') || '{}') || {}; } catch (e) { cur = {}; }
+    var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) { byStop = {}; }
+    byStop[loc('busprestop')] = { u: now, r: cur.r, rot: cur.rot, s: loc('busprestop'), n: stop.name, l: stopLetter(stop.name), b: perRoute, a: others };
+    // The 4 stops with the newest times, as refresh.js keeps them
+    setGlobal('BusStateIslandByStop', JSON.stringify(Object.keys(byStop).sort(function (a, b) { return byStop[b].u - byStop[a].u; }).slice(0, 4)
+      .reduce(function (o, k) { o[k] = byStop[k]; return o; }, {})));
+  } catch (e) {}
+}
+</Str>
+			<Str sr="arg1" ve="3"/>
+			<Int sr="arg2" val="1"/>
+			<Int sr="arg3" val="45"/>
+		</Action>
+		<Action sr="act130" ve="7">
+			<code>129</code>
+			<label>Its timetable today, for routes with no live time there? (once a day per stop) · The first switch of the day used to fetch it after the island showed</label>
+			<Str sr="arg0" ve="3">/* ==================================================================
+   Bus Refresh · Timetable needed for this stop?
+   Scheduled times are the fallback when TfL has no live prediction for
+   one of my routes (it only predicts about 30 minutes ahead) or can't be
+   reached. Each stop's timetable is fetched once a day, one request per
+   route, and kept in BusCacheTimetable. Since 4.43 this runs after the
+   island has been shown, and only for routes TfL had no live time for
+   just now (busliveroutes, from refresh.js), so it never holds up the
+   times: the next refresh shows the timetable's.
+   Output: busttfetch = yes / no, busttcount (routes to fetch)
+   ================================================================== */
+// A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
+// name, starting with %)
+function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
+// isn't set
+function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
+
+// The current stop, or the one a long press goes to while it's being got ready (busttstop, 4.45)
+var stopId = loc('busttstop') || get('BusStateStopId');
+var mine = get('BusRoutes').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+var pool = JSON.parse(get('BusCacheStops') || '{}');
+var here = pool[stopId] ? pool[stopId].r.filter(function (r) { return mine.indexOf(r) &gt; -1; }) : mine;
+
+var tt = JSON.parse(get('BusCacheTimetable') || '{}');
+var today = new Date().toDateString();
+var have = (tt[stopId] &amp;&amp; tt[stopId].date === today) ? tt[stopId].r : {};
+var live = loc('busliveroutes').split(',');
+var missing = here.filter(function (r) { return !(r in have) &amp;&amp; live.indexOf(r) &lt; 0; });
+
+var busttfetch = missing.length ? 'yes' : 'no';
+var busttcount = String(missing.length);
+setGlobal('BusTempTimetableRoutes', missing.join(','));
+</Str>
+			<Str sr="arg1" ve="3"/>
+			<Int sr="arg2" val="1"/>
+			<Int sr="arg3" val="45"/>
+		</Action>
+		<Action sr="act131" ve="7">
+			<code>37</code>
+			<label>Not yet: fetch it too · Once a day for that stop, as for the stop you're at</label>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busttfetch</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
+		<Action sr="act132" ve="7">
+			<code>39</code>
+			<label>For each of those routes there · One request per route, the same as for the current stop</label>
+			<Str sr="arg0" ve="3">%i</Str>
+			<Str sr="arg1" ve="3">1:%busttcount</Str>
+			<Int sr="arg2" val="0"/>
+		</Action>
+		<Action sr="act133" ve="7">
+			<code>129</code>
+			<label>Which route · The route this pass of the loop is about</label>
+			<Str sr="arg0" ve="3">/* Bus Refresh · Which route's timetable is this pass of the loop? (i = loop counter) */
+var busttroute = global('BusTempTimetableRoutes').split(',')[parseInt(i, 10) - 1];
+</Str>
+			<Str sr="arg1" ve="3"/>
+			<Int sr="arg2" val="1"/>
+			<Int sr="arg3" val="45"/>
+		</Action>
+		<Action sr="act134" ve="7">
+			<code>339</code>
+			<se>false</se>
+			<label>Ask TfL for its timetable there · The stop a long press goes to</label>
+			<Bundle sr="arg0">
+				<Vals sr="val"/>
+			</Bundle>
+			<Int sr="arg1" val="0"/>
+			<Int sr="arg10" val="1"/>
+			<Int sr="arg11" val="0"/>
+			<Int sr="arg12" val="0"/>
+			<Str sr="arg2" ve="3">https://api.tfl.gov.uk/Line/%busttroute/Timetable/%busttstop?app_key=%TflKey</Str>
+			<Str sr="arg3" ve="3"/>
+			<Str sr="arg4" ve="3"/>
+			<Str sr="arg5" ve="3"/>
+			<Str sr="arg6" ve="3"/>
+			<Str sr="arg7" ve="3"/>
+			<Int sr="arg8" val="15"/>
+			<Int sr="arg9" val="0"/>
+		</Action>
+		<Action sr="act135" ve="7">
+			<code>129</code>
+			<label>Keep today's departures · Stored per stop and route; fetched again tomorrow</label>
+			<Str sr="arg0" ve="3">/* ==================================================================
+   Bus Refresh · Keep today's departures for this route at this stop
+   From TfL /Line/{route}/Timetable/{stop}: pick today's schedule
+   (weekday, Saturday or Sunday) and store each departure as
+   [minutes after midnight, destination]. The destination is the last
+   stop of that journey's pattern (knownJourneys[].intervalId points at
+   stationIntervals), so short journeys show where they really end.
+   Stored per route as { t: [[minute, nameIndex], ...], n: [names] }. A failed request stores an empty list so it
+   isn't retried until tomorrow. Only the 8 most recent stops are kept.
+   ================================================================== */
+// A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
+// name, starting with %)
+function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
+// isn't set
+function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
+
+var stopId = loc('busttstop') || get('BusStateStopId'); var today = new Date().toDateString(); var day = new Date().getDay();
+var trips = []; var names = [];
+var code = loc('http_response_code');
+
+function todays(schedules) {
+  var named = function (re, not) { return schedules.filter(function (s) { return re.test(s.name) &amp;&amp; !(not &amp;&amp; not.test(s.name)); })[0]; };
+  if (day === 0) return named(/sun/i);
+  if (day === 6) return named(/sat/i);
+  return named(/mon/i, /school/i) || named(/mon/i);
+}
+if (code === '200') {
+  try {
+    var data = JSON.parse(http_data); var t = data.timetable || {};
+    // Stop id -&gt; name, from both lists TfL returns
+    var stopName = {};
+    (data.stops || []).concat(data.stations || []).forEach(function (s) { if (s &amp;&amp; s.id) stopName[s.id] = s.name; });
+    var fallbackDest = (data.stations &amp;&amp; data.stations.length) ? data.stations[data.stations.length - 1].name : '';
+    function nameIndex(n) { n = String(n || fallbackDest || 'Timetable').replace(/ (Bus Station|Interchange)$/, ''); var k = names.indexOf(n); if (k &lt; 0) { names.push(n); k = names.length - 1; } return k; }
+
+    (t.routes || []).forEach(function (route) {
+      // Where each journey pattern ends
+      var ends = {};
+      (route.stationIntervals || []).forEach(function (si) {
+        var list = si.intervals || [];
+        if (list.length) ends[si.id] = stopName[list[list.length - 1].stopId];
+      });
+      var s = todays(route.schedules || []);
+      (s &amp;&amp; s.knownJourneys || []).forEach(function (j) {
+        var m = parseInt(j.hour, 10) * 60 + parseInt(j.minute, 10);
+        if (!isNaN(m)) trips.push([m, nameIndex(ends[j.intervalId])]);
+      });
+    });
+  } catch (e) { trips = []; names = []; }
+}
+trips.sort(function (a, b) { return a[0] - b[0]; });
+
+var tt = JSON.parse(get('BusCacheTimetable') || '{}');
+if (!tt[stopId] || tt[stopId].date !== today) { delete tt[stopId]; tt[stopId] = { date: today, r: {} }; }
+tt[stopId].r[busttroute] = { t: trips, n: names };
+var keys = Object.keys(tt);
+while (keys.length &gt; 8) { delete tt[keys.shift()]; }
+setGlobal('BusCacheTimetable', JSON.stringify(tt));
+</Str>
+			<Str sr="arg1" ve="3"/>
+			<Int sr="arg2" val="1"/>
+			<Int sr="arg3" val="45"/>
+		</Action>
+		<Action sr="act136" ve="7">
+			<code>40</code>
+		</Action>
+		<Action sr="act137" ve="7">
 			<code>38</code>
 		</Action>
 	</Task>
 	<Task sr="task79">
-		<cdate>1791536191838</cdate>
-		<edate>1791536191838</edate>
+		<cdate>1791536399278</cdate>
+		<edate>1791536399278</edate>
 		<id>79</id>
 		<nme>Bus Wake</nme>
 		<pri>6</pri>
 		<Action sr="act0" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.44.202610090956</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.45.202610090959</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.44.202610090956</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.45.202610090959</rhs></Condition></ConditionList></Action>
 		<Action sr="act2" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.44.202610090956</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.45.202610090959</rhs></Condition></ConditionList></Action>
 		<Action sr="act3" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.44.202610090956</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.45.202610090959</rhs></Condition></ConditionList></Action>
 		<Action sr="act4" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.44.202610090956</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.45.202610090959</rhs></Condition></ConditionList></Action>
 		<Action sr="act5" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.44.202610090956</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.45.202610090959</rhs></Condition></ConditionList></Action>
 		<Action sr="act6" ve="7">
 			<code>547</code>
 			<label>This build · Version and build time</label>
 			<Str sr="arg0" ve="3">%busbuild</Str>
-			<Str sr="arg1" ve="3">4.44.202610090956</Str>
+			<Str sr="arg1" ve="3">4.45.202610090959</Str>
 			<Int sr="arg2" val="0"/>
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.44.202610090956</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.45.202610090959</rhs></Condition></ConditionList></Action>
 		<Action sr="act7" ve="7">
 			<code>129</code>
 			<label>Remember it was done for this build · BusStateVersion</label>
@@ -9688,11 +10059,11 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.44.202610090956</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.45.202610090959</rhs></Condition></ConditionList></Action>
 		<Action sr="act8" ve="7">
 			<code>548</code>
 			<label>Say so · A short message</label>
-			<Str sr="arg0" ve="3">Bus countdown 4.44: profiles switched on</Str>
+			<Str sr="arg0" ve="3">Bus countdown 4.45: profiles switched on</Str>
 			<Int sr="arg1" val="0"/>
 			<Str sr="arg10" ve="3"/>
 			<Int sr="arg11" val="1"/>
@@ -9708,7 +10079,7 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg7" ve="3"/>
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.44.202610090956</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.45.202610090959</rhs></Condition></ConditionList></Action>
 		<Action sr="act9" ve="7">
 			<code>137</code>
 			<label>Only asked to switch the profiles: done · Started by another task with par1 "profiles"</label>
@@ -10040,8 +10411,8 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 		</Action>
 	</Task>
 	<Task sr="task32">
-		<cdate>1791536191838</cdate>
-		<edate>1791536191838</edate>
+		<cdate>1791536399278</cdate>
+		<edate>1791536399278</edate>
 		<id>32</id>
 		<nme>Bus End</nme>
 		<pri>6</pri>
@@ -10302,8 +10673,8 @@ setGlobal('BusStateMatch', '');
 		</Action>
 	</Task>
 	<Task sr="task31">
-		<cdate>1791536191838</cdate>
-		<edate>1791536191838</edate>
+		<cdate>1791536399278</cdate>
+		<edate>1791536399278</edate>
 		<id>31</id>
 		<nme>Bus Island</nme>
 		<pri>6</pri>
@@ -10450,8 +10821,8 @@ if (stops.length) {
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busdo</lhs><op>2</op><rhs>switch/open/close/open-grown</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task62">
-		<cdate>1791536191838</cdate>
-		<edate>1791536191838</edate>
+		<cdate>1791536399278</cdate>
+		<edate>1791536399278</edate>
 		<id>62</id>
 		<nme>Bus Watch</nme>
 		<pri>6</pri>
@@ -12122,8 +12493,8 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busaction</lhs><op>2</op><rhs>stop</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task72">
-		<cdate>1791536191839</cdate>
-		<edate>1791536191839</edate>
+		<cdate>1791536399278</cdate>
+		<edate>1791536399278</edate>
 		<id>72</id>
 		<nme>Bus Status</nme>
 		<pri>6</pri>

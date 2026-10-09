@@ -4,6 +4,17 @@
 import re
 
 DETAILS = {
+ # Getting the stop a long press goes to ready (4.45)
+ 'A long press to the stop that was got ready: its times are here already (4.45)': 'Bus Refresh keeps the next stop\'s times ready after each refresh, so switching sides needn\'t wait for TfL.',
+ 'Use them, rather than wait for TfL': 'Turns the kept reply back into seconds away from now. Bus Loop fetches fresh ones as usual.',
+ 'Get the stop a long press goes to ready? (not if its times are under 40 s old, there is no other stop, or the screen is off)': 'Only while a countdown is running, after the island is up.',
+ 'Nothing to get ready': 'No other stop nearby, its times are fresh enough, or the screen is off.',
+ 'Ask TfL for its live arrivals': 'For the stop a long press goes to: one extra small request per refresh while a countdown runs with the screen on.',
+ 'Keep them for a long press': 'In BusStatePrefetch for up to 90 s, and as that stop\'s island data, so a long press shows its times at once.',
+ 'Its timetable today, for routes with no live time there? (once a day per stop)': 'The first switch of the day used to fetch it after the island showed.',
+ 'Not yet: fetch it too': 'Once a day for that stop, as for the stop you\'re at.',
+ 'For each of those routes there': 'One request per route, the same as for the current stop.',
+ 'Ask TfL for its timetable there': 'The stop a long press goes to.',
  # Bus (menu)
  'Only what applies: Start or End, depending on whether a countdown is running': 'Builds the menu: "Start countdown" or "End countdown", whichever makes sense right now, then Settings and Status.',
  'Pick what to do': 'The Bus menu itself. Tap an item to run it.',

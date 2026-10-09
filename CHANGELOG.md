@@ -4,6 +4,12 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.45] - 2026-10-09
+
+### Changed
+
+- Switching to the other side of the road shows its times at once. After each refresh, while a countdown runs with the screen on, Bus Refresh gets the stop a long press goes to ready: its live times (unless they're under 40 seconds old) and, once a day, its timetable for routes with no live time there. A long press then shows that stop with its times straight away, and Bus Refresh builds the island from them instead of waiting 1 to 2 s for TfL. Bus Loop fetches fresh ones as usual.
+
 ## [4.44] - 2026-10-09
 
 ### Changed

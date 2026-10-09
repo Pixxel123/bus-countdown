@@ -11,7 +11,7 @@
 /* @include get */
 /* @include loc */
 
-var stopId = get('BusStateStopId'); var today = new Date().toDateString(); var day = new Date().getDay();
+var stopId = loc('busttstop') || get('BusStateStopId'); var today = new Date().toDateString(); var day = new Date().getDay();
 var trips = []; var names = [];
 var code = loc('http_response_code');
 

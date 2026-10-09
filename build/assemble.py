@@ -104,7 +104,11 @@ def fetch_steps():
     # Fetch the stop's live times, build the departures, record them and buzz (Bus Refresh: before
     # drawing the island, or, when the stop board opens, after, 4.43)
     return [
-      http('https://api.tfl.gov.uk/StopPoint/%BusStateStopId/Arrivals?app_key=%TflKey', 'Ask TfL for live arrivals'),
+      if_('%busfresh', 2, 'cached', 'A long press to the stop that was got ready: its times are here already (4.45)'),
+        js('prefetch_use.js', 'Use them, rather than wait for TfL'),
+      else_(),
+        http('https://api.tfl.gov.uk/StopPoint/%BusStateStopId/Arrivals?app_key=%TflKey', 'Ask TfL for live arrivals'),
+      endif(),
       js('refresh.js', 'Build the departures: live times, timetable where there are none'),
       *record_steps(),
       stop('No live data and no timetable: keep showing the last times', ('%busnodata', 2, 'yes')),
@@ -217,7 +221,7 @@ def request_positions(mode, cond=None):
         deco(set_str(set_str(T['VARSET'], 0, '%BusStatePush'), 1, f'GPS, {what}'), '   GPS worked', ('%BusStatePush', 2, 'not requested'))]
 
 PROFILES = ['Bus Moved', 'Bus Screen On', 'Bus Hide When Sideways']
-VERSION = '4.44'
+VERSION = '4.45'
 BUILD = VERSION + '.' + time.strftime('%Y%m%d%H%M')     # changes with every build
 
 def profile_status(name, on, label, cond=None):
@@ -440,6 +444,21 @@ TASKS = [
           js('tt_store.js', "Keep today's departures"),
         T['ENDFOR'],
       endif(),
+    endif(),
+    # Get the stop a long press goes to ready (4.45): its live times after every refresh while a
+    # countdown runs with the screen on (unless they're under 40 s old), and its timetable once a day
+    # for routes with no live time there. Last of all, so nothing on the island waits for it.
+    js('prefetch_due.js', 'Get the stop a long press goes to ready? (not if its times are under 40 s old, there is no other stop, or the screen is off)'),
+    stop('Nothing to get ready', ('%busprefetch', 3, 'yes')),
+    http('https://api.tfl.gov.uk/StopPoint/%busprestop/Arrivals?app_key=%TflKey', 'Ask TfL for its live arrivals'),
+    js('prefetch_store.js', 'Keep them for a long press'),
+    js('tt_check.js', 'Its timetable today, for routes with no live time there? (once a day per stop)'),
+    if_('%busttfetch', 2, 'yes', 'Not yet: fetch it too'),
+      deco(set_str(T['FOR'], 1, '1:%busttcount'), 'For each of those routes there'),
+        js('tt_route.js', 'Which route'),
+        http('https://api.tfl.gov.uk/Line/%busttroute/Timetable/%busttstop?app_key=%TflKey', 'Ask TfL for its timetable there'),
+        js('tt_store.js', "Keep today's departures"),
+      T['ENDFOR'],
     endif(),
  ]),
  (79, 'Bus Wake', [

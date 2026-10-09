@@ -54,7 +54,8 @@ Variables starting with `BusState`, `BusCache` or `BusTemp` are managed by the p
 - `BusDebugLog`: the last 20 decisions, for Debugging (Bus Status).
 - `BusStateTrip`, `BusStateWindow`: the trip's state and the last six positions (see [The trip, step by step](how-it-works.md#the-trip-step-by-step)).
 - `BusStateBoard`: `1` while the stop board is open (Bus Island sets it; Bus End and a new countdown clear it). `BusStateBoardSelf`: `1` when the pill's page grew the board itself and keeps it the right size (4.43); `BusStateBoardRows`: how many lines a board drawn as a new window has.
-- `BusStateIslandByStop`: the pill's data for the last 4 stops fetched, so a long press shows the stop it switches to at once (4.43).
+- `BusStateIslandByStop`: the pill's data for the last 4 stops fetched, so a long press shows the stop it switches to at once (4.43), including the stop got ready for it (4.45).
+- `BusStatePrefetch`: the live times of the stop a long press goes to, got ready after each refresh, so Bus Refresh can show them straight after a switch (4.45).
 - `BusStateSnooze`: the stop you last swiped away, and when (kept apart from the trip so a check running at the same moment can't undo it).
 - `BusStateSeen`: the buses TfL last listed at the current stop, so one it drops can be kept on its countdown. `BusStateBuzzed` and `BusStateBuzzAt`: which buses have buzzed at which stop, and when the last buzz was.
 - `BusStateMatch`, `BusStateBoarded`, `BusStateCameOn`: the bus you're riding (while it's being worked out, and once known), the bus you last got on, and the bus you last came in on (see [Which bus you're on](how-it-works.md#which-bus-youre-on)).

@@ -12,7 +12,8 @@
 /* @include get */
 /* @include loc */
 
-var stopId = get('BusStateStopId');
+// The current stop, or the one a long press goes to while it's being got ready (busttstop, 4.45)
+var stopId = loc('busttstop') || get('BusStateStopId');
 var mine = get('BusRoutes').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
 var pool = JSON.parse(get('BusCacheStops') || '{}');
 var here = pool[stopId] ? pool[stopId].r.filter(function (r) { return mine.indexOf(r) > -1; }) : mine;

@@ -69,7 +69,7 @@ The pill appears by itself when you reach a saved stop and slow down or stop the
 |---|---|
 | Short swipe left or right (24 dp or more, short of a dismiss) | Next or previous route |
 | Long swipe left or right: 90 dp, or a quick 60 dp fling; with several of your routes at the stop, 130 dp however fast | Dismiss (the whole pill follows your finger and fades as it nears the dismissal point) |
-| Long press | Switch to the next nearby stop, usually the one across the road |
+| Long press | Switch to the next nearby stop, usually the one across the road. Its times are already there |
 | Tap | Open the stop board: the pill grows down into it, with every bus at the stop, by route. Tap again or swipe up to close it; it closes by itself after 10 s |
 
 The first time the pill appears, a message explains the gestures. The phone gives a short tick when a swipe is long enough to dismiss, and vibrates when the pill is dismissed or a long press switches stop.

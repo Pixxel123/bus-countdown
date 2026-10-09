@@ -159,7 +159,8 @@ if (yourBus) {
 }
 var busnodata = (code !== '200' && !deps.length) ? 'yes' : 'no';
 // When these times arrived, for Bus Refresh's next run (fetch_due.js: a second fetch within 20 s is skipped)
-if (code === '200') { setGlobal('BusStateFetchAt', String(now)); setGlobal('BusStateFetchStop', get('BusStateStopId')); }
+if (code === '200') { setGlobal('BusStateFetchAt', loc('buscachedat') || String(now));   // (got ready earlier, 4.45: when fetched)
+  setGlobal('BusStateFetchStop', get('BusStateStopId')); }
 
 // Refresh less often while the next bus is far off: more than 10 minutes away, wait twice
 // BusRefresh (90 s by default) before the next fetch; closer than that, BusRefresh as normal.
@@ -228,7 +229,7 @@ if (busbuzz === 'yes') {
 }
 // Recorder: TfL's predictions as they came (route, vehicle, seconds away), for steadier times,
 // matching you to your bus, and spotting buses that have left
-record('tfl', { stop: get('BusStateStopId'), code: code, you: yourBus ? yourBus.v : undefined, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
+record('tfl', { stop: get('BusStateStopId'), code: code, you: yourBus ? yourBus.v : undefined, cached: loc('buscachedat') ? Math.round((now - parseInt(loc('buscachedat'), 10)) / 1000) : undefined, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
   b: deps.map(function (x) { return [x.k, x.v || '', Math.round((x.t - now) / 1000), x.kept ? 'k' : x.st === 'sched' ? 's' : 'l']; }),
   o: otherBuses.length ? otherBuses.map(function (x) { return [x.k, x.v, Math.round((x.t - now) / 1000), x.d]; }) : undefined });   // the stop's other routes (4.41)
 /* @include stopLetter */
