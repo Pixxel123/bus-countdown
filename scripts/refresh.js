@@ -216,9 +216,11 @@ deps.forEach(function (x) { if (buzzed[keyOf(x)]) stillHere[keyOf(x)] = buzzed[k
 // there can't be caught); until it's known, nothing does
 // (Your bus known but no longer listed: it has reached the stop, so you're there, and buzzing is as usual)
 var buzzRiding = riding && !(match.n >= 2 && match.sure && !yourBus);
+// BusBuzz = off (Settings › Island, 4.49): no buzz at all; the island still shows the times as usual
+var buzzOn = get('BusBuzz') !== 'off';
 var first = deps.filter(function (x) { return x.t - now > -60000 && (!buzzRiding || (yourBus && !x.mine && !x.idle && x.t > yourBus.t + 30000)); })
   .sort(function (a, b) { return a.t - b.t; })[0];
-if (first && (first.t - now) / 60000 < 5 && (stillHere[keyOf(first)] || 0) < 2 && sinceBuzz >= 30000) {
+if (buzzOn && first && (first.t - now) / 60000 < 5 && (stillHere[keyOf(first)] || 0) < 2 && sinceBuzz >= 30000) {
   busbuzz = 'yes';
   stillHere[keyOf(first)] = (stillHere[keyOf(first)] || 0) + 1;
   setGlobal('BusStateBuzzAt', String(now));

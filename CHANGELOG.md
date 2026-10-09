@@ -4,6 +4,12 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.49] - 2026-10-09
+
+### Added
+
+- Settings › Island: the buzz when a bus is under 5 minutes away can be turned off. The island still shows the times as usual, and the main page's Island entry says "no buzz" while it's off.
+
 ## [4.48] - 2026-10-09
 
 ### Fixed

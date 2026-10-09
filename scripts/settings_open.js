@@ -394,6 +394,8 @@ var y = parseInt(get('BusIslandY'), 10); if (!(y >= 0)) y = 9;
 var islandPage = [group(
   choices('Show as', P.style, get('BusStyle') || 'pill', 'BusStyle')
   .concat(choices('Countdown border', P.border, get('BusBorder') || 'off', 'BusBorder'))
+  // The buzz when a bus is under 5 minutes away (4.49)
+  .concat(choices('Buzz when a bus is under 5 min away', [['On', 'on'], ['Off', 'off']], get('BusBuzz') || 'on', 'BusBuzz'))
   .concat(choices('Destination length', [['3 letters', '3'], ['6 letters', '6'], ['10 letters', '10']], get('BusDestLetters') || '3', 'BusDestLetters'))
   // The stop board (4.42): tap the island to see every bus at the stop
   .concat(choices('Tap for the stop board: show', [['All routes', 'all'], ['Your routes', 'mine']], get('BusBoardRoutes') || 'all', 'BusBoardRoutes'))
@@ -440,7 +442,8 @@ var mainPage = (setup ? [text('Add your TfL key under Setup, then pick routes at
   group([entry('Timer', 'Countdown', 'Every ' + label(P.refresh, get('BusRefresh') || 45) + ', ends after ' + label(P.timeout, get('BusTimeout') || 30), 'countdown'),
          entry('Wifi', 'Home and work', (get('BusHomeWifi') || 'No home Wi-Fi') + ' and ' + (get('BusWorkWifi') || 'no work Wi-Fi'), 'wifi'),
          entry('Smartphone', 'Island', label(P.style, get('BusStyle') || 'pill') + ', the stop board closes ' +
-               ({ '10': 'after 10 s', '30': 'after 30 s', '0': 'when tapped' }[get('BusBoardSecs') || '10'] || 'after 10 s'), 'island')]),
+               ({ '10': 'after 10 s', '30': 'after 30 s', '0': 'when tapped' }[get('BusBoardSecs') || '10'] || 'after 10 s') +
+               (get('BusBuzz') === 'off' ? ', no buzz' : ''), 'island')]),
   group([entry('Key', 'Setup', !get('TflKey') ? 'Add your TfL key' : missing.length ? missing.length + ' permission' + (missing.length > 1 ? 's' : '') + ' needed' : 'TfL key added, all permissions on', 'setup')])]);
 
 // ---- The top bar: each page's title, and a back arrow that goes up a level ----

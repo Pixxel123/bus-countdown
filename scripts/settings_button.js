@@ -26,11 +26,11 @@ var ALLOWED = {
   BusRefresh: ['30', '45', '60', '90'], BusTimeout: ['15', '30', '45', '60'], BusRotate: ['4', '6', '8', '10'],
   BusRadius: ['200', '300', '500', '800'], BusDestLetters: ['3', '6', '10'],
   BusLeaveShow: ['off', 'work', 'home', 'both'], BusApproach: ['off', 'walk', 'both'], BusApproachMin: ['2', '3', '5'], BusRecord: ['off', 'on'], BusGlanceFrom: ['off', '16:30', '17:00', '17:30'], BusGlanceTo: ['17:30', '18:00', '18:30', '19:00'], BusStyle: ['pill', 'chip'], BusBorder: ['off', 'on'],
-  BusBoardRoutes: ['all', 'mine'], BusBoardSecs: ['10', '30', '0'],
+  BusBoardRoutes: ['all', 'mine'], BusBoardSecs: ['10', '30', '0'], BusBuzz: ['on', 'off'],
   BusHomeWifi: null, BusWorkWifi: null                          // any network name ("" clears work)
 };
 var NAMES = { BusRefresh: 'refresh every', BusTimeout: 'end after', BusRotate: 'time per route', BusRadius: 'search distance', BusDestLetters: 'destination letters', BusLeaveShow: 'next buses on leaving', BusApproach: 'heading to a stop', BusApproachMin: 'minutes ahead', BusRecord: 'record trips', BusGlanceFrom: 'heads-up at work from', BusGlanceTo: 'heads-up until',
-              BusStyle: 'show as', BusBorder: 'countdown border', BusBoardRoutes: 'stop board shows', BusBoardSecs: 'stop board closes',
+              BusStyle: 'show as', BusBorder: 'countdown border', BusBoardRoutes: 'stop board shows', BusBoardSecs: 'stop board closes', BusBuzz: 'buzz when a bus is near',
               BusHomeWifi: 'home Wi-Fi', BusWorkWifi: 'work Wi-Fi' };
 if (action === 'set') {
   var setting = loc('bussetting'); var value = loc('busvalue');

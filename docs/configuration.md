@@ -38,6 +38,7 @@ Most of these are on the settings screen. All of them can also be set in Tasker'
 | `%BusRadius` | 300 | Metres Bus Start looks for your saved stops |
 | `%BusStyle` | `pill` | `pill` (round the camera) or `chip` (in the status bar). Both are drawn by Tasker the same way. |
 | `%BusBorder` | `off` | `on` draws a border round the pill that drains until the next route or refresh |
+| `%BusBuzz` | `on` | The buzz when a bus is under 5 minutes away: `off` turns it off (Settings › Island). The pill shows the times as usual. |
 | `%BusDestLetters` | 3 | How many letters of the destination the pill's left side has room for: 3, 6 or 10. The left side is sized to fit the stop letter, the widest route and that many letters. |
 | `%BusBoardRoutes` | `all` | What the stop board (tap the pill) shows: `all` routes at the stop, or `mine` for yours only |
 | `%BusBoardSecs` | 10 | Seconds before the stop board closes by itself: 10 or 30, or 0 to stay open until you tap it |

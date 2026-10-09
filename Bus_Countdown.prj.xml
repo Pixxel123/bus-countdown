@@ -1,8 +1,8 @@
 <TaskerData sr="" dvi="1" tv="6.7.6-beta">
 	<dmetric>1344.0,2992.0</dmetric>
 	<Profile sr="prof72" ve="2">
-		<cdate>1791539550654</cdate>
-		<edate>1791539550654</edate>
+		<cdate>1791539684818</cdate>
+		<edate>1791539684818</edate>
 		<flags>8</flags>
 		<id>72</id>
 		<mid0>79</mid0>
@@ -14,8 +14,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof74" ve="2">
-		<cdate>1791539550654</cdate>
-		<edate>1791539550654</edate>
+		<cdate>1791539684818</cdate>
+		<edate>1791539684818</edate>
 		<flags>8</flags>
 		<id>74</id>
 		<mid0>62</mid0>
@@ -33,8 +33,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof73" ve="2">
-		<cdate>1791539550654</cdate>
-		<edate>1791539550654</edate>
+		<cdate>1791539684818</cdate>
+		<edate>1791539684818</edate>
 		<flags>8</flags>
 		<id>73</id>
 		<mid0>59</mid0>
@@ -46,14 +46,14 @@
 		</State>
 	</Profile>
 	<Project sr="proj0" ve="2">
-		<cdate>1791539550654</cdate>
+		<cdate>1791539684818</cdate>
 		<name>Bus Countdown</name>
 		<pids>72,73,74</pids>
 		<tids>73,74,75,76,38,60,59,79,32,31,62,72</tids>
 	</Project>
 	<Task sr="task73">
-		<cdate>1791539550655</cdate>
-		<edate>1791539550655</edate>
+		<cdate>1791539684818</cdate>
+		<edate>1791539684818</edate>
 		<id>73</id>
 		<nme>Bus</nme>
 		<pri>6</pri>
@@ -178,11 +178,11 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.48.202610091052</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.49.202610091054</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task74">
-		<cdate>1791539550655</cdate>
-		<edate>1791539550655</edate>
+		<cdate>1791539684818</cdate>
+		<edate>1791539684818</edate>
 		<id>74</id>
 		<nme>Bus Settings</nme>
 		<pri>6</pri>
@@ -201,7 +201,7 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.48.202610091052</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.49.202610091054</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>First run? · Camera not measured yet</label>
@@ -889,6 +889,8 @@ var y = parseInt(get('BusIslandY'), 10); if (!(y &gt;= 0)) y = 9;
 var islandPage = [group(
   choices('Show as', P.style, get('BusStyle') || 'pill', 'BusStyle')
   .concat(choices('Countdown border', P.border, get('BusBorder') || 'off', 'BusBorder'))
+  // The buzz when a bus is under 5 minutes away (4.49)
+  .concat(choices('Buzz when a bus is under 5 min away', [['On', 'on'], ['Off', 'off']], get('BusBuzz') || 'on', 'BusBuzz'))
   .concat(choices('Destination length', [['3 letters', '3'], ['6 letters', '6'], ['10 letters', '10']], get('BusDestLetters') || '3', 'BusDestLetters'))
   // The stop board (4.42): tap the island to see every bus at the stop
   .concat(choices('Tap for the stop board: show', [['All routes', 'all'], ['Your routes', 'mine']], get('BusBoardRoutes') || 'all', 'BusBoardRoutes'))
@@ -935,7 +937,8 @@ var mainPage = (setup ? [text('Add your TfL key under Setup, then pick routes at
   group([entry('Timer', 'Countdown', 'Every ' + label(P.refresh, get('BusRefresh') || 45) + ', ends after ' + label(P.timeout, get('BusTimeout') || 30), 'countdown'),
          entry('Wifi', 'Home and work', (get('BusHomeWifi') || 'No home Wi-Fi') + ' and ' + (get('BusWorkWifi') || 'no work Wi-Fi'), 'wifi'),
          entry('Smartphone', 'Island', label(P.style, get('BusStyle') || 'pill') + ', the stop board closes ' +
-               ({ '10': 'after 10 s', '30': 'after 30 s', '0': 'when tapped' }[get('BusBoardSecs') || '10'] || 'after 10 s'), 'island')]),
+               ({ '10': 'after 10 s', '30': 'after 30 s', '0': 'when tapped' }[get('BusBoardSecs') || '10'] || 'after 10 s') +
+               (get('BusBuzz') === 'off' ? ', no buzz' : ''), 'island')]),
   group([entry('Key', 'Setup', !get('TflKey') ? 'Add your TfL key' : missing.length ? missing.length + ' permission' + (missing.length &gt; 1 ? 's' : '') + ' needed' : 'TfL key added, all permissions on', 'setup')])]);
 
 // ---- The top bar: each page's title, and a back arrow that goes up a level ----
@@ -1222,11 +1225,11 @@ var ALLOWED = {
   BusRefresh: ['30', '45', '60', '90'], BusTimeout: ['15', '30', '45', '60'], BusRotate: ['4', '6', '8', '10'],
   BusRadius: ['200', '300', '500', '800'], BusDestLetters: ['3', '6', '10'],
   BusLeaveShow: ['off', 'work', 'home', 'both'], BusApproach: ['off', 'walk', 'both'], BusApproachMin: ['2', '3', '5'], BusRecord: ['off', 'on'], BusGlanceFrom: ['off', '16:30', '17:00', '17:30'], BusGlanceTo: ['17:30', '18:00', '18:30', '19:00'], BusStyle: ['pill', 'chip'], BusBorder: ['off', 'on'],
-  BusBoardRoutes: ['all', 'mine'], BusBoardSecs: ['10', '30', '0'],
+  BusBoardRoutes: ['all', 'mine'], BusBoardSecs: ['10', '30', '0'], BusBuzz: ['on', 'off'],
   BusHomeWifi: null, BusWorkWifi: null                          // any network name ("" clears work)
 };
 var NAMES = { BusRefresh: 'refresh every', BusTimeout: 'end after', BusRotate: 'time per route', BusRadius: 'search distance', BusDestLetters: 'destination letters', BusLeaveShow: 'next buses on leaving', BusApproach: 'heading to a stop', BusApproachMin: 'minutes ahead', BusRecord: 'record trips', BusGlanceFrom: 'heads-up at work from', BusGlanceTo: 'heads-up until',
-              BusStyle: 'show as', BusBorder: 'countdown border', BusBoardRoutes: 'stop board shows', BusBoardSecs: 'stop board closes',
+              BusStyle: 'show as', BusBorder: 'countdown border', BusBoardRoutes: 'stop board shows', BusBoardSecs: 'stop board closes', BusBuzz: 'buzz when a bus is near',
               BusHomeWifi: 'home Wi-Fi', BusWorkWifi: 'work Wi-Fi' };
 if (action === 'set') {
   var setting = loc('bussetting'); var value = loc('busvalue');
@@ -3853,8 +3856,8 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buspreview</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task75">
-		<cdate>1791539550656</cdate>
-		<edate>1791539550656</edate>
+		<cdate>1791539684819</cdate>
+		<edate>1791539684819</edate>
 		<id>75</id>
 		<nme>Bus Settings Button</nme>
 		<pri>6</pri>
@@ -3893,11 +3896,11 @@ var ALLOWED = {
   BusRefresh: ['30', '45', '60', '90'], BusTimeout: ['15', '30', '45', '60'], BusRotate: ['4', '6', '8', '10'],
   BusRadius: ['200', '300', '500', '800'], BusDestLetters: ['3', '6', '10'],
   BusLeaveShow: ['off', 'work', 'home', 'both'], BusApproach: ['off', 'walk', 'both'], BusApproachMin: ['2', '3', '5'], BusRecord: ['off', 'on'], BusGlanceFrom: ['off', '16:30', '17:00', '17:30'], BusGlanceTo: ['17:30', '18:00', '18:30', '19:00'], BusStyle: ['pill', 'chip'], BusBorder: ['off', 'on'],
-  BusBoardRoutes: ['all', 'mine'], BusBoardSecs: ['10', '30', '0'],
+  BusBoardRoutes: ['all', 'mine'], BusBoardSecs: ['10', '30', '0'], BusBuzz: ['on', 'off'],
   BusHomeWifi: null, BusWorkWifi: null                          // any network name ("" clears work)
 };
 var NAMES = { BusRefresh: 'refresh every', BusTimeout: 'end after', BusRotate: 'time per route', BusRadius: 'search distance', BusDestLetters: 'destination letters', BusLeaveShow: 'next buses on leaving', BusApproach: 'heading to a stop', BusApproachMin: 'minutes ahead', BusRecord: 'record trips', BusGlanceFrom: 'heads-up at work from', BusGlanceTo: 'heads-up until',
-              BusStyle: 'show as', BusBorder: 'countdown border', BusBoardRoutes: 'stop board shows', BusBoardSecs: 'stop board closes',
+              BusStyle: 'show as', BusBorder: 'countdown border', BusBoardRoutes: 'stop board shows', BusBoardSecs: 'stop board closes', BusBuzz: 'buzz when a bus is near',
               BusHomeWifi: 'home Wi-Fi', BusWorkWifi: 'work Wi-Fi' };
 if (action === 'set') {
   var setting = loc('bussetting'); var value = loc('busvalue');
@@ -6122,8 +6125,8 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<label>Open it · Shows the Android settings page</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">startActivity {} (android.content.Intent)</Str><Str sr="arg3" ve="3">busint</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busintent</lhs><op>2</op><rhs>android*</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task76">
-		<cdate>1791539550656</cdate>
-		<edate>1791539550656</edate>
+		<cdate>1791539684819</cdate>
+		<edate>1791539684819</edate>
 		<id>76</id>
 		<nme>Bus Find Camera</nme>
 		<pri>6</pri>
@@ -6256,8 +6259,8 @@ if (!r || !dens || !w) {
 			<label>Reset position: move the open screen's height slider · Shows the new value straight away</label><Str sr="arg0" ve="3">bussettings</Str><Str sr="arg1" ve="3">sl_y</Str><Str sr="arg2" ve="3">value</Str><Str sr="arg3" ve="3">%BusIslandY</Str><Int sr="arg4" val="0"/><Str sr="arg5" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrebuild</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task38">
-		<cdate>1791539550656</cdate>
-		<edate>1791539550656</edate>
+		<cdate>1791539684819</cdate>
+		<edate>1791539684819</edate>
 		<id>38</id>
 		<nme>Bus Start</nme>
 		<pri>6</pri>
@@ -6275,7 +6278,7 @@ if (!r || !dens || !w) {
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.48.202610091052</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.49.202610091054</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>Settings: fill in defaults, check TflKey and BusRoutes · Resets empty or invalid settings</label>
@@ -7117,8 +7120,8 @@ record(busok === 'yes' ? 'start' : 'nostart', { stop: get('BusStateStopId'), nam
 		</Action>
 	</Task>
 	<Task sr="task60">
-		<cdate>1791539550656</cdate>
-		<edate>1791539550656</edate>
+		<cdate>1791539684820</cdate>
+		<edate>1791539684820</edate>
 		<id>60</id>
 		<nme>Bus Loop</nme>
 		<pri>6</pri>
@@ -7458,8 +7461,8 @@ var buspushm = get('BusStatePushM') || '30';
 		</Action>
 	</Task>
 	<Task sr="task59">
-		<cdate>1791539550656</cdate>
-		<edate>1791539550656</edate>
+		<cdate>1791539684820</cdate>
+		<edate>1791539684820</edate>
 		<id>59</id>
 		<nme>Bus Refresh</nme>
 		<pri>6</pri>
@@ -8066,9 +8069,11 @@ deps.forEach(function (x) { if (buzzed[keyOf(x)]) stillHere[keyOf(x)] = buzzed[k
 // there can't be caught); until it's known, nothing does
 // (Your bus known but no longer listed: it has reached the stop, so you're there, and buzzing is as usual)
 var buzzRiding = riding &amp;&amp; !(match.n &gt;= 2 &amp;&amp; match.sure &amp;&amp; !yourBus);
+// BusBuzz = off (Settings › Island, 4.49): no buzz at all; the island still shows the times as usual
+var buzzOn = get('BusBuzz') !== 'off';
 var first = deps.filter(function (x) { return x.t - now &gt; -60000 &amp;&amp; (!buzzRiding || (yourBus &amp;&amp; !x.mine &amp;&amp; !x.idle &amp;&amp; x.t &gt; yourBus.t + 30000)); })
   .sort(function (a, b) { return a.t - b.t; })[0];
-if (first &amp;&amp; (first.t - now) / 60000 &lt; 5 &amp;&amp; (stillHere[keyOf(first)] || 0) &lt; 2 &amp;&amp; sinceBuzz &gt;= 30000) {
+if (buzzOn &amp;&amp; first &amp;&amp; (first.t - now) / 60000 &lt; 5 &amp;&amp; (stillHere[keyOf(first)] || 0) &lt; 2 &amp;&amp; sinceBuzz &gt;= 30000) {
   busbuzz = 'yes';
   stillHere[keyOf(first)] = (stillHere[keyOf(first)] || 0) + 1;
   setGlobal('BusStateBuzzAt', String(now));
@@ -9854,9 +9859,11 @@ deps.forEach(function (x) { if (buzzed[keyOf(x)]) stillHere[keyOf(x)] = buzzed[k
 // there can't be caught); until it's known, nothing does
 // (Your bus known but no longer listed: it has reached the stop, so you're there, and buzzing is as usual)
 var buzzRiding = riding &amp;&amp; !(match.n &gt;= 2 &amp;&amp; match.sure &amp;&amp; !yourBus);
+// BusBuzz = off (Settings › Island, 4.49): no buzz at all; the island still shows the times as usual
+var buzzOn = get('BusBuzz') !== 'off';
 var first = deps.filter(function (x) { return x.t - now &gt; -60000 &amp;&amp; (!buzzRiding || (yourBus &amp;&amp; !x.mine &amp;&amp; !x.idle &amp;&amp; x.t &gt; yourBus.t + 30000)); })
   .sort(function (a, b) { return a.t - b.t; })[0];
-if (first &amp;&amp; (first.t - now) / 60000 &lt; 5 &amp;&amp; (stillHere[keyOf(first)] || 0) &lt; 2 &amp;&amp; sinceBuzz &gt;= 30000) {
+if (buzzOn &amp;&amp; first &amp;&amp; (first.t - now) / 60000 &lt; 5 &amp;&amp; (stillHere[keyOf(first)] || 0) &lt; 2 &amp;&amp; sinceBuzz &gt;= 30000) {
   busbuzz = 'yes';
   stillHere[keyOf(first)] = (stillHere[keyOf(first)] || 0) + 1;
   setGlobal('BusStateBuzzAt', String(now));
@@ -11650,40 +11657,40 @@ setGlobal('BusCacheTimetable', JSON.stringify(tt));
 		</Action>
 	</Task>
 	<Task sr="task79">
-		<cdate>1791539550657</cdate>
-		<edate>1791539550657</edate>
+		<cdate>1791539684821</cdate>
+		<edate>1791539684821</edate>
 		<id>79</id>
 		<nme>Bus Wake</nme>
 		<pri>6</pri>
 		<Action sr="act0" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.48.202610091052</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.49.202610091054</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.48.202610091052</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.49.202610091054</rhs></Condition></ConditionList></Action>
 		<Action sr="act2" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.48.202610091052</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.49.202610091054</rhs></Condition></ConditionList></Action>
 		<Action sr="act3" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.48.202610091052</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.49.202610091054</rhs></Condition></ConditionList></Action>
 		<Action sr="act4" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.48.202610091052</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.49.202610091054</rhs></Condition></ConditionList></Action>
 		<Action sr="act5" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.48.202610091052</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.49.202610091054</rhs></Condition></ConditionList></Action>
 		<Action sr="act6" ve="7">
 			<code>547</code>
 			<label>This build · Version and build time</label>
 			<Str sr="arg0" ve="3">%busbuild</Str>
-			<Str sr="arg1" ve="3">4.48.202610091052</Str>
+			<Str sr="arg1" ve="3">4.49.202610091054</Str>
 			<Int sr="arg2" val="0"/>
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.48.202610091052</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.49.202610091054</rhs></Condition></ConditionList></Action>
 		<Action sr="act7" ve="7">
 			<code>129</code>
 			<label>Remember it was done for this build · BusStateVersion</label>
@@ -11709,11 +11716,11 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.48.202610091052</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.49.202610091054</rhs></Condition></ConditionList></Action>
 		<Action sr="act8" ve="7">
 			<code>548</code>
 			<label>Say so · A short message</label>
-			<Str sr="arg0" ve="3">Bus countdown 4.48: profiles switched on</Str>
+			<Str sr="arg0" ve="3">Bus countdown 4.49: profiles switched on</Str>
 			<Int sr="arg1" val="0"/>
 			<Str sr="arg10" ve="3"/>
 			<Int sr="arg11" val="1"/>
@@ -11729,7 +11736,7 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg7" ve="3"/>
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.48.202610091052</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.49.202610091054</rhs></Condition></ConditionList></Action>
 		<Action sr="act9" ve="7">
 			<code>137</code>
 			<label>Only asked to switch the profiles: done · Started by another task with par1 "profiles"</label>
@@ -12061,8 +12068,8 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 		</Action>
 	</Task>
 	<Task sr="task32">
-		<cdate>1791539550657</cdate>
-		<edate>1791539550657</edate>
+		<cdate>1791539684821</cdate>
+		<edate>1791539684821</edate>
 		<id>32</id>
 		<nme>Bus End</nme>
 		<pri>6</pri>
@@ -12323,8 +12330,8 @@ setGlobal('BusStateMatch', '');
 		</Action>
 	</Task>
 	<Task sr="task31">
-		<cdate>1791539550657</cdate>
-		<edate>1791539550657</edate>
+		<cdate>1791539684821</cdate>
+		<edate>1791539684821</edate>
 		<id>31</id>
 		<nme>Bus Island</nme>
 		<pri>6</pri>
@@ -12518,8 +12525,8 @@ if (stops.length) {
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busdo</lhs><op>2</op><rhs>switch/open/close/open-grown/fit</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task62">
-		<cdate>1791539550657</cdate>
-		<edate>1791539550657</edate>
+		<cdate>1791539684821</cdate>
+		<edate>1791539684821</edate>
 		<id>62</id>
 		<nme>Bus Watch</nme>
 		<pri>6</pri>
@@ -14190,8 +14197,8 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busaction</lhs><op>2</op><rhs>stop</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task72">
-		<cdate>1791539550657</cdate>
-		<edate>1791539550657</edate>
+		<cdate>1791539684822</cdate>
+		<edate>1791539684822</edate>
 		<id>72</id>
 		<nme>Bus Status</nme>
 		<pri>6</pri>
