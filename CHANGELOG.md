@@ -4,6 +4,12 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.53] - 2026-10-09
+
+### Fixed
+
+- Adjust live's Cancel and Done buttons are no longer cut off: the panel is 380 dp tall instead of 300, room for its text at Android's larger font sizes, and scrolls if it's ever taller still. The line under its title ("It moves as you slide. Done saves it.") is gone.
+
 ## [4.52] - 2026-10-09
 
 ### Added

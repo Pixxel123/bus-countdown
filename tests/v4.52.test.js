@@ -66,7 +66,7 @@ test('the panel: the gap and top offset for the island (or offset and top for th
     [['Cancel', 'Bus Position Done', 'cancel'], ['Done', 'Bus Position Done', 'done']]);
   assert.strictEqual(g.BusStatePrevPos, '44,11,76', 'the island starts where it is');
   assert.strictEqual(+g.BusStateEditing, AT);
-  assert.deepStrictEqual([r.busx, r.busww, r.bush], ['8', '432', '300'], 'the screen\'s width, less 8 dp each side');
+  assert.deepStrictEqual([r.busx, r.busww, r.bush], ['8', '432', '380'], 'the screen\'s width, less 8 dp each side (4.53: 380 dp tall)');
   const chip = all(JSON.parse(run('position_open.js', { globals: { BusStyle: 'chip', BusChipX: '90' }, now: AT }).buslayout).root).filter((n) => n.type === 'Slider');
   assert.deepStrictEqual(chip.map((s) => [s.id, s.value]), [['sl_cx', '90'], ['sl_y', '9']]);
 });

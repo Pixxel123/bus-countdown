@@ -44,9 +44,9 @@ var sliders = chip
 var buslayout = JSON.stringify({
   name: 'Bus Position', defaultDisplayMode: 'Overlay',
   root: { type: 'Card', id: 'panel', style: 'Elevated', modifiers: [{ type: 'FillSize' }], children: [
-    { type: 'Column', id: 'body', verticalArrangement: 'SpacedBy', spacing: '6', modifiers: [{ type: 'FillWidth' }, { type: 'Padding', all: '16' }],
-      children: [text(chip ? 'Status bar position' : 'Island position', 18, '', { fontWeight: 'Bold' }),
-                 text('It moves as you slide. Done saves it.', 13, 'onSurfaceVariant')].concat(sliders, [
+    // Scrolls if it's ever taller than the panel (4.53: at Android's 115% font size, Done and Cancel were cut off)
+    { type: 'Column', id: 'body', verticalArrangement: 'SpacedBy', spacing: '6', modifiers: [{ type: 'FillSize' }, { type: 'VerticalScroll' }, { type: 'Padding', all: '16' }],
+      children: [text(chip ? 'Status bar position' : 'Island position', 18, '', { fontWeight: 'Bold' })].concat(sliders, [
         { type: 'Row', id: 'buttons', verticalAlignment: 'Center', horizontalArrangement: 'End', spacing: '8', modifiers: [{ type: 'FillWidth' }],
           children: [button('Cancel', 'cancel', false), button('Done', 'done', true)] }]) }] }
 });
@@ -54,7 +54,9 @@ var buslayout = JSON.stringify({
 // At the bottom of the screen, its full width less 8 dp each side, clear of the gesture bar
 var screenW = parseInt(get('BusScreenW'), 10) || (typeof screen !== 'undefined' && Math.round(screen.width)) || 412;
 var screenH = (typeof screen !== 'undefined' && Math.round(screen.height)) || 900;
-var bush = '300';
+// 380 dp tall: room for the title, two sliders and the buttons at Android's larger font sizes (4.53: 300 cut them off)
+var PANEL_H = 380;
+var bush = String(PANEL_H);
 var busww = String(screenW - 16);
 var busx = '8';
-var busy = String(Math.max(120, screenH - 300 - 48));
+var busy = String(Math.max(120, screenH - PANEL_H - 48));
