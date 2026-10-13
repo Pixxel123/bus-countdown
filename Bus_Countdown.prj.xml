@@ -1,8 +1,8 @@
 <TaskerData sr="" dvi="1" tv="6.7.6-beta">
 	<dmetric>1344.0,2992.0</dmetric>
 	<Profile sr="prof72" ve="2">
-		<cdate>1791548451139</cdate>
-		<edate>1791548451139</edate>
+		<cdate>1791714106189</cdate>
+		<edate>1791714106189</edate>
 		<flags>8</flags>
 		<id>72</id>
 		<mid0>79</mid0>
@@ -14,8 +14,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof74" ve="2">
-		<cdate>1791548451139</cdate>
-		<edate>1791548451139</edate>
+		<cdate>1791714106189</cdate>
+		<edate>1791714106189</edate>
 		<flags>8</flags>
 		<id>74</id>
 		<mid0>62</mid0>
@@ -33,8 +33,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof73" ve="2">
-		<cdate>1791548451139</cdate>
-		<edate>1791548451139</edate>
+		<cdate>1791714106189</cdate>
+		<edate>1791714106189</edate>
 		<flags>8</flags>
 		<id>73</id>
 		<mid0>59</mid0>
@@ -46,14 +46,14 @@
 		</State>
 	</Profile>
 	<Project sr="proj0" ve="2">
-		<cdate>1791548451139</cdate>
+		<cdate>1791714106189</cdate>
 		<name>Bus Countdown</name>
 		<pids>72,73,74</pids>
 		<tids>73,74,75,77,78,80,76,38,60,59,79,32,31,62,72</tids>
 	</Project>
 	<Task sr="task73">
-		<cdate>1791548451139</cdate>
-		<edate>1791548451139</edate>
+		<cdate>1791714106189</cdate>
+		<edate>1791714106189</edate>
 		<id>73</id>
 		<nme>Bus</nme>
 		<pri>6</pri>
@@ -178,11 +178,11 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task74">
-		<cdate>1791548451139</cdate>
-		<edate>1791548451139</edate>
+		<cdate>1791714106189</cdate>
+		<edate>1791714106189</edate>
 		<id>74</id>
 		<nme>Bus Settings</nme>
 		<pri>6</pri>
@@ -201,7 +201,7 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>First run? · Camera not measured yet</label>
@@ -1588,8 +1588,8 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buslive</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task75">
-		<cdate>1791548451140</cdate>
-		<edate>1791548451140</edate>
+		<cdate>1791714106190</cdate>
+		<edate>1791714106190</edate>
 		<id>75</id>
 		<nme>Bus Settings Button</nme>
 		<pri>6</pri>
@@ -1721,8 +1721,8 @@ if (buspreview === 'yes') {
 			<label>Open it · Shows the Android settings page</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">startActivity {} (android.content.Intent)</Str><Str sr="arg3" ve="3">busint</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busintent</lhs><op>2</op><rhs>android*</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task77">
-		<cdate>1791548451140</cdate>
-		<edate>1791548451140</edate>
+		<cdate>1791714106190</cdate>
+		<edate>1791714106190</edate>
 		<id>77</id>
 		<nme>Bus Position</nme>
 		<pri>6</pri>
@@ -2420,23 +2420,31 @@ var PAGE = String.raw`&lt;!doctype html&gt;
   var CAN_FIT = !IS_PREVIEW &amp;&amp; !!window.Tasker &amp;&amp; typeof Tasker.updateOverlayConfig === 'function';
   function totalFor(r) { return PAD + LEFT + GAP + r + PAD; }
   function setRight(r) { setWidths(LEFT, r); }
-  function fitTo(r) {
+  // quiet (4.57): growing between refreshes, for a bus that has turned due. Then it's only ever done in
+  // place: if the window can't resize itself, the second time is dropped as before, as drawing it
+  // again would only bring back the width Bus Refresh last chose. Returns whether it resized.
+  function fitTo(r, quiet) {
     // The board open: the island's width for when it closes; the board itself only ever grows for it
-    if (BOARD) { ISLAND_RIGHT = r; if (r &lt;= RIGHT_NOW) return; }
+    if (BOARD) { ISLAND_RIGHT = r; if (r &lt;= RIGHT_NOW) return false; }
     else ISLAND_RIGHT = r;
-    if (!(r &gt; 0) || r === RIGHT_NOW) return;
+    if (!(r &gt; 0) || r === RIGHT_NOW) return false;
     var was = RIGHT_NOW, tracks = Math.abs(window.innerWidth - totalFor(was)) &lt;= 2;
     clearTimeout(fitTimer);
-    if (!CAN_FIT || !tracks) { setRight(r); runTask('Bus Island', { busisland: 'fit' }); return; }
+    if (!CAN_FIT || !tracks) { if (quiet) return false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); return true; }
     try { Tasker.updateOverlayConfig({ width: String(totalFor(r)), configTransitionMs: 200, configTransitionEasing: 'EaseOut' }); }
-    catch (e) { setRight(r); runTask('Bus Island', { busisland: 'fit' }); return; }
+    catch (e) { if (quiet) return false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); return true; }
     if (r &gt; was) setRight(r);
     fitTimer = setTimeout(function () {
       if (r &lt; was) setRight(r);
-      // Didn't take: drawn again at the new width instead
-      if (Math.abs(window.innerWidth - totalFor(r)) &gt; 2) { CAN_FIT = false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); }
+      // Didn't take: drawn again at the new width instead (or, quiet, back as it was)
+      if (Math.abs(window.innerWidth - totalFor(r)) &gt; 2) {
+        CAN_FIT = false;
+        if (quiet) { ISLAND_RIGHT = was; setRight(was); draw(); }
+        else { setRight(r); runTask('Bus Island', { busisland: 'fit' }); }
+      }
       else unzoom();                       // took, but zoomed the page (4.50)
     }, 420);
+    return true;
   }
 
   // Closing the board (a tap, a swipe up, or its time running out)
@@ -2601,7 +2609,12 @@ var PAGE = String.raw`&lt;!doctype html&gt;
       L.innerHTML = (data &amp;&amp; data.l ? '&lt;span class="sl"&gt;' + esc(data.l) + '&lt;/span&gt;' : '') +
                     '&lt;span class="b' + (b.idle ? ' idle' : '') + '"&gt;' + esc(b.k) + '&lt;/span&gt;&lt;span class="d' + (b.st === 'sched' ? ' sched' : '') + '"&gt;' + esc(b.d) + '&lt;/span&gt;';
       R.innerHTML = rightHtml(b, idx);
-      if (R.scrollWidth &gt; R.clientWidth + 1) R.innerHTML = rightHtml(b, idx, true);   // too wide: just the first time
+      // Too wide for the times now showing: a bus has turned due since the refresh ("1 · 15 min" becoming
+      // "Due · 14 min"). The island grows to fit in place, at once (4.57); if it can't, just the first time
+      if (R.scrollWidth &gt; R.clientWidth + 1) {
+        var more = rightNeeded(buses(), Date.now());
+        if (!(more &gt; RIGHT_NOW) || !fitTo(more, true)) R.innerHTML = rightHtml(b, idx, true);
+      }
     }
     drawRing();
   }
@@ -3050,8 +3063,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task78">
-		<cdate>1791548451140</cdate>
-		<edate>1791548451140</edate>
+		<cdate>1791714106190</cdate>
+		<edate>1791714106190</edate>
 		<id>78</id>
 		<nme>Bus Position Set</nme>
 		<pri>6</pri>
@@ -3069,8 +3082,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task80">
-		<cdate>1791548451140</cdate>
-		<edate>1791548451140</edate>
+		<cdate>1791714106190</cdate>
+		<edate>1791714106190</edate>
 		<id>80</id>
 		<nme>Bus Position Done</nme>
 		<pri>6</pri>
@@ -3175,8 +3188,8 @@ var busmsg = changed.length ? 'Saved: ' + changed.join(', ') : 'none';
 		</Action>
 	</Task>
 	<Task sr="task76">
-		<cdate>1791548451140</cdate>
-		<edate>1791548451140</edate>
+		<cdate>1791714106190</cdate>
+		<edate>1791714106190</edate>
 		<id>76</id>
 		<nme>Bus Find Camera</nme>
 		<pri>6</pri>
@@ -3309,8 +3322,8 @@ if (!r || !dens || !w) {
 			<label>Reset position: move the open screen's height slider · Shows the new value straight away</label><Str sr="arg0" ve="3">bussettings</Str><Str sr="arg1" ve="3">sl_y</Str><Str sr="arg2" ve="3">value</Str><Str sr="arg3" ve="3">%BusIslandY</Str><Int sr="arg4" val="0"/><Str sr="arg5" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrebuild</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task38">
-		<cdate>1791548451140</cdate>
-		<edate>1791548451140</edate>
+		<cdate>1791714106190</cdate>
+		<edate>1791714106190</edate>
 		<id>38</id>
 		<nme>Bus Start</nme>
 		<pri>6</pri>
@@ -3328,7 +3341,7 @@ if (!r || !dens || !w) {
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>Settings: fill in defaults, check TflKey and BusRoutes · Resets empty or invalid settings</label>
@@ -4170,8 +4183,8 @@ record(busok === 'yes' ? 'start' : 'nostart', { stop: get('BusStateStopId'), nam
 		</Action>
 	</Task>
 	<Task sr="task60">
-		<cdate>1791548451140</cdate>
-		<edate>1791548451140</edate>
+		<cdate>1791714106190</cdate>
+		<edate>1791714106190</edate>
 		<id>60</id>
 		<nme>Bus Loop</nme>
 		<pri>6</pri>
@@ -4511,8 +4524,8 @@ var buspushm = get('BusStatePushM') || '30';
 		</Action>
 	</Task>
 	<Task sr="task59">
-		<cdate>1791548451140</cdate>
-		<edate>1791548451140</edate>
+		<cdate>1791714106190</cdate>
+		<edate>1791714106190</edate>
 		<id>59</id>
 		<nme>Bus Refresh</nme>
 		<pri>6</pri>
@@ -5185,25 +5198,18 @@ var rowsNow = boardRows(perRoute.length, otherRoutes.length, get('BusBoardRoutes
 if (get('BusStateBoard') === '1' &amp;&amp; get('BusStateBoardSelf') !== '1' &amp;&amp; get('BusStateIslandShown') === '1' &amp;&amp; get('BusStateBoardRows') !== '' &amp;&amp; get('BusStateBoardRows') !== String(rowsNow)) {
   setGlobal('BusStateIslandShown', '2');
 }
-// The right half's width (4.46): grow now, shrink later. The island grows the moment the times need
-// more room ("9 min" becoming "10 · 22 min", a timetable "~", another route), so nothing is ever cut
-// short; it shrinks only after two refreshes in a row with 8 dp or more to spare, with the screen on
-// and the stop board closed, so it doesn't keep changing size as times count down. Whenever it's
-// about to be drawn anyway (first shown, or drawn again) or at a new stop, it's simply fitted.
-// BusStateIslandRight is the width it's drawn at (island_show.js) or resizing itself to: the page
-// fits its own window to data.fit (or, if it can't, has Bus Island draw it again).
+// The right half's width (4.57): grows the moment the times need more room, and shrinks at the very
+// next refresh when it has 8 dp or more to spare. (4.46 to 4.56 waited for two refreshes in a row with
+// that much to spare; fitting exactly every time moved it about three times as often as 4.56, on last
+// week's recordings, for a fit only 1 to 2 dp closer.) A new stop, or an island about to be drawn, is
+// simply fitted. Between refreshes the page grows itself if a bus turns due and needs more room.
+// BusStateIslandRight is the width it's drawn at (island_show.js) or resizing itself to: the page fits
+// its own window to data.fit (or, if it can't, has Bus Island draw it again).
 var fitNow = rightNeeded(perRoute, now);
 var drawnAt = parseInt(get('BusStateIslandRight'), 10) || 0;
-var slack = parseInt(get('BusStateIslandSlack'), 10) || 0;
-var want = drawnAt;
-if (get('BusStateIslandShown') !== '1' || !drawnAt || get('BusStateIslandFitStop') !== get('BusStateStopId')) { want = fitNow; slack = 0; }
-else if (fitNow &gt; drawnAt) { want = fitNow; slack = 0; }                                  // grow now
-else if (drawnAt - fitNow &gt;= 8 &amp;&amp; get('SCREEN') !== 'off' &amp;&amp; get('BusStateBoard') !== '1') {
-  slack++;
-  if (slack &gt;= 2) { want = fitNow; slack = 0; }                                           // shrink later
-} else slack = 0;
+var refit = get('BusStateIslandShown') !== '1' || !drawnAt || get('BusStateIslandFitStop') !== get('BusStateStopId');
+var want = refit || fitNow &gt; drawnAt || drawnAt - fitNow &gt;= 8 ? fitNow : drawnAt;
 setGlobal('BusStateIslandRight', String(want));
-setGlobal('BusStateIslandSlack', String(slack));
 setGlobal('BusStateIslandFitStop', get('BusStateStopId'));
 var islandData = {
   u: now,                                                       // when this data arrived
@@ -5939,23 +5945,31 @@ var PAGE = String.raw`&lt;!doctype html&gt;
   var CAN_FIT = !IS_PREVIEW &amp;&amp; !!window.Tasker &amp;&amp; typeof Tasker.updateOverlayConfig === 'function';
   function totalFor(r) { return PAD + LEFT + GAP + r + PAD; }
   function setRight(r) { setWidths(LEFT, r); }
-  function fitTo(r) {
+  // quiet (4.57): growing between refreshes, for a bus that has turned due. Then it's only ever done in
+  // place: if the window can't resize itself, the second time is dropped as before, as drawing it
+  // again would only bring back the width Bus Refresh last chose. Returns whether it resized.
+  function fitTo(r, quiet) {
     // The board open: the island's width for when it closes; the board itself only ever grows for it
-    if (BOARD) { ISLAND_RIGHT = r; if (r &lt;= RIGHT_NOW) return; }
+    if (BOARD) { ISLAND_RIGHT = r; if (r &lt;= RIGHT_NOW) return false; }
     else ISLAND_RIGHT = r;
-    if (!(r &gt; 0) || r === RIGHT_NOW) return;
+    if (!(r &gt; 0) || r === RIGHT_NOW) return false;
     var was = RIGHT_NOW, tracks = Math.abs(window.innerWidth - totalFor(was)) &lt;= 2;
     clearTimeout(fitTimer);
-    if (!CAN_FIT || !tracks) { setRight(r); runTask('Bus Island', { busisland: 'fit' }); return; }
+    if (!CAN_FIT || !tracks) { if (quiet) return false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); return true; }
     try { Tasker.updateOverlayConfig({ width: String(totalFor(r)), configTransitionMs: 200, configTransitionEasing: 'EaseOut' }); }
-    catch (e) { setRight(r); runTask('Bus Island', { busisland: 'fit' }); return; }
+    catch (e) { if (quiet) return false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); return true; }
     if (r &gt; was) setRight(r);
     fitTimer = setTimeout(function () {
       if (r &lt; was) setRight(r);
-      // Didn't take: drawn again at the new width instead
-      if (Math.abs(window.innerWidth - totalFor(r)) &gt; 2) { CAN_FIT = false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); }
+      // Didn't take: drawn again at the new width instead (or, quiet, back as it was)
+      if (Math.abs(window.innerWidth - totalFor(r)) &gt; 2) {
+        CAN_FIT = false;
+        if (quiet) { ISLAND_RIGHT = was; setRight(was); draw(); }
+        else { setRight(r); runTask('Bus Island', { busisland: 'fit' }); }
+      }
       else unzoom();                       // took, but zoomed the page (4.50)
     }, 420);
+    return true;
   }
 
   // Closing the board (a tap, a swipe up, or its time running out)
@@ -6120,7 +6134,12 @@ var PAGE = String.raw`&lt;!doctype html&gt;
       L.innerHTML = (data &amp;&amp; data.l ? '&lt;span class="sl"&gt;' + esc(data.l) + '&lt;/span&gt;' : '') +
                     '&lt;span class="b' + (b.idle ? ' idle' : '') + '"&gt;' + esc(b.k) + '&lt;/span&gt;&lt;span class="d' + (b.st === 'sched' ? ' sched' : '') + '"&gt;' + esc(b.d) + '&lt;/span&gt;';
       R.innerHTML = rightHtml(b, idx);
-      if (R.scrollWidth &gt; R.clientWidth + 1) R.innerHTML = rightHtml(b, idx, true);   // too wide: just the first time
+      // Too wide for the times now showing: a bus has turned due since the refresh ("1 · 15 min" becoming
+      // "Due · 14 min"). The island grows to fit in place, at once (4.57); if it can't, just the first time
+      if (R.scrollWidth &gt; R.clientWidth + 1) {
+        var more = rightNeeded(buses(), Date.now());
+        if (!(more &gt; RIGHT_NOW) || !fitTo(more, true)) R.innerHTML = rightHtml(b, idx, true);
+      }
     }
     drawRing();
   }
@@ -7016,25 +7035,18 @@ var rowsNow = boardRows(perRoute.length, otherRoutes.length, get('BusBoardRoutes
 if (get('BusStateBoard') === '1' &amp;&amp; get('BusStateBoardSelf') !== '1' &amp;&amp; get('BusStateIslandShown') === '1' &amp;&amp; get('BusStateBoardRows') !== '' &amp;&amp; get('BusStateBoardRows') !== String(rowsNow)) {
   setGlobal('BusStateIslandShown', '2');
 }
-// The right half's width (4.46): grow now, shrink later. The island grows the moment the times need
-// more room ("9 min" becoming "10 · 22 min", a timetable "~", another route), so nothing is ever cut
-// short; it shrinks only after two refreshes in a row with 8 dp or more to spare, with the screen on
-// and the stop board closed, so it doesn't keep changing size as times count down. Whenever it's
-// about to be drawn anyway (first shown, or drawn again) or at a new stop, it's simply fitted.
-// BusStateIslandRight is the width it's drawn at (island_show.js) or resizing itself to: the page
-// fits its own window to data.fit (or, if it can't, has Bus Island draw it again).
+// The right half's width (4.57): grows the moment the times need more room, and shrinks at the very
+// next refresh when it has 8 dp or more to spare. (4.46 to 4.56 waited for two refreshes in a row with
+// that much to spare; fitting exactly every time moved it about three times as often as 4.56, on last
+// week's recordings, for a fit only 1 to 2 dp closer.) A new stop, or an island about to be drawn, is
+// simply fitted. Between refreshes the page grows itself if a bus turns due and needs more room.
+// BusStateIslandRight is the width it's drawn at (island_show.js) or resizing itself to: the page fits
+// its own window to data.fit (or, if it can't, has Bus Island draw it again).
 var fitNow = rightNeeded(perRoute, now);
 var drawnAt = parseInt(get('BusStateIslandRight'), 10) || 0;
-var slack = parseInt(get('BusStateIslandSlack'), 10) || 0;
-var want = drawnAt;
-if (get('BusStateIslandShown') !== '1' || !drawnAt || get('BusStateIslandFitStop') !== get('BusStateStopId')) { want = fitNow; slack = 0; }
-else if (fitNow &gt; drawnAt) { want = fitNow; slack = 0; }                                  // grow now
-else if (drawnAt - fitNow &gt;= 8 &amp;&amp; get('SCREEN') !== 'off' &amp;&amp; get('BusStateBoard') !== '1') {
-  slack++;
-  if (slack &gt;= 2) { want = fitNow; slack = 0; }                                           // shrink later
-} else slack = 0;
+var refit = get('BusStateIslandShown') !== '1' || !drawnAt || get('BusStateIslandFitStop') !== get('BusStateStopId');
+var want = refit || fitNow &gt; drawnAt || drawnAt - fitNow &gt;= 8 ? fitNow : drawnAt;
 setGlobal('BusStateIslandRight', String(want));
-setGlobal('BusStateIslandSlack', String(slack));
 setGlobal('BusStateIslandFitStop', get('BusStateStopId'));
 var islandData = {
   u: now,                                                       // when this data arrived
@@ -7778,23 +7790,31 @@ var PAGE = String.raw`&lt;!doctype html&gt;
   var CAN_FIT = !IS_PREVIEW &amp;&amp; !!window.Tasker &amp;&amp; typeof Tasker.updateOverlayConfig === 'function';
   function totalFor(r) { return PAD + LEFT + GAP + r + PAD; }
   function setRight(r) { setWidths(LEFT, r); }
-  function fitTo(r) {
+  // quiet (4.57): growing between refreshes, for a bus that has turned due. Then it's only ever done in
+  // place: if the window can't resize itself, the second time is dropped as before, as drawing it
+  // again would only bring back the width Bus Refresh last chose. Returns whether it resized.
+  function fitTo(r, quiet) {
     // The board open: the island's width for when it closes; the board itself only ever grows for it
-    if (BOARD) { ISLAND_RIGHT = r; if (r &lt;= RIGHT_NOW) return; }
+    if (BOARD) { ISLAND_RIGHT = r; if (r &lt;= RIGHT_NOW) return false; }
     else ISLAND_RIGHT = r;
-    if (!(r &gt; 0) || r === RIGHT_NOW) return;
+    if (!(r &gt; 0) || r === RIGHT_NOW) return false;
     var was = RIGHT_NOW, tracks = Math.abs(window.innerWidth - totalFor(was)) &lt;= 2;
     clearTimeout(fitTimer);
-    if (!CAN_FIT || !tracks) { setRight(r); runTask('Bus Island', { busisland: 'fit' }); return; }
+    if (!CAN_FIT || !tracks) { if (quiet) return false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); return true; }
     try { Tasker.updateOverlayConfig({ width: String(totalFor(r)), configTransitionMs: 200, configTransitionEasing: 'EaseOut' }); }
-    catch (e) { setRight(r); runTask('Bus Island', { busisland: 'fit' }); return; }
+    catch (e) { if (quiet) return false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); return true; }
     if (r &gt; was) setRight(r);
     fitTimer = setTimeout(function () {
       if (r &lt; was) setRight(r);
-      // Didn't take: drawn again at the new width instead
-      if (Math.abs(window.innerWidth - totalFor(r)) &gt; 2) { CAN_FIT = false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); }
+      // Didn't take: drawn again at the new width instead (or, quiet, back as it was)
+      if (Math.abs(window.innerWidth - totalFor(r)) &gt; 2) {
+        CAN_FIT = false;
+        if (quiet) { ISLAND_RIGHT = was; setRight(was); draw(); }
+        else { setRight(r); runTask('Bus Island', { busisland: 'fit' }); }
+      }
       else unzoom();                       // took, but zoomed the page (4.50)
     }, 420);
+    return true;
   }
 
   // Closing the board (a tap, a swipe up, or its time running out)
@@ -7959,7 +7979,12 @@ var PAGE = String.raw`&lt;!doctype html&gt;
       L.innerHTML = (data &amp;&amp; data.l ? '&lt;span class="sl"&gt;' + esc(data.l) + '&lt;/span&gt;' : '') +
                     '&lt;span class="b' + (b.idle ? ' idle' : '') + '"&gt;' + esc(b.k) + '&lt;/span&gt;&lt;span class="d' + (b.st === 'sched' ? ' sched' : '') + '"&gt;' + esc(b.d) + '&lt;/span&gt;';
       R.innerHTML = rightHtml(b, idx);
-      if (R.scrollWidth &gt; R.clientWidth + 1) R.innerHTML = rightHtml(b, idx, true);   // too wide: just the first time
+      // Too wide for the times now showing: a bus has turned due since the refresh ("1 · 15 min" becoming
+      // "Due · 14 min"). The island grows to fit in place, at once (4.57); if it can't, just the first time
+      if (R.scrollWidth &gt; R.clientWidth + 1) {
+        var more = rightNeeded(buses(), Date.now());
+        if (!(more &gt; RIGHT_NOW) || !fitTo(more, true)) R.innerHTML = rightHtml(b, idx, true);
+      }
     }
     drawRing();
   }
@@ -8822,40 +8847,40 @@ setGlobal('BusCacheTimetable', JSON.stringify(tt));
 		</Action>
 	</Task>
 	<Task sr="task79">
-		<cdate>1791548451142</cdate>
-		<edate>1791548451142</edate>
+		<cdate>1791714106191</cdate>
+		<edate>1791714106191</edate>
 		<id>79</id>
 		<nme>Bus Wake</nme>
 		<pri>6</pri>
 		<Action sr="act0" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
 		<Action sr="act2" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
 		<Action sr="act3" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
 		<Action sr="act4" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
 		<Action sr="act5" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
 		<Action sr="act6" ve="7">
 			<code>547</code>
 			<label>This build · Version and build time</label>
 			<Str sr="arg0" ve="3">%busbuild</Str>
-			<Str sr="arg1" ve="3">4.56.202610091320</Str>
+			<Str sr="arg1" ve="3">4.57.202610111121</Str>
 			<Int sr="arg2" val="0"/>
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
 		<Action sr="act7" ve="7">
 			<code>129</code>
 			<label>Remember it was done for this build · BusStateVersion</label>
@@ -8881,11 +8906,11 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
 		<Action sr="act8" ve="7">
 			<code>548</code>
 			<label>Say so · A short message</label>
-			<Str sr="arg0" ve="3">Bus countdown 4.56: profiles switched on</Str>
+			<Str sr="arg0" ve="3">Bus countdown 4.57: profiles switched on</Str>
 			<Int sr="arg1" val="0"/>
 			<Str sr="arg10" ve="3"/>
 			<Int sr="arg11" val="1"/>
@@ -8901,7 +8926,7 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg7" ve="3"/>
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.56.202610091320</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
 		<Action sr="act9" ve="7">
 			<code>137</code>
 			<label>Only asked to switch the profiles: done · Started by another task with par1 "profiles"</label>
@@ -9263,8 +9288,8 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 		</Action>
 	</Task>
 	<Task sr="task32">
-		<cdate>1791548451142</cdate>
-		<edate>1791548451142</edate>
+		<cdate>1791714106191</cdate>
+		<edate>1791714106191</edate>
 		<id>32</id>
 		<nme>Bus End</nme>
 		<pri>6</pri>
@@ -9525,8 +9550,8 @@ setGlobal('BusStateMatch', '');
 		</Action>
 	</Task>
 	<Task sr="task31">
-		<cdate>1791548451142</cdate>
-		<edate>1791548451142</edate>
+		<cdate>1791714106191</cdate>
+		<edate>1791714106191</edate>
 		<id>31</id>
 		<nme>Bus Island</nme>
 		<pri>6</pri>
@@ -9691,8 +9716,8 @@ if (stops.length) {
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busdo</lhs><op>2</op><rhs>switch/open/close/open-grown/fit</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task62">
-		<cdate>1791548451142</cdate>
-		<edate>1791548451142</edate>
+		<cdate>1791714106191</cdate>
+		<edate>1791714106191</edate>
 		<id>62</id>
 		<nme>Bus Watch</nme>
 		<pri>6</pri>
@@ -11372,8 +11397,8 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busaction</lhs><op>2</op><rhs>stop</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task72">
-		<cdate>1791548451142</cdate>
-		<edate>1791548451142</edate>
+		<cdate>1791714106192</cdate>
+		<edate>1791714106192</edate>
 		<id>72</id>
 		<nme>Bus Status</nme>
 		<pri>6</pri>

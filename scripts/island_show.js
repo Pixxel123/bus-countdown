@@ -390,23 +390,31 @@ var PAGE = String.raw`<!doctype html>
   var CAN_FIT = !IS_PREVIEW && !!window.Tasker && typeof Tasker.updateOverlayConfig === 'function';
   function totalFor(r) { return PAD + LEFT + GAP + r + PAD; }
   function setRight(r) { setWidths(LEFT, r); }
-  function fitTo(r) {
+  // quiet (4.57): growing between refreshes, for a bus that has turned due. Then it's only ever done in
+  // place: if the window can't resize itself, the second time is dropped as before, as drawing it
+  // again would only bring back the width Bus Refresh last chose. Returns whether it resized.
+  function fitTo(r, quiet) {
     // The board open: the island's width for when it closes; the board itself only ever grows for it
-    if (BOARD) { ISLAND_RIGHT = r; if (r <= RIGHT_NOW) return; }
+    if (BOARD) { ISLAND_RIGHT = r; if (r <= RIGHT_NOW) return false; }
     else ISLAND_RIGHT = r;
-    if (!(r > 0) || r === RIGHT_NOW) return;
+    if (!(r > 0) || r === RIGHT_NOW) return false;
     var was = RIGHT_NOW, tracks = Math.abs(window.innerWidth - totalFor(was)) <= 2;
     clearTimeout(fitTimer);
-    if (!CAN_FIT || !tracks) { setRight(r); runTask('Bus Island', { busisland: 'fit' }); return; }
+    if (!CAN_FIT || !tracks) { if (quiet) return false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); return true; }
     try { Tasker.updateOverlayConfig({ width: String(totalFor(r)), configTransitionMs: 200, configTransitionEasing: 'EaseOut' }); }
-    catch (e) { setRight(r); runTask('Bus Island', { busisland: 'fit' }); return; }
+    catch (e) { if (quiet) return false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); return true; }
     if (r > was) setRight(r);
     fitTimer = setTimeout(function () {
       if (r < was) setRight(r);
-      // Didn't take: drawn again at the new width instead
-      if (Math.abs(window.innerWidth - totalFor(r)) > 2) { CAN_FIT = false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); }
+      // Didn't take: drawn again at the new width instead (or, quiet, back as it was)
+      if (Math.abs(window.innerWidth - totalFor(r)) > 2) {
+        CAN_FIT = false;
+        if (quiet) { ISLAND_RIGHT = was; setRight(was); draw(); }
+        else { setRight(r); runTask('Bus Island', { busisland: 'fit' }); }
+      }
       else unzoom();                       // took, but zoomed the page (4.50)
     }, 420);
+    return true;
   }
 
   // Closing the board (a tap, a swipe up, or its time running out)
@@ -571,7 +579,12 @@ var PAGE = String.raw`<!doctype html>
       L.innerHTML = (data && data.l ? '<span class="sl">' + esc(data.l) + '</span>' : '') +
                     '<span class="b' + (b.idle ? ' idle' : '') + '">' + esc(b.k) + '</span><span class="d' + (b.st === 'sched' ? ' sched' : '') + '">' + esc(b.d) + '</span>';
       R.innerHTML = rightHtml(b, idx);
-      if (R.scrollWidth > R.clientWidth + 1) R.innerHTML = rightHtml(b, idx, true);   // too wide: just the first time
+      // Too wide for the times now showing: a bus has turned due since the refresh ("1 · 15 min" becoming
+      // "Due · 14 min"). The island grows to fit in place, at once (4.57); if it can't, just the first time
+      if (R.scrollWidth > R.clientWidth + 1) {
+        var more = rightNeeded(buses(), Date.now());
+        if (!(more > RIGHT_NOW) || !fitTo(more, true)) R.innerHTML = rightHtml(b, idx, true);
+      }
     }
     drawRing();
   }

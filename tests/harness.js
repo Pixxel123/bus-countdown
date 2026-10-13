@@ -95,6 +95,7 @@ function runPage(globals, now, opts = {}) {
   const ctx = {
     Tasker, document: { getElementById: el, body: el('body'), documentElement: el('html'), hidden: false, addEventListener() {} },
     visualViewport: opts.scale ? { scale: opts.scale } : undefined,
+    innerWidth: opts.innerWidth,        // the page's width, when a test needs it to follow the window (4.57)
     devicePixelRatio: 3, addEventListener() {}, requestAnimationFrame: (f) => timers.push([0, f]),
     setTimeout: (f, ms) => { timers.push([ms || 0, f]); return timers.length; }, clearTimeout() {}, setInterval() {},
     MutationObserver: class { constructor(f) { observed.push(f); } observe() {} }, JSON, Math, Date: PageDate, String, Number, Array, Object, parseInt, parseFloat, Promise,

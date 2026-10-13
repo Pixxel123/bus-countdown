@@ -290,7 +290,7 @@ h1{text-wrap:balance}
     <button type="button" id="viewSettings" aria-pressed="false">Settings</button>
   </div>
   <div id="nowView">
-    <p class="eyebrow">Version 4.56</p>
+    <p class="eyebrow">Version 4.57</p>
     <h1>The island as built</h1>
     <p class="lede">Drawn by the island's own page from the project, at true scale on the top edge of a Pixel 8 Pro, 448 dp wide. Swipe it sideways to change route; pick Stop board to see it tapped open. Sample times, refreshed every 45 seconds as on the phone.</p>
 
@@ -354,7 +354,7 @@ h1{text-wrap:balance}
   </div>
 
   <div id="timelineView" hidden>
-    <p class="eyebrow">27 September to 9 October</p>
+    <p class="eyebrow">27 September to 11 October</p>
     <h1>Every change to the island</h1>
     <p class="lede">Newest first. Each card shows the island as that version drew it, with a sentence on what changed. Versions in between changed only what happens underneath, so they aren’t listed.</p>
     <ol class="tl" id="tl"></ol>
@@ -1533,23 +1533,31 @@ ${'<'}script>
   var CAN_FIT = !IS_PREVIEW && !!window.Tasker && typeof Tasker.updateOverlayConfig === 'function';
   function totalFor(r) { return PAD + LEFT + GAP + r + PAD; }
   function setRight(r) { setWidths(LEFT, r); }
-  function fitTo(r) {
+  // quiet (4.57): growing between refreshes, for a bus that has turned due. Then it's only ever done in
+  // place: if the window can't resize itself, the second time is dropped as before, as drawing it
+  // again would only bring back the width Bus Refresh last chose. Returns whether it resized.
+  function fitTo(r, quiet) {
     // The board open: the island's width for when it closes; the board itself only ever grows for it
-    if (BOARD) { ISLAND_RIGHT = r; if (r <= RIGHT_NOW) return; }
+    if (BOARD) { ISLAND_RIGHT = r; if (r <= RIGHT_NOW) return false; }
     else ISLAND_RIGHT = r;
-    if (!(r > 0) || r === RIGHT_NOW) return;
+    if (!(r > 0) || r === RIGHT_NOW) return false;
     var was = RIGHT_NOW, tracks = Math.abs(window.innerWidth - totalFor(was)) <= 2;
     clearTimeout(fitTimer);
-    if (!CAN_FIT || !tracks) { setRight(r); runTask('Bus Island', { busisland: 'fit' }); return; }
+    if (!CAN_FIT || !tracks) { if (quiet) return false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); return true; }
     try { Tasker.updateOverlayConfig({ width: String(totalFor(r)), configTransitionMs: 200, configTransitionEasing: 'EaseOut' }); }
-    catch (e) { setRight(r); runTask('Bus Island', { busisland: 'fit' }); return; }
+    catch (e) { if (quiet) return false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); return true; }
     if (r > was) setRight(r);
     fitTimer = setTimeout(function () {
       if (r < was) setRight(r);
-      // Didn't take: drawn again at the new width instead
-      if (Math.abs(window.innerWidth - totalFor(r)) > 2) { CAN_FIT = false; setRight(r); runTask('Bus Island', { busisland: 'fit' }); }
+      // Didn't take: drawn again at the new width instead (or, quiet, back as it was)
+      if (Math.abs(window.innerWidth - totalFor(r)) > 2) {
+        CAN_FIT = false;
+        if (quiet) { ISLAND_RIGHT = was; setRight(was); draw(); }
+        else { setRight(r); runTask('Bus Island', { busisland: 'fit' }); }
+      }
       else unzoom();                       // took, but zoomed the page (4.50)
     }, 420);
+    return true;
   }
 
   // Closing the board (a tap, a swipe up, or its time running out)
@@ -1714,7 +1722,12 @@ ${'<'}script>
       L.innerHTML = (data && data.l ? '<span class="sl">' + esc(data.l) + '</span>' : '') +
                     '<span class="b' + (b.idle ? ' idle' : '') + '">' + esc(b.k) + '</span><span class="d' + (b.st === 'sched' ? ' sched' : '') + '">' + esc(b.d) + '</span>';
       R.innerHTML = rightHtml(b, idx);
-      if (R.scrollWidth > R.clientWidth + 1) R.innerHTML = rightHtml(b, idx, true);   // too wide: just the first time
+      // Too wide for the times now showing: a bus has turned due since the refresh ("1 · 15 min" becoming
+      // "Due · 14 min"). The island grows to fit in place, at once (4.57); if it can't, just the first time
+      if (R.scrollWidth > R.clientWidth + 1) {
+        var more = rightNeeded(buses(), Date.now());
+        if (!(more > RIGHT_NOW) || !fitTo(more, true)) R.innerHTML = rightHtml(b, idx, true);
+      }
     }
     drawRing();
   }
@@ -2189,6 +2202,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
     v431: { ring: 'D', letters: 3, right: 'now', k: '517', idle: true, d: 'Holbry', m: '18 min', dots: 2, on: 1 },
     v447: { board: true, wide: true, ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2,
       rows: [['517', '', 'Holbry', '14', '33 · 52'], ['566', '', 'Fernleigh Village', '5', '17 · 29'], ['289', 'other', 'Ordwick', '3', '15 · 27'], ['N68', 'other', 'Kelbury Bus Garage', '26 min', '']] },
+    v457: { ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: 'Due', mCls: 'due', m2: '14', dots: 2 },
     v456: { arriving: true, ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Wexley', m: '2', m2: '15', dots: 2 },
     v448: { name: 'Stop D · Wexley / Thornacre Precinct', ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
     v446: { ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
@@ -2215,6 +2229,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
   }
   // Newest first, only the versions that changed how the island looks: [version, date, look, what changed]
   var VERSIONS = [
+    ['4.57', '11 Oct', 'v457', 'Shrinks at the next refresh with 8 dp or more to spare, rather than two in a row. A bus turning due between refreshes keeps the next one\u2019s time: the island grows to fit \u201cDue \u00b7 14 min\u201d the moment it turns due, where it used to drop the second time and leave \u201cDue\u201d alone in a gap.'],
     ['4.56', '9 Oct', 'v456', 'Hold the island for the other side of the road and it changes the moment the hold is long enough, its route and times sliding in. Before, it waited for Tasker, dimmed, then showed the stop\u2019s name on the left for 0.6 s.'],
     ['4.48', '9 Oct', 'v448', 'Hold the island for the other side of the road and its times show as soon as it changes, with the stop\u2019s name on the left for 0.6 s; before, the name filled the island for 1.2 s first.'],
     ['4.47', '9 Oct', 'v447', 'The stop board widens a little when its lines need it: room for three times on a route and for a wider route badge (N68), growing outwards from the camera gap as it grows down. Tucked back in, it\u2019s the island at its own width again.'],

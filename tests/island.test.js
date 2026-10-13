@@ -16,9 +16,10 @@ const at = Date.UTC(2026, 9, 5, 8, 0, 0);
 function refresh(g, arrivals) {
   run('refresh.js', { globals: g, now: at, locals: { http_response_code: '200', http_data: JSON.stringify(arrivals) } });
 }
-// Show the island once (as Bus Refresh does), then refresh with each new set of data in turn. 4.46:
-// grow now, shrink later. The page fits its own window to data.fit, so it's never drawn again for
-// that: after each refresh, the width the right half is to be (or 'same'), and whether it was redrawn.
+// Show the island once (as Bus Refresh does), then refresh with each new set of data in turn: fitted
+// exactly at every refresh (4.57; 4.46 to 4.56 grew at once and shrank later). The page fits its own
+// window to data.fit, so it's never drawn again for that: after each refresh, the width the right half
+// is to be (or 'same').
 function widths(first, ...next) {
   const g = base(); const out = [];
   refresh(g, first);
@@ -42,30 +43,28 @@ test('it grows the moment the times need more room', () => {
   const [w0, w1] = widths([bus('517', 5), bus('566', 9)], [bus('517', 4), bus('566', 12)]);
   assert.ok(w1 > w0, `${w0} then ${w1}`);
 });
-test('it shrinks only after two refreshes in a row with 8 dp or more to spare', () => {
+test('it shrinks to fit at the very next refresh (4.57; 4.46 to 4.56 waited for two with 8 dp to spare)', () => {
   const big = [bus('517', 12), bus('517', 25), bus('566', 9)];                 // "12 · 25 min"
   const small = [bus('517', 4), bus('566', 9)];
-  const w = widths(big, small, small, small);
-  assert.deepStrictEqual(w.slice(1).map((x) => x === 'same'), [true, false, true], 'kept once, then shrunk');
-  assert.ok(w[2] < w[0]);
-  // Needing the room again in between starts the count again
-  assert.deepStrictEqual(widths(big, small, big, small, small).slice(1).map((x) => x === 'same'), [true, true, true, false]);
+  const w = widths(big, small, small);
+  assert.ok(typeof w[1] === 'number' && w[1] < w[0], `${w[0]} then ${w[1]}`);
+  assert.strictEqual(w[2], 'same');
 });
-test('a second time appearing, or a route coming back, grows it at once; going, shrinks it later', () => {
+test('a second time appearing, or a route coming back, grows it at once; going, shrinks it at once', () => {
   const two = [bus('517', 5), bus('517', 12), bus('566', 9)], one = [bus('517', 5), bus('566', 9)];
   assert.ok(widths(one, two)[1] > widths(one)[0]);
-  assert.deepStrictEqual(widths(two, one).slice(1), ['same']);
+  assert.ok(widths(two, one)[1] < widths(two)[0]);
   assert.ok(widths([bus('517', 5)], one)[1] > widths([bus('517', 5)])[0], 'another dot');
-  assert.deepStrictEqual(widths(one, [bus('517', 5)]).slice(1), ['same']);
+  assert.ok(widths(one, [bus('517', 5)])[1] < widths(one)[0]);
 });
-test('it never shrinks with the screen off or the stop board open', () => {
+test('fitted the same way with the screen off or the stop board open (the page keeps an open board as it is)', () => {
   for (const extra of [{ SCREEN: 'off' }, { BusStateBoard: '1' }]) {
     const g = Object.assign(base(), extra);
     refresh(g, [bus('517', 12), bus('517', 25), bus('566', 9)]);
     run('island_show.js', { globals: g, now: at }); g.BusStateIslandShown = '1';
-    const was = g.BusStateIslandRight;
-    for (let i = 0; i < 3; i++) refresh(g, [bus('517', 4), bus('566', 9)]);
-    assert.strictEqual(g.BusStateIslandRight, was, JSON.stringify(extra));
+    const was = +g.BusStateIslandRight;
+    refresh(g, [bus('517', 4), bus('566', 9)]);
+    assert.ok(+g.BusStateIslandRight < was, JSON.stringify(extra));
   }
 });
 test('a route switching to timetable times grows it at once if "~" needs the room', () => {
@@ -99,7 +98,7 @@ test('the page fits its own window to data.fit, or has it drawn again if it can\
   const src = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'island_show.js'), 'utf8');
   assert.match(src, /if \(data\.fit\) fitTo\(data\.fit\);/);
   assert.match(src, /Tasker\.updateOverlayConfig\(\{ width: String\(totalFor\(r\)\), configTransitionMs: 200, configTransitionEasing: 'EaseOut' \}\)/);
-  assert.match(src, /if \(Math\.abs\(window\.innerWidth - totalFor\(r\)\) > 2\) \{ CAN_FIT = false; setRight\(r\); runTask\('Bus Island', \{ busisland: 'fit' \}\); \}/, 'checked afterwards');
+  assert.match(src, /if \(Math\.abs\(window\.innerWidth - totalFor\(r\)\) > 2\) \{\s*CAN_FIT = false;[\s\S]*?else \{ setRight\(r\); runTask\('Bus Island', \{ busisland: 'fit' \}\); \}/, 'checked afterwards');
 });
 
 test('redraws take turns between two scene names; the first show has nothing to remove', () => {

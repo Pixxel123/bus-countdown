@@ -258,25 +258,18 @@ var rowsNow = boardRows(perRoute.length, otherRoutes.length, get('BusBoardRoutes
 if (get('BusStateBoard') === '1' && get('BusStateBoardSelf') !== '1' && get('BusStateIslandShown') === '1' && get('BusStateBoardRows') !== '' && get('BusStateBoardRows') !== String(rowsNow)) {
   setGlobal('BusStateIslandShown', '2');
 }
-// The right half's width (4.46): grow now, shrink later. The island grows the moment the times need
-// more room ("9 min" becoming "10 · 22 min", a timetable "~", another route), so nothing is ever cut
-// short; it shrinks only after two refreshes in a row with 8 dp or more to spare, with the screen on
-// and the stop board closed, so it doesn't keep changing size as times count down. Whenever it's
-// about to be drawn anyway (first shown, or drawn again) or at a new stop, it's simply fitted.
-// BusStateIslandRight is the width it's drawn at (island_show.js) or resizing itself to: the page
-// fits its own window to data.fit (or, if it can't, has Bus Island draw it again).
+// The right half's width (4.57): grows the moment the times need more room, and shrinks at the very
+// next refresh when it has 8 dp or more to spare. (4.46 to 4.56 waited for two refreshes in a row with
+// that much to spare; fitting exactly every time moved it about three times as often as 4.56, on last
+// week's recordings, for a fit only 1 to 2 dp closer.) A new stop, or an island about to be drawn, is
+// simply fitted. Between refreshes the page grows itself if a bus turns due and needs more room.
+// BusStateIslandRight is the width it's drawn at (island_show.js) or resizing itself to: the page fits
+// its own window to data.fit (or, if it can't, has Bus Island draw it again).
 var fitNow = rightNeeded(perRoute, now);
 var drawnAt = parseInt(get('BusStateIslandRight'), 10) || 0;
-var slack = parseInt(get('BusStateIslandSlack'), 10) || 0;
-var want = drawnAt;
-if (get('BusStateIslandShown') !== '1' || !drawnAt || get('BusStateIslandFitStop') !== get('BusStateStopId')) { want = fitNow; slack = 0; }
-else if (fitNow > drawnAt) { want = fitNow; slack = 0; }                                  // grow now
-else if (drawnAt - fitNow >= 8 && get('SCREEN') !== 'off' && get('BusStateBoard') !== '1') {
-  slack++;
-  if (slack >= 2) { want = fitNow; slack = 0; }                                           // shrink later
-} else slack = 0;
+var refit = get('BusStateIslandShown') !== '1' || !drawnAt || get('BusStateIslandFitStop') !== get('BusStateStopId');
+var want = refit || fitNow > drawnAt || drawnAt - fitNow >= 8 ? fitNow : drawnAt;
 setGlobal('BusStateIslandRight', String(want));
-setGlobal('BusStateIslandSlack', String(slack));
 setGlobal('BusStateIslandFitStop', get('BusStateStopId'));
 var islandData = {
   u: now,                                                       // when this data arrived

@@ -4,6 +4,16 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
+## [4.57] - 2026-10-11
+
+### Changed
+
+- The island shrinks at the next refresh with 8 dp or more to spare, instead of waiting for two in a row, and still grows the moment its times need more room. On last week's recordings that's about 50 resizes on a busy day rather than 25 to 29, each the island's own window sliding, for a fit within 1 to 2 dp. (Fitting exactly at every refresh came to 91 to 98, for a fit only 1 to 2 dp closer.)
+
+### Fixed
+
+- A bus turning due between refreshes keeps the next one's time. "1 · 15 min" became "Due · 14 min", which no longer fitted, so the island dropped the second time and left "Due" alone in a gap sized for the longer line: 5 to 14 buses a day last week, for 2½ to 8 minutes a day in all. It now grows to fit the moment it turns due, without waiting for Bus Refresh. If its window can't resize itself, it drops the second time as before.
+
 ## [4.56] - 2026-10-09
 
 ### Changed

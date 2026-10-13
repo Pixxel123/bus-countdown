@@ -1152,6 +1152,7 @@ function islandShow(global, setGlobal) {
     v431: { ring: 'D', letters: 3, right: 'now', k: '517', idle: true, d: 'Holbry', m: '18 min', dots: 2, on: 1 },
     v447: { board: true, wide: true, ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2,
       rows: [['517', '', 'Holbry', '14', '33 · 52'], ['566', '', 'Fernleigh Village', '5', '17 · 29'], ['289', 'other', 'Ordwick', '3', '15 · 27'], ['N68', 'other', 'Kelbury Bus Garage', '26 min', '']] },
+    v457: { ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: 'Due', mCls: 'due', m2: '14', dots: 2 },
     v456: { arriving: true, ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Wexley', m: '2', m2: '15', dots: 2 },
     v448: { name: 'Stop D · Wexley / Thornacre Precinct', ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
     v446: { ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
@@ -1178,6 +1179,7 @@ function islandShow(global, setGlobal) {
   }
   // Newest first, only the versions that changed how the island looks: [version, date, look, what changed]
   var VERSIONS = [
+    ['4.57', '11 Oct', 'v457', 'Shrinks at the next refresh with 8 dp or more to spare, rather than two in a row. A bus turning due between refreshes keeps the next one\u2019s time: the island grows to fit \u201cDue \u00b7 14 min\u201d the moment it turns due, where it used to drop the second time and leave \u201cDue\u201d alone in a gap.'],
     ['4.56', '9 Oct', 'v456', 'Hold the island for the other side of the road and it changes the moment the hold is long enough, its route and times sliding in. Before, it waited for Tasker, dimmed, then showed the stop\u2019s name on the left for 0.6 s.'],
     ['4.48', '9 Oct', 'v448', 'Hold the island for the other side of the road and its times show as soon as it changes, with the stop\u2019s name on the left for 0.6 s; before, the name filled the island for 1.2 s first.'],
     ['4.47', '9 Oct', 'v447', 'The stop board widens a little when its lines need it: room for three times on a route and for a wider route badge (N68), growing outwards from the camera gap as it grows down. Tucked back in, it\u2019s the island at its own width again.'],
