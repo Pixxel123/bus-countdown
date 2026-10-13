@@ -4,7 +4,12 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
-## [4.59] - 2026-10-12
+## [4.60] - 2026-10-13
+
+### Fixed
+
+- Walking straight to a stop shows it as you go, even inside its circle. A stop's circle is where it starts once you slow down, so walking past a stop doesn't show it; but heading for a stop on foot was only seen outside every circle, so a stop with a big one waited until you got there. On Tuesday morning Ashenhurst (Stop U), with a 200 m circle, waited 2 minutes as "passing by at 6 km/h" while you walked to it, and showed only once you paused to cross the road 110 m away. Inside a circle, getting nearer to the stop at 60% of your pace or more over the last 45 seconds, and there within the minutes-ahead setting, now counts as heading for it, without needing a direction from Android (which gives one with about one position in four). A stop by home or work only shows this way while you're not getting nearer to home or work: setting off, not arriving. Replayed on the recordings since 6 October, it shows Ashenhurst 88 s sooner on Tuesday, 2 minutes 40 sooner on Wednesday, and on Friday morning, when it never showed, from 08:31 while you walked to it and waited, so getting on the bus there is seen too; and Wexley (Stop D) 17 s sooner as you changed buses on Monday. Nothing else on the island changes on any day; without the home rule, it would have shown as you walked home past Ashenhurst late on Wednesday 7 October.
+
 
 ### Added
 

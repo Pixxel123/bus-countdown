@@ -69,6 +69,7 @@ var afterAll = '';                   // set when a walk away turns out to have b
 var lostNote = '';                   // set when the countdown was lost to Tasker stopping (4.58)
 var closest = null;
 var follow = null;                   // the bus you got on, from TfL (4.58): { with, why } or null
+var inCircleAhead = null;            // walking towards a stop inside its circle (4.60)
 var trip = { s: 'idle' };
 
 if (!stale && !isNaN(lat) && !isNaN(lon)) {
@@ -414,6 +415,15 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     // off it: having got off, you may well cross the road for a bus back, or walk to a connection. A
     // run by hand still shows it.
     else if (arrival && !byHand && goesBack(arrival, now, trip.s === 'onbus')) why = (trip.s === 'onbus' ? 'on a bus' : 'just off a bus') + ' by ' + arrival.n + ', but its buses go back the way you came: no countdown';
+    // Walking towards it inside its circle (4.60): shown now, as it would be heading for it from
+    // outside the circle. On Tuesday 13 October Ashenhurst (Stop U), with a 200 m circle, waited 2
+    // minutes as "passing by" while you walked straight to it, and showed only as you paused to cross
+    // the road 110 m away
+    else if (arrival && !slow && !byHand && (inCircleAhead = walkingTo(arrival))) {
+      busaction = 'approach'; why = inCircleAhead.why;
+      setGlobal('BusStateArrivedStop', arrival.id); setGlobal('BusStateStartMode', 'approach|' + now);
+      trip = { s: 'heading', stop: arrival.id, since: now, minD: Math.round(arrival.d), bus: false };
+    }
     else if (arrival && !slow && !byHand) { why = 'passing by at ' + Math.round(speed * 3.6) + ' km/h: waits until you slow down (or stay put for 30 s)'; busdwell = 'yes'; }
     else if (arrival) {
       busaction = 'start'; why = settled && speed > 0.8 ? 'start (you have stayed put, though the GPS speed reads ' + Math.round(speed * 3.6) + ' km/h)' : 'start';
@@ -479,6 +489,28 @@ function approaching() {
   best.bus = onABus;
   best.why = 'heading to ' + best.n + ' (' + Math.round(best.d) + ' m, about ' + Math.max(1, Math.round(best.eta / 60)) + ' min ' + (onABus ? 'by bus' : 'on foot') + ')';
   return best;
+}
+
+// Walking towards a stop you're already inside the circle of (4.60): at walking pace (over 0.8 and up
+// to 2.5 m/s), getting nearer to it over the last 45 seconds or more at 0.5 m/s or more and at least
+// 60% of your pace (mostly towards it: Android gives a direction with only one position in four or
+// so, so it isn't needed), and there within the minutes-ahead setting at your pace. Not when heading
+// for stops is off. Returns { why } or null. Walking past a stop, or round it, doesn't close in on it
+// that fast, so still waits as before.
+// A stop by home or work only while you're not getting nearer to home or work: setting off, not
+// arriving. On Wednesday 7 October at 22:38 you walked home past Ashenhurst, and it would have
+// shown for the last two and a half minutes of the walk.
+function walkingTo(st) {
+  if ((get('BusApproach') || 'both') === 'off' || speed <= 0.8 || speed > 2.5 || st.d <= 30) return null;
+  var limit = (parseFloat(get('BusApproachMin')) || 3) * 60;
+  var closing = closingSpeed(st);
+  if (closing < Math.max(0.5, 0.6 * speed) || st.d / speed > limit) return null;
+  var place = homeOrWork(st);
+  if (place) {
+    var pAt = null; try { pAt = JSON.parse(get(place === 'home' ? 'BusHomeAt' : 'BusWorkAt') || 'null'); } catch (e) { pAt = null; }
+    if (pAt && closingSpeed({ lat: pAt.lat, lon: pAt.lon, d: metres(lat, lon, pAt.lat, pAt.lon) }) > 0.3) return null;
+  }
+  return { why: 'heading to ' + st.n + ' (' + Math.round(st.d) + ' m, about ' + Math.max(1, Math.round(st.d / speed / 60)) + ' min on foot, getting nearer at ' + Math.round(closing * 3.6) + ' km/h)' };
 }
 
 // How fast you've been closing in on a stop (m/s): your distance from it now against a position 45
