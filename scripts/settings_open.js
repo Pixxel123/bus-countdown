@@ -215,8 +215,11 @@ get('BusPlaces').split('\n').forEach(function (line, i) {
                     own: parseFloat(p[5]) > 0 ? Math.round(parseFloat(p[5])) : 0,
                     routes: here.length ? here : mine.slice(), ticked: (here.length ? here : mine).filter(function (r) { return mine.indexOf(r) > -1; }) });
 });
+// The nearest 6 not saved (10 before 4.58): each stop adds 10 to 20 KB to the screen's layout, and with
+// 10 it came to about 280 KB, which Tasker has to hand to the screen in one go (on Monday 12 October,
+// Settings opened during a countdown restarted Tasker; this takes up to about 75 KB off the layout)
 near.filter(function (x) { return !stopsShown.some(function (s) { return s.id === x.id; }); })
-    .sort(function (a, b) { return a.d - b.d; }).slice(0, 10)
+    .sort(function (a, b) { return a.d - b.d; }).slice(0, 6)
     .forEach(function (x) { stopsShown.push({ id: x.id, name: x.name, lat: x.lat, lon: x.lon, saved: false, towards: x.towards || '', line: -1, own: 0, routes: x.routes, ticked: [] }); });
 
 // Taps are also recorded by the Bus Settings Button task in BusTempTicks, because a screen

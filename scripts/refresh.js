@@ -7,7 +7,6 @@
      { k: label (route), d: destination, t: due (ms), st: status }
      st = live | sched (timetable) | late | cancel (late/cancel: trains, V5)
    Output: busnodata = yes when there's nothing at all to show
-           busliveroutes = your routes with a live time (for tt_check.js)
            BusStateIslandData (global, read live by the island)
    ================================================================== */
 /* @include get */
@@ -83,8 +82,6 @@ if (keptNow.length) debugLog('TfL dropped ' + keptNow.join(', ') + ': kept on it
 var d0 = new Date(); var nowMin = d0.getHours() * 60 + d0.getMinutes() + d0.getSeconds() / 60;
 var tt = JSON.parse(get('BusCacheTimetable') || '{}')[get('BusStateStopId')];
 var liveRoutes = deps.map(function (x) { return x.k; });
-// For tt_check.js, after the island: only routes with no live time need the timetable (4.43)
-var busliveroutes = liveRoutes.join(',');
 Object.keys((tt && tt.r) || {}).forEach(function (route) {
   var saved = tt.r[route];
   if (liveRoutes.indexOf(route) > -1 || mine.indexOf(route) < 0 || !saved || !saved.t) return;
@@ -232,7 +229,11 @@ if (busbuzz === 'yes') {
 }
 // Recorder: TfL's predictions as they came (route, vehicle, seconds away), for steadier times,
 // matching you to your bus, and spotting buses that have left
-record('tfl', { stop: get('BusStateStopId'), code: code, you: yourBus ? yourBus.v : undefined, cached: loc('buscachedat') ? Math.round((now - parseInt(loc('buscachedat'), 10)) / 1000) : undefined, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
+// A request that failed: why, as Tasker said (4.58; the HTTP step clears it first)
+// (A reply with an error code says so: 429 or 503 is TfL answering, not the connection failing)
+var failWhy = code === '200' ? '' : (loc('errmsg') || (code ? 'HTTP ' + code : 'no reply'));
+if (failWhy && !loc('buscachedat')) debugLog('TfL didn\u2019t answer (' + failWhy.slice(0, 80) + '): ' + (deps.length ? 'kept and timetable times only' : 'nothing to show'));
+record('tfl', { stop: get('BusStateStopId'), code: code, err: failWhy ? failWhy.slice(0, 160) : undefined, you: yourBus ? yourBus.v : undefined, cached: loc('buscachedat') ? Math.round((now - parseInt(loc('buscachedat'), 10)) / 1000) : undefined, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
   b: deps.map(function (x) { return [x.k, x.v || '', Math.round((x.t - now) / 1000), x.kept ? 'k' : x.st === 'sched' ? 's' : 'l']; }),
   o: otherBuses.length ? otherBuses.map(function (x) { return [x.k, x.v, Math.round((x.t - now) / 1000), x.d]; }) : undefined });   // the stop's other routes (4.41)
 /* @include stopLetter */

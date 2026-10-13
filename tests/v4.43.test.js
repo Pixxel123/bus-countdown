@@ -85,20 +85,19 @@ test('Bus Refresh asks for live arrivals first, and checks for the timetable onl
   assert.strictEqual(s[check - 1].cond, '%busfresh 3 yes', 'only when times were just fetched');
 });
 
-test('the timetable is fetched only for your routes TfL has no live time for', () => {
+test('the timetable is fetched for every one of your routes at the stop, live or not (4.58; 4.43 to 4.57: only those with no live time)', () => {
   const g = { BusStateStopId: 'KH', BusRoutes: '517,566', BusCacheStops: JSON.stringify({ KH: { r: ['517', '566'] } }) };
-  const r = run('tt_check.js', { globals: g, now: AT, locals: { busliveroutes: '517' } });
-  assert.deepStrictEqual([r.busttfetch, r.busttcount, g.BusTempTimetableRoutes], ['yes', '1', '566']);
-  assert.strictEqual(run('tt_check.js', { globals: g, now: AT, locals: { busliveroutes: '566,517' } }).busttfetch, 'no');
-  assert.strictEqual(run('tt_check.js', { globals: g, now: AT, locals: { busliveroutes: '' } }).busttcount, '2', 'no live times: both');
+  for (const live of ['517', '566,517', '']) {
+    const r = run('tt_check.js', { globals: g, now: AT, locals: { busliveroutes: live } })   // (no longer read, 4.58);
+    assert.deepStrictEqual([r.busttfetch, r.busttcount, g.BusTempTimetableRoutes], ['yes', '2', '517,566'], live);
+  }
 });
 
-test('refresh.js says which routes had live times, and keeps each stop\'s island data (the 4 latest)', () => {
+test('refresh.js keeps each stop\'s island data (the 4 latest)', () => {
   const g = { BusRefresh: '45', BusRoutes: '517,566', BusStyle: 'pill', BusStateStopId: 'KH', BusStateStopName: KH.name,
     BusStateIslandByStop: JSON.stringify({ A: { u: AT - 4000 }, B: { u: AT - 3000 }, C: { u: AT - 2000 }, D: { u: AT - 1000 } }) };
   const r = run('refresh.js', { globals: g, now: AT, locals: { http_response_code: '200',
     http_data: JSON.stringify([{ lineName: '517', destinationName: 'Holbry', timeToStation: 300, vehicleId: 'BX1' }]) } });
-  assert.strictEqual(r.busliveroutes, '517');
   const byStop = JSON.parse(g.BusStateIslandByStop);
   assert.deepStrictEqual(Object.keys(byStop).sort(), ['B', 'C', 'D', 'KH']);
   const shown = JSON.parse(g.BusStateIslandData); delete shown.fit;   // (the width it's fitted to, 4.46, is the page's alone)

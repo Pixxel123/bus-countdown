@@ -12,8 +12,7 @@ const { run, m, files } = require('./harness');
 
 const BASE = 51.37, LON = -0.08;
 const at = Date.UTC(2026, 9, 6, 8, 20, 0);
-const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date(at).getDay()];
-const FILE = `Download/Tasker-bus-trip-data/bus-trip-${day}.jsonl`;
+const FILE = 'Download/Tasker-bus-trip-data/bus-trip-2026-10-06-Tue.jsonl';      // dated (4.58)
 const world = (extra) => Object.assign({ BusPlaces: `bus|S|High St (Stop S)|${BASE}|${LON}|100`, BusNearRadius: '50', BusRoutes: '517', BusStateRunning: '0', TRUN: '' }, extra);
 const check = (g, x, t, kmh) => run('watch.js', { globals: g, now: t, locals: { buscaller: 'profile=moved', gl_latitude: String(BASE + m(x)), gl_longitude: String(LON),
   gl_time_seconds: String(t / 1000), busspeed: String(kmh / 3.6), busbearing: '0', busacc: '12' } });
@@ -39,11 +38,21 @@ test('on: the day starts with your setup, then a line per position with what was
   assert.ok(Math.abs(l[1].lat - (BASE + m(-40))) < 1e-5 && l[1].acc === 12);
 });
 
-test('a new day starts its weekday file afresh (so a week is kept)', () => {
-  files[FILE] = 'last week\n';
+test('each day has its own file, named by its date and weekday, so last week\'s is kept (4.58)', () => {
+  const LAST = 'Download/Tasker-bus-trip-data/bus-trip-2026-09-29-Tue.jsonl';
+  files[LAST] = 'last week\n';
+  delete files[FILE];
   const g = world({ BusRecord: 'on', BusRecordDay: 'some other day' });
   check(g, -40, at, 0);
-  assert.ok(!files[FILE].includes('last week'));
+  assert.strictEqual(files[LAST], 'last week\n');
+  assert.strictEqual(lines()[0].k, 'setup');
+});
+
+test('a new day still starts its file afresh, if one by that name is somehow there already', () => {
+  files[FILE] = 'stale\n';
+  const g = world({ BusRecord: 'on', BusRecordDay: 'some other day' });
+  check(g, -40, at, 0);
+  assert.ok(!files[FILE].includes('stale'));
 });
 
 test('TfL replies are recorded with vehicles and seconds away; a buzz is recorded and logged', () => {

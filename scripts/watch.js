@@ -15,7 +15,8 @@
      at stop  waiting. On a bus heading away -> on bus (end). Walking
               steadily away, or past the end distance -> left (end).
      on bus   riding (no island, unless a saved stop is coming up on the
-              route). Walking pace again -> left.
+              route). Walking pace again -> left, unless TfL has the bus
+              you got on still with you (4.58, shared/followBus.js).
      left     island gone. That stop only starts again once you've come
               back 100 m from the furthest you went, or after 15 minutes.
               Other stops are free. Left a stop you'd got to, and now 150 m
@@ -45,6 +46,7 @@
 /* @include loc */
 /* @include metres */
 /* @include travelMode */
+/* @include followBus */
 
 var now = Date.now();
 var lat = parseFloat(loc('gl_latitude')); var lon = parseFloat(loc('gl_longitude'));
@@ -64,7 +66,9 @@ var why = '';
 var skipped = '';                    // why approaching() passed over a stop, for the note
 var tmode = null;                    // travel mode on trial (4.34): recorded only
 var afterAll = '';                   // set when a walk away turns out to have been a bus
+var lostNote = '';                   // set when the countdown was lost to Tasker stopping (4.58)
 var closest = null;
+var follow = null;                   // the bus you got on, from TfL (4.58): { with, why } or null
 var trip = { s: 'idle' };
 
 if (!stale && !isNaN(lat) && !isNaN(lon)) {
@@ -139,15 +143,41 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
   function endAtFor(st) { return Math.max(Math.min(250, Math.max(150, 3 * st.r)), st.r + 100); }
 
 
+  // A lost countdown (below) starts again only while you're still there: at the stop, within the
+  // distance that ends a countdown, or heading for it, no more than 100 m further than the closest
+  // you've come. Already on your way (on a bus, by the first check after Tasker came back, which can
+  // be late: nothing asks for positions until the screen comes on), it's handled as before, as having
+  // left, so getting on a bus there is still seen. And only once per stop in 15 minutes, in case the
+  // countdown itself is what stops Tasker.
+  function restartLost() {
+    var at = stops.filter(function (st) { return st.id === trip.stop; })[0];
+    var before = null; try { before = JSON.parse(get('BusStateLostAt') || 'null'); } catch (e) { before = null; }
+    lostNote = 'the countdown at ' + (at ? at.n : 'the stop') + ' stopped without ending (Tasker restarted?)';
+    if (!at || (trip.s === 'atstop' ? at.d > endAtFor(at) : at.d > (trip.minD || at.d) + 100)) return false;
+    if (trip.s === 'atstop' && speed > 4.2) return false;      // already pulling away on a bus, just past the stop
+    if (before && before.stop === at.id && now - before.at < 15 * 60000) { lostNote += '; it did already, so not again'; return false; }
+    setGlobal('BusStateLostAt', JSON.stringify({ stop: at.id, at: now }));
+    return true;
+  }
+
   // ---- The trip state, kept in step with what's actually happening --------------------------
   try { trip = JSON.parse(get('BusStateTrip') || '{"s":"idle"}'); } catch (e) { trip = { s: 'idle' }; }
   var running = get('BusStateRunning') === '1' && /(^|,)Bus Loop(,|$)/.test(get('TRUN'));
-  if (get('BusStateRunning') === '1' && !running) setGlobal('BusStateRunning', '0');
+  // Lost, not ended (4.58): the running flag is still set, but Bus Loop has gone. Only Bus End clears
+  // the flag (a swipe, time up, Wi-Fi, walking away), so Tasker itself stopped: it restarted, or
+  // Android stopped it
+  var lost = get('BusStateRunning') === '1' && !running;
+  if (lost) setGlobal('BusStateRunning', '0');
   var shownId = get('BusStateStopId');
   var shown = stops.filter(function (st) { return st.id === shownId; })[0];
   if (running && shown && (trip.stop !== shownId || trip.s === 'idle' || trip.s === 'left' || trip.s === 'onbus')) {
     // A countdown started some other way (by hand, leaving work, heads-up): pick it up
     trip = { s: shown.d <= shown.r ? 'atstop' : 'heading', stop: shownId, since: now, minD: Math.round(shown.d) };
+  } else if (lost && (trip.s === 'atstop' || trip.s === 'heading') && restartLost()) {
+    // The countdown was lost, not ended (4.58): start again from here, as if just arrived, rather than
+    // as having left. On Monday morning opening Settings restarted Tasker at Kiln Street, and "you've
+    // just left this stop" kept the countdown away for 10 minutes while you stood at it
+    trip = { s: 'idle' };
   } else if (!running && (trip.s === 'atstop' || trip.s === 'heading')) {
     // Ended without us (swiped, timed out, got home): treat it as left
     var was = stops.filter(function (st) { return st.id === trip.stop; })[0];
@@ -177,6 +207,12 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
   var snoozedAt = snoozed ? snooze.at : 0;
   var from = function (to, note) { trip = Object.assign({}, trip, { s: to, since: now, byBus: false }, note || {}); };   // byBus: see "still on the bus"
   var tripStop = stops.filter(function (st) { return st.id === trip.stop; })[0];
+  // Riding a bus Bus Watch has named: is TfL's next stop for it consistent with where you are? (4.58)
+  if (trip.s === 'onbus' || (trip.s === 'heading' && trip.bus)) follow = followBus(lat, lon, accuracy, now);
+  // A fix too rough to place you (over 60 m) can't end a ride TfL had with you in the last minute
+  var withBus = !!follow && follow.with;
+  if (withBus) { trip.withAt = now; setGlobal('BusStateLastBusAt', String(now)); }
+  var keptOn = withBus || (!follow && (accuracy || 15) > 60 && now - (trip.withAt || 0) < 60000);
 
   // ---- What this position means, from the current state --------------------------------------
   // Slowed down: the speed reading is walking pace or less (unknown counts as slow), or, since a rough
@@ -205,6 +241,16 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
   var lastTwo = win.map(function (w) { return w.spd; }).filter(function (v) { return v >= 0; }).slice(-2);
   var busTwice = lastTwo.length === 2 && lastTwo[0] > 4.2 && lastTwo[1] > 4.2;
   var bus = speed > 4.2 || busTwice;   // or the last two both fast
+  // The way the bus is going, kept so it's known when the bus stands or crawls (goesBack, 4.58): t,
+  // when last known; b, when last at bus speed. While TfL has your bus with you, from its stops (the
+  // stop before its next one, to that one): that lasts a minute or two after you get off, while the
+  // window is your walk, so the window is only used at bus speed, over 60 m or more.
+  var headWas = null; try { headWas = JSON.parse(get('BusStateHeading') || 'null'); } catch (e) { headWas = null; }
+  if (bus && win.length >= 2 && metres(win[0].lat, win[0].lon, win[win.length - 1].lat, win[win.length - 1].lon) >= 60) {
+    setGlobal('BusStateHeading', JSON.stringify({ t: now, b: now, a: [win[0].lat, win[0].lon], z: [win[win.length - 1].lat, win[win.length - 1].lon] }));
+  } else if (withBus && follow.dir) {
+    setGlobal('BusStateHeading', JSON.stringify({ t: now, b: headWas && headWas.b ? headWas.b : 0, a: follow.dir[0], z: follow.dir[1] }));
+  }
   // Steady pace away from a stop: the fastest average over 90 seconds or more of the window. Walking
   // tops out under 2 m/s even with GPS error; over 2.2 m/s for that long is a bus, however slowly it
   // crawled through traffic (Tuesday, leaving Wexley on the 566: 2.6 m/s for nearly 3 minutes, which
@@ -254,6 +300,10 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     // 25 s had taken for getting off, 4.39), it ends. Standing still doesn't count towards it. If you
     // then speed up towards it again (back on a bus), it can show again once you're 100 m closer.
     else if (!bus && speed >= 0 && speed < 0.6) { why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m (standing still)'; trip.slowN = 0; trip.slowSince = 0; }
+    // Slow, but TfL has the bus you got on still with you (4.58): a crawl in traffic, not getting off.
+    // On Thursday evening the 517 crawled the last 600 m to Wexley and this read as "off the bus, on
+    // foot", so a bus due there when you got there no longer counted as yours
+    else if (!bus && keptOn) { why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m (slow: ' + (follow ? follow.why : 'TfL had your bus with you a moment ago') + ')'; trip.slowN = 0; trip.slowSince = 0; trip.walkN = 0; }
     else if (!bus && speed >= 0 && speed <= 2.5 && tripStop.d > endAtFor(tripStop) &&
              tripStop.d / Math.max(speed, 0.3) > 2 * (parseFloat(get('BusApproachMin')) || 3) * 60 &&
              (trip.slowSince = trip.slowSince || now) && (trip.slowN = (trip.slowN || 0) + 1) >= 3 && now - trip.slowSince >= 120000) {
@@ -276,9 +326,15 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     // Off the bus (or so it looks: a crawl in traffic reads the same). Keep the stop you boarded at, so
     // it still counts as just left: a bus held up while still inside that stop's circle mustn't pop
     // the island up for the stop you've just got on at
-    if (trip.s === 'onbus' && !bus && speed >= 0 && speed < 2) {
+    // Unless TfL has the bus you got on still with you (4.58): on Thursday evening the 566 from Wexley
+    // slowed to 2 km/h a minute out, the ride ended here, and Bus Watch had you on foot for the rest
+    // of it. Once the bus has gone on without you (by its next stop), it ends as before.
+    if (trip.s === 'onbus' && !bus && speed >= 0 && speed < 2 && keptOn) {
+      why = 'on a bus, slow: ' + (follow ? follow.why : 'TfL had it with you a moment ago, and this fix is too rough to say otherwise');
+    } else if (trip.s === 'onbus' && !bus && speed >= 0 && speed < 2) {
       var boarded = stops.filter(function (st) { return st.id === trip.stop; })[0];
       from('left', { leftD: boarded ? Math.round(boarded.d) : 0, maxD: trip.maxD || 0 });
+      if (follow) why = 'off the bus: ' + follow.why;
     }
     // Fifteen minutes after leaving a stop the trip is over: the bus you got on is forgotten too, so a
     // later ride can't take it for yours (4.32; not on getting off, which a crawl in traffic looks like).
@@ -334,6 +390,11 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     var arrival = insideStops.filter(function (st) { return !justLeft(st); })[0];
     if (arrival && (snoozed && !byHand)) why = 'snoozed: you swiped it away; it comes back once you\u2019ve been to that stop and left it, or at ' + new Date(snoozedAt + 30 * 60000).toTimeString().slice(0, 5);
     else if (arrival && offBusLately && !byHand && homeOrWork(arrival)) why = 'off the bus at ' + arrival.n + ', by ' + homeOrWork(arrival) + ': no countdown (you\u2019ve arrived)';
+    // On a bus, or just off one, by a stop whose buses all go back the way the bus was going: the other
+    // side of the road (4.58). Only within 3 minutes of last moving at bus speed while on a bus, 2 once
+    // off it: having got off, you may well cross the road for a bus back, or walk to a connection. A
+    // run by hand still shows it.
+    else if (arrival && !byHand && goesBack(arrival, now, trip.s === 'onbus')) why = (trip.s === 'onbus' ? 'on a bus' : 'just off a bus') + ' by ' + arrival.n + ', but its buses go back the way you came: no countdown';
     else if (arrival && !slow && !byHand) { why = 'passing by at ' + Math.round(speed * 3.6) + ' km/h: waits until you slow down (or stay put for 30 s)'; busdwell = 'yes'; }
     else if (arrival) {
       busaction = 'start'; why = settled && speed > 0.8 ? 'start (you have stayed put, though the GPS speed reads ' + Math.round(speed * 3.6) + ' km/h)' : 'start';
@@ -347,7 +408,7 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
         busaction = 'approach'; why = ahead.why;
         setGlobal('BusStateArrivedStop', ahead.id); setGlobal('BusStateStartMode', 'approach|' + now);
         trip = { s: 'heading', stop: ahead.id, since: now, minD: Math.round(ahead.d), bus: ahead.bus };
-      } else why = skipped || (trip.s === 'onbus' ? 'on a bus' : 'not close enough');
+      } else why = skipped || why || (trip.s === 'onbus' ? 'on a bus' : 'not close enough');      // why: set above when TfL's word on your bus decided (4.58)
     } else why = 'snoozed: you swiped it away; it comes back once you\u2019ve been to that stop and left it, or at ' + new Date(snoozedAt + 30 * 60000).toTimeString().slice(0, 5);
   }
   // Riding a bus to the stop: when you'd get there at the pace you've been closing in on it, for
@@ -359,6 +420,7 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     if (closing > 0.5) { trip.eta = Math.round(fixT + etaStop.d / closing * 1000); trip.etaAt = now; }
   }
   if (afterAll && busaction === 'none') why = afterAll;
+  if (lostNote) why = lostNote + (busaction === 'start' || busaction === 'approach' ? ', so it starts again' : '') + ': ' + why;
   setGlobal('BusStateTrip', JSON.stringify(trip));
   if (busaction === 'stop') setGlobal('BusStateEndWhy', why);         // for Bus End's note in the recorder
 }
@@ -601,4 +663,5 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
   v: typeof speed !== 'undefined' && speed >= 0 ? +speed.toFixed(2) : null,       // the speed the rules used (Android's, or worked out)
   bus: typeof bus !== 'undefined' && bus ? 1 : 0, settled: typeof settled !== 'undefined' && settled ? 1 : 0, rate: rateWant,
   kv: tmode ? tmode.nv : null, mode: tmode ? tmode.mode : null, mp: tmode ? tmode.p : null,   // travel mode on trial (4.34)
+  fol: follow ? (follow.with ? 1 : 0) : undefined,                                  // TfL had the bus you got on with you (4.58)
   state: trip.s, stop: trip.stop || '', action: busaction, why: why, near: closest ? { n: closest.name, d: Math.round(closest.d), r: closest.radius } : null });

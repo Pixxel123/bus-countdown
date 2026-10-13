@@ -28,7 +28,7 @@ test('a real bus heading for a saved stop, with ordinary fixes, still shows it a
 
 // ---- 2. The trip recorder ------------------------------------------------------------------------------
 const NOW = Date.UTC(2026, 9, 8, 7, 5, 0);
-const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date(NOW).getDay()];
+const day = '2026-10-08-Thu';                 // the file's date and weekday (4.58)
 const FILE = `Download/Tasker-bus-trip-data/bus-trip-${day}.jsonl`;
 const endLog = (g, now, locals) => run('end_log.js', { now, globals: g, locals: Object.assign({ busfrom: 'island' }, locals) });
 
@@ -59,7 +59,7 @@ test('Bus Status says when today\'s file is missing, and the last write error', 
   delete files[FILE];
   const g = { BusRecord: 'on', BusRecordDay: '2026-10-8', BusRecordErr: '08:04 EACCES (Permission denied)', BusRoutes: '517', BusPlaces: '' };
   const s = status(g, NOW);
-  assert.match(s, /bus-trip-\w{3}\.jsonl: not found; last write failed at 08:04 EACCES/);
+  assert.match(s, /bus-trip-2026-10-08-Thu\.jsonl: not found; last write failed at 08:04 EACCES/);
 });
 
 // ---- 3. "Last got on", once you're off it -------------------------------------------------------------

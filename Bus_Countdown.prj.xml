@@ -1,8 +1,8 @@
 <TaskerData sr="" dvi="1" tv="6.7.6-beta">
 	<dmetric>1344.0,2992.0</dmetric>
 	<Profile sr="prof72" ve="2">
-		<cdate>1791714106189</cdate>
-		<edate>1791714106189</edate>
+		<cdate>1791831295016</cdate>
+		<edate>1791831295016</edate>
 		<flags>8</flags>
 		<id>72</id>
 		<mid0>79</mid0>
@@ -14,8 +14,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof74" ve="2">
-		<cdate>1791714106189</cdate>
-		<edate>1791714106189</edate>
+		<cdate>1791831295016</cdate>
+		<edate>1791831295016</edate>
 		<flags>8</flags>
 		<id>74</id>
 		<mid0>62</mid0>
@@ -33,8 +33,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof73" ve="2">
-		<cdate>1791714106189</cdate>
-		<edate>1791714106189</edate>
+		<cdate>1791831295016</cdate>
+		<edate>1791831295016</edate>
 		<flags>8</flags>
 		<id>73</id>
 		<mid0>59</mid0>
@@ -46,14 +46,14 @@
 		</State>
 	</Profile>
 	<Project sr="proj0" ve="2">
-		<cdate>1791714106189</cdate>
+		<cdate>1791831295016</cdate>
 		<name>Bus Countdown</name>
 		<pids>72,73,74</pids>
 		<tids>73,74,75,77,78,80,76,38,60,59,79,32,31,62,72</tids>
 	</Project>
 	<Task sr="task73">
-		<cdate>1791714106189</cdate>
-		<edate>1791714106189</edate>
+		<cdate>1791831295016</cdate>
+		<edate>1791831295016</edate>
 		<id>73</id>
 		<nme>Bus</nme>
 		<pri>6</pri>
@@ -178,11 +178,11 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task74">
-		<cdate>1791714106189</cdate>
-		<edate>1791714106189</edate>
+		<cdate>1791831295016</cdate>
+		<edate>1791831295016</edate>
 		<id>74</id>
 		<nme>Bus Settings</nme>
 		<pri>6</pri>
@@ -201,7 +201,7 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>First run? · Camera not measured yet</label>
@@ -721,8 +721,11 @@ get('BusPlaces').split('\n').forEach(function (line, i) {
                     own: parseFloat(p[5]) &gt; 0 ? Math.round(parseFloat(p[5])) : 0,
                     routes: here.length ? here : mine.slice(), ticked: (here.length ? here : mine).filter(function (r) { return mine.indexOf(r) &gt; -1; }) });
 });
+// The nearest 6 not saved (10 before 4.58): each stop adds 10 to 20 KB to the screen's layout, and with
+// 10 it came to about 280 KB, which Tasker has to hand to the screen in one go (on Monday 12 October,
+// Settings opened during a countdown restarted Tasker; this takes up to about 75 KB off the layout)
 near.filter(function (x) { return !stopsShown.some(function (s) { return s.id === x.id; }); })
-    .sort(function (a, b) { return a.d - b.d; }).slice(0, 10)
+    .sort(function (a, b) { return a.d - b.d; }).slice(0, 6)
     .forEach(function (x) { stopsShown.push({ id: x.id, name: x.name, lat: x.lat, lon: x.lon, saved: false, towards: x.towards || '', line: -1, own: 0, routes: x.routes, ticked: [] }); });
 
 // Taps are also recorded by the Bus Settings Button task in BusTempTicks, because a screen
@@ -985,6 +988,29 @@ setGlobal('BusTempSettings', JSON.stringify({ mine: mine, near: near, wifiNow: w
 			<Int sr="arg3" val="45"/>
 		</Action>
 		<Action sr="act32" ve="7">
+			<code>480</code>
+			<se>false</se>
+			<label>A countdown is showing: hide the island while Settings is open (both at once restarted Tasker) · Since 4.57 the island can resize its own window at any moment; showing Settings while it did restarted Tasker on Monday 12 October</label>
+			<Str sr="arg0" ve="3">buspill</Str>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateIslandShown</lhs><op>2</op><rhs>1/2</rhs></Condition></ConditionList></Action>
+		<Action sr="act33" ve="7">
+			<code>480</code>
+			<se>false</se>
+			<label>   and the other name · The island uses two scene names in turn</label>
+			<Str sr="arg0" ve="3">buspill2</Str>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateIslandShown</lhs><op>2</op><rhs>1/2</rhs></Condition></ConditionList></Action>
+		<Action sr="act34" ve="7">
+			<code>547</code>
+			<label>   so a refresh shows it again · Bus Refresh draws the island when this says it isn't up</label>
+			<Str sr="arg0" ve="3">%BusStateIslandShown</Str>
+			<Str sr="arg1" ve="3">0</Str>
+			<Int sr="arg2" val="0"/>
+			<Int sr="arg3" val="0"/>
+			<Int sr="arg4" val="0"/>
+			<Int sr="arg5" val="3"/>
+			<Int sr="arg6" val="0"/>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateRunning</lhs><op>2</op><rhs>1</rhs></Condition></ConditionList></Action>
+		<Action sr="act35" ve="7">
 			<code>479</code>
 			<se>false</se>
 			<label>Show the settings screen · Waits until it is closed; closes itself after 10 minutes</label>
@@ -1008,7 +1034,7 @@ setGlobal('BusTempSettings', JSON.stringify({ mine: mine, near: near, wifiNow: w
 			<Int sr="arg8" val="1"/>
 			<Str sr="arg9" ve="3"/>
 		</Action>
-		<Action sr="act33" ve="7">
+		<Action sr="act36" ve="7">
 			<code>129</code>
 			<label>Save what changed · However the screen was closed</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -1157,10 +1183,10 @@ setGlobal('BusTempRemoved', '');
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act34" ve="7"><code>409</code>
+		<Action sr="act37" ve="7"><code>409</code>
 			<se>false</se>
 			<label>Record trips on: make sure its folder is there · Downloads/Tasker-bus-trip-data</label><Str sr="arg0" ve="3">Download/Tasker-bus-trip-data</Str><Int sr="arg1" val="1"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusRecord</lhs><op>2</op><rhs>on</rhs></Condition></ConditionList></Action>
-		<Action sr="act35" ve="7">
+		<Action sr="act38" ve="7">
 			<code>548</code>
 			<label>Say what was saved, if anything · A short message listing what changed, so you know it took</label>
 			<Str sr="arg0" ve="3">%busmsg</Str>
@@ -1180,11 +1206,11 @@ setGlobal('BusTempRemoved', '');
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busmsg</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act36" ve="7">
+		<Action sr="act39" ve="7">
 			<code>37</code>
 			<label>Stops or routes changed? · Then refresh stop lists, offer the other side</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busstopschanged</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act37" ve="7">
+		<Action sr="act40" ve="7">
 			<code>129</code>
 			<label>Route stops cache up to date? · Once a day, or when routes change</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -1216,18 +1242,18 @@ if (!fresh) {
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act38" ve="7">
+		<Action sr="act41" ve="7">
 			<code>37</code>
 			<label>Out of date: fetch it · Once a day, or when your routes change</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busfetch</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act39" ve="7">
+		<Action sr="act42" ve="7">
 			<code>39</code>
 			<label>For each of my routes · Once a day, or when your routes change</label>
 			<Str sr="arg0" ve="3">%i</Str>
 			<Str sr="arg1" ve="3">1:%busroutecount</Str>
 			<Int sr="arg2" val="0"/>
 		</Action>
-		<Action sr="act40" ve="7">
+		<Action sr="act43" ve="7">
 			<code>129</code>
 			<label>Which route · The route this pass of the loop is about</label>
 			<Str sr="arg0" ve="3">/* Route stops cache · Which route is this pass of the loop? (i = loop counter) */
@@ -1237,7 +1263,7 @@ var busroute = global('BusTempFetchRoutes').split(',')[parseInt(i, 10) - 1];
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act41" ve="7">
+		<Action sr="act44" ve="7">
 			<code>339</code>
 			<se>false</se>
 			<label>Ask TfL for every stop on it · Its full stop list, including stops in both directions</label>
@@ -1257,7 +1283,7 @@ var busroute = global('BusTempFetchRoutes').split(',')[parseInt(i, 10) - 1];
 			<Int sr="arg8" val="15"/>
 			<Int sr="arg9" val="0"/>
 		</Action>
-		<Action sr="act42" ve="7">
+		<Action sr="act45" ve="7">
 			<code>129</code>
 			<label>Add its stops · Adds this route's stops to the list Bus Start chooses from</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -1290,7 +1316,7 @@ if (code !== '200') {
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act43" ve="7">
+		<Action sr="act46" ve="7">
 			<code>339</code>
 			<se>false</se>
 			<label>Ask TfL for its stops in order, one way · To tell which side of a road heads home or to work</label>
@@ -1310,7 +1336,7 @@ if (code !== '200') {
 			<Int sr="arg8" val="15"/>
 			<Int sr="arg9" val="0"/>
 		</Action>
-		<Action sr="act44" ve="7">
+		<Action sr="act47" ve="7">
 			<code>129</code>
 			<label>Keep that order · Stored in BusCacheSeq</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -1336,7 +1362,7 @@ if (code === '200') {
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act45" ve="7">
+		<Action sr="act48" ve="7">
 			<code>339</code>
 			<se>false</se>
 			<label>And the other way · The opposite direction</label>
@@ -1356,7 +1382,7 @@ if (code === '200') {
 			<Int sr="arg8" val="15"/>
 			<Int sr="arg9" val="0"/>
 		</Action>
-		<Action sr="act46" ve="7">
+		<Action sr="act49" ve="7">
 			<code>129</code>
 			<label>Keep that order too · Stored in BusCacheSeq</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -1382,13 +1408,13 @@ if (code === '200') {
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act47" ve="7">
+		<Action sr="act50" ve="7">
 			<code>40</code>
 		</Action>
-		<Action sr="act48" ve="7">
+		<Action sr="act51" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act49" ve="7">
+		<Action sr="act52" ve="7">
 			<code>129</code>
 			<label>Keep what was fetched · Saves the combined stop list and today's date</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -1420,7 +1446,7 @@ if (busfetch === 'yes') {
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act50" ve="7">
+		<Action sr="act53" ve="7">
 			<code>129</code>
 			<label>The stop across the road, for each stop just added · Same route, within 200 m</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -1483,7 +1509,7 @@ setGlobal('BusTempOpposite', '');
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act51" ve="7">
+		<Action sr="act54" ve="7">
 			<code>378</code>
 			<se>false</se>
 			<label>Ask: save the stop across the road too? · A list of those stops, with name, letter and direction</label>
@@ -1504,7 +1530,7 @@ setGlobal('BusTempOpposite', '');
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="60"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busoppask</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act52" ve="7">
+		<Action sr="act55" ve="7">
 			<code>129</code>
 			<label>Save the ones ticked · Adds the ticked stops to your saved stops</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -1548,7 +1574,7 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busoppask</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act53" ve="7">
+		<Action sr="act56" ve="7">
 			<code>548</code>
 			<label>Say what was saved · Which stops across the road were saved, or that none were</label>
 			<Str sr="arg0" ve="3">%busoppmsg</Str>
@@ -1568,10 +1594,39 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busoppask</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act54" ve="7">
+		<Action sr="act57" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act55" ve="7">
+		<Action sr="act58" ve="7">
+			<code>37</code>
+			<label>A countdown is running: bring the island back (unless Adjust live shows it) · Settings has closed, and what was saved has been said</label>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateRunning</lhs><op>2</op><rhs>1</rhs></Condition></ConditionList></Action>
+		<Action sr="act59" ve="7">
+			<code>37</code>
+			<label>   and Bus Loop is really running · Not a flag left from before Tasker restarted</label>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%TRUN</lhs><op>2</op><rhs>*Bus Loop*</rhs></Condition></ConditionList></Action>
+		<Action sr="act60" ve="7">
+			<code>130</code>
+			<label>   Show the island again, with its times · A refresh at once, rather than waiting for Bus Loop</label>
+			<Str sr="arg0" ve="3">Bus Refresh</Str>
+			<Int sr="arg1" val="10"/>
+			<Int sr="arg10" val="1"/>
+			<Str sr="arg2" ve="3">settings</Str>
+			<Str sr="arg3" ve="3"/>
+			<Str sr="arg4" ve="3"/>
+			<Int sr="arg5" val="0"/>
+			<Int sr="arg6" val="0"/>
+			<Str sr="arg7" ve="3"/>
+			<Int sr="arg8" val="0"/>
+			<Int sr="arg9" val="0"/>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buslive</lhs><op>3</op><rhs>yes</rhs></Condition></ConditionList></Action>
+		<Action sr="act61" ve="7">
+			<code>38</code>
+		</Action>
+		<Action sr="act62" ve="7">
+			<code>38</code>
+		</Action>
+		<Action sr="act63" ve="7">
 			<code>130</code>
 			<label>Adjust live was tapped: the live position editor · 4.52; it reopens Settings when done</label>
 			<Str sr="arg0" ve="3">Bus Position</Str>
@@ -1588,8 +1643,8 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buslive</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task75">
-		<cdate>1791714106190</cdate>
-		<edate>1791714106190</edate>
+		<cdate>1791831295017</cdate>
+		<edate>1791831295017</edate>
 		<id>75</id>
 		<nme>Bus Settings Button</nme>
 		<pri>6</pri>
@@ -1721,8 +1776,8 @@ if (buspreview === 'yes') {
 			<label>Open it · Shows the Android settings page</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">startActivity {} (android.content.Intent)</Str><Str sr="arg3" ve="3">busint</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busintent</lhs><op>2</op><rhs>android*</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task77">
-		<cdate>1791714106190</cdate>
-		<edate>1791714106190</edate>
+		<cdate>1791831295017</cdate>
+		<edate>1791831295017</edate>
 		<id>77</id>
 		<nme>Bus Position</nme>
 		<pri>6</pri>
@@ -3063,8 +3118,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task78">
-		<cdate>1791714106190</cdate>
-		<edate>1791714106190</edate>
+		<cdate>1791831295017</cdate>
+		<edate>1791831295017</edate>
 		<id>78</id>
 		<nme>Bus Position Set</nme>
 		<pri>6</pri>
@@ -3082,8 +3137,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task80">
-		<cdate>1791714106190</cdate>
-		<edate>1791714106190</edate>
+		<cdate>1791831295017</cdate>
+		<edate>1791831295017</edate>
 		<id>80</id>
 		<nme>Bus Position Done</nme>
 		<pri>6</pri>
@@ -3188,8 +3243,8 @@ var busmsg = changed.length ? 'Saved: ' + changed.join(', ') : 'none';
 		</Action>
 	</Task>
 	<Task sr="task76">
-		<cdate>1791714106190</cdate>
-		<edate>1791714106190</edate>
+		<cdate>1791831295017</cdate>
+		<edate>1791831295017</edate>
 		<id>76</id>
 		<nme>Bus Find Camera</nme>
 		<pri>6</pri>
@@ -3322,8 +3377,8 @@ if (!r || !dens || !w) {
 			<label>Reset position: move the open screen's height slider · Shows the new value straight away</label><Str sr="arg0" ve="3">bussettings</Str><Str sr="arg1" ve="3">sl_y</Str><Str sr="arg2" ve="3">value</Str><Str sr="arg3" ve="3">%BusIslandY</Str><Int sr="arg4" val="0"/><Str sr="arg5" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrebuild</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task38">
-		<cdate>1791714106190</cdate>
-		<edate>1791714106190</edate>
+		<cdate>1791831295017</cdate>
+		<edate>1791831295017</edate>
 		<id>38</id>
 		<nme>Bus Start</nme>
 		<pri>6</pri>
@@ -3341,7 +3396,7 @@ if (!r || !dens || !w) {
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>Settings: fill in defaults, check TflKey and BusRoutes · Resets empty or invalid settings</label>
@@ -3994,10 +4049,10 @@ function dirTable() {
   return (dirCache = table);
 }
 // Trip recorder (Settings: Record trips, BusRecord on). Each call adds one line of JSON for a file in
-// Download/Tasker-bus-trip-data (Downloads in the Files app): bus-trip-Mon.jsonl to
-// bus-trip-Sun.jsonl, so a week is kept and each day's file is
-// started afresh when that weekday comes round again. Everything stays on the phone until you upload
-// it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
+// Download/Tasker-bus-trip-data (Downloads in the Files app), one per day, named by its date and
+// weekday: bus-trip-2026-10-12-Mon.jsonl (4.58; before, bus-trip-Mon.jsonl was started afresh each
+// week, so a week not yet uploaded was lost). Every day is kept until you delete it. Everything stays
+// on the phone until you upload it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
 // The script doesn't write the file itself (4.43). Tasker runs a script's writeFile as a task of its
 // own, and a script waiting on it while another script was running hung both for 45 s (a long press
 // on the island just as the screen came on, Thursday 8 Oct). So the lines are collected here, and the
@@ -4011,10 +4066,10 @@ var busrecappend;
 var busrecday;
 function record(kind, data) {
   if (global('BusRecord') !== 'on') return;
-  var d = new Date(); var day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
+  var d = new Date();
   var line = JSON.stringify(Object.assign({ t: d.getTime(), k: kind }, data || {}));
   if (busrecline) { busrecline += '\n' + line; return; }
-  busrecfile = 'Download/Tasker-bus-trip-data/bus-trip-' + day + '.jsonl';
+  busrecfile = 'Download/Tasker-bus-trip-data/' + recordName(d);
   busrecday = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   // The day only counts as started once its first line is really written: if that fails, the next
   // line tries again from scratch, with the setup (4.38)
@@ -4029,6 +4084,11 @@ function record(kind, data) {
     line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
   }
   busrecline = line;
+}
+// The day's file name: bus-trip-2026-10-12-Mon.jsonl (4.58), so the files sort by date
+function recordName(d) {
+  var two = function (n) { return (n &lt; 10 ? '0' : '') + n; };
+  return 'bus-trip-' + d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()) + '-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] + '.jsonl';
 }
 
 // Debugging: keep the last 20 decisions in BusDebugLog (copied by the Bus Debugging task).
@@ -4183,8 +4243,8 @@ record(busok === 'yes' ? 'start' : 'nostart', { stop: get('BusStateStopId'), nam
 		</Action>
 	</Task>
 	<Task sr="task60">
-		<cdate>1791714106190</cdate>
-		<edate>1791714106190</edate>
+		<cdate>1791831295017</cdate>
+		<edate>1791831295017</edate>
 		<id>60</id>
 		<nme>Bus Loop</nme>
 		<pri>6</pri>
@@ -4524,8 +4584,8 @@ var buspushm = get('BusStatePushM') || '30';
 		</Action>
 	</Task>
 	<Task sr="task59">
-		<cdate>1791714106190</cdate>
-		<edate>1791714106190</edate>
+		<cdate>1791831295017</cdate>
+		<edate>1791831295017</edate>
 		<id>59</id>
 		<nme>Bus Refresh</nme>
 		<pri>6</pri>
@@ -4754,7 +4814,9 @@ var buscachedat = String(ready.at || now);
 		<Action sr="act20" ve="7">
 			<code>43</code>
 		</Action>
-		<Action sr="act21" ve="7">
+		<Action sr="act21" ve="7"><code>549</code>
+			<label>Clear the last error, so a failed request says why (4.58) · Tasker puts the reason in %errmsg; the recorder keeps it with the reply (err), and the debug log says so</label><Str sr="arg0" ve="3">%errmsg</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
+		<Action sr="act22" ve="7">
 			<code>339</code>
 			<se>false</se>
 			<label>Ask TfL for live arrivals · Every bus TfL predicts at this stop, about 30 minutes ahead. Read by the next step</label>
@@ -4774,10 +4836,10 @@ var buscachedat = String(ready.at || now);
 			<Int sr="arg8" val="15"/>
 			<Int sr="arg9" val="0"/>
 		</Action>
-		<Action sr="act22" ve="7">
+		<Action sr="act23" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act23" ve="7">
+		<Action sr="act24" ve="7">
 			<code>129</code>
 			<label>Build the departures: live times, timetable where there are none · One line per route, for the island</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -4789,7 +4851,6 @@ var buscachedat = String(ready.at || now);
      { k: label (route), d: destination, t: due (ms), st: status }
      st = live | sched (timetable) | late | cancel (late/cancel: trains, V5)
    Output: busnodata = yes when there's nothing at all to show
-           busliveroutes = your routes with a live time (for tt_check.js)
            BusStateIslandData (global, read live by the island)
    ================================================================== */
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
@@ -4887,10 +4948,10 @@ function debugLog(msg) {
   setGlobal('BusDebugLog', JSON.stringify(a.slice(-20)));
 }
 // Trip recorder (Settings: Record trips, BusRecord on). Each call adds one line of JSON for a file in
-// Download/Tasker-bus-trip-data (Downloads in the Files app): bus-trip-Mon.jsonl to
-// bus-trip-Sun.jsonl, so a week is kept and each day's file is
-// started afresh when that weekday comes round again. Everything stays on the phone until you upload
-// it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
+// Download/Tasker-bus-trip-data (Downloads in the Files app), one per day, named by its date and
+// weekday: bus-trip-2026-10-12-Mon.jsonl (4.58; before, bus-trip-Mon.jsonl was started afresh each
+// week, so a week not yet uploaded was lost). Every day is kept until you delete it. Everything stays
+// on the phone until you upload it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
 // The script doesn't write the file itself (4.43). Tasker runs a script's writeFile as a task of its
 // own, and a script waiting on it while another script was running hung both for 45 s (a long press
 // on the island just as the screen came on, Thursday 8 Oct). So the lines are collected here, and the
@@ -4904,10 +4965,10 @@ var busrecappend;
 var busrecday;
 function record(kind, data) {
   if (global('BusRecord') !== 'on') return;
-  var d = new Date(); var day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
+  var d = new Date();
   var line = JSON.stringify(Object.assign({ t: d.getTime(), k: kind }, data || {}));
   if (busrecline) { busrecline += '\n' + line; return; }
-  busrecfile = 'Download/Tasker-bus-trip-data/bus-trip-' + day + '.jsonl';
+  busrecfile = 'Download/Tasker-bus-trip-data/' + recordName(d);
   busrecday = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   // The day only counts as started once its first line is really written: if that fails, the next
   // line tries again from scratch, with the setup (4.38)
@@ -4922,6 +4983,11 @@ function record(kind, data) {
     line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
   }
   busrecline = line;
+}
+// The day's file name: bus-trip-2026-10-12-Mon.jsonl (4.58), so the files sort by date
+function recordName(d) {
+  var two = function (n) { return (n &lt; 10 ? '0' : '') + n; };
+  return 'bus-trip-' + d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()) + '-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] + '.jsonl';
 }
 // Which of the buses listed at a stop is the one you're riding towards it. eta is when you'd get
 // there at the pace you've been closing in (ms). Each bus's TfL time is compared with it: the
@@ -5002,8 +5068,6 @@ if (keptNow.length) debugLog('TfL dropped ' + keptNow.join(', ') + ': kept on it
 var d0 = new Date(); var nowMin = d0.getHours() * 60 + d0.getMinutes() + d0.getSeconds() / 60;
 var tt = JSON.parse(get('BusCacheTimetable') || '{}')[get('BusStateStopId')];
 var liveRoutes = deps.map(function (x) { return x.k; });
-// For tt_check.js, after the island: only routes with no live time need the timetable (4.43)
-var busliveroutes = liveRoutes.join(',');
 Object.keys((tt &amp;&amp; tt.r) || {}).forEach(function (route) {
   var saved = tt.r[route];
   if (liveRoutes.indexOf(route) &gt; -1 || mine.indexOf(route) &lt; 0 || !saved || !saved.t) return;
@@ -5151,7 +5215,11 @@ if (busbuzz === 'yes') {
 }
 // Recorder: TfL's predictions as they came (route, vehicle, seconds away), for steadier times,
 // matching you to your bus, and spotting buses that have left
-record('tfl', { stop: get('BusStateStopId'), code: code, you: yourBus ? yourBus.v : undefined, cached: loc('buscachedat') ? Math.round((now - parseInt(loc('buscachedat'), 10)) / 1000) : undefined, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
+// A request that failed: why, as Tasker said (4.58; the HTTP step clears it first)
+// (A reply with an error code says so: 429 or 503 is TfL answering, not the connection failing)
+var failWhy = code === '200' ? '' : (loc('errmsg') || (code ? 'HTTP ' + code : 'no reply'));
+if (failWhy &amp;&amp; !loc('buscachedat')) debugLog('TfL didn\u2019t answer (' + failWhy.slice(0, 80) + '): ' + (deps.length ? 'kept and timetable times only' : 'nothing to show'));
+record('tfl', { stop: get('BusStateStopId'), code: code, err: failWhy ? failWhy.slice(0, 160) : undefined, you: yourBus ? yourBus.v : undefined, cached: loc('buscachedat') ? Math.round((now - parseInt(loc('buscachedat'), 10)) / 1000) : undefined, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
   b: deps.map(function (x) { return [x.k, x.v || '', Math.round((x.t - now) / 1000), x.kept ? 'k' : x.st === 'sched' ? 's' : 'l']; }),
   o: otherBuses.length ? otherBuses.map(function (x) { return [x.k, x.v, Math.round((x.t - now) / 1000), x.d]; }) : undefined });   // the stop's other routes (4.41)
 // The stop's letter, from its TfL indicator ("Stop B" -&gt; B, "Stop BK" -&gt; BK). Stops without one
@@ -5238,14 +5306,14 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act24" ve="7">
+		<Action sr="act25" ve="7">
 			<code>37</code>
 			<label>Trip recorder on: write what was just recorded · Scripts no longer write the file themselves: Tasker ran that as a task of its own, and two scripts at once could hang each other for 45 s</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecfile</lhs><op>2</op><rhs>Download/*</rhs></Condition></ConditionList></Action>
-		<Action sr="act25" ve="7"><code>409</code>
+		<Action sr="act26" ve="7"><code>409</code>
 			<se>false</se>
 			<label>   A new day: make sure its folder is there · Download/Tasker-bus-trip-data, in case it was deleted since</label><Str sr="arg0" ve="3">Download/Tasker-bus-trip-data</Str><Int sr="arg1" val="1"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act26" ve="7">
+		<Action sr="act27" ve="7">
 			<code>547</code>
 			<label>   Clear the last error, to spot a new one · A void method only reports failure as an error</label>
 			<Str sr="arg0" ve="3">%errmsg</Str>
@@ -5256,28 +5324,28 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act27" ve="7"><code>664</code>
-			<se>false</se>
-			<label>   Open the file · On a new day, start it afresh</label><Str sr="arg0" ve="3">busrecw</Str><Str sr="arg1" ve="3">java.io.FileWriter</Str><Str sr="arg2" ve="3">new {java.io.FileWriter} (String, boolean)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3">%busrecappend</Str><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
 		<Action sr="act28" ve="7"><code>664</code>
 			<se>false</se>
-			<label>   Write the lines · Every line the script recorded: the setup first on a new day</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">%busrecline</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
+			<label>   Open the file · On a new day, start it afresh</label><Str sr="arg0" ve="3">busrecw</Str><Str sr="arg1" ve="3">java.io.FileWriter</Str><Str sr="arg2" ve="3">new {java.io.FileWriter} (String, boolean)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3">%busrecappend</Str><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
 		<Action sr="act29" ve="7"><code>664</code>
 			<se>false</se>
-			<label>   Android's line break · So the file always ends with a complete line</label><Str sr="arg0" ve="3">busrecnl</Str><Str sr="arg1" ve="3">java.lang.System</Str><Str sr="arg2" ve="3">lineSeparator {String} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
+			<label>   Write the lines · Every line the script recorded: the setup first on a new day</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">%busrecline</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
 		<Action sr="act30" ve="7"><code>664</code>
 			<se>false</se>
-			<label>   Write it after the last line · Ends the last line</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">busrecnl</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
+			<label>   Android's line break · So the file always ends with a complete line</label><Str sr="arg0" ve="3">busrecnl</Str><Str sr="arg1" ve="3">java.lang.System</Str><Str sr="arg2" ve="3">lineSeparator {String} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
 		<Action sr="act31" ve="7"><code>664</code>
 			<se>false</se>
+			<label>   Write it after the last line · Ends the last line</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">busrecnl</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
+		<Action sr="act32" ve="7"><code>664</code>
+			<se>false</se>
 			<label>   Close the file · Saves it</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">close {} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act32" ve="7">
+		<Action sr="act33" ve="7">
 			<code>37</code>
 			<label>   Did it work? · An error from any of the steps above leaves Tasker's last error changed</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act33" ve="7"><code>549</code>
+		<Action sr="act34" ve="7"><code>549</code>
 			<label>   No write error to report · Bus Status shows the last write error, if there was one</label><Str sr="arg0" ve="3">%BusRecordErr</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act34" ve="7">
+		<Action sr="act35" ve="7">
 			<code>547</code>
 			<label>   A new day: it has started · Once its first line is really written; if that failed, the next line starts the file again, with the setup</label>
 			<Str sr="arg0" ve="3">%BusRecordDay</Str>
@@ -5288,19 +5356,19 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act35" ve="7"><code>664</code>
-			<se>false</se>
-			<label>   A new file: announce it to the media index, so the Files app lists it · Files written straight to storage aren't listed until Android's media scanner has seen them</label><Str sr="arg0" ve="3">busscanpath</Str><Str sr="arg1" ve="3">java.lang.String</Str><Str sr="arg2" ve="3">new {java.lang.String} (String)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
 		<Action sr="act36" ve="7"><code>664</code>
 			<se>false</se>
-			<label>   Its path, as a list of one · The scanner takes a list of paths</label><Str sr="arg0" ve="3">busscanlist</Str><Str sr="arg1" ve="3">busscanpath</Str><Str sr="arg2" ve="3">split {String[]} (String)</Str><Str sr="arg3" ve="3">,</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
+			<label>   A new file: announce it to the media index, so the Files app lists it · Files written straight to storage aren't listed until Android's media scanner has seen them</label><Str sr="arg0" ve="3">busscanpath</Str><Str sr="arg1" ve="3">java.lang.String</Str><Str sr="arg2" ve="3">new {java.lang.String} (String)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
 		<Action sr="act37" ve="7"><code>664</code>
 			<se>false</se>
+			<label>   Its path, as a list of one · The scanner takes a list of paths</label><Str sr="arg0" ve="3">busscanlist</Str><Str sr="arg1" ve="3">busscanpath</Str><Str sr="arg2" ve="3">split {String[]} (String)</Str><Str sr="arg3" ve="3">,</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
+		<Action sr="act38" ve="7"><code>664</code>
+			<se>false</se>
 			<label>   Ask Android to scan it · MediaScannerConnection.scanFile, with no type and no reply wanted</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">android.media.MediaScannerConnection</Str><Str sr="arg2" ve="3">scanFile {} (android.content.Context, String[], String[], android.media.MediaScannerConnection$OnScanCompletedListener)</Str><Str sr="arg3" ve="3">CONTEXT</Str><Str sr="arg4" ve="3">busscanlist</Str><Str sr="arg5" ve="3">null</Str><Str sr="arg6" ve="3">null</Str><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act38" ve="7">
+		<Action sr="act39" ve="7">
 			<code>43</code>
 		</Action>
-		<Action sr="act39" ve="7">
+		<Action sr="act40" ve="7">
 			<code>547</code>
 			<label>   Failed: keep why, for Bus Status · The next line tries again</label>
 			<Str sr="arg0" ve="3">%BusRecordErr</Str>
@@ -5311,29 +5379,29 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act40" ve="7">
+		<Action sr="act41" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act41" ve="7"><code>549</code>
-			<label>   Done: forget the lines · Another script in the same task starts with nothing collected</label><Str sr="arg0" ve="3">%busrecline</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
 		<Action sr="act42" ve="7"><code>549</code>
-			<label>   the file · Cleared too</label><Str sr="arg0" ve="3">%busrecfile</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
+			<label>   Done: forget the lines · Another script in the same task starts with nothing collected</label><Str sr="arg0" ve="3">%busrecline</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
 		<Action sr="act43" ve="7"><code>549</code>
-			<label>   whether to start it afresh · Cleared too</label><Str sr="arg0" ve="3">%busrecappend</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
+			<label>   the file · Cleared too</label><Str sr="arg0" ve="3">%busrecfile</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
 		<Action sr="act44" ve="7"><code>549</code>
+			<label>   whether to start it afresh · Cleared too</label><Str sr="arg0" ve="3">%busrecappend</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
+		<Action sr="act45" ve="7"><code>549</code>
 			<label>   and the day · Cleared too</label><Str sr="arg0" ve="3">%busrecday</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act45" ve="7">
+		<Action sr="act46" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act46" ve="7">
+		<Action sr="act47" ve="7">
 			<code>137</code>
 			<label>No live data and no timetable: keep showing the last times · For example with no signal</label>
 			<Int sr="arg0" val="0"/>
 			<Str sr="arg1" ve="3"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busnodata</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act47" ve="7"><code>61</code>
+		<Action sr="act48" ve="7"><code>61</code>
 			<label>A bus within 5 minutes: buzz · Three 200 ms buzzes, on two refreshes in a row, then quiet</label><Int sr="arg0" val="200"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act48" ve="7">
+		<Action sr="act49" ve="7">
 			<code>30</code>
 			<label>   pause · 200 ms between buzzes</label>
 			<Int sr="arg0" val="200"/>
@@ -5342,9 +5410,9 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act49" ve="7"><code>61</code>
+		<Action sr="act50" ve="7"><code>61</code>
 			<label>   buzz · The next of the three</label><Int sr="arg0" val="200"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act50" ve="7">
+		<Action sr="act51" ve="7">
 			<code>30</code>
 			<label>   pause · 200 ms between buzzes</label>
 			<Int sr="arg0" val="200"/>
@@ -5353,22 +5421,59 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act51" ve="7"><code>61</code>
+		<Action sr="act52" ve="7"><code>61</code>
 			<label>   buzz (three in all) · The last of the three</label><Int sr="arg0" val="200"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act52" ve="7">
+		<Action sr="act53" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act53" ve="7">
+		<Action sr="act54" ve="7">
+			<code>547</code>
+			<label>Draw the island if it needs it · Unless Settings is open (4.58)</label>
+			<Str sr="arg0" ve="3">%busdraw</Str>
+			<Str sr="arg1" ve="3">yes</Str>
+			<Int sr="arg2" val="0"/>
+			<Int sr="arg3" val="0"/>
+			<Int sr="arg4" val="0"/>
+			<Int sr="arg5" val="3"/>
+			<Int sr="arg6" val="0"/>
+		</Action>
+		<Action sr="act55" ve="7">
+			<code>547</code>
+			<label>   not while Settings is open · Settings takes the island down while its screen shows; a screen turned on, or the phone turned upright, would draw it over Settings</label>
+			<Str sr="arg0" ve="3">%busdraw</Str>
+			<Str sr="arg1" ve="3">no</Str>
+			<Int sr="arg2" val="0"/>
+			<Int sr="arg3" val="0"/>
+			<Int sr="arg4" val="0"/>
+			<Int sr="arg5" val="3"/>
+			<Int sr="arg6" val="0"/>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%TRUN</lhs><op>2</op><rhs>*Bus Settings*</rhs></Condition></ConditionList></Action>
+		<Action sr="act56" ve="7">
+			<code>547</code>
+			<label>   unless Settings asked, as it closed · Bus Settings performs this refresh (par1 settings) to put the island back</label>
+			<Str sr="arg0" ve="3">%busdraw</Str>
+			<Str sr="arg1" ve="3">yes</Str>
+			<Int sr="arg2" val="0"/>
+			<Int sr="arg3" val="0"/>
+			<Int sr="arg4" val="0"/>
+			<Int sr="arg5" val="3"/>
+			<Int sr="arg6" val="0"/>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrefpar</lhs><op>2</op><rhs>settings</rhs></Condition></ConditionList></Action>
+		<Action sr="act57" ve="7">
+			<code>37</code>
+			<label>Settings not open · Or closing, and asking for the island back</label>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busdraw</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
+		<Action sr="act58" ve="7">
 			<code>37</code>
 			<label>Island not up yet, or to be drawn again · 2): show it (after that it updates itself</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateIslandShown</lhs><op>3</op><rhs>1</rhs></Condition></ConditionList></Action>
-		<Action sr="act54" ve="7"><code>664</code>
+		<Action sr="act59" ve="7"><code>664</code>
 			<se>false</se>
 			<label>Which way up is the phone? · Screen settings</label><Str sr="arg0" ve="3">confres</Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">getResources {Resources} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrefpar</lhs><op>3</op><rhs>open/close</rhs></Condition></ConditionList></Action>
-		<Action sr="act55" ve="7"><code>664</code>
+		<Action sr="act60" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   As text · So the script can read it</label><Str sr="arg0" ve="3">%busconfig</Str><Str sr="arg1" ve="3">confres</Str><Str sr="arg2" ve="3">getConfiguration {Object} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrefpar</lhs><op>3</op><rhs>open/close</rhs></Condition></ConditionList></Action>
-		<Action sr="act56" ve="7">
+		<Action sr="act61" ve="7">
 			<code>129</code>
 			<label>Sideways or upright? · From Android's own screen configuration ("port" or "land")</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -5403,11 +5508,11 @@ setGlobal('BusStateFullscreenInfo', (land ? 'sideways' : 'upright') + (editing ?
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrefpar</lhs><op>3</op><rhs>open/close</rhs></Condition></ConditionList></Action>
-		<Action sr="act57" ve="7">
+		<Action sr="act62" ve="7">
 			<code>37</code>
 			<label>Upright: show the island · Sideways: keep it hidden for now</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busfullnow</lhs><op>3</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act58" ve="7">
+		<Action sr="act63" ve="7">
 			<code>129</code>
 			<label>Build the island, and pick which scene name to show it under · The other one from last time</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -6466,7 +6571,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act59" ve="7">
+		<Action sr="act64" ve="7">
 			<code>479</code>
 			<se>false</se>
 			<label>Show it around the camera · On top of the old one, if any</label>
@@ -6490,7 +6595,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg8" val="1"/>
 			<Str sr="arg9" ve="3">%busanim</Str>
 		</Action>
-		<Action sr="act60" ve="7">
+		<Action sr="act65" ve="7">
 			<code>30</code>
 			<label>Let it fade in over the old one · Not when the stop board closes: it goes at once</label>
 			<Int sr="arg0"><var>%busfadems</var></Int>
@@ -6499,13 +6604,13 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busoldscene</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act61" ve="7">
+		<Action sr="act66" ve="7">
 			<code>480</code>
 			<se>false</se>
 			<label>Now remove the old one · The new island is already showing on top</label>
 			<Str sr="arg0" ve="3">%busoldscene</Str>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busoldscene</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act62" ve="7">
+		<Action sr="act67" ve="7">
 			<code>547</code>
 			<label>Island showing · So later refreshes just update it, rather than drawing it again</label>
 			<Str sr="arg0" ve="3">%BusStateIslandShown</Str>
@@ -6516,7 +6621,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act63" ve="7">
+		<Action sr="act68" ve="7">
 			<code>548</code>
 			<label>First time only: how to use the island · A one-off message explaining the swipe and hold gestures</label>
 			<Str sr="arg0" ve="3">Tap the island for every bus at the stop. Swipe it for the next route. Hold it for the other side of the road. Swipe it right across to dismiss it.</Str>
@@ -6536,7 +6641,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateHintShown</lhs><op>3</op><rhs>1</rhs></Condition></ConditionList></Action>
-		<Action sr="act64" ve="7">
+		<Action sr="act69" ve="7">
 			<code>547</code>
 			<label>Hint shown · So the gestures message only appears once</label>
 			<Str sr="arg0" ve="3">%BusStateHintShown</Str>
@@ -6547,21 +6652,24 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act65" ve="7">
+		<Action sr="act70" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act66" ve="7">
+		<Action sr="act71" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act67" ve="7">
+		<Action sr="act72" ve="7">
+			<code>38</code>
+		</Action>
+		<Action sr="act73" ve="7">
 			<code>37</code>
 			<label>The stop board is open: now fetch its times, as they were due (it updates itself) · The board shows the new times as soon as they arrive, without being drawn again</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busafter</lhs><op>2</op><rhs>no</rhs></Condition></ConditionList></Action>
-		<Action sr="act68" ve="7">
+		<Action sr="act74" ve="7">
 			<code>37</code>
 			<label>A long press to the stop that was got ready: its times are here already (4.45) · Bus Refresh keeps the next stop's times ready after each refresh, so switching sides needn't wait for TfL</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busfresh</lhs><op>2</op><rhs>cached</rhs></Condition></ConditionList></Action>
-		<Action sr="act69" ve="7">
+		<Action sr="act75" ve="7">
 			<code>129</code>
 			<label>Use them, rather than wait for TfL · Turns the kept reply back into seconds away from now</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -6588,10 +6696,12 @@ var buscachedat = String(ready.at || now);
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act70" ve="7">
+		<Action sr="act76" ve="7">
 			<code>43</code>
 		</Action>
-		<Action sr="act71" ve="7">
+		<Action sr="act77" ve="7"><code>549</code>
+			<label>Clear the last error, so a failed request says why (4.58) · Tasker puts the reason in %errmsg; the recorder keeps it with the reply (err), and the debug log says so</label><Str sr="arg0" ve="3">%errmsg</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
+		<Action sr="act78" ve="7">
 			<code>339</code>
 			<se>false</se>
 			<label>Ask TfL for live arrivals · Every bus TfL predicts at this stop, about 30 minutes ahead. Read by the next step</label>
@@ -6611,10 +6721,10 @@ var buscachedat = String(ready.at || now);
 			<Int sr="arg8" val="15"/>
 			<Int sr="arg9" val="0"/>
 		</Action>
-		<Action sr="act72" ve="7">
+		<Action sr="act79" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act73" ve="7">
+		<Action sr="act80" ve="7">
 			<code>129</code>
 			<label>Build the departures: live times, timetable where there are none · One line per route, for the island</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -6626,7 +6736,6 @@ var buscachedat = String(ready.at || now);
      { k: label (route), d: destination, t: due (ms), st: status }
      st = live | sched (timetable) | late | cancel (late/cancel: trains, V5)
    Output: busnodata = yes when there's nothing at all to show
-           busliveroutes = your routes with a live time (for tt_check.js)
            BusStateIslandData (global, read live by the island)
    ================================================================== */
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
@@ -6724,10 +6833,10 @@ function debugLog(msg) {
   setGlobal('BusDebugLog', JSON.stringify(a.slice(-20)));
 }
 // Trip recorder (Settings: Record trips, BusRecord on). Each call adds one line of JSON for a file in
-// Download/Tasker-bus-trip-data (Downloads in the Files app): bus-trip-Mon.jsonl to
-// bus-trip-Sun.jsonl, so a week is kept and each day's file is
-// started afresh when that weekday comes round again. Everything stays on the phone until you upload
-// it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
+// Download/Tasker-bus-trip-data (Downloads in the Files app), one per day, named by its date and
+// weekday: bus-trip-2026-10-12-Mon.jsonl (4.58; before, bus-trip-Mon.jsonl was started afresh each
+// week, so a week not yet uploaded was lost). Every day is kept until you delete it. Everything stays
+// on the phone until you upload it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
 // The script doesn't write the file itself (4.43). Tasker runs a script's writeFile as a task of its
 // own, and a script waiting on it while another script was running hung both for 45 s (a long press
 // on the island just as the screen came on, Thursday 8 Oct). So the lines are collected here, and the
@@ -6741,10 +6850,10 @@ var busrecappend;
 var busrecday;
 function record(kind, data) {
   if (global('BusRecord') !== 'on') return;
-  var d = new Date(); var day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
+  var d = new Date();
   var line = JSON.stringify(Object.assign({ t: d.getTime(), k: kind }, data || {}));
   if (busrecline) { busrecline += '\n' + line; return; }
-  busrecfile = 'Download/Tasker-bus-trip-data/bus-trip-' + day + '.jsonl';
+  busrecfile = 'Download/Tasker-bus-trip-data/' + recordName(d);
   busrecday = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   // The day only counts as started once its first line is really written: if that fails, the next
   // line tries again from scratch, with the setup (4.38)
@@ -6759,6 +6868,11 @@ function record(kind, data) {
     line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
   }
   busrecline = line;
+}
+// The day's file name: bus-trip-2026-10-12-Mon.jsonl (4.58), so the files sort by date
+function recordName(d) {
+  var two = function (n) { return (n &lt; 10 ? '0' : '') + n; };
+  return 'bus-trip-' + d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()) + '-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] + '.jsonl';
 }
 // Which of the buses listed at a stop is the one you're riding towards it. eta is when you'd get
 // there at the pace you've been closing in (ms). Each bus's TfL time is compared with it: the
@@ -6839,8 +6953,6 @@ if (keptNow.length) debugLog('TfL dropped ' + keptNow.join(', ') + ': kept on it
 var d0 = new Date(); var nowMin = d0.getHours() * 60 + d0.getMinutes() + d0.getSeconds() / 60;
 var tt = JSON.parse(get('BusCacheTimetable') || '{}')[get('BusStateStopId')];
 var liveRoutes = deps.map(function (x) { return x.k; });
-// For tt_check.js, after the island: only routes with no live time need the timetable (4.43)
-var busliveroutes = liveRoutes.join(',');
 Object.keys((tt &amp;&amp; tt.r) || {}).forEach(function (route) {
   var saved = tt.r[route];
   if (liveRoutes.indexOf(route) &gt; -1 || mine.indexOf(route) &lt; 0 || !saved || !saved.t) return;
@@ -6988,7 +7100,11 @@ if (busbuzz === 'yes') {
 }
 // Recorder: TfL's predictions as they came (route, vehicle, seconds away), for steadier times,
 // matching you to your bus, and spotting buses that have left
-record('tfl', { stop: get('BusStateStopId'), code: code, you: yourBus ? yourBus.v : undefined, cached: loc('buscachedat') ? Math.round((now - parseInt(loc('buscachedat'), 10)) / 1000) : undefined, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
+// A request that failed: why, as Tasker said (4.58; the HTTP step clears it first)
+// (A reply with an error code says so: 429 or 503 is TfL answering, not the connection failing)
+var failWhy = code === '200' ? '' : (loc('errmsg') || (code ? 'HTTP ' + code : 'no reply'));
+if (failWhy &amp;&amp; !loc('buscachedat')) debugLog('TfL didn\u2019t answer (' + failWhy.slice(0, 80) + '): ' + (deps.length ? 'kept and timetable times only' : 'nothing to show'));
+record('tfl', { stop: get('BusStateStopId'), code: code, err: failWhy ? failWhy.slice(0, 160) : undefined, you: yourBus ? yourBus.v : undefined, cached: loc('buscachedat') ? Math.round((now - parseInt(loc('buscachedat'), 10)) / 1000) : undefined, took: loc('busstart') ? Date.now() - parseInt(loc('busstart'), 10) : null,
   b: deps.map(function (x) { return [x.k, x.v || '', Math.round((x.t - now) / 1000), x.kept ? 'k' : x.st === 'sched' ? 's' : 'l']; }),
   o: otherBuses.length ? otherBuses.map(function (x) { return [x.k, x.v, Math.round((x.t - now) / 1000), x.d]; }) : undefined });   // the stop's other routes (4.41)
 // The stop's letter, from its TfL indicator ("Stop B" -&gt; B, "Stop BK" -&gt; BK). Stops without one
@@ -7075,14 +7191,14 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act74" ve="7">
+		<Action sr="act81" ve="7">
 			<code>37</code>
 			<label>Trip recorder on: write what was just recorded · Scripts no longer write the file themselves: Tasker ran that as a task of its own, and two scripts at once could hang each other for 45 s</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecfile</lhs><op>2</op><rhs>Download/*</rhs></Condition></ConditionList></Action>
-		<Action sr="act75" ve="7"><code>409</code>
+		<Action sr="act82" ve="7"><code>409</code>
 			<se>false</se>
 			<label>   A new day: make sure its folder is there · Download/Tasker-bus-trip-data, in case it was deleted since</label><Str sr="arg0" ve="3">Download/Tasker-bus-trip-data</Str><Int sr="arg1" val="1"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act76" ve="7">
+		<Action sr="act83" ve="7">
 			<code>547</code>
 			<label>   Clear the last error, to spot a new one · A void method only reports failure as an error</label>
 			<Str sr="arg0" ve="3">%errmsg</Str>
@@ -7093,28 +7209,28 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act77" ve="7"><code>664</code>
+		<Action sr="act84" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Open the file · On a new day, start it afresh</label><Str sr="arg0" ve="3">busrecw</Str><Str sr="arg1" ve="3">java.io.FileWriter</Str><Str sr="arg2" ve="3">new {java.io.FileWriter} (String, boolean)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3">%busrecappend</Str><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act78" ve="7"><code>664</code>
+		<Action sr="act85" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Write the lines · Every line the script recorded: the setup first on a new day</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">%busrecline</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act79" ve="7"><code>664</code>
+		<Action sr="act86" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Android's line break · So the file always ends with a complete line</label><Str sr="arg0" ve="3">busrecnl</Str><Str sr="arg1" ve="3">java.lang.System</Str><Str sr="arg2" ve="3">lineSeparator {String} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act80" ve="7"><code>664</code>
+		<Action sr="act87" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Write it after the last line · Ends the last line</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">busrecnl</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act81" ve="7"><code>664</code>
+		<Action sr="act88" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Close the file · Saves it</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">close {} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act82" ve="7">
+		<Action sr="act89" ve="7">
 			<code>37</code>
 			<label>   Did it work? · An error from any of the steps above leaves Tasker's last error changed</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act83" ve="7"><code>549</code>
+		<Action sr="act90" ve="7"><code>549</code>
 			<label>   No write error to report · Bus Status shows the last write error, if there was one</label><Str sr="arg0" ve="3">%BusRecordErr</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act84" ve="7">
+		<Action sr="act91" ve="7">
 			<code>547</code>
 			<label>   A new day: it has started · Once its first line is really written; if that failed, the next line starts the file again, with the setup</label>
 			<Str sr="arg0" ve="3">%BusRecordDay</Str>
@@ -7125,19 +7241,19 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act85" ve="7"><code>664</code>
+		<Action sr="act92" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   A new file: announce it to the media index, so the Files app lists it · Files written straight to storage aren't listed until Android's media scanner has seen them</label><Str sr="arg0" ve="3">busscanpath</Str><Str sr="arg1" ve="3">java.lang.String</Str><Str sr="arg2" ve="3">new {java.lang.String} (String)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act86" ve="7"><code>664</code>
+		<Action sr="act93" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Its path, as a list of one · The scanner takes a list of paths</label><Str sr="arg0" ve="3">busscanlist</Str><Str sr="arg1" ve="3">busscanpath</Str><Str sr="arg2" ve="3">split {String[]} (String)</Str><Str sr="arg3" ve="3">,</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act87" ve="7"><code>664</code>
+		<Action sr="act94" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Ask Android to scan it · MediaScannerConnection.scanFile, with no type and no reply wanted</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">android.media.MediaScannerConnection</Str><Str sr="arg2" ve="3">scanFile {} (android.content.Context, String[], String[], android.media.MediaScannerConnection$OnScanCompletedListener)</Str><Str sr="arg3" ve="3">CONTEXT</Str><Str sr="arg4" ve="3">busscanlist</Str><Str sr="arg5" ve="3">null</Str><Str sr="arg6" ve="3">null</Str><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act88" ve="7">
+		<Action sr="act95" ve="7">
 			<code>43</code>
 		</Action>
-		<Action sr="act89" ve="7">
+		<Action sr="act96" ve="7">
 			<code>547</code>
 			<label>   Failed: keep why, for Bus Status · The next line tries again</label>
 			<Str sr="arg0" ve="3">%BusRecordErr</Str>
@@ -7148,29 +7264,29 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act90" ve="7">
+		<Action sr="act97" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act91" ve="7"><code>549</code>
+		<Action sr="act98" ve="7"><code>549</code>
 			<label>   Done: forget the lines · Another script in the same task starts with nothing collected</label><Str sr="arg0" ve="3">%busrecline</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act92" ve="7"><code>549</code>
+		<Action sr="act99" ve="7"><code>549</code>
 			<label>   the file · Cleared too</label><Str sr="arg0" ve="3">%busrecfile</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act93" ve="7"><code>549</code>
+		<Action sr="act100" ve="7"><code>549</code>
 			<label>   whether to start it afresh · Cleared too</label><Str sr="arg0" ve="3">%busrecappend</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act94" ve="7"><code>549</code>
+		<Action sr="act101" ve="7"><code>549</code>
 			<label>   and the day · Cleared too</label><Str sr="arg0" ve="3">%busrecday</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act95" ve="7">
+		<Action sr="act102" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act96" ve="7">
+		<Action sr="act103" ve="7">
 			<code>137</code>
 			<label>No live data and no timetable: keep showing the last times · For example with no signal</label>
 			<Int sr="arg0" val="0"/>
 			<Str sr="arg1" ve="3"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busnodata</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act97" ve="7"><code>61</code>
+		<Action sr="act104" ve="7"><code>61</code>
 			<label>A bus within 5 minutes: buzz · Three 200 ms buzzes, on two refreshes in a row, then quiet</label><Int sr="arg0" val="200"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act98" ve="7">
+		<Action sr="act105" ve="7">
 			<code>30</code>
 			<label>   pause · 200 ms between buzzes</label>
 			<Int sr="arg0" val="200"/>
@@ -7179,9 +7295,9 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act99" ve="7"><code>61</code>
+		<Action sr="act106" ve="7"><code>61</code>
 			<label>   buzz · The next of the three</label><Int sr="arg0" val="200"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act100" ve="7">
+		<Action sr="act107" ve="7">
 			<code>30</code>
 			<label>   pause · 200 ms between buzzes</label>
 			<Int sr="arg0" val="200"/>
@@ -7190,9 +7306,9 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act101" ve="7"><code>61</code>
+		<Action sr="act108" ve="7"><code>61</code>
 			<label>   buzz (three in all) · The last of the three</label><Int sr="arg0" val="200"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuzz</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act102" ve="7">
+		<Action sr="act109" ve="7">
 			<code>547</code>
 			<label>   Times were just fetched · So the timetable check below runs</label>
 			<Str sr="arg0" ve="3">%busfresh</Str>
@@ -7203,17 +7319,17 @@ function mins(x) { var m = Math.round((x.t - now) / 60000); return (x.st === 'sc
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act103" ve="7">
+		<Action sr="act110" ve="7">
 			<code>37</code>
 			<label>   The board needs more or fewer lines: draw it again · A route came or went with the new times, so the board is drawn at its new height</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateIslandShown</lhs><op>3</op><rhs>1</rhs></Condition></ConditionList></Action>
-		<Action sr="act104" ve="7"><code>664</code>
+		<Action sr="act111" ve="7"><code>664</code>
 			<se>false</se>
 			<label>Which way up is the phone? · Screen settings</label><Str sr="arg0" ve="3">confres</Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">getResources {Resources} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrefpar</lhs><op>3</op><rhs>open/close</rhs></Condition></ConditionList></Action>
-		<Action sr="act105" ve="7"><code>664</code>
+		<Action sr="act112" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   As text · So the script can read it</label><Str sr="arg0" ve="3">%busconfig</Str><Str sr="arg1" ve="3">confres</Str><Str sr="arg2" ve="3">getConfiguration {Object} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrefpar</lhs><op>3</op><rhs>open/close</rhs></Condition></ConditionList></Action>
-		<Action sr="act106" ve="7">
+		<Action sr="act113" ve="7">
 			<code>129</code>
 			<label>Sideways or upright? · From Android's own screen configuration ("port" or "land")</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -7248,11 +7364,11 @@ setGlobal('BusStateFullscreenInfo', (land ? 'sideways' : 'upright') + (editing ?
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrefpar</lhs><op>3</op><rhs>open/close</rhs></Condition></ConditionList></Action>
-		<Action sr="act107" ve="7">
+		<Action sr="act114" ve="7">
 			<code>37</code>
 			<label>Upright: show the island · Sideways: keep it hidden for now</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busfullnow</lhs><op>3</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act108" ve="7">
+		<Action sr="act115" ve="7">
 			<code>129</code>
 			<label>Build the board again, and pick which scene name to show it under · The other one from last time</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -8311,7 +8427,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act109" ve="7">
+		<Action sr="act116" ve="7">
 			<code>479</code>
 			<se>false</se>
 			<label>Show it around the camera · On top of the old one, if any</label>
@@ -8335,7 +8451,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg8" val="1"/>
 			<Str sr="arg9" ve="3">%busanim</Str>
 		</Action>
-		<Action sr="act110" ve="7">
+		<Action sr="act117" ve="7">
 			<code>30</code>
 			<label>Let it fade in over the old one · Not when the stop board closes: it goes at once</label>
 			<Int sr="arg0"><var>%busfadems</var></Int>
@@ -8344,13 +8460,13 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busoldscene</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act111" ve="7">
+		<Action sr="act118" ve="7">
 			<code>480</code>
 			<se>false</se>
 			<label>Now remove the old one · The new island is already showing on top</label>
 			<Str sr="arg0" ve="3">%busoldscene</Str>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busoldscene</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act112" ve="7">
+		<Action sr="act119" ve="7">
 			<code>547</code>
 			<label>Island showing · So later refreshes just update it, rather than drawing it again</label>
 			<Str sr="arg0" ve="3">%BusStateIslandShown</Str>
@@ -8361,31 +8477,35 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act113" ve="7">
+		<Action sr="act120" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act114" ve="7">
+		<Action sr="act121" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act115" ve="7">
+		<Action sr="act122" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act116" ve="7">
+		<Action sr="act123" ve="7">
 			<code>37</code>
 			<label>Times were just fetched: timetable needed too? · After the island, so it never holds it up</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busfresh</lhs><op>3</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act117" ve="7">
+		<Action sr="act124" ve="7">
 			<code>129</code>
-			<label>Timetable for this stop today, for routes with no live time? · Once a day per stop</label>
+			<label>Timetable for this stop today, for each of your routes there? · Once a day per stop and route</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
    Bus Refresh · Timetable needed for this stop?
    Scheduled times are the fallback when TfL has no live prediction for
    one of my routes (it only predicts about 30 minutes ahead) or can't be
    reached. Each stop's timetable is fetched once a day, one request per
    route, and kept in BusCacheTimetable. Since 4.43 this runs after the
-   island has been shown, and only for routes TfL had no live time for
-   just now (busliveroutes, from refresh.js), so it never holds up the
-   times: the next refresh shows the timetable's.
+   island has been shown, so it never holds up the times: the next
+   refresh shows the timetable's. Since 4.58, for every one of your
+   routes at the stop, not only those TfL had no live time for just now
+   (on Monday 12 October TfL stopped answering at Wexley, Stop D; the
+   566, live when you got there, had no timetable to fall back on, and
+   the island showed only the 517). A request that failed is tried again
+   after 5 minutes, rather than tomorrow.
    Output: busttfetch = yes / no, busttcount (routes to fetch)
    ================================================================== */
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
@@ -8404,8 +8524,7 @@ var here = pool[stopId] ? pool[stopId].r.filter(function (r) { return mine.index
 var tt = JSON.parse(get('BusCacheTimetable') || '{}');
 var today = new Date().toDateString();
 var have = (tt[stopId] &amp;&amp; tt[stopId].date === today) ? tt[stopId].r : {};
-var live = loc('busliveroutes').split(',');
-var missing = here.filter(function (r) { return !(r in have) &amp;&amp; live.indexOf(r) &lt; 0; });
+var missing = here.filter(function (r) { var got = have[r]; return !got || (got.fail &amp;&amp; Date.now() - got.fail &gt;= 5 * 60000); });
 
 var busttfetch = missing.length ? 'yes' : 'no';
 var busttcount = String(missing.length);
@@ -8415,18 +8534,18 @@ setGlobal('BusTempTimetableRoutes', missing.join(','));
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act118" ve="7">
+		<Action sr="act125" ve="7">
 			<code>37</code>
 			<label>Not yet: fetch it · Once a day per stop: today's timetable for each of your routes there</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busttfetch</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act119" ve="7">
+		<Action sr="act126" ve="7">
 			<code>39</code>
-			<label>For each of those routes · Your routes at this stop with no live time and no timetable yet today</label>
+			<label>For each of those routes · Your routes at this stop with no timetable yet today, live or not (4.58), or whose request failed 5 minutes ago or more</label>
 			<Str sr="arg0" ve="3">%i</Str>
 			<Str sr="arg1" ve="3">1:%busttcount</Str>
 			<Int sr="arg2" val="0"/>
 		</Action>
-		<Action sr="act120" ve="7">
+		<Action sr="act127" ve="7">
 			<code>129</code>
 			<label>Which route · The route this pass of the loop is about</label>
 			<Str sr="arg0" ve="3">/* Bus Refresh · Which route's timetable is this pass of the loop? (i = loop counter) */
@@ -8436,10 +8555,10 @@ var busttroute = global('BusTempTimetableRoutes').split(',')[parseInt(i, 10) - 1
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act121" ve="7">
+		<Action sr="act128" ve="7">
 			<code>339</code>
 			<se>false</se>
-			<label>Ask TfL for its timetable · For routes with no live prediction</label>
+			<label>Ask TfL for its timetable · Today's departures for that route here: the fallback when TfL has no live time, or doesn't answer</label>
 			<Bundle sr="arg0">
 				<Vals sr="val"/>
 			</Bundle>
@@ -8456,7 +8575,7 @@ var busttroute = global('BusTempTimetableRoutes').split(',')[parseInt(i, 10) - 1
 			<Int sr="arg8" val="15"/>
 			<Int sr="arg9" val="0"/>
 		</Action>
-		<Action sr="act122" ve="7">
+		<Action sr="act129" ve="7">
 			<code>129</code>
 			<label>Keep today's departures · Stored per stop and route; fetched again tomorrow</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -8466,8 +8585,10 @@ var busttroute = global('BusTempTimetableRoutes').split(',')[parseInt(i, 10) - 1
    [minutes after midnight, destination]. The destination is the last
    stop of that journey's pattern (knownJourneys[].intervalId points at
    stationIntervals), so short journeys show where they really end.
-   Stored per route as { t: [[minute, nameIndex], ...], n: [names] }. A failed request stores an empty list so it
-   isn't retried until tomorrow. Only the 8 most recent stops are kept.
+   Stored per route as { t: [[minute, nameIndex], ...], n: [names] }. A reply with no journeys today stores an
+   empty list, so it isn't asked for again until tomorrow; a request with no reply, or a 429 or 5xx, stores when
+   it failed (fail), and tt_check.js tries again 5 minutes later (4.58); any other error is kept as no
+   departures for the day. Only the 8 most recent stops are kept.
    ================================================================== */
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
@@ -8514,7 +8635,10 @@ trips.sort(function (a, b) { return a[0] - b[0]; });
 
 var tt = JSON.parse(get('BusCacheTimetable') || '{}');
 if (!tt[stopId] || tt[stopId].date !== today) { delete tt[stopId]; tt[stopId] = { date: today, r: {} }; }
-tt[stopId].r[busttroute] = { t: trips, n: names };
+// Tried again later only when it may work then: no reply, TfL busy (429) or failing (5xx). Any other
+// answer (a 404 for a route that doesn't call here, say) is kept for the day, as no departures
+var retry = code !== '200' &amp;&amp; (!code || code === '429' || /^5/.test(code));
+tt[stopId].r[busttroute] = retry ? { t: [], n: [], fail: Date.now() } : { t: trips, n: names };
 var keys = Object.keys(tt);
 while (keys.length &gt; 8) { delete tt[keys.shift()]; }
 setGlobal('BusCacheTimetable', JSON.stringify(tt));
@@ -8523,16 +8647,16 @@ setGlobal('BusCacheTimetable', JSON.stringify(tt));
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act123" ve="7">
+		<Action sr="act130" ve="7">
 			<code>40</code>
 		</Action>
-		<Action sr="act124" ve="7">
+		<Action sr="act131" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act125" ve="7">
+		<Action sr="act132" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act126" ve="7">
+		<Action sr="act133" ve="7">
 			<code>129</code>
 			<label>Get the stop a long press goes to ready? (not if its times are under 40 s old, there is no other stop, or the screen is off) · Only while a countdown is running, after the island is up</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -8564,13 +8688,13 @@ var busttstop = busprestop;
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act127" ve="7">
+		<Action sr="act134" ve="7">
 			<code>137</code>
 			<label>Nothing to get ready · No other stop nearby, its times are fresh enough, or the screen is off</label>
 			<Int sr="arg0" val="0"/>
 			<Str sr="arg1" ve="3"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busprefetch</lhs><op>3</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act128" ve="7">
+		<Action sr="act135" ve="7">
 			<code>339</code>
 			<se>false</se>
 			<label>Ask TfL for its live arrivals · For the stop a long press goes to: one extra small request per refresh while a countdown runs with the screen on</label>
@@ -8590,7 +8714,7 @@ var busttstop = busprestop;
 			<Int sr="arg8" val="15"/>
 			<Int sr="arg9" val="0"/>
 		</Action>
-		<Action sr="act129" ve="7">
+		<Action sr="act136" ve="7">
 			<code>129</code>
 			<label>Keep them for a long press · In BusStatePrefetch for up to 90 s, and as that stop's island data, so a long press shows its times at once</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -8608,8 +8732,6 @@ var busttstop = busprestop;
    - and (4.56) as the island's nx, so its page shows it the moment you
      hold the island, without waiting for Tasker.
    A failed fetch keeps the last.
-   Output: busliveroutes (your routes with a live time there, for
-           tt_check.js: the timetable is only needed for the others)
    ================================================================== */
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
@@ -8641,7 +8763,6 @@ function nextStop(at, cur) {
     : { u: at, r: cur.r, rot: cur.rot, s: stops[i].id, n: stops[i].name, l: stopLetter(stops[i].name), b: [], a: [], w: 1 } };
 }
 var now = Date.now();
-var busliveroutes = '';
 if (loc('http_response_code') === '200' &amp;&amp; loc('busprestop')) {
   try {
     var got = JSON.parse(http_data).map(function (b) { return [b.lineName, b.vehicleId || '', now + b.timeToStation * 1000, b.destinationName || '']; })
@@ -8659,7 +8780,6 @@ if (loc('http_response_code') === '200' &amp;&amp; loc('busprestop')) {
       else if (r.t2 === undefined &amp;&amp; x[2] - r.t &gt;= 60000) { r.t2 = x[2]; r.st2 = 'live'; }
       else if (r.t2 !== undefined &amp;&amp; r.t3 === undefined &amp;&amp; x[2] - r.t2 &gt;= 60000) { r.t3 = x[2]; r.st3 = 'live'; }
     });
-    busliveroutes = perRoute.map(function (r) { return r.k; }).join(',');
     // The stop's other routes, soonest first: up to 8, three times each (as refresh.js, 4.41)
     var others = [];
     var byRoute = {};
@@ -8690,18 +8810,22 @@ if (loc('http_response_code') === '200' &amp;&amp; loc('busprestop')) {
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act130" ve="7">
+		<Action sr="act137" ve="7">
 			<code>129</code>
-			<label>Its timetable today, for routes with no live time there? (once a day per stop) · The first switch of the day used to fetch it after the island showed</label>
+			<label>Its timetable today, for each of your routes there? (once a day per stop and route) · The first switch of the day used to fetch it after the island showed</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
    Bus Refresh · Timetable needed for this stop?
    Scheduled times are the fallback when TfL has no live prediction for
    one of my routes (it only predicts about 30 minutes ahead) or can't be
    reached. Each stop's timetable is fetched once a day, one request per
    route, and kept in BusCacheTimetable. Since 4.43 this runs after the
-   island has been shown, and only for routes TfL had no live time for
-   just now (busliveroutes, from refresh.js), so it never holds up the
-   times: the next refresh shows the timetable's.
+   island has been shown, so it never holds up the times: the next
+   refresh shows the timetable's. Since 4.58, for every one of your
+   routes at the stop, not only those TfL had no live time for just now
+   (on Monday 12 October TfL stopped answering at Wexley, Stop D; the
+   566, live when you got there, had no timetable to fall back on, and
+   the island showed only the 517). A request that failed is tried again
+   after 5 minutes, rather than tomorrow.
    Output: busttfetch = yes / no, busttcount (routes to fetch)
    ================================================================== */
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
@@ -8720,8 +8844,7 @@ var here = pool[stopId] ? pool[stopId].r.filter(function (r) { return mine.index
 var tt = JSON.parse(get('BusCacheTimetable') || '{}');
 var today = new Date().toDateString();
 var have = (tt[stopId] &amp;&amp; tt[stopId].date === today) ? tt[stopId].r : {};
-var live = loc('busliveroutes').split(',');
-var missing = here.filter(function (r) { return !(r in have) &amp;&amp; live.indexOf(r) &lt; 0; });
+var missing = here.filter(function (r) { var got = have[r]; return !got || (got.fail &amp;&amp; Date.now() - got.fail &gt;= 5 * 60000); });
 
 var busttfetch = missing.length ? 'yes' : 'no';
 var busttcount = String(missing.length);
@@ -8731,18 +8854,18 @@ setGlobal('BusTempTimetableRoutes', missing.join(','));
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act131" ve="7">
+		<Action sr="act138" ve="7">
 			<code>37</code>
 			<label>Not yet: fetch it too · Once a day for that stop, as for the stop you're at</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busttfetch</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
-		<Action sr="act132" ve="7">
+		<Action sr="act139" ve="7">
 			<code>39</code>
 			<label>For each of those routes there · One request per route, the same as for the current stop</label>
 			<Str sr="arg0" ve="3">%i</Str>
 			<Str sr="arg1" ve="3">1:%busttcount</Str>
 			<Int sr="arg2" val="0"/>
 		</Action>
-		<Action sr="act133" ve="7">
+		<Action sr="act140" ve="7">
 			<code>129</code>
 			<label>Which route · The route this pass of the loop is about</label>
 			<Str sr="arg0" ve="3">/* Bus Refresh · Which route's timetable is this pass of the loop? (i = loop counter) */
@@ -8752,7 +8875,7 @@ var busttroute = global('BusTempTimetableRoutes').split(',')[parseInt(i, 10) - 1
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act134" ve="7">
+		<Action sr="act141" ve="7">
 			<code>339</code>
 			<se>false</se>
 			<label>Ask TfL for its timetable there · The stop a long press goes to</label>
@@ -8772,7 +8895,7 @@ var busttroute = global('BusTempTimetableRoutes').split(',')[parseInt(i, 10) - 1
 			<Int sr="arg8" val="15"/>
 			<Int sr="arg9" val="0"/>
 		</Action>
-		<Action sr="act135" ve="7">
+		<Action sr="act142" ve="7">
 			<code>129</code>
 			<label>Keep today's departures · Stored per stop and route; fetched again tomorrow</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
@@ -8782,8 +8905,10 @@ var busttroute = global('BusTempTimetableRoutes').split(',')[parseInt(i, 10) - 1
    [minutes after midnight, destination]. The destination is the last
    stop of that journey's pattern (knownJourneys[].intervalId points at
    stationIntervals), so short journeys show where they really end.
-   Stored per route as { t: [[minute, nameIndex], ...], n: [names] }. A failed request stores an empty list so it
-   isn't retried until tomorrow. Only the 8 most recent stops are kept.
+   Stored per route as { t: [[minute, nameIndex], ...], n: [names] }. A reply with no journeys today stores an
+   empty list, so it isn't asked for again until tomorrow; a request with no reply, or a 429 or 5xx, stores when
+   it failed (fail), and tt_check.js tries again 5 minutes later (4.58); any other error is kept as no
+   departures for the day. Only the 8 most recent stops are kept.
    ================================================================== */
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
@@ -8830,7 +8955,10 @@ trips.sort(function (a, b) { return a[0] - b[0]; });
 
 var tt = JSON.parse(get('BusCacheTimetable') || '{}');
 if (!tt[stopId] || tt[stopId].date !== today) { delete tt[stopId]; tt[stopId] = { date: today, r: {} }; }
-tt[stopId].r[busttroute] = { t: trips, n: names };
+// Tried again later only when it may work then: no reply, TfL busy (429) or failing (5xx). Any other
+// answer (a 404 for a route that doesn't call here, say) is kept for the day, as no departures
+var retry = code !== '200' &amp;&amp; (!code || code === '429' || /^5/.test(code));
+tt[stopId].r[busttroute] = retry ? { t: [], n: [], fail: Date.now() } : { t: trips, n: names };
 var keys = Object.keys(tt);
 while (keys.length &gt; 8) { delete tt[keys.shift()]; }
 setGlobal('BusCacheTimetable', JSON.stringify(tt));
@@ -8839,48 +8967,48 @@ setGlobal('BusCacheTimetable', JSON.stringify(tt));
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act136" ve="7">
+		<Action sr="act143" ve="7">
 			<code>40</code>
 		</Action>
-		<Action sr="act137" ve="7">
+		<Action sr="act144" ve="7">
 			<code>38</code>
 		</Action>
 	</Task>
 	<Task sr="task79">
-		<cdate>1791714106191</cdate>
-		<edate>1791714106191</edate>
+		<cdate>1791831295018</cdate>
+		<edate>1791831295018</edate>
 		<id>79</id>
 		<nme>Bus Wake</nme>
 		<pri>6</pri>
 		<Action sr="act0" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
 		<Action sr="act2" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
 		<Action sr="act3" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
 		<Action sr="act4" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
 		<Action sr="act5" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
 		<Action sr="act6" ve="7">
 			<code>547</code>
 			<label>This build · Version and build time</label>
 			<Str sr="arg0" ve="3">%busbuild</Str>
-			<Str sr="arg1" ve="3">4.57.202610111121</Str>
+			<Str sr="arg1" ve="3">4.58.202610121954</Str>
 			<Int sr="arg2" val="0"/>
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
 		<Action sr="act7" ve="7">
 			<code>129</code>
 			<label>Remember it was done for this build · BusStateVersion</label>
@@ -8906,11 +9034,11 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
 		<Action sr="act8" ve="7">
 			<code>548</code>
 			<label>Say so · A short message</label>
-			<Str sr="arg0" ve="3">Bus countdown 4.57: profiles switched on</Str>
+			<Str sr="arg0" ve="3">Bus countdown 4.58: profiles switched on</Str>
 			<Int sr="arg1" val="0"/>
 			<Str sr="arg10" ve="3"/>
 			<Int sr="arg11" val="1"/>
@@ -8926,7 +9054,7 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg7" ve="3"/>
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.57.202610111121</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
 		<Action sr="act9" ve="7">
 			<code>137</code>
 			<label>Only asked to switch the profiles: done · Started by another task with par1 "profiles"</label>
@@ -9077,10 +9205,10 @@ function wifiName() {
   return /^&lt;unknown ssid&gt;$|^0x$/i.test(name) ? '' : name;
 }
 // Trip recorder (Settings: Record trips, BusRecord on). Each call adds one line of JSON for a file in
-// Download/Tasker-bus-trip-data (Downloads in the Files app): bus-trip-Mon.jsonl to
-// bus-trip-Sun.jsonl, so a week is kept and each day's file is
-// started afresh when that weekday comes round again. Everything stays on the phone until you upload
-// it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
+// Download/Tasker-bus-trip-data (Downloads in the Files app), one per day, named by its date and
+// weekday: bus-trip-2026-10-12-Mon.jsonl (4.58; before, bus-trip-Mon.jsonl was started afresh each
+// week, so a week not yet uploaded was lost). Every day is kept until you delete it. Everything stays
+// on the phone until you upload it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
 // The script doesn't write the file itself (4.43). Tasker runs a script's writeFile as a task of its
 // own, and a script waiting on it while another script was running hung both for 45 s (a long press
 // on the island just as the screen came on, Thursday 8 Oct). So the lines are collected here, and the
@@ -9094,10 +9222,10 @@ var busrecappend;
 var busrecday;
 function record(kind, data) {
   if (global('BusRecord') !== 'on') return;
-  var d = new Date(); var day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
+  var d = new Date();
   var line = JSON.stringify(Object.assign({ t: d.getTime(), k: kind }, data || {}));
   if (busrecline) { busrecline += '\n' + line; return; }
-  busrecfile = 'Download/Tasker-bus-trip-data/bus-trip-' + day + '.jsonl';
+  busrecfile = 'Download/Tasker-bus-trip-data/' + recordName(d);
   busrecday = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   // The day only counts as started once its first line is really written: if that fails, the next
   // line tries again from scratch, with the setup (4.38)
@@ -9112,6 +9240,11 @@ function record(kind, data) {
     line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
   }
   busrecline = line;
+}
+// The day's file name: bus-trip-2026-10-12-Mon.jsonl (4.58), so the files sort by date
+function recordName(d) {
+  var two = function (n) { return (n &lt; 10 ? '0' : '') + n; };
+  return 'bus-trip-' + d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()) + '-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] + '.jsonl';
 }
 var wifiBefore = global('BusStateWifi') || '';
 var wifiNow = wifiName();
@@ -9288,8 +9421,8 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 		</Action>
 	</Task>
 	<Task sr="task32">
-		<cdate>1791714106191</cdate>
-		<edate>1791714106191</edate>
+		<cdate>1791831295018</cdate>
+		<edate>1791831295018</edate>
 		<id>32</id>
 		<nme>Bus End</nme>
 		<pri>6</pri>
@@ -9415,10 +9548,10 @@ function debugLog(msg) {
   setGlobal('BusDebugLog', JSON.stringify(a.slice(-20)));
 }
 // Trip recorder (Settings: Record trips, BusRecord on). Each call adds one line of JSON for a file in
-// Download/Tasker-bus-trip-data (Downloads in the Files app): bus-trip-Mon.jsonl to
-// bus-trip-Sun.jsonl, so a week is kept and each day's file is
-// started afresh when that weekday comes round again. Everything stays on the phone until you upload
-// it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
+// Download/Tasker-bus-trip-data (Downloads in the Files app), one per day, named by its date and
+// weekday: bus-trip-2026-10-12-Mon.jsonl (4.58; before, bus-trip-Mon.jsonl was started afresh each
+// week, so a week not yet uploaded was lost). Every day is kept until you delete it. Everything stays
+// on the phone until you upload it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
 // The script doesn't write the file itself (4.43). Tasker runs a script's writeFile as a task of its
 // own, and a script waiting on it while another script was running hung both for 45 s (a long press
 // on the island just as the screen came on, Thursday 8 Oct). So the lines are collected here, and the
@@ -9432,10 +9565,10 @@ var busrecappend;
 var busrecday;
 function record(kind, data) {
   if (global('BusRecord') !== 'on') return;
-  var d = new Date(); var day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
+  var d = new Date();
   var line = JSON.stringify(Object.assign({ t: d.getTime(), k: kind }, data || {}));
   if (busrecline) { busrecline += '\n' + line; return; }
-  busrecfile = 'Download/Tasker-bus-trip-data/bus-trip-' + day + '.jsonl';
+  busrecfile = 'Download/Tasker-bus-trip-data/' + recordName(d);
   busrecday = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   // The day only counts as started once its first line is really written: if that fails, the next
   // line tries again from scratch, with the setup (4.38)
@@ -9450,6 +9583,11 @@ function record(kind, data) {
     line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
   }
   busrecline = line;
+}
+// The day's file name: bus-trip-2026-10-12-Mon.jsonl (4.58), so the files sort by date
+function recordName(d) {
+  var two = function (n) { return (n &lt; 10 ? '0' : '') + n; };
+  return 'bus-trip-' + d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()) + '-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] + '.jsonl';
 }
 debugLog('Countdown ended: ' + how);
 record('end', { stop: global('BusStateStopId') || '', from: from, why: how, battery: global('BATT') || '' });
@@ -9550,8 +9688,8 @@ setGlobal('BusStateMatch', '');
 		</Action>
 	</Task>
 	<Task sr="task31">
-		<cdate>1791714106191</cdate>
-		<edate>1791714106191</edate>
+		<cdate>1791831295018</cdate>
+		<edate>1791831295018</edate>
 		<id>31</id>
 		<nme>Bus Island</nme>
 		<pri>6</pri>
@@ -9716,8 +9854,8 @@ if (stops.length) {
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busdo</lhs><op>2</op><rhs>switch/open/close/open-grown/fit</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task62">
-		<cdate>1791714106191</cdate>
-		<edate>1791714106191</edate>
+		<cdate>1791831295018</cdate>
+		<edate>1791831295018</edate>
 		<id>62</id>
 		<nme>Bus Watch</nme>
 		<pri>6</pri>
@@ -9793,10 +9931,10 @@ function wifiName() {
   return /^&lt;unknown ssid&gt;$|^0x$/i.test(name) ? '' : name;
 }
 // Trip recorder (Settings: Record trips, BusRecord on). Each call adds one line of JSON for a file in
-// Download/Tasker-bus-trip-data (Downloads in the Files app): bus-trip-Mon.jsonl to
-// bus-trip-Sun.jsonl, so a week is kept and each day's file is
-// started afresh when that weekday comes round again. Everything stays on the phone until you upload
-// it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
+// Download/Tasker-bus-trip-data (Downloads in the Files app), one per day, named by its date and
+// weekday: bus-trip-2026-10-12-Mon.jsonl (4.58; before, bus-trip-Mon.jsonl was started afresh each
+// week, so a week not yet uploaded was lost). Every day is kept until you delete it. Everything stays
+// on the phone until you upload it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
 // The script doesn't write the file itself (4.43). Tasker runs a script's writeFile as a task of its
 // own, and a script waiting on it while another script was running hung both for 45 s (a long press
 // on the island just as the screen came on, Thursday 8 Oct). So the lines are collected here, and the
@@ -9810,10 +9948,10 @@ var busrecappend;
 var busrecday;
 function record(kind, data) {
   if (global('BusRecord') !== 'on') return;
-  var d = new Date(); var day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
+  var d = new Date();
   var line = JSON.stringify(Object.assign({ t: d.getTime(), k: kind }, data || {}));
   if (busrecline) { busrecline += '\n' + line; return; }
-  busrecfile = 'Download/Tasker-bus-trip-data/bus-trip-' + day + '.jsonl';
+  busrecfile = 'Download/Tasker-bus-trip-data/' + recordName(d);
   busrecday = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   // The day only counts as started once its first line is really written: if that fails, the next
   // line tries again from scratch, with the setup (4.38)
@@ -9828,6 +9966,11 @@ function record(kind, data) {
     line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
   }
   busrecline = line;
+}
+// The day's file name: bus-trip-2026-10-12-Mon.jsonl (4.58), so the files sort by date
+function recordName(d) {
+  var two = function (n) { return (n &lt; 10 ? '0' : '') + n; };
+  return 'bus-trip-' + d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()) + '-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] + '.jsonl';
 }
 var wifiBefore = global('BusStateWifi') || '';
 var wifiNow = wifiName();
@@ -10383,6 +10526,248 @@ if (which &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busdue</lhs><op>2</op><rhs>no</rhs></Condition></ConditionList></Action>
 		<Action sr="act51" ve="7">
 			<code>129</code>
+			<label>Riding a bus Bus Watch has named? Ask TfL where it is (every 45 s at most, 20 s while slow) · Only on a bus you were seen getting on, with no countdown or one for a stop the bus is heading to</label>
+			<Str sr="arg0" ve="3">/* ==================================================================
+   Bus Watch · Ask TfL where your bus is? (4.58)
+   While you ride a bus Bus Watch has named (BusStateBoarded, the one
+   you were seen getting on), TfL is asked which stops it calls at next,
+   just before each check, so a slow spell in traffic can be told from
+   getting off (shared/followBus.js). Only while riding: on a bus, or on
+   one heading for a saved stop. At most every 45 s, or every 20 s while
+   you're moving slowly (the times it matters). The last reply is kept
+   for 2 minutes, so a missed one changes nothing. Every attempt counts,
+   not only answered ones (BusStateFollowTry): after a failed request
+   (no signal, TfL down) it waits 90 s, then 180, then 300 at most, as
+   Bus Loop does, so it never asks on every position.
+   Output: busfollow = yes / no, busfollowv (the bus's registration)
+   ================================================================== */
+// A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
+// name, starting with %)
+function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+var now = Date.now();
+var trip = {}; try { trip = JSON.parse(get('BusStateTrip') || '{}') || {}; } catch (e) { trip = {}; }
+var boarded = null; try { boarded = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) { boarded = null; }
+var last = null; try { last = JSON.parse(get('BusStateFollow') || 'null'); } catch (e) { last = null; }
+var win = []; try { win = JSON.parse(get('BusStateWindow') || '[]'); } catch (e) { win = []; }
+var riding = trip.s === 'onbus' || (trip.s === 'heading' &amp;&amp; !!trip.bus);
+var named = !!boarded &amp;&amp; !!boarded.v &amp;&amp; boarded.sure !== false &amp;&amp; now - (boarded.at || 0) &lt; 2 * 3600000;
+var tried = null; try { tried = JSON.parse(get('BusStateFollowTry') || 'null'); } catch (e) { tried = null; }
+var lastSpd = win.length ? win[win.length - 1].spd : -1;
+var fails = tried &amp;&amp; tried.v === (boarded &amp;&amp; boarded.v) ? tried.fails || 0 : 0;
+var lastAsk = Math.max(last &amp;&amp; last.v === (boarded &amp;&amp; boarded.v) ? last.at : 0, tried &amp;&amp; tried.v === (boarded &amp;&amp; boarded.v) ? tried.at : 0);
+var wait = fails ? Math.min(300000, 90000 * Math.pow(2, fails - 1)) : (lastSpd &gt;= 0 &amp;&amp; lastSpd &lt;= 2.5 ? 20000 : 45000);
+var busfollow = riding &amp;&amp; named &amp;&amp; now - lastAsk &gt;= wait ? 'yes' : 'no';
+var busfollowv = busfollow === 'yes' ? boarded.v : '';
+// Counted as tried now; follow_store.js marks it answered, or failed once more
+if (busfollow === 'yes') setGlobal('BusStateFollowTry', JSON.stringify({ v: boarded.v, at: now, fails: fails }));
+</Str>
+			<Str sr="arg1" ve="3"/>
+			<Int sr="arg2" val="1"/>
+			<Int sr="arg3" val="45"/>
+		</Action>
+		<Action sr="act52" ve="7">
+			<code>37</code>
+			<label>Yes: ask now · One small request; a crawl in traffic is then told from getting off</label>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busfollow</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
+		<Action sr="act53" ve="7">
+			<code>339</code>
+			<se>false</se>
+			<label>   Ask TfL which stops your bus calls at next (5 s at most: Bus Watch waits for it) · TfL's list of the stops that bus calls at next, with times, by its registration</label>
+			<Bundle sr="arg0">
+				<Vals sr="val"/>
+			</Bundle>
+			<Int sr="arg1" val="0"/>
+			<Int sr="arg10" val="1"/>
+			<Int sr="arg11" val="0"/>
+			<Int sr="arg12" val="0"/>
+			<Str sr="arg2" ve="3">https://api.tfl.gov.uk/Vehicle/%busfollowv/Arrivals?app_key=%TflKey</Str>
+			<Str sr="arg3" ve="3"/>
+			<Str sr="arg4" ve="3"/>
+			<Str sr="arg5" ve="3"/>
+			<Str sr="arg6" ve="3"/>
+			<Str sr="arg7" ve="3"/>
+			<Int sr="arg8" val="5"/>
+			<Int sr="arg9" val="0"/>
+		</Action>
+		<Action sr="act54" ve="7">
+			<code>129</code>
+			<label>   Keep them for Bus Watch · In BusStateFollow. Bus Watch trusts it for 2 minutes, so a failed request changes nothing</label>
+			<Str sr="arg0" ve="3">/* ==================================================================
+   Bus Watch · Keep where your bus calls next (4.58)
+   TfL's reply for the bus you're riding (/Vehicle/{id}/Arrivals): the
+   stops it calls at next, soonest first, kept as BusStateFollow = { v:
+   registration, at: when fetched, n: [[stop id, expected (ms), stop
+   name], ...] } for Bus Watch (shared/followBus.js). A failed fetch
+   keeps the last (Bus Watch stops trusting it after 2 minutes), and is
+   counted in BusStateFollowTry, so follow_due.js waits longer before
+   the next. The
+   recorder keeps the first six stops, with seconds away, so a recorded
+   day replays with them (build/replay-core.js).
+   ================================================================== */
+// A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
+// name, starting with %)
+function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
+// isn't set
+function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
+var now = Date.now();
+var answered = false;
+if (loc('http_response_code') === '200' &amp;&amp; loc('busfollowv')) {
+  try {
+    var calls = JSON.parse(http_data).map(function (p) { return [p.naptanId, now + p.timeToStation * 1000, p.stationName || '']; })
+      .sort(function (a, b) { return a[1] - b[1]; })
+      .filter(function (p, i, all) { return p[0] &amp;&amp; (i === 0 || p[0] !== all[i - 1][0]); })
+      .slice(0, 12);
+    var bus = loc('busfollowv');
+    setGlobal('BusStateFollow', JSON.stringify({ v: bus, at: now, n: calls }));
+    record('follow', { v: bus, n: calls.slice(0, 6).map(function (p) { return [p[0], Math.round((p[1] - now) / 1000)]; }) });
+    answered = true;
+  } catch (e) {}
+}
+// For follow_due.js: answered (ask again in 20 to 45 s), or failed once more (wait longer each time)
+var tried = null; try { tried = JSON.parse(get('BusStateFollowTry') || 'null'); } catch (e) { tried = null; }
+if (tried &amp;&amp; loc('busfollowv')) setGlobal('BusStateFollowTry', JSON.stringify({ v: tried.v, at: tried.at, fails: answered ? 0 : (tried.fails || 0) + 1 }));
+if (!answered &amp;&amp; loc('busfollowv')) record('follow', { v: loc('busfollowv'), fail: loc('http_response_code') || 'no reply' });
+
+// Trip recorder (Settings: Record trips, BusRecord on). Each call adds one line of JSON for a file in
+// Download/Tasker-bus-trip-data (Downloads in the Files app), one per day, named by its date and
+// weekday: bus-trip-2026-10-12-Mon.jsonl (4.58; before, bus-trip-Mon.jsonl was started afresh each
+// week, so a week not yet uploaded was lost). Every day is kept until you delete it. Everything stays
+// on the phone until you upload it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
+// The script doesn't write the file itself (4.43). Tasker runs a script's writeFile as a task of its
+// own, and a script waiting on it while another script was running hung both for 45 s (a long press
+// on the island just as the screen came on, Thursday 8 Oct). So the lines are collected here, and the
+// steps straight after the script write them (record_steps in build/assemble.py): busrecfile,
+// busrecline (the lines), busrecappend (false: start the file afresh) and busrecday (the day the
+// file starts, kept once it's written). Declared without a value, so a script that includes this
+// after its first record() doesn't lose what was collected.
+var busrecline;
+var busrecfile;
+var busrecappend;
+var busrecday;
+function record(kind, data) {
+  if (global('BusRecord') !== 'on') return;
+  var d = new Date();
+  var line = JSON.stringify(Object.assign({ t: d.getTime(), k: kind }, data || {}));
+  if (busrecline) { busrecline += '\n' + line; return; }
+  busrecfile = 'Download/Tasker-bus-trip-data/' + recordName(d);
+  busrecday = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  // The day only counts as started once its first line is really written: if that fails, the next
+  // line tries again from scratch, with the setup (4.38)
+  var fresh = global('BusRecordDay') !== busrecday;
+  busrecappend = fresh ? 'false' : 'true';
+  // Each day's file starts with your setup (saved stops, routes, the route lists, home and work, the
+  // settings that shape decisions), so a recorded day can be replayed later (npm run replay)
+  if (fresh) {
+    var keep = ['BusPlaces', 'BusRoutes', 'BusNearRadius', 'BusRadius', 'BusApproach', 'BusApproachMin', 'BusLeaveShow', 'BusHomeWifi', 'BusWorkWifi',
+      'BusHomeAt', 'BusWorkAt', 'BusTimeout', 'BusRefresh', 'BusCacheStops', 'BusCacheSeq'];
+    var setup = {}; keep.forEach(function (n) { var v = global(n); if (v !== undefined &amp;&amp; v !== null &amp;&amp; String(v).charAt(0) !== '%') setup[n] = String(v); });
+    line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
+  }
+  busrecline = line;
+}
+// The day's file name: bus-trip-2026-10-12-Mon.jsonl (4.58), so the files sort by date
+function recordName(d) {
+  var two = function (n) { return (n &lt; 10 ? '0' : '') + n; };
+  return 'bus-trip-' + d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()) + '-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] + '.jsonl';
+}
+</Str>
+			<Str sr="arg1" ve="3"/>
+			<Int sr="arg2" val="1"/>
+			<Int sr="arg3" val="45"/>
+		</Action>
+		<Action sr="act55" ve="7">
+			<code>37</code>
+			<label>Trip recorder on: write what was just recorded · Scripts no longer write the file themselves: Tasker ran that as a task of its own, and two scripts at once could hang each other for 45 s</label>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecfile</lhs><op>2</op><rhs>Download/*</rhs></Condition></ConditionList></Action>
+		<Action sr="act56" ve="7"><code>409</code>
+			<se>false</se>
+			<label>   A new day: make sure its folder is there · Download/Tasker-bus-trip-data, in case it was deleted since</label><Str sr="arg0" ve="3">Download/Tasker-bus-trip-data</Str><Int sr="arg1" val="1"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
+		<Action sr="act57" ve="7">
+			<code>547</code>
+			<label>   Clear the last error, to spot a new one · A void method only reports failure as an error</label>
+			<Str sr="arg0" ve="3">%errmsg</Str>
+			<Str sr="arg1" ve="3">untouched</Str>
+			<Int sr="arg2" val="0"/>
+			<Int sr="arg3" val="0"/>
+			<Int sr="arg4" val="0"/>
+			<Int sr="arg5" val="3"/>
+			<Int sr="arg6" val="0"/>
+		</Action>
+		<Action sr="act58" ve="7"><code>664</code>
+			<se>false</se>
+			<label>   Open the file · On a new day, start it afresh</label><Str sr="arg0" ve="3">busrecw</Str><Str sr="arg1" ve="3">java.io.FileWriter</Str><Str sr="arg2" ve="3">new {java.io.FileWriter} (String, boolean)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3">%busrecappend</Str><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
+		<Action sr="act59" ve="7"><code>664</code>
+			<se>false</se>
+			<label>   Write the lines · Every line the script recorded: the setup first on a new day</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">%busrecline</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
+		<Action sr="act60" ve="7"><code>664</code>
+			<se>false</se>
+			<label>   Android's line break · So the file always ends with a complete line</label><Str sr="arg0" ve="3">busrecnl</Str><Str sr="arg1" ve="3">java.lang.System</Str><Str sr="arg2" ve="3">lineSeparator {String} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
+		<Action sr="act61" ve="7"><code>664</code>
+			<se>false</se>
+			<label>   Write it after the last line · Ends the last line</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">busrecnl</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
+		<Action sr="act62" ve="7"><code>664</code>
+			<se>false</se>
+			<label>   Close the file · Saves it</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">close {} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
+		<Action sr="act63" ve="7">
+			<code>37</code>
+			<label>   Did it work? · An error from any of the steps above leaves Tasker's last error changed</label>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
+		<Action sr="act64" ve="7"><code>549</code>
+			<label>   No write error to report · Bus Status shows the last write error, if there was one</label><Str sr="arg0" ve="3">%BusRecordErr</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
+		<Action sr="act65" ve="7">
+			<code>547</code>
+			<label>   A new day: it has started · Once its first line is really written; if that failed, the next line starts the file again, with the setup</label>
+			<Str sr="arg0" ve="3">%BusRecordDay</Str>
+			<Str sr="arg1" ve="3">%busrecday</Str>
+			<Int sr="arg2" val="0"/>
+			<Int sr="arg3" val="0"/>
+			<Int sr="arg4" val="0"/>
+			<Int sr="arg5" val="3"/>
+			<Int sr="arg6" val="0"/>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
+		<Action sr="act66" ve="7"><code>664</code>
+			<se>false</se>
+			<label>   A new file: announce it to the media index, so the Files app lists it · Files written straight to storage aren't listed until Android's media scanner has seen them</label><Str sr="arg0" ve="3">busscanpath</Str><Str sr="arg1" ve="3">java.lang.String</Str><Str sr="arg2" ve="3">new {java.lang.String} (String)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
+		<Action sr="act67" ve="7"><code>664</code>
+			<se>false</se>
+			<label>   Its path, as a list of one · The scanner takes a list of paths</label><Str sr="arg0" ve="3">busscanlist</Str><Str sr="arg1" ve="3">busscanpath</Str><Str sr="arg2" ve="3">split {String[]} (String)</Str><Str sr="arg3" ve="3">,</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
+		<Action sr="act68" ve="7"><code>664</code>
+			<se>false</se>
+			<label>   Ask Android to scan it · MediaScannerConnection.scanFile, with no type and no reply wanted</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">android.media.MediaScannerConnection</Str><Str sr="arg2" ve="3">scanFile {} (android.content.Context, String[], String[], android.media.MediaScannerConnection$OnScanCompletedListener)</Str><Str sr="arg3" ve="3">CONTEXT</Str><Str sr="arg4" ve="3">busscanlist</Str><Str sr="arg5" ve="3">null</Str><Str sr="arg6" ve="3">null</Str><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
+		<Action sr="act69" ve="7">
+			<code>43</code>
+		</Action>
+		<Action sr="act70" ve="7">
+			<code>547</code>
+			<label>   Failed: keep why, for Bus Status · The next line tries again</label>
+			<Str sr="arg0" ve="3">%BusRecordErr</Str>
+			<Str sr="arg1" ve="3">%TIME %errmsg</Str>
+			<Int sr="arg2" val="0"/>
+			<Int sr="arg3" val="0"/>
+			<Int sr="arg4" val="0"/>
+			<Int sr="arg5" val="3"/>
+			<Int sr="arg6" val="0"/>
+		</Action>
+		<Action sr="act71" ve="7">
+			<code>38</code>
+		</Action>
+		<Action sr="act72" ve="7"><code>549</code>
+			<label>   Done: forget the lines · Another script in the same task starts with nothing collected</label><Str sr="arg0" ve="3">%busrecline</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
+		<Action sr="act73" ve="7"><code>549</code>
+			<label>   the file · Cleared too</label><Str sr="arg0" ve="3">%busrecfile</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
+		<Action sr="act74" ve="7"><code>549</code>
+			<label>   whether to start it afresh · Cleared too</label><Str sr="arg0" ve="3">%busrecappend</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
+		<Action sr="act75" ve="7"><code>549</code>
+			<label>   and the day · Cleared too</label><Str sr="arg0" ve="3">%busrecday</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
+		<Action sr="act76" ve="7">
+			<code>38</code>
+		</Action>
+		<Action sr="act77" ve="7">
+			<code>38</code>
+		</Action>
+		<Action sr="act78" ve="7">
+			<code>129</code>
 			<label>Where are you in the trip? Move it on · The state machine: idle, heading, at stop, on bus, left</label>
 			<Str sr="arg0" ve="3">/* ==================================================================
    Bus Watch · Where are you in a trip, and what should the island do?
@@ -10401,7 +10786,8 @@ if (which &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
      at stop  waiting. On a bus heading away -&gt; on bus (end). Walking
               steadily away, or past the end distance -&gt; left (end).
      on bus   riding (no island, unless a saved stop is coming up on the
-              route). Walking pace again -&gt; left.
+              route). Walking pace again -&gt; left, unless TfL has the bus
+              you got on still with you (4.58, shared/followBus.js).
      left     island gone. That stop only starts again once you've come
               back 100 m from the furthest you went, or after 15 minutes.
               Other stops are free. Left a stop you'd got to, and now 150 m
@@ -10520,6 +10906,86 @@ function travelMode(t, lat, lon, acc) {
   function tr(A) { var C = []; for (var r1 = 0; r1 &lt; 4; r1++) for (var c = 0; c &lt; 4; c++) C.push(A[c * 4 + r1]); return C; }
   function add(A, B) { return A.map(function (v, n) { return v + B[n]; }); }
 }
+// Following your bus (4.58). While you ride a bus Bus Watch has named (BusStateBoarded), TfL is asked
+// which stops it calls at next (/Vehicle/{id}/Arrivals, follow_store.js keeps them in BusStateFollow).
+// Your position can't say much on its own: a bus crawling in traffic moves at walking pace, so on
+// Thursday and Friday Bus Watch had you off the bus for 80 of the 148 minutes you rode. The bus's next
+// stop can: the bus is somewhere between the stop before it and that stop, so if you are too, you're
+// most likely still on it, and if the bus has gone on past you (or you're well off its road), you're
+// not.
+//   followBus(lat, lon, accuracy, now) -&gt; { with: true or false, why } or null (nothing to go on: no
+//   named bus, no reply from TfL in the last 2 minutes, a fix worse than 60 m, or stops not in
+//   BusCacheSeq)
+// It can only say "with you" until the bus reaches its next stop after you get off (a minute or two),
+// so nothing that needs a quick answer waits on it: it only stops a slow spell ending a ride.
+function followBus(fLat, fLon, fAcc, fNow) {
+  var fb = null; try { fb = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) { fb = null; }
+  var ff = null; try { ff = JSON.parse(get('BusStateFollow') || 'null'); } catch (e) { ff = null; }
+  if (!fb || !fb.v || fb.sure === false || !ff || ff.v !== fb.v || fNow - ff.at &gt; 120000 || (fAcc || 15) &gt; 60) return null;
+  // Stops still to come: TfL's times move on by themselves, so a reply a minute old still says where
+  // the bus is now (one due up to 30 s ago may be standing there yet)
+  var ahead = (ff.n || []).filter(function (x) { return x[1] &gt;= fNow - 30000; });
+  if (!ahead.length) return null;
+  // The bus's line of stops: one with its next stop, and the one after that further on (so it's the
+  // right direction), from BusCacheSeq
+  var fSeqs = []; try { fSeqs = JSON.parse(get('BusCacheSeq') || '[]'); } catch (e) { fSeqs = []; }
+  var seq = null; var at = -1; var sure = false;
+  fSeqs.forEach(function (sq) {
+    var k = -1; for (var i = 1; i &lt; sq.length &amp;&amp; k &lt; 0; i++) if (sq[i][0] === ahead[0][0]) k = i;
+    if (k &lt; 1) return;
+    var onward = ahead.length &lt; 2 || sq.slice(k + 1).some(function (p) { return p[0] === ahead[1][0]; });
+    if (!seq || (onward &amp;&amp; !sure)) { seq = sq; at = k; sure = onward; }
+  });
+  // With two or more stops ahead, a line that has them in that order, or nothing: at the end of a
+  // route TfL may list the bus's next trip back, which no line through its next stop follows on from
+  if (!seq || (ahead.length &gt;= 2 &amp;&amp; !sure)) return null;
+  // Metres along the line to each stop, and where you are on it: the nearest segment near the bus
+  // (from 6 stops before its next stop to 4 after), flattened locally
+  var R = Math.PI / 180; var kx = Math.cos(fLat * R) * 6371000 * R; var ky = 6371000 * R;
+  var cum = [0]; for (var c = 1; c &lt; seq.length; c++) cum.push(cum[c - 1] + metres(seq[c - 1][1], seq[c - 1][2], seq[c][1], seq[c][2]));
+  var off = Infinity; var you = 0;
+  for (var j = Math.max(0, at - 6); j &lt; Math.min(seq.length - 1, at + 4); j++) {
+    var ax = (seq[j][2] - fLon) * kx; var ay = (seq[j][1] - fLat) * ky; var dx = (seq[j + 1][2] - fLon) * kx - ax; var dy = (seq[j + 1][1] - fLat) * ky - ay;
+    var len2 = dx * dx + dy * dy; if (!len2) continue;
+    var f = Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2));
+    var o = Math.sqrt(Math.pow(ax + f * dx, 2) + Math.pow(ay + f * dy, 2));
+    if (o &lt; off) { off = o; you = cum[j] + f * (cum[j + 1] - cum[j]); }
+  }
+  var nextName = ahead[0][2] || 'its next stop';
+  var route = fb.k ? 'the ' + fb.k : 'your bus';
+  if (off &gt; 100) return { with: false, why: route + ' is on another road (' + Math.round(off) + ' m away)' };
+  if (you &lt; cum[at - 1] - 150) return { with: false, why: route + ' has gone on, to ' + nextName };
+  if (you &gt; cum[at] + 150) return { with: false, why: route + ' is behind you, still to reach ' + nextName };
+  // dir: the way the bus is going, from the stop before its next one to that stop (for goesBack: the
+  // bus's way, whatever your feet are doing)
+  return { with: true, why: route + ' is still with you (next stop ' + nextName + ')', dir: [[seq[at - 1][1], seq[at - 1][2]], [seq[at][1], seq[at][2]]] };
+}
+
+// Just off a bus, or still on it, inside a saved stop whose buses all go back the way you came: on
+// Thursday and Friday evenings the 566 home passed Kiln Street on the other side of the road, close
+// enough to be inside its circle, and slowing there started a countdown for buses back to Wexley.
+// True when every route at the stop (BusCacheSeq) leaves it heading within 60 degrees of straight back
+// along the way the bus was last going (BusStateHeading, kept by watch.js: from TfL's stops while it
+// has your bus with you, or from your positions at bus speed; never from a walk after getting off).
+// While Bus Watch has you on the bus, that's from the last 3 minutes (on Friday the 566 crawled the
+// last 9 minutes to Kiln Street, so only TfL's word gave its way); once you're off it, only within 2
+// minutes of last moving at bus speed, so crossing the road for a bus back soon shows its countdown.
+function goesBack(st, gNow, onBus) {
+  var hd = null; try { hd = JSON.parse(get('BusStateHeading') || 'null'); } catch (e) { hd = null; }
+  if (!hd || !hd.a || !hd.z || (onBus ? gNow - hd.t &gt; 3 * 60000 : gNow - (hd.b || 0) &gt; 2 * 60000)) return false;
+  var a = hd.a; var z = hd.z;
+  var R = Math.PI / 180; var kx = Math.cos(st.lat * R); var tx = (z[1] - a[1]) * kx; var ty = z[0] - a[0];
+  var gSeqs = []; try { gSeqs = JSON.parse(get('BusCacheSeq') || '[]'); } catch (e) { gSeqs = []; }
+  var leaving = [];
+  gSeqs.forEach(function (sq) {
+    for (var i = 0; i &lt; sq.length - 1; i++) {
+      if (sq[i][0] !== st.id) continue;
+      var dx = (sq[i + 1][2] - sq[i][2]) * kx; var dy = sq[i + 1][1] - sq[i][1]; var dl = Math.sqrt(dx * dx + dy * dy);
+      if (dl) leaving.push((dx * tx + dy * ty) / (dl * Math.sqrt(tx * tx + ty * ty)));
+    }
+  });
+  return leaving.length &gt; 0 &amp;&amp; leaving.every(function (cos) { return cos &lt; -0.5; });
+}
 
 var now = Date.now();
 var lat = parseFloat(loc('gl_latitude')); var lon = parseFloat(loc('gl_longitude'));
@@ -10539,7 +11005,9 @@ var why = '';
 var skipped = '';                    // why approaching() passed over a stop, for the note
 var tmode = null;                    // travel mode on trial (4.34): recorded only
 var afterAll = '';                   // set when a walk away turns out to have been a bus
+var lostNote = '';                   // set when the countdown was lost to Tasker stopping (4.58)
 var closest = null;
+var follow = null;                   // the bus you got on, from TfL (4.58): { with, why } or null
 var trip = { s: 'idle' };
 
 if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
@@ -10614,15 +11082,41 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
   function endAtFor(st) { return Math.max(Math.min(250, Math.max(150, 3 * st.r)), st.r + 100); }
 
 
+  // A lost countdown (below) starts again only while you're still there: at the stop, within the
+  // distance that ends a countdown, or heading for it, no more than 100 m further than the closest
+  // you've come. Already on your way (on a bus, by the first check after Tasker came back, which can
+  // be late: nothing asks for positions until the screen comes on), it's handled as before, as having
+  // left, so getting on a bus there is still seen. And only once per stop in 15 minutes, in case the
+  // countdown itself is what stops Tasker.
+  function restartLost() {
+    var at = stops.filter(function (st) { return st.id === trip.stop; })[0];
+    var before = null; try { before = JSON.parse(get('BusStateLostAt') || 'null'); } catch (e) { before = null; }
+    lostNote = 'the countdown at ' + (at ? at.n : 'the stop') + ' stopped without ending (Tasker restarted?)';
+    if (!at || (trip.s === 'atstop' ? at.d &gt; endAtFor(at) : at.d &gt; (trip.minD || at.d) + 100)) return false;
+    if (trip.s === 'atstop' &amp;&amp; speed &gt; 4.2) return false;      // already pulling away on a bus, just past the stop
+    if (before &amp;&amp; before.stop === at.id &amp;&amp; now - before.at &lt; 15 * 60000) { lostNote += '; it did already, so not again'; return false; }
+    setGlobal('BusStateLostAt', JSON.stringify({ stop: at.id, at: now }));
+    return true;
+  }
+
   // ---- The trip state, kept in step with what's actually happening --------------------------
   try { trip = JSON.parse(get('BusStateTrip') || '{"s":"idle"}'); } catch (e) { trip = { s: 'idle' }; }
   var running = get('BusStateRunning') === '1' &amp;&amp; /(^|,)Bus Loop(,|$)/.test(get('TRUN'));
-  if (get('BusStateRunning') === '1' &amp;&amp; !running) setGlobal('BusStateRunning', '0');
+  // Lost, not ended (4.58): the running flag is still set, but Bus Loop has gone. Only Bus End clears
+  // the flag (a swipe, time up, Wi-Fi, walking away), so Tasker itself stopped: it restarted, or
+  // Android stopped it
+  var lost = get('BusStateRunning') === '1' &amp;&amp; !running;
+  if (lost) setGlobal('BusStateRunning', '0');
   var shownId = get('BusStateStopId');
   var shown = stops.filter(function (st) { return st.id === shownId; })[0];
   if (running &amp;&amp; shown &amp;&amp; (trip.stop !== shownId || trip.s === 'idle' || trip.s === 'left' || trip.s === 'onbus')) {
     // A countdown started some other way (by hand, leaving work, heads-up): pick it up
     trip = { s: shown.d &lt;= shown.r ? 'atstop' : 'heading', stop: shownId, since: now, minD: Math.round(shown.d) };
+  } else if (lost &amp;&amp; (trip.s === 'atstop' || trip.s === 'heading') &amp;&amp; restartLost()) {
+    // The countdown was lost, not ended (4.58): start again from here, as if just arrived, rather than
+    // as having left. On Monday morning opening Settings restarted Tasker at Kiln Street, and "you've
+    // just left this stop" kept the countdown away for 10 minutes while you stood at it
+    trip = { s: 'idle' };
   } else if (!running &amp;&amp; (trip.s === 'atstop' || trip.s === 'heading')) {
     // Ended without us (swiped, timed out, got home): treat it as left
     var was = stops.filter(function (st) { return st.id === trip.stop; })[0];
@@ -10652,6 +11146,12 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
   var snoozedAt = snoozed ? snooze.at : 0;
   var from = function (to, note) { trip = Object.assign({}, trip, { s: to, since: now, byBus: false }, note || {}); };   // byBus: see "still on the bus"
   var tripStop = stops.filter(function (st) { return st.id === trip.stop; })[0];
+  // Riding a bus Bus Watch has named: is TfL's next stop for it consistent with where you are? (4.58)
+  if (trip.s === 'onbus' || (trip.s === 'heading' &amp;&amp; trip.bus)) follow = followBus(lat, lon, accuracy, now);
+  // A fix too rough to place you (over 60 m) can't end a ride TfL had with you in the last minute
+  var withBus = !!follow &amp;&amp; follow.with;
+  if (withBus) { trip.withAt = now; setGlobal('BusStateLastBusAt', String(now)); }
+  var keptOn = withBus || (!follow &amp;&amp; (accuracy || 15) &gt; 60 &amp;&amp; now - (trip.withAt || 0) &lt; 60000);
 
   // ---- What this position means, from the current state --------------------------------------
   // Slowed down: the speed reading is walking pace or less (unknown counts as slow), or, since a rough
@@ -10680,6 +11180,16 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
   var lastTwo = win.map(function (w) { return w.spd; }).filter(function (v) { return v &gt;= 0; }).slice(-2);
   var busTwice = lastTwo.length === 2 &amp;&amp; lastTwo[0] &gt; 4.2 &amp;&amp; lastTwo[1] &gt; 4.2;
   var bus = speed &gt; 4.2 || busTwice;   // or the last two both fast
+  // The way the bus is going, kept so it's known when the bus stands or crawls (goesBack, 4.58): t,
+  // when last known; b, when last at bus speed. While TfL has your bus with you, from its stops (the
+  // stop before its next one, to that one): that lasts a minute or two after you get off, while the
+  // window is your walk, so the window is only used at bus speed, over 60 m or more.
+  var headWas = null; try { headWas = JSON.parse(get('BusStateHeading') || 'null'); } catch (e) { headWas = null; }
+  if (bus &amp;&amp; win.length &gt;= 2 &amp;&amp; metres(win[0].lat, win[0].lon, win[win.length - 1].lat, win[win.length - 1].lon) &gt;= 60) {
+    setGlobal('BusStateHeading', JSON.stringify({ t: now, b: now, a: [win[0].lat, win[0].lon], z: [win[win.length - 1].lat, win[win.length - 1].lon] }));
+  } else if (withBus &amp;&amp; follow.dir) {
+    setGlobal('BusStateHeading', JSON.stringify({ t: now, b: headWas &amp;&amp; headWas.b ? headWas.b : 0, a: follow.dir[0], z: follow.dir[1] }));
+  }
   // Steady pace away from a stop: the fastest average over 90 seconds or more of the window. Walking
   // tops out under 2 m/s even with GPS error; over 2.2 m/s for that long is a bus, however slowly it
   // crawled through traffic (Tuesday, leaving Wexley on the 566: 2.6 m/s for nearly 3 minutes, which
@@ -10729,6 +11239,10 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
     // 25 s had taken for getting off, 4.39), it ends. Standing still doesn't count towards it. If you
     // then speed up towards it again (back on a bus), it can show again once you're 100 m closer.
     else if (!bus &amp;&amp; speed &gt;= 0 &amp;&amp; speed &lt; 0.6) { why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m (standing still)'; trip.slowN = 0; trip.slowSince = 0; }
+    // Slow, but TfL has the bus you got on still with you (4.58): a crawl in traffic, not getting off.
+    // On Thursday evening the 517 crawled the last 600 m to Wexley and this read as "off the bus, on
+    // foot", so a bus due there when you got there no longer counted as yours
+    else if (!bus &amp;&amp; keptOn) { why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m (slow: ' + (follow ? follow.why : 'TfL had your bus with you a moment ago') + ')'; trip.slowN = 0; trip.slowSince = 0; trip.walkN = 0; }
     else if (!bus &amp;&amp; speed &gt;= 0 &amp;&amp; speed &lt;= 2.5 &amp;&amp; tripStop.d &gt; endAtFor(tripStop) &amp;&amp;
              tripStop.d / Math.max(speed, 0.3) &gt; 2 * (parseFloat(get('BusApproachMin')) || 3) * 60 &amp;&amp;
              (trip.slowSince = trip.slowSince || now) &amp;&amp; (trip.slowN = (trip.slowN || 0) + 1) &gt;= 3 &amp;&amp; now - trip.slowSince &gt;= 120000) {
@@ -10751,9 +11265,15 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
     // Off the bus (or so it looks: a crawl in traffic reads the same). Keep the stop you boarded at, so
     // it still counts as just left: a bus held up while still inside that stop's circle mustn't pop
     // the island up for the stop you've just got on at
-    if (trip.s === 'onbus' &amp;&amp; !bus &amp;&amp; speed &gt;= 0 &amp;&amp; speed &lt; 2) {
+    // Unless TfL has the bus you got on still with you (4.58): on Thursday evening the 566 from Wexley
+    // slowed to 2 km/h a minute out, the ride ended here, and Bus Watch had you on foot for the rest
+    // of it. Once the bus has gone on without you (by its next stop), it ends as before.
+    if (trip.s === 'onbus' &amp;&amp; !bus &amp;&amp; speed &gt;= 0 &amp;&amp; speed &lt; 2 &amp;&amp; keptOn) {
+      why = 'on a bus, slow: ' + (follow ? follow.why : 'TfL had it with you a moment ago, and this fix is too rough to say otherwise');
+    } else if (trip.s === 'onbus' &amp;&amp; !bus &amp;&amp; speed &gt;= 0 &amp;&amp; speed &lt; 2) {
       var boarded = stops.filter(function (st) { return st.id === trip.stop; })[0];
       from('left', { leftD: boarded ? Math.round(boarded.d) : 0, maxD: trip.maxD || 0 });
+      if (follow) why = 'off the bus: ' + follow.why;
     }
     // Fifteen minutes after leaving a stop the trip is over: the bus you got on is forgotten too, so a
     // later ride can't take it for yours (4.32; not on getting off, which a crawl in traffic looks like).
@@ -10809,6 +11329,11 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
     var arrival = insideStops.filter(function (st) { return !justLeft(st); })[0];
     if (arrival &amp;&amp; (snoozed &amp;&amp; !byHand)) why = 'snoozed: you swiped it away; it comes back once you\u2019ve been to that stop and left it, or at ' + new Date(snoozedAt + 30 * 60000).toTimeString().slice(0, 5);
     else if (arrival &amp;&amp; offBusLately &amp;&amp; !byHand &amp;&amp; homeOrWork(arrival)) why = 'off the bus at ' + arrival.n + ', by ' + homeOrWork(arrival) + ': no countdown (you\u2019ve arrived)';
+    // On a bus, or just off one, by a stop whose buses all go back the way the bus was going: the other
+    // side of the road (4.58). Only within 3 minutes of last moving at bus speed while on a bus, 2 once
+    // off it: having got off, you may well cross the road for a bus back, or walk to a connection. A
+    // run by hand still shows it.
+    else if (arrival &amp;&amp; !byHand &amp;&amp; goesBack(arrival, now, trip.s === 'onbus')) why = (trip.s === 'onbus' ? 'on a bus' : 'just off a bus') + ' by ' + arrival.n + ', but its buses go back the way you came: no countdown';
     else if (arrival &amp;&amp; !slow &amp;&amp; !byHand) { why = 'passing by at ' + Math.round(speed * 3.6) + ' km/h: waits until you slow down (or stay put for 30 s)'; busdwell = 'yes'; }
     else if (arrival) {
       busaction = 'start'; why = settled &amp;&amp; speed &gt; 0.8 ? 'start (you have stayed put, though the GPS speed reads ' + Math.round(speed * 3.6) + ' km/h)' : 'start';
@@ -10822,7 +11347,7 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
         busaction = 'approach'; why = ahead.why;
         setGlobal('BusStateArrivedStop', ahead.id); setGlobal('BusStateStartMode', 'approach|' + now);
         trip = { s: 'heading', stop: ahead.id, since: now, minD: Math.round(ahead.d), bus: ahead.bus };
-      } else why = skipped || (trip.s === 'onbus' ? 'on a bus' : 'not close enough');
+      } else why = skipped || why || (trip.s === 'onbus' ? 'on a bus' : 'not close enough');      // why: set above when TfL's word on your bus decided (4.58)
     } else why = 'snoozed: you swiped it away; it comes back once you\u2019ve been to that stop and left it, or at ' + new Date(snoozedAt + 30 * 60000).toTimeString().slice(0, 5);
   }
   // Riding a bus to the stop: when you'd get there at the pace you've been closing in on it, for
@@ -10834,6 +11359,7 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
     if (closing &gt; 0.5) { trip.eta = Math.round(fixT + etaStop.d / closing * 1000); trip.etaAt = now; }
   }
   if (afterAll &amp;&amp; busaction === 'none') why = afterAll;
+  if (lostNote) why = lostNote + (busaction === 'start' || busaction === 'approach' ? ', so it starts again' : '') + ': ' + why;
   setGlobal('BusStateTrip', JSON.stringify(trip));
   if (busaction === 'stop') setGlobal('BusStateEndWhy', why);         // for Bus End's note in the recorder
 }
@@ -11065,10 +11591,10 @@ var busnearedge = closest ? String(Math.round(closest.edge)) : '';
 setGlobal('BusStateWatchInfo', (get('BusStateWatchInfo') || '') + ' \u2192 ' + busnote.replace(/^Bus Watch: /, ''));
 
 // Trip recorder (Settings: Record trips, BusRecord on). Each call adds one line of JSON for a file in
-// Download/Tasker-bus-trip-data (Downloads in the Files app): bus-trip-Mon.jsonl to
-// bus-trip-Sun.jsonl, so a week is kept and each day's file is
-// started afresh when that weekday comes round again. Everything stays on the phone until you upload
-// it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
+// Download/Tasker-bus-trip-data (Downloads in the Files app), one per day, named by its date and
+// weekday: bus-trip-2026-10-12-Mon.jsonl (4.58; before, bus-trip-Mon.jsonl was started afresh each
+// week, so a week not yet uploaded was lost). Every day is kept until you delete it. Everything stays
+// on the phone until you upload it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
 // The script doesn't write the file itself (4.43). Tasker runs a script's writeFile as a task of its
 // own, and a script waiting on it while another script was running hung both for 45 s (a long press
 // on the island just as the screen came on, Thursday 8 Oct). So the lines are collected here, and the
@@ -11082,10 +11608,10 @@ var busrecappend;
 var busrecday;
 function record(kind, data) {
   if (global('BusRecord') !== 'on') return;
-  var d = new Date(); var day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
+  var d = new Date();
   var line = JSON.stringify(Object.assign({ t: d.getTime(), k: kind }, data || {}));
   if (busrecline) { busrecline += '\n' + line; return; }
-  busrecfile = 'Download/Tasker-bus-trip-data/bus-trip-' + day + '.jsonl';
+  busrecfile = 'Download/Tasker-bus-trip-data/' + recordName(d);
   busrecday = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   // The day only counts as started once its first line is really written: if that fails, the next
   // line tries again from scratch, with the setup (4.38)
@@ -11100,6 +11626,11 @@ function record(kind, data) {
     line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
   }
   busrecline = line;
+}
+// The day's file name: bus-trip-2026-10-12-Mon.jsonl (4.58), so the files sort by date
+function recordName(d) {
+  var two = function (n) { return (n &lt; 10 ? '0' : '') + n; };
+  return 'bus-trip-' + d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()) + '-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] + '.jsonl';
 }
 // ---- Which side of the road? (B: by direction) ----------------------------------------------
 // Coming from home on a weekday morning, the side heading towards work comes first; coming from
@@ -11172,20 +11703,21 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
   v: typeof speed !== 'undefined' &amp;&amp; speed &gt;= 0 ? +speed.toFixed(2) : null,       // the speed the rules used (Android's, or worked out)
   bus: typeof bus !== 'undefined' &amp;&amp; bus ? 1 : 0, settled: typeof settled !== 'undefined' &amp;&amp; settled ? 1 : 0, rate: rateWant,
   kv: tmode ? tmode.nv : null, mode: tmode ? tmode.mode : null, mp: tmode ? tmode.p : null,   // travel mode on trial (4.34)
+  fol: follow ? (follow.with ? 1 : 0) : undefined,                                  // TfL had the bus you got on with you (4.58)
   state: trip.s, stop: trip.stop || '', action: busaction, why: why, near: closest ? { n: closest.name, d: Math.round(closest.d), r: closest.radius } : null });
 </Str>
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
 		</Action>
-		<Action sr="act52" ve="7">
+		<Action sr="act79" ve="7">
 			<code>37</code>
 			<label>Trip recorder on: write what was just recorded · Scripts no longer write the file themselves: Tasker ran that as a task of its own, and two scripts at once could hang each other for 45 s</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecfile</lhs><op>2</op><rhs>Download/*</rhs></Condition></ConditionList></Action>
-		<Action sr="act53" ve="7"><code>409</code>
+		<Action sr="act80" ve="7"><code>409</code>
 			<se>false</se>
 			<label>   A new day: make sure its folder is there · Download/Tasker-bus-trip-data, in case it was deleted since</label><Str sr="arg0" ve="3">Download/Tasker-bus-trip-data</Str><Int sr="arg1" val="1"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act54" ve="7">
+		<Action sr="act81" ve="7">
 			<code>547</code>
 			<label>   Clear the last error, to spot a new one · A void method only reports failure as an error</label>
 			<Str sr="arg0" ve="3">%errmsg</Str>
@@ -11196,28 +11728,28 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act55" ve="7"><code>664</code>
+		<Action sr="act82" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Open the file · On a new day, start it afresh</label><Str sr="arg0" ve="3">busrecw</Str><Str sr="arg1" ve="3">java.io.FileWriter</Str><Str sr="arg2" ve="3">new {java.io.FileWriter} (String, boolean)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3">%busrecappend</Str><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act56" ve="7"><code>664</code>
+		<Action sr="act83" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Write the lines · Every line the script recorded: the setup first on a new day</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">%busrecline</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act57" ve="7"><code>664</code>
+		<Action sr="act84" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Android's line break · So the file always ends with a complete line</label><Str sr="arg0" ve="3">busrecnl</Str><Str sr="arg1" ve="3">java.lang.System</Str><Str sr="arg2" ve="3">lineSeparator {String} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act58" ve="7"><code>664</code>
+		<Action sr="act85" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Write it after the last line · Ends the last line</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">write {} (String)</Str><Str sr="arg3" ve="3">busrecnl</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act59" ve="7"><code>664</code>
+		<Action sr="act86" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Close the file · Saves it</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">busrecw</Str><Str sr="arg2" ve="3">close {} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/></Action>
-		<Action sr="act60" ve="7">
+		<Action sr="act87" ve="7">
 			<code>37</code>
 			<label>   Did it work? · An error from any of the steps above leaves Tasker's last error changed</label>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act61" ve="7"><code>549</code>
+		<Action sr="act88" ve="7"><code>549</code>
 			<label>   No write error to report · Bus Status shows the last write error, if there was one</label><Str sr="arg0" ve="3">%BusRecordErr</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act62" ve="7">
+		<Action sr="act89" ve="7">
 			<code>547</code>
 			<label>   A new day: it has started · Once its first line is really written; if that failed, the next line starts the file again, with the setup</label>
 			<Str sr="arg0" ve="3">%BusRecordDay</Str>
@@ -11228,19 +11760,19 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act63" ve="7"><code>664</code>
+		<Action sr="act90" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   A new file: announce it to the media index, so the Files app lists it · Files written straight to storage aren't listed until Android's media scanner has seen them</label><Str sr="arg0" ve="3">busscanpath</Str><Str sr="arg1" ve="3">java.lang.String</Str><Str sr="arg2" ve="3">new {java.lang.String} (String)</Str><Str sr="arg3" ve="3">/sdcard/%busrecfile</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act64" ve="7"><code>664</code>
+		<Action sr="act91" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Its path, as a list of one · The scanner takes a list of paths</label><Str sr="arg0" ve="3">busscanlist</Str><Str sr="arg1" ve="3">busscanpath</Str><Str sr="arg2" ve="3">split {String[]} (String)</Str><Str sr="arg3" ve="3">,</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act65" ve="7"><code>664</code>
+		<Action sr="act92" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Ask Android to scan it · MediaScannerConnection.scanFile, with no type and no reply wanted</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">android.media.MediaScannerConnection</Str><Str sr="arg2" ve="3">scanFile {} (android.content.Context, String[], String[], android.media.MediaScannerConnection$OnScanCompletedListener)</Str><Str sr="arg3" ve="3">CONTEXT</Str><Str sr="arg4" ve="3">busscanlist</Str><Str sr="arg5" ve="3">null</Str><Str sr="arg6" ve="3">null</Str><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrecappend</lhs><op>2</op><rhs>false</rhs></Condition></ConditionList></Action>
-		<Action sr="act66" ve="7">
+		<Action sr="act93" ve="7">
 			<code>43</code>
 		</Action>
-		<Action sr="act67" ve="7">
+		<Action sr="act94" ve="7">
 			<code>547</code>
 			<label>   Failed: keep why, for Bus Status · The next line tries again</label>
 			<Str sr="arg0" ve="3">%BusRecordErr</Str>
@@ -11251,21 +11783,21 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		</Action>
-		<Action sr="act68" ve="7">
+		<Action sr="act95" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act69" ve="7"><code>549</code>
+		<Action sr="act96" ve="7"><code>549</code>
 			<label>   Done: forget the lines · Another script in the same task starts with nothing collected</label><Str sr="arg0" ve="3">%busrecline</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act70" ve="7"><code>549</code>
+		<Action sr="act97" ve="7"><code>549</code>
 			<label>   the file · Cleared too</label><Str sr="arg0" ve="3">%busrecfile</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act71" ve="7"><code>549</code>
+		<Action sr="act98" ve="7"><code>549</code>
 			<label>   whether to start it afresh · Cleared too</label><Str sr="arg0" ve="3">%busrecappend</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act72" ve="7"><code>549</code>
+		<Action sr="act99" ve="7"><code>549</code>
 			<label>   and the day · Cleared too</label><Str sr="arg0" ve="3">%busrecday</Str><Int sr="arg1" val="0"/><Int sr="arg2" val="0"/><Int sr="arg3" val="0"/></Action>
-		<Action sr="act73" ve="7">
+		<Action sr="act100" ve="7">
 			<code>38</code>
 		</Action>
-		<Action sr="act74" ve="7">
+		<Action sr="act101" ve="7">
 			<code>548</code>
 			<label>Say what it found and why · Only when run by hand</label>
 			<Str sr="arg0" ve="3">%busnote</Str>
@@ -11285,22 +11817,22 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buscaller</lhs><op>3</op><rhs>profile*</rhs></Condition></ConditionList></Action>
-		<Action sr="act75" ve="7"><code>664</code>
+		<Action sr="act102" ve="7"><code>664</code>
 			<se>false</se>
 			<label>Tasker's package name · So the message Android sends goes to Tasker and nothing else</label><Str sr="arg0" ve="3">%bus_pkg</Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">getPackageName {String} ()</Str><Str sr="arg3" ve="3"/><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buspushmode</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act76" ve="7"><code>664</code>
+		<Action sr="act103" ve="7"><code>664</code>
 			<se>false</se>
 			<label>Android location service · Android's LocationManager, which sends the positions</label><Str sr="arg0" ve="3">buslm</Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">getSystemService {Object} (String)</Str><Str sr="arg3" ve="3">location</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buspushmode</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act77" ve="7"><code>664</code>
+		<Action sr="act104" ve="7"><code>664</code>
 			<se>false</se>
 			<label>The message each position comes in · Action net.buscountdown.MOVED, for Bus Moved</label><Str sr="arg0" ve="3">busmint</Str><Str sr="arg1" ve="3">android.content.Intent</Str><Str sr="arg2" ve="3">new {android.content.Intent} (String)</Str><Str sr="arg3" ve="3">net.buscountdown.MOVED</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buspushmode</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act78" ve="7"><code>664</code>
+		<Action sr="act105" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   Addressed to Tasker only · So no other app receives it</label><Str sr="arg0" ve="3">busmint</Str><Str sr="arg1" ve="3">busmint</Str><Str sr="arg2" ve="3">setPackage {Object} (String)</Str><Str sr="arg3" ve="3">%bus_pkg</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buspushmode</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act79" ve="7"><code>664</code>
+		<Action sr="act106" ve="7"><code>664</code>
 			<se>false</se>
 			<label>   The PendingIntent Android sends it with · Mutable, so Android can attach the position</label><Str sr="arg0" ve="3">busmpi</Str><Str sr="arg1" ve="3">android.app.PendingIntent</Str><Str sr="arg2" ve="3">getBroadcast {Object} (android.content.Context, int, android.content.Intent, int)</Str><Str sr="arg3" ve="3">CONTEXT</Str><Str sr="arg4" ve="3">7201</Str><Str sr="arg5" ve="3">busmint</Str><Str sr="arg6" ve="3">167772160</Str><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buspushmode</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act80" ve="7">
+		<Action sr="act107" ve="7">
 			<code>547</code>
 			<label>Not requested yet · Set before asking, so a failed request is obvious in Bus Status</label>
 			<Str sr="arg0" ve="3">%BusStatePush</Str>
@@ -11311,7 +11843,7 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buspushmode</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act81" ve="7">
+		<Action sr="act108" ve="7">
 			<code>547</code>
 			<label>Clear the last error, to spot a new one · A void method only reports failure as an error</label>
 			<Str sr="arg0" ve="3">%errmsg</Str>
@@ -11322,10 +11854,10 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buspushmode</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act82" ve="7"><code>664</code>
+		<Action sr="act109" ve="7"><code>664</code>
 			<se>false</se>
 			<label>Ask Android for a position every %buspushm m · Fused: GPS, Wi-Fi and mobile</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">buslm</Str><Str sr="arg2" ve="3">requestLocationUpdates {} (String, long, float, android.app.PendingIntent)</Str><Str sr="arg3" ve="3">fused</Str><Str sr="arg4" ve="3">%buspushms</Str><Str sr="arg5" ve="3">%buspushm</Str><Str sr="arg6" ve="3">busmpi</Str><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buspushmode</lhs><op>3</op><rhs>none</rhs></Condition></ConditionList></Action>
-		<Action sr="act83" ve="7">
+		<Action sr="act110" ve="7">
 			<code>547</code>
 			<label>   It worked · Records which source is sending positions, for Bus Status</label>
 			<Str sr="arg0" ve="3">%BusStatePush</Str>
@@ -11336,10 +11868,10 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%errmsg</lhs><op>2</op><rhs>untouched</rhs></Condition></ConditionList></Action>
-		<Action sr="act84" ve="7"><code>664</code>
+		<Action sr="act111" ve="7"><code>664</code>
 			<se>false</se>
 			<label>If that failed: ask GPS instead · Only if Android refused the fused source</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">buslm</Str><Str sr="arg2" ve="3">requestLocationUpdates {} (String, long, float, android.app.PendingIntent)</Str><Str sr="arg3" ve="3">gps</Str><Str sr="arg4" ve="3">%buspushms</Str><Str sr="arg5" ve="3">%buspushm</Str><Str sr="arg6" ve="3">busmpi</Str><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStatePush</lhs><op>2</op><rhs>not requested</rhs></Condition></ConditionList></Action>
-		<Action sr="act85" ve="7">
+		<Action sr="act112" ve="7">
 			<code>547</code>
 			<label>   GPS worked · Records that positions are coming from GPS</label>
 			<Str sr="arg0" ve="3">%BusStatePush</Str>
@@ -11350,7 +11882,7 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStatePush</lhs><op>2</op><rhs>not requested</rhs></Condition></ConditionList></Action>
-		<Action sr="act86" ve="7">
+		<Action sr="act113" ve="7">
 			<code>130</code>
 			<label>Arrived: start the countdown · For the saved stop you are at</label>
 			<Str sr="arg0" ve="3">Bus Start</Str>
@@ -11365,7 +11897,7 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busaction</lhs><op>2</op><rhs>start</rhs></Condition></ConditionList></Action>
-		<Action sr="act87" ve="7">
+		<Action sr="act114" ve="7">
 			<code>130</code>
 			<label>Heading to a saved stop: show its next buses early · Due there within BusApproachMin minutes</label>
 			<Str sr="arg0" ve="3">Bus Start</Str>
@@ -11380,7 +11912,7 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busaction</lhs><op>2</op><rhs>approach</rhs></Condition></ConditionList></Action>
-		<Action sr="act88" ve="7">
+		<Action sr="act115" ve="7">
 			<code>130</code>
 			<label>Left: end the countdown · Removes the island and goes back to a position every 30 m</label>
 			<Str sr="arg0" ve="3">Bus End</Str>
@@ -11397,8 +11929,8 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busaction</lhs><op>2</op><rhs>stop</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task72">
-		<cdate>1791714106192</cdate>
-		<edate>1791714106192</edate>
+		<cdate>1791831295019</cdate>
+		<edate>1791831295019</edate>
 		<id>72</id>
 		<nme>Bus Status</nme>
 		<pri>6</pri>
@@ -11412,6 +11944,48 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// Trip recorder (Settings: Record trips, BusRecord on). Each call adds one line of JSON for a file in
+// Download/Tasker-bus-trip-data (Downloads in the Files app), one per day, named by its date and
+// weekday: bus-trip-2026-10-12-Mon.jsonl (4.58; before, bus-trip-Mon.jsonl was started afresh each
+// week, so a week not yet uploaded was lost). Every day is kept until you delete it. Everything stays
+// on the phone until you upload it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
+// The script doesn't write the file itself (4.43). Tasker runs a script's writeFile as a task of its
+// own, and a script waiting on it while another script was running hung both for 45 s (a long press
+// on the island just as the screen came on, Thursday 8 Oct). So the lines are collected here, and the
+// steps straight after the script write them (record_steps in build/assemble.py): busrecfile,
+// busrecline (the lines), busrecappend (false: start the file afresh) and busrecday (the day the
+// file starts, kept once it's written). Declared without a value, so a script that includes this
+// after its first record() doesn't lose what was collected.
+var busrecline;
+var busrecfile;
+var busrecappend;
+var busrecday;
+function record(kind, data) {
+  if (global('BusRecord') !== 'on') return;
+  var d = new Date();
+  var line = JSON.stringify(Object.assign({ t: d.getTime(), k: kind }, data || {}));
+  if (busrecline) { busrecline += '\n' + line; return; }
+  busrecfile = 'Download/Tasker-bus-trip-data/' + recordName(d);
+  busrecday = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  // The day only counts as started once its first line is really written: if that fails, the next
+  // line tries again from scratch, with the setup (4.38)
+  var fresh = global('BusRecordDay') !== busrecday;
+  busrecappend = fresh ? 'false' : 'true';
+  // Each day's file starts with your setup (saved stops, routes, the route lists, home and work, the
+  // settings that shape decisions), so a recorded day can be replayed later (npm run replay)
+  if (fresh) {
+    var keep = ['BusPlaces', 'BusRoutes', 'BusNearRadius', 'BusRadius', 'BusApproach', 'BusApproachMin', 'BusLeaveShow', 'BusHomeWifi', 'BusWorkWifi',
+      'BusHomeAt', 'BusWorkAt', 'BusTimeout', 'BusRefresh', 'BusCacheStops', 'BusCacheSeq'];
+    var setup = {}; keep.forEach(function (n) { var v = global(n); if (v !== undefined &amp;&amp; v !== null &amp;&amp; String(v).charAt(0) !== '%') setup[n] = String(v); });
+    line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
+  }
+  busrecline = line;
+}
+// The day's file name: bus-trip-2026-10-12-Mon.jsonl (4.58), so the files sort by date
+function recordName(d) {
+  var two = function (n) { return (n &lt; 10 ? '0' : '') + n; };
+  return 'bus-trip-' + d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()) + '-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] + '.jsonl';
+}
 var now = Date.now(); var lines = [];
 
 var running = get('BusStateRunning') === '1' &amp;&amp; /(^|,)Bus Loop(,|$)/.test(get('TRUN'));
@@ -11430,15 +12004,15 @@ var sideNow = lastPlace === 'work' ? 'the side towards home (you came from work)
 lines.push('Side of the road first: ' + sideNow + '. Home ' + (get('BusHomeAt') ? 'known' : 'not known yet') +
   ', work ' + (get('BusWorkAt') ? 'known' : 'not known yet') + (get('BusCacheSeq') ? '' : ', route orders not fetched yet'));
 // Recording: whether today's file is really there, as Tasker sees it, and how much it holds (4.38)
-var recDay = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][dd.getDay()];
-var recFile = 'Download/Tasker-bus-trip-data/bus-trip-' + recDay + '.jsonl';
+var recName = recordName(dd);                // bus-trip-2026-10-12-Mon.jsonl (recordName in shared/record.js, 4.58)
+var recFile = 'Download/Tasker-bus-trip-data/' + recName;
 var recNote = 'off';
 if (get('BusRecord') === 'on') {
   var recToday = get('BusRecordDay') === dd.getFullYear() + '-' + (dd.getMonth() + 1) + '-' + dd.getDate();
   var recText = null; try { recText = typeof readFile === 'function' ? readFile(recFile) : null; } catch (e) { recText = null; }
   var recLines = typeof recText === 'string' ? recText.split('\n').filter(function (l) { return l; }) : [];
   var recLast = null; try { recLast = recLines.length ? JSON.parse(recLines[recLines.length - 1]).t : null; } catch (e) { recLast = null; }
-  recNote = 'on (Downloads/Tasker-bus-trip-data/bus-trip-' + recDay + '.jsonl: ' +
+  recNote = 'on (Downloads/Tasker-bus-trip-data/' + recName + ': ' +
     (!recToday ? 'nothing written today yet' : recLines.length ? recLines.length + ' lines, last at ' + (recLast ? new Date(recLast).toTimeString().slice(0, 5) : '?') : 'not found') +
     (get('BusRecordErr') ? '; last write failed at ' + get('BusRecordErr') : '') + ')';
 }
@@ -11467,6 +12041,15 @@ if (modeNow &amp;&amp; Date.now() - modeNow.t &lt; 10 * 60000) {
   var mi = ['still', 'walk', 'ride'].indexOf(modeNow.m);
   lines.push('Travel mode (on trial, not used yet): ' + ({ still: 'still', walk: 'walking', ride: 'riding' }[modeNow.m] || '?') + ', ' + (mi &gt; -1 &amp;&amp; modeNow.p ? modeNow.p[mi] : '?') + '% sure' + (isFinite(modeNow.v) ? ', ' + Math.round(modeNow.v * 3.6) + ' km/h' : ''));
 }
+// Following your bus (4.58): what TfL last said about the bus you got on, in the last 10 minutes
+var followNow = null; try { followNow = JSON.parse(get('BusStateFollow') || 'null'); } catch (e) { followNow = null; }
+var followTry = null; try { followTry = JSON.parse(get('BusStateFollowTry') || 'null'); } catch (e) { followTry = null; }
+if (followNow &amp;&amp; Date.now() - followNow.at &lt; 10 * 60000) {
+  var followNext = (followNow.n || []).filter(function (x) { return x[1] &gt;= Date.now() - 30000; })[0];
+  lines.push('Following your bus: ' + followNow.v + ', asked ' + Math.round((Date.now() - followNow.at) / 1000) + ' s ago' +
+    (followNext ? ', next stop ' + (followNext[2] || followNext[0]) + ' in about ' + Math.max(0, Math.round((followNext[1] - Date.now()) / 60000)) + ' min' : ', no stops ahead') +
+    (followTry &amp;&amp; followTry.fails ? ' (the last ' + followTry.fails + (followTry.fails === 1 ? ' request' : ' requests') + ' failed)' : ''));
+}
 lines.push('Bus Watch last run: ' + (get('BusStateWatchInfo') || 'not yet'));
 
 var places = get('BusPlaces').split('\n').filter(function (r) { return r.split('|').length &gt;= 5; });
@@ -11475,8 +12058,12 @@ lines.push(places.length + (places.length === 1 ? ' saved stop' : ' saved stops'
 var stops = Object.keys(JSON.parse(get('BusCacheStops') || '{}')).length;
 lines.push('Route stops: ' + stops + ' stops, ' + (get('BusCacheStopsDate') === new Date().toDateString() ? 'fetched today' : 'refreshes next start'));
 var tt = JSON.parse(get('BusCacheTimetable') || '{}');
-var today = Object.keys(tt).filter(function (k) { return tt[k].date === new Date().toDateString(); }).length;
-lines.push('Timetables: ' + today + (today === 1 ? ' stop' : ' stops') + ' today');
+var today = Object.keys(tt).filter(function (k) { return tt[k].date === new Date().toDateString(); });
+// Routes whose request failed (4.58: tried again 5 minutes later) aren't counted as having one
+var ttFailed = [];
+today.forEach(function (k) { Object.keys(tt[k].r || {}).forEach(function (r) { if (tt[k].r[r].fail) ttFailed.push(r); }); });
+var ttGot = today.filter(function (k) { return Object.keys(tt[k].r || {}).some(function (r) { return !tt[k].r[r].fail; }); }).length;
+lines.push('Timetables: ' + ttGot + (ttGot === 1 ? ' stop' : ' stops') + ' today' + (ttFailed.length ? '; not yet for ' + ttFailed.length + (ttFailed.length === 1 ? ' route' : ' routes') + ' (TfL didn\u2019t answer: tried again 5 minutes later)' : ''));
 
 lines.push('Wi-Fi off-switch: home ' + (get('BusHomeWifi') || 'not set') + ', work ' + (get('BusWorkWifi') || 'not set'));
 lines.push('Island: screen ' + (get('BusStateScreenW') || '?') + ' dp wide' + (get('BusScreenW') ? ' (from Bus Find Camera)' : ' (measured)') +

@@ -61,7 +61,10 @@ def perform(name, label=None, cond=None, pri=10, par1=''):
     return deco(x, label, cond)
 def varset(name, val, label=None): return deco(set_str(set_str(T['VARSET'], 0, name), 1, val), label)
 def getloc(label='Where am I?'): return deco(T['GETLOC'], label, cont=True)
-def http(url, label): return deco(set_str(T['HTTP'], 2, url), label, cont=True)
+def http(url, label, timeout=None):
+    # timeout: seconds to wait for TfL (arg8; the template's is 15)
+    x = set_str(T['HTTP'], 2, url)
+    return deco(set_int(x, 8, timeout) if timeout else x, label, cont=True)
 def flash(text, label=None, cond=None):
     # Every flash uses Tasker Layout (arg2)
     return deco(set_int(set_str(T['FLASH'], 0, text), 2, 1), label, cond)

@@ -1,8 +1,8 @@
 // Trip recorder (Settings: Record trips, BusRecord on). Each call adds one line of JSON for a file in
-// Download/Tasker-bus-trip-data (Downloads in the Files app): bus-trip-Mon.jsonl to
-// bus-trip-Sun.jsonl, so a week is kept and each day's file is
-// started afresh when that weekday comes round again. Everything stays on the phone until you upload
-// it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
+// Download/Tasker-bus-trip-data (Downloads in the Files app), one per day, named by its date and
+// weekday: bus-trip-2026-10-12-Mon.jsonl (4.58; before, bus-trip-Mon.jsonl was started afresh each
+// week, so a week not yet uploaded was lost). Every day is kept until you delete it. Everything stays
+// on the phone until you upload it. kind: what happened (pos, decision, tfl, start, end, buzz); data: its details.
 // The script doesn't write the file itself (4.43). Tasker runs a script's writeFile as a task of its
 // own, and a script waiting on it while another script was running hung both for 45 s (a long press
 // on the island just as the screen came on, Thursday 8 Oct). So the lines are collected here, and the
@@ -16,10 +16,10 @@ var busrecappend;
 var busrecday;
 function record(kind, data) {
   if (global('BusRecord') !== 'on') return;
-  var d = new Date(); var day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
+  var d = new Date();
   var line = JSON.stringify(Object.assign({ t: d.getTime(), k: kind }, data || {}));
   if (busrecline) { busrecline += '\n' + line; return; }
-  busrecfile = 'Download/Tasker-bus-trip-data/bus-trip-' + day + '.jsonl';
+  busrecfile = 'Download/Tasker-bus-trip-data/' + recordName(d);
   busrecday = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
   // The day only counts as started once its first line is really written: if that fails, the next
   // line tries again from scratch, with the setup (4.38)
@@ -34,4 +34,9 @@ function record(kind, data) {
     line = JSON.stringify({ t: d.getTime(), k: 'setup', vars: setup }) + '\n' + line;
   }
   busrecline = line;
+}
+// The day's file name: bus-trip-2026-10-12-Mon.jsonl (4.58), so the files sort by date
+function recordName(d) {
+  var two = function (n) { return (n < 10 ? '0' : '') + n; };
+  return 'bus-trip-' + d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()) + '-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] + '.jsonl';
 }

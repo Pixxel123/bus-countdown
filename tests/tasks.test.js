@@ -88,6 +88,7 @@ test('what Bus Loop starts runs straight away, ahead of the loop itself', () => 
 // without thinking about the order things happen in.
 const MID_TASK_PERFORMS = {
   'Bus Settings -> Bus Wake': 'only to switch the profiles after an import: nothing in Settings depends on it',
+  'Bus Settings -> Bus Refresh': 'the island back once the screen has closed (4.58): what Settings does after (route lists, the stop across the road) never touches the island',
   'Bus Start -> Bus Wake': 'only to switch the profiles after an import: independent of starting the countdown',
   'Bus Loop -> Bus End': 'time is up: the loop stops on its next step anyway',
   'Bus Loop -> Bus Watch': 'safety net: the check runs while the loop goes on to refresh',

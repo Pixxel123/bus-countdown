@@ -13,15 +13,12 @@
    - and (4.56) as the island's nx, so its page shows it the moment you
      hold the island, without waiting for Tasker.
    A failed fetch keeps the last.
-   Output: busliveroutes (your routes with a live time there, for
-           tt_check.js: the timetable is only needed for the others)
    ================================================================== */
 /* @include get */
 /* @include loc */
 /* @include stopLetter */
 /* @include nextStop */
 var now = Date.now();
-var busliveroutes = '';
 if (loc('http_response_code') === '200' && loc('busprestop')) {
   try {
     var got = JSON.parse(http_data).map(function (b) { return [b.lineName, b.vehicleId || '', now + b.timeToStation * 1000, b.destinationName || '']; })
@@ -39,7 +36,6 @@ if (loc('http_response_code') === '200' && loc('busprestop')) {
       else if (r.t2 === undefined && x[2] - r.t >= 60000) { r.t2 = x[2]; r.st2 = 'live'; }
       else if (r.t2 !== undefined && r.t3 === undefined && x[2] - r.t2 >= 60000) { r.t3 = x[2]; r.st3 = 'live'; }
     });
-    busliveroutes = perRoute.map(function (r) { return r.k; }).join(',');
     // The stop's other routes, soonest first: up to 8, three times each (as refresh.js, 4.41)
     var others = [];
     var byRoute = {};

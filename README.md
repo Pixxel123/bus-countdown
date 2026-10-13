@@ -50,7 +50,7 @@ Data comes from the [TfL Unified API](https://api-portal.tfl.gov.uk/). Built and
 2. In Tasker, long-press the project bar at the bottom, choose Import Project, and pick the file.
 3. Run the **Bus Settings** task.
 
-The first time, Bus Settings measures the camera cutout before opening. Enter your TfL key under Setup, set your home and work Wi-Fi, then under Stops and routes tap the routes you want at the stops you use. Stops within 400 m of you are listed with their routes. Go back to the main page and tap its back arrow to save and close. For each stop you've added, it then asks whether to save the stop across the road too, showing its name, letter and direction.
+The first time, Bus Settings measures the camera cutout before opening. Enter your TfL key under Setup, set your home and work Wi-Fi, then under Stops and routes tap the routes you want at the stops you use. The nearest stops within 400 m of you (up to 6 besides your own) are listed with their routes. Go back to the main page and tap its back arrow to save and close. For each stop you've added, it then asks whether to save the stop across the road too, showing its name, letter and direction.
 
 For day-to-day use, add the **Bus** task as a home screen shortcut or Quick Settings tile. It opens a menu: Start countdown (or End countdown while one is running), Settings, Status and Debugging.
 
@@ -98,8 +98,8 @@ Everything stays on the phone. There are no accounts, analytics or servers of th
 
 - **What it reads:** your position (pushed by Android as you move, and fetched when a check needs one), the name of the Wi-Fi network you're on, and whether the screen is on.
 - **What it keeps:** Tasker global variables on the phone hold your saved stops and routes, your TfL key (`%TflKey`), your home and work Wi-Fi names, where Bus Watch has learned home and work are (`%BusHomeAt`, `%BusWorkAt`), and the current trip, including your last six positions (see [Settings](docs/configuration.md#settings)).
-- **What TfL sees:** each request carries your API key, and TfL sees the phone's IP address as with any website. Live arrivals, timetables and route lists ask about a stop or a route, never where you are. The one exception is the settings screen's list of stops near you, which sends your position to TfL's stop search (`/StopPoint?lat&lon`) each time Settings opens.
-- **Trip recordings:** off unless you turn on Record trips. They hold every position checked during the day, with times, and every TfL reply, in `Download/Tasker-bus-trip-data`. Other apps that can read your Downloads folder can read them too. A week is kept, each weekday's file started afresh when that day comes round.
+- **What TfL sees:** each request carries your API key, and TfL sees the phone's IP address as with any website. Live arrivals, timetables and route lists ask about a stop or a route, never where you are. Two exceptions: the settings screen's list of stops near you sends your position to TfL's stop search (`/StopPoint?lat&lon`) each time Settings opens; and since 4.58, while you ride a bus Bus Watch saw you get on, it asks TfL about that bus by its registration (`/Vehicle/{id}/Arrivals`) every 20 to 45 seconds, which, with your key, tells TfL which bus you're on for the ride.
+- **Trip recordings:** off unless you turn on Record trips. They hold every position checked during the day, with times, and every TfL reply, in `Download/Tasker-bus-trip-data`. Other apps that can read your Downloads folder can read them too. One file a day, named by its date (`bus-trip-2026-10-12-Mon.jsonl`), kept until you delete it.
 - **Reports:** Bus Status copies its report to the clipboard, and the Debugging report includes your recent positions, so check either before pasting it anywhere public.
 - **Sharing your setup:** your key and Wi-Fi names live in Tasker variables, not in the project file, but a Tasker backup includes them. Leave `%TflKey` out of anything you share.
 

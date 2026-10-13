@@ -3,6 +3,7 @@
    Output: busstatus
    ================================================================== */
 /* @include get */
+/* @include record */
 var now = Date.now(); var lines = [];
 
 var running = get('BusStateRunning') === '1' && /(^|,)Bus Loop(,|$)/.test(get('TRUN'));
@@ -21,15 +22,15 @@ var sideNow = lastPlace === 'work' ? 'the side towards home (you came from work)
 lines.push('Side of the road first: ' + sideNow + '. Home ' + (get('BusHomeAt') ? 'known' : 'not known yet') +
   ', work ' + (get('BusWorkAt') ? 'known' : 'not known yet') + (get('BusCacheSeq') ? '' : ', route orders not fetched yet'));
 // Recording: whether today's file is really there, as Tasker sees it, and how much it holds (4.38)
-var recDay = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][dd.getDay()];
-var recFile = 'Download/Tasker-bus-trip-data/bus-trip-' + recDay + '.jsonl';
+var recName = recordName(dd);                // bus-trip-2026-10-12-Mon.jsonl (recordName in shared/record.js, 4.58)
+var recFile = 'Download/Tasker-bus-trip-data/' + recName;
 var recNote = 'off';
 if (get('BusRecord') === 'on') {
   var recToday = get('BusRecordDay') === dd.getFullYear() + '-' + (dd.getMonth() + 1) + '-' + dd.getDate();
   var recText = null; try { recText = typeof readFile === 'function' ? readFile(recFile) : null; } catch (e) { recText = null; }
   var recLines = typeof recText === 'string' ? recText.split('\n').filter(function (l) { return l; }) : [];
   var recLast = null; try { recLast = recLines.length ? JSON.parse(recLines[recLines.length - 1]).t : null; } catch (e) { recLast = null; }
-  recNote = 'on (Downloads/Tasker-bus-trip-data/bus-trip-' + recDay + '.jsonl: ' +
+  recNote = 'on (Downloads/Tasker-bus-trip-data/' + recName + ': ' +
     (!recToday ? 'nothing written today yet' : recLines.length ? recLines.length + ' lines, last at ' + (recLast ? new Date(recLast).toTimeString().slice(0, 5) : '?') : 'not found') +
     (get('BusRecordErr') ? '; last write failed at ' + get('BusRecordErr') : '') + ')';
 }
@@ -58,6 +59,15 @@ if (modeNow && Date.now() - modeNow.t < 10 * 60000) {
   var mi = ['still', 'walk', 'ride'].indexOf(modeNow.m);
   lines.push('Travel mode (on trial, not used yet): ' + ({ still: 'still', walk: 'walking', ride: 'riding' }[modeNow.m] || '?') + ', ' + (mi > -1 && modeNow.p ? modeNow.p[mi] : '?') + '% sure' + (isFinite(modeNow.v) ? ', ' + Math.round(modeNow.v * 3.6) + ' km/h' : ''));
 }
+// Following your bus (4.58): what TfL last said about the bus you got on, in the last 10 minutes
+var followNow = null; try { followNow = JSON.parse(get('BusStateFollow') || 'null'); } catch (e) { followNow = null; }
+var followTry = null; try { followTry = JSON.parse(get('BusStateFollowTry') || 'null'); } catch (e) { followTry = null; }
+if (followNow && Date.now() - followNow.at < 10 * 60000) {
+  var followNext = (followNow.n || []).filter(function (x) { return x[1] >= Date.now() - 30000; })[0];
+  lines.push('Following your bus: ' + followNow.v + ', asked ' + Math.round((Date.now() - followNow.at) / 1000) + ' s ago' +
+    (followNext ? ', next stop ' + (followNext[2] || followNext[0]) + ' in about ' + Math.max(0, Math.round((followNext[1] - Date.now()) / 60000)) + ' min' : ', no stops ahead') +
+    (followTry && followTry.fails ? ' (the last ' + followTry.fails + (followTry.fails === 1 ? ' request' : ' requests') + ' failed)' : ''));
+}
 lines.push('Bus Watch last run: ' + (get('BusStateWatchInfo') || 'not yet'));
 
 var places = get('BusPlaces').split('\n').filter(function (r) { return r.split('|').length >= 5; });
@@ -66,8 +76,12 @@ lines.push(places.length + (places.length === 1 ? ' saved stop' : ' saved stops'
 var stops = Object.keys(JSON.parse(get('BusCacheStops') || '{}')).length;
 lines.push('Route stops: ' + stops + ' stops, ' + (get('BusCacheStopsDate') === new Date().toDateString() ? 'fetched today' : 'refreshes next start'));
 var tt = JSON.parse(get('BusCacheTimetable') || '{}');
-var today = Object.keys(tt).filter(function (k) { return tt[k].date === new Date().toDateString(); }).length;
-lines.push('Timetables: ' + today + (today === 1 ? ' stop' : ' stops') + ' today');
+var today = Object.keys(tt).filter(function (k) { return tt[k].date === new Date().toDateString(); });
+// Routes whose request failed (4.58: tried again 5 minutes later) aren't counted as having one
+var ttFailed = [];
+today.forEach(function (k) { Object.keys(tt[k].r || {}).forEach(function (r) { if (tt[k].r[r].fail) ttFailed.push(r); }); });
+var ttGot = today.filter(function (k) { return Object.keys(tt[k].r || {}).some(function (r) { return !tt[k].r[r].fail; }); }).length;
+lines.push('Timetables: ' + ttGot + (ttGot === 1 ? ' stop' : ' stops') + ' today' + (ttFailed.length ? '; not yet for ' + ttFailed.length + (ttFailed.length === 1 ? ' route' : ' routes') + ' (TfL didn\u2019t answer: tried again 5 minutes later)' : ''));
 
 lines.push('Wi-Fi off-switch: home ' + (get('BusHomeWifi') || 'not set') + ', work ' + (get('BusWorkWifi') || 'not set'));
 lines.push('Island: screen ' + (get('BusStateScreenW') || '?') + ' dp wide' + (get('BusScreenW') ? ' (from Bus Find Camera)' : ' (measured)') +

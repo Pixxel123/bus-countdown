@@ -1,6 +1,6 @@
-// Replay a recorded day (Downloads/Tasker-bus-trip-data/bus-trip-<Day>.jsonl from the phone) through Bus Watch's rules as
+// Replay a recorded day (Downloads/Tasker-bus-trip-data/bus-trip-<date>-<Day>.jsonl from the phone) through Bus Watch's rules as
 // they are now, and show where today's code decides differently from what happened on the phone.
-//   npm run replay -- path/to/bus-trip-Tue.jsonl
+//   npm run replay -- path/to/bus-trip-2026-10-13-Tue.jsonl
 // Each "check" line is one position as it came in; the day's "setup" line gives your stops and
 // settings. Start and end are played as the tasks would (Bus Start / Bus End). The work is done by
 // build/replay-core.js, which the tests use too.
@@ -9,7 +9,7 @@ const fs = require('fs');
 const { replay } = require('./replay-core');
 
 const file = process.argv[2];
-if (!file) { console.error('Usage: npm run replay -- bus-trip-Tue.jsonl'); process.exit(1); }
+if (!file) { console.error('Usage: npm run replay -- bus-trip-2026-10-13-Tue.jsonl'); process.exit(1); }
 const lines = fs.readFileSync(file, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
 const time = (t) => new Date(t).toTimeString().slice(0, 8);
 let differ = 0, checks = 0;

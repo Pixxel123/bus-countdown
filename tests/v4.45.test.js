@@ -1,6 +1,6 @@
 // V4.45: switching sides without waiting for TfL. After each refresh, while a countdown runs with the
 // screen on, Bus Refresh gets the stop a long press goes to ready: its live times, and its timetable
-// once a day for routes with no live time there. A long press then shows those times at once (as that
+// once a day (for each of your routes there since 4.58; for routes with no live time there before). A long press then shows those times at once (as that
 // stop's island data, which opposite.js shows since 4.43), and Bus Refresh builds the island from them
 // instead of waiting for TfL.
 'use strict';
@@ -37,15 +37,14 @@ test('its reply is kept with each bus\'s expected time, and as that stop\'s isla
   assert.deepStrictEqual([kj.u, kj.s, kj.n, kj.l, kj.r], [AT, 'KJ', 'Kiln Street (Stop KJ)', 'KJ', 45000]);
   assert.deepStrictEqual(kj.b.map((b) => [b.k, (b.t - AT) / 60000, (b.t2 - AT) / 60000, (b.t3 - AT) / 60000]), [['517', 3, 11, 25]], 'the same bus listed twice counts once');
   assert.deepStrictEqual(kj.a, [{ k: '289', d: 'Fernleigh', t: [AT + 360000] }]);
-  assert.strictEqual(r.busliveroutes, '517');
   run('prefetch_store.js', { globals: g, now: AT + 45000, locals: { http_response_code: '503', busprestop: 'KJ', http_data: '' } });
   assert.strictEqual(JSON.parse(g.BusStatePrefetch).at, AT, 'a failed fetch keeps the last');
 });
 
-test('its timetable is fetched for that stop, only for your routes with no live time there', () => {
+test('its timetable is fetched for that stop, for each of your routes there (live or not, since 4.58)', () => {
   const g = base({ BusCacheStops: JSON.stringify({ KJ: { r: ['517', '566'] }, KH: { r: ['517', '566'] } }) });
   const t = run('tt_check.js', { globals: g, now: AT, locals: { busttstop: 'KJ', busliveroutes: '517' } });
-  assert.deepStrictEqual([t.busttfetch, t.busttcount], ['yes', '1'], 'the 566 at KJ');
+  assert.deepStrictEqual([t.busttfetch, t.busttcount], ['yes', '2'], 'both routes at KJ');
 });
 
 // ---- 2. A long press -------------------------------------------------------------------------------

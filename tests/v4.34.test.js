@@ -138,7 +138,7 @@ test('in the project: %caller1 copied, the check, then fetching to buzzing skipp
   const idx = (re) => acts.findIndex((a) => re.test(a));
   const iCopy = idx(/<Str sr="arg0" ve="3">%busrefby<\/Str>[\s\S]*<Str sr="arg1" ve="3">%caller1<\/Str>/), iCheck = idx(/Fetched these times under 20 s ago/);
   const iIf = idx(/<code>37<\/code>[\s\S]*<lhs>%busfresh<\/lhs><op>3<\/op><rhs>yes<\/rhs>/);
-  const iHttp = idx(/StopPoint\/%BusStateStopId\/Arrivals/), iIsland = idx(/Island not up yet/);
+  const iHttp = idx(/StopPoint\/%BusStateStopId\/Arrivals/), iIsland = idx(/Draw the island if it needs it/);   // (4.58: the island block now starts with whether Settings is open)
   assert.ok(iCopy >= 0 && iCopy < iCheck && iCheck < iIf && iIf < iHttp && iHttp < iIsland, [iCopy, iCheck, iIf, iHttp, iIsland].join(' '));
   // Nesting: count If (37) and End If (38) between the busfresh If and the island step: back to level 0
   let depth = 0;

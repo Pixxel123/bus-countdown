@@ -4,6 +4,22 @@
 import re
 
 DETAILS = {
+ # Why TfL didn't answer (4.58)
+ 'Clear the last error, so a failed request says why (4.58)': 'Tasker puts the reason in %errmsg; the recorder keeps it with the reply (err), and the debug log says so.',
+ # Settings during a countdown (4.58)
+ 'A countdown is showing: hide the island while Settings is open (both at once restarted Tasker)': 'Since 4.57 the island can resize its own window at any moment; showing Settings while it did restarted Tasker on Monday 12 October.',
+ 'so a refresh shows it again': 'Bus Refresh draws the island when this says it isn\'t up.',
+ 'A countdown is running: bring the island back (unless Adjust live shows it)': 'Settings has closed, and what was saved has been said.',
+ 'Draw the island if it needs it': 'Unless Settings is open (4.58).',
+ 'not while Settings is open': 'Settings takes the island down while its screen shows; a screen turned on, or the phone turned upright, would draw it over Settings.',
+ 'unless Settings asked, as it closed': 'Bus Settings performs this refresh (par1 settings) to put the island back.',
+ 'Settings not open': 'Or closing, and asking for the island back.',
+ 'Show the island again, with its times': 'A refresh at once, rather than waiting for Bus Loop.',
+ # Following your bus (4.58)
+ 'Riding a bus Bus Watch has named? Ask TfL where it is (every 45 s at most, 20 s while slow)': 'Only on a bus you were seen getting on, with no countdown or one for a stop the bus is heading to. After a failed request it waits 90 s, then 180, then 300.',
+ 'Yes: ask now': 'One small request; a crawl in traffic is then told from getting off.',
+ 'Ask TfL which stops your bus calls at next (5 s at most: Bus Watch waits for it)': 'TfL\'s list of the stops that bus calls at next, with times, by its registration.',
+ 'Keep them for Bus Watch': 'In BusStateFollow. Bus Watch trusts it for 2 minutes, so a failed request changes nothing.',
  # Getting the stop a long press goes to ready (4.45)
  'A long press to the stop that was got ready: its times are here already (4.45)': 'Bus Refresh keeps the next stop\'s times ready after each refresh, so switching sides needn\'t wait for TfL.',
  'Use them, rather than wait for TfL': 'Turns the kept reply back into seconds away from now. Bus Loop fetches fresh ones as usual.',
@@ -11,7 +27,7 @@ DETAILS = {
  'Nothing to get ready': 'No other stop nearby, its times are fresh enough, or the screen is off.',
  'Ask TfL for its live arrivals': 'For the stop a long press goes to: one extra small request per refresh while a countdown runs with the screen on.',
  'Keep them for a long press': 'In BusStatePrefetch for up to 90 s, and as that stop\'s island data, so a long press shows its times at once.',
- 'Its timetable today, for routes with no live time there? (once a day per stop)': 'The first switch of the day used to fetch it after the island showed.',
+ 'Its timetable today, for each of your routes there? (once a day per stop and route)': 'The first switch of the day used to fetch it after the island showed.',
  'Not yet: fetch it too': 'Once a day for that stop, as for the stop you\'re at.',
  'For each of those routes there': 'One request per route, the same as for the current stop.',
  'Ask TfL for its timetable there': 'The stop a long press goes to.',
@@ -120,7 +136,7 @@ DETAILS = {
  'Clear the island': 'Removes it from the screen, if it\'s showing.',
  'Dismissed from the island: confirm with a vibration': 'A 40 ms buzz when you swipe the island away.',
  'For each of my routes': 'Fetches the list of stops for every route you use (once a day, or when your routes change).',
- 'For each of those routes': 'Your routes at this stop with no live time and no timetable yet today.',
+ 'For each of those routes': 'Your routes at this stop with no timetable yet today, live or not (4.58), or whose request failed 5 minutes ago or more.',
  'Ask TfL for live arrivals': 'Every bus TfL predicts at this stop, about 30 minutes ahead. Read by the next step.',
  'Held on the island: confirm with a vibration': 'A 20 ms buzz when a long press switches stop.',
  'Hint shown': 'So the gestures message only appears once.',
@@ -216,7 +232,7 @@ SHORT = {
  'A tick: the island has been swiped far enough to dismiss': '15 ms buzz: letting go now ends it',
  'Accessibility services that are on': 'Lets the island draw over the status bar',
  'And take it away again after a minute': 'Unless you have left the office Wi-Fi by then',
- 'Ask TfL for its timetable': 'For routes with no live prediction',
+ 'Ask TfL for its timetable': 'Today\'s departures for that route here: the fallback when TfL has no live time, or doesn\'t answer',
  'Assume the phone is upright to start with': 'Bus Refresh checks before showing the island',
  'At work, in the heads-up window, with no countdown running?': 'On work Wi-Fi, in the set window',
  'Build the departures: live times, timetable where there are none': 'One line per route, for the island',

@@ -92,6 +92,7 @@ def fetch_steps():
       if_('%busfresh', 2, 'cached', 'A long press to the stop that was got ready: its times are here already (4.45)'),
         js('prefetch_use.js', 'Use them, rather than wait for TfL'),
       else_(),
+        clear_var('%errmsg', 'Clear the last error, so a failed request says why (4.58)'),
         http('https://api.tfl.gov.uk/StopPoint/%BusStateStopId/Arrivals?app_key=%TflKey', 'Ask TfL for live arrivals'),
       endif(),
       js('refresh.js', 'Build the departures: live times, timetable where there are none'),
@@ -206,7 +207,7 @@ def request_positions(mode, cond=None):
         deco(set_str(set_str(T['VARSET'], 0, '%BusStatePush'), 1, f'GPS, {what}'), '   GPS worked', ('%BusStatePush', 2, 'not requested'))]
 
 PROFILES = ['Bus Moved', 'Bus Screen On', 'Bus Hide When Sideways']
-VERSION = '4.57'
+VERSION = '4.58'
 BUILD = VERSION + '.' + time.strftime('%Y%m%d%H%M')     # changes with every build
 
 def profile_status(name, on, label, cond=None):
@@ -304,6 +305,13 @@ TASKS = [
     *wifi_name(),
     varset('%busstartpage', '%par1', 'Which page to open on (the live position editor reopens it on Position, 4.52; scripts can\'t read %par1)'),
     js('settings_open.js', 'Build the settings screen'),
+    # 4.58: Settings opened during a countdown, with the island up, restarted Tasker as the screen was
+    # shown (Monday 12 October), and the countdown with it. The island's page can resize its own window
+    # at any moment since 4.57, so the island is taken down first, as when the phone turns sideways, and
+    # put back by a refresh once the screen closes.
+    # Showing (1), or showing but due to be drawn again (2: a refresh with no times leaves it so)
+    *dismiss_island('A countdown is showing: hide the island while Settings is open (both at once restarted Tasker)', ('%BusStateIslandShown', 2, '1/2')),
+    deco(varset('%BusStateIslandShown', '0', '   so a refresh shows it again'), None, ('%BusStateRunning', 2, '1')),
     show_settings(),
     js('settings_save.js', 'Save what changed (however the screen was closed)'),
     mkdir('Download/Tasker-bus-trip-data', 'Record trips on: make sure its folder is there (Downloads/Tasker-bus-trip-data)', ('%BusRecord', 2, 'on')),
@@ -314,6 +322,14 @@ TASKS = [
       list_dialog('%busoppitems', 'Also save the stop across the road? Tick to save', 'Ask: save the stop across the road too?', True, ('%busoppask', 2, 'yes')),
       deco(js('settings_opposite_apply.js', 'Save the ones ticked'), None, ('%busoppask', 2, 'yes')),
       flash('%busoppmsg', 'Say what was saved', ('%busoppask', 2, 'yes')),
+    endif(),
+    # The island back, last, so what was saved is said first. Only with Bus Loop really running: after
+    # Tasker restarted, the running flag can still be set with nothing behind it, and an island drawn
+    # then would never update or time out (Bus Watch notices the lost countdown on its next check).
+    if_('%BusStateRunning', 2, '1', 'A countdown is running: bring the island back (unless Adjust live shows it)'),
+      if_('%TRUN', 2, '*Bus Loop*', '   and Bus Loop is really running (not a flag left from before Tasker restarted)'),
+        perform('Bus Refresh', '      Show the island again, with its times', ('%buslive', 3, 'yes'), pri=10, par1='settings'),
+      endif(),
     endif(),
     perform('Bus Position', 'Adjust live was tapped: the live position editor (4.52; it reopens Settings when done)', ('%buslive', 2, 'yes'), pri=11),
  ]),
@@ -419,12 +435,20 @@ TASKS = [
     if_('%busfresh', 3, 'yes', 'Not fetched in the last 20 s (fetch new times, build the departures and buzz)'),
       *fetch_steps(),
     endif(),
+    # Not while Settings is open (4.58): it takes the island down while its screen shows, and puts it
+    # back as it closes (par1 "settings"). A screen turned off and on, or the phone turned upright,
+    # would otherwise draw it over Settings. Settings no longer running (closed, or stopped) frees it.
+    varset('%busdraw', 'yes', 'Draw the island if it needs it'),
+    deco(varset('%busdraw', 'no', '   not while Settings is open'), None, ('%TRUN', 2, '*Bus Settings*')),
+    deco(varset('%busdraw', 'yes', '   unless Settings asked, as it closed'), None, ('%busrefpar', 2, 'settings')),
+    if_('%busdraw', 2, 'yes', 'Settings not open'),
     if_('%BusStateIslandShown', 3, '1', 'Island not up yet, or to be drawn again (2): show it (after that it updates itself)'),
       *island_steps('Build the island', then=[
         flash('Tap the island for every bus at the stop. Swipe it for the next route. Hold it for the other side of the road. Swipe it right across to dismiss it.',
               'First time only: how to use the island', ('%BusStateHintShown', 3, '1')),
         varset('%BusStateHintShown', '1', 'Hint shown'),
       ]),
+    endif(),
     endif(),
     if_('%busafter', 2, 'no', 'The stop board is open: now fetch its times, as they were due (it updates itself)'),
       *fetch_steps(),
@@ -435,10 +459,11 @@ TASKS = [
       endif(),
     endif(),
     # The timetable, once the island shows the live times (4.43): fetching it first, one request per
-    # route, held up a stop switch by about 2 s. Only your routes TfL has no live time for right now,
-    # once a day per stop; the next refresh shows their timetable times.
+    # route, held up a stop switch by about 2 s. Each of your routes at the stop, once a day (since 4.58,
+    # live or not, so every route has a fallback when TfL stops answering); a failed request is tried
+    # again 5 minutes later. The next refresh shows the timetable's times where there are no live ones.
     if_('%busfresh', 3, 'yes', 'Times were just fetched: timetable needed too? (after the island, so it never holds it up)'),
-      js('tt_check.js', 'Timetable for this stop today, for routes with no live time? (once a day per stop)'),
+      js('tt_check.js', 'Timetable for this stop today, for each of your routes there? (once a day per stop and route)'),
       if_('%busttfetch', 2, 'yes', 'Not yet: fetch it'),
         deco(set_str(T['FOR'], 1, '1:%busttcount'), 'For each of those routes'),
           js('tt_route.js', 'Which route'),
@@ -449,12 +474,12 @@ TASKS = [
     endif(),
     # Get the stop a long press goes to ready (4.45): its live times after every refresh while a
     # countdown runs with the screen on (unless they're under 40 s old), and its timetable once a day
-    # for routes with no live time there. Last of all, so nothing on the island waits for it.
+    # for each of your routes there. Last of all, so nothing on the island waits for it.
     js('prefetch_due.js', 'Get the stop a long press goes to ready? (not if its times are under 40 s old, there is no other stop, or the screen is off)'),
     stop('Nothing to get ready', ('%busprefetch', 3, 'yes')),
     http('https://api.tfl.gov.uk/StopPoint/%busprestop/Arrivals?app_key=%TflKey', 'Ask TfL for its live arrivals'),
     js('prefetch_store.js', 'Keep them for a long press'),
-    js('tt_check.js', 'Its timetable today, for routes with no live time there? (once a day per stop)'),
+    js('tt_check.js', 'Its timetable today, for each of your routes there? (once a day per stop and route)'),
     if_('%busttfetch', 2, 'yes', 'Not yet: fetch it too'),
       deco(set_str(T['FOR'], 1, '1:%busttcount'), 'For each of those routes there'),
         js('tt_route.js', 'Which route'),
@@ -563,6 +588,15 @@ TASKS = [
     stop('No position: nothing to do', ('%busmovedok', 3, 'yes')),
     js('place_record.js', 'On home or work Wi-Fi? Remember where it is'),
     stop('On home or work Wi-Fi: nothing more to check', ('%busdue', 2, 'no')),
+    # Following your bus (4.58): riding a bus Bus Watch has named, TfL is asked which stops it calls at
+    # next, so watch.js can tell a crawl in traffic from getting off. Before watch.js, so this check
+    # uses the answer; a failed request carries on, and Bus Watch uses the last for up to 2 minutes.
+    js('follow_due.js', 'Riding a bus Bus Watch has named? Ask TfL where it is (every 45 s at most, 20 s while slow)'),
+    if_('%busfollow', 2, 'yes', 'Yes: ask now'),
+      http('https://api.tfl.gov.uk/Vehicle/%busfollowv/Arrivals?app_key=%TflKey', '   Ask TfL which stops your bus calls at next (5 s at most: Bus Watch waits for it)', timeout=5),
+      js('follow_store.js', '   Keep them for Bus Watch'),
+      *record_steps(),
+    endif(),
     js('watch.js', 'Where are you in the trip? Move it on'),
     *record_steps(),
     # %buscaller, not %caller1: runs from a profile or another task are all marked profile=...

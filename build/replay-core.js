@@ -55,6 +55,13 @@ function replay(lines, extraGlobals) {
         yours, shown: shown.map((b) => b.v || ''), match, trip: JSON.parse(g.BusStateTrip || '{}') });
       continue;
     }
+    // TfL's word on the bus you're riding (4.58): as follow_store.js kept it on the phone
+    if (l.k === 'follow' && l.fail) { out.push({ t: l.t, k: 'follow', line: l, note: `TfL: no word on the ${l.v} (${l.fail})` }); continue; }   // the last reply stands
+    if (l.k === 'follow') {
+      g.BusStateFollow = JSON.stringify({ v: l.v, at: l.t, n: (l.n || []).map((x) => [x[0], l.t + x[1] * 1000, '']) });
+      out.push({ t: l.t, k: 'follow', line: l, note: `TfL: the ${l.v} calls next at ${(l.n || []).map((x) => x[0]).join(', ')}` });
+      continue;
+    }
     if (l.k !== 'check' || l.lat === null) continue;
     // The position Android gave. A poor fix (over 25 m) is averaged with the one before it, and the
     // recording has the averaged position; played as it is, it would be averaged a second time, which

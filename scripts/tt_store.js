@@ -5,8 +5,10 @@
    [minutes after midnight, destination]. The destination is the last
    stop of that journey's pattern (knownJourneys[].intervalId points at
    stationIntervals), so short journeys show where they really end.
-   Stored per route as { t: [[minute, nameIndex], ...], n: [names] }. A failed request stores an empty list so it
-   isn't retried until tomorrow. Only the 8 most recent stops are kept.
+   Stored per route as { t: [[minute, nameIndex], ...], n: [names] }. A reply with no journeys today stores an
+   empty list, so it isn't asked for again until tomorrow; a request with no reply, or a 429 or 5xx, stores when
+   it failed (fail), and tt_check.js tries again 5 minutes later (4.58); any other error is kept as no
+   departures for the day. Only the 8 most recent stops are kept.
    ================================================================== */
 /* @include get */
 /* @include loc */
@@ -49,7 +51,10 @@ trips.sort(function (a, b) { return a[0] - b[0]; });
 
 var tt = JSON.parse(get('BusCacheTimetable') || '{}');
 if (!tt[stopId] || tt[stopId].date !== today) { delete tt[stopId]; tt[stopId] = { date: today, r: {} }; }
-tt[stopId].r[busttroute] = { t: trips, n: names };
+// Tried again later only when it may work then: no reply, TfL busy (429) or failing (5xx). Any other
+// answer (a 404 for a route that doesn't call here, say) is kept for the day, as no departures
+var retry = code !== '200' && (!code || code === '429' || /^5/.test(code));
+tt[stopId].r[busttroute] = retry ? { t: [], n: [], fail: Date.now() } : { t: trips, n: names };
 var keys = Object.keys(tt);
 while (keys.length > 8) { delete tt[keys.shift()]; }
 setGlobal('BusCacheTimetable', JSON.stringify(tt));
