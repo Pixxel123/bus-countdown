@@ -1,8 +1,8 @@
 <TaskerData sr="" dvi="1" tv="6.7.6-beta">
 	<dmetric>1344.0,2992.0</dmetric>
 	<Profile sr="prof72" ve="2">
-		<cdate>1791831295016</cdate>
-		<edate>1791831295016</edate>
+		<cdate>1791836653356</cdate>
+		<edate>1791836653356</edate>
 		<flags>8</flags>
 		<id>72</id>
 		<mid0>79</mid0>
@@ -14,8 +14,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof74" ve="2">
-		<cdate>1791831295016</cdate>
-		<edate>1791831295016</edate>
+		<cdate>1791836653356</cdate>
+		<edate>1791836653356</edate>
 		<flags>8</flags>
 		<id>74</id>
 		<mid0>62</mid0>
@@ -33,8 +33,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof73" ve="2">
-		<cdate>1791831295016</cdate>
-		<edate>1791831295016</edate>
+		<cdate>1791836653356</cdate>
+		<edate>1791836653356</edate>
 		<flags>8</flags>
 		<id>73</id>
 		<mid0>59</mid0>
@@ -46,14 +46,14 @@
 		</State>
 	</Profile>
 	<Project sr="proj0" ve="2">
-		<cdate>1791831295016</cdate>
+		<cdate>1791836653356</cdate>
 		<name>Bus Countdown</name>
 		<pids>72,73,74</pids>
 		<tids>73,74,75,77,78,80,76,38,60,59,79,32,31,62,72</tids>
 	</Project>
 	<Task sr="task73">
-		<cdate>1791831295016</cdate>
-		<edate>1791831295016</edate>
+		<cdate>1791836653357</cdate>
+		<edate>1791836653357</edate>
 		<id>73</id>
 		<nme>Bus</nme>
 		<pri>6</pri>
@@ -178,11 +178,11 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.59.202610122124</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task74">
-		<cdate>1791831295016</cdate>
-		<edate>1791831295016</edate>
+		<cdate>1791836653357</cdate>
+		<edate>1791836653357</edate>
 		<id>74</id>
 		<nme>Bus Settings</nme>
 		<pri>6</pri>
@@ -201,7 +201,7 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.59.202610122124</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>First run? · Camera not measured yet</label>
@@ -1643,8 +1643,8 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buslive</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task75">
-		<cdate>1791831295017</cdate>
-		<edate>1791831295017</edate>
+		<cdate>1791836653357</cdate>
+		<edate>1791836653357</edate>
 		<id>75</id>
 		<nme>Bus Settings Button</nme>
 		<pri>6</pri>
@@ -1776,8 +1776,8 @@ if (buspreview === 'yes') {
 			<label>Open it · Shows the Android settings page</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">startActivity {} (android.content.Intent)</Str><Str sr="arg3" ve="3">busint</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busintent</lhs><op>2</op><rhs>android*</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task77">
-		<cdate>1791831295017</cdate>
-		<edate>1791831295017</edate>
+		<cdate>1791836653357</cdate>
+		<edate>1791836653357</edate>
 		<id>77</id>
 		<nme>Bus Position</nme>
 		<pri>6</pri>
@@ -3118,8 +3118,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task78">
-		<cdate>1791831295017</cdate>
-		<edate>1791831295017</edate>
+		<cdate>1791836653357</cdate>
+		<edate>1791836653357</edate>
 		<id>78</id>
 		<nme>Bus Position Set</nme>
 		<pri>6</pri>
@@ -3137,8 +3137,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task80">
-		<cdate>1791831295017</cdate>
-		<edate>1791831295017</edate>
+		<cdate>1791836653357</cdate>
+		<edate>1791836653357</edate>
 		<id>80</id>
 		<nme>Bus Position Done</nme>
 		<pri>6</pri>
@@ -3243,8 +3243,8 @@ var busmsg = changed.length ? 'Saved: ' + changed.join(', ') : 'none';
 		</Action>
 	</Task>
 	<Task sr="task76">
-		<cdate>1791831295017</cdate>
-		<edate>1791831295017</edate>
+		<cdate>1791836653357</cdate>
+		<edate>1791836653357</edate>
 		<id>76</id>
 		<nme>Bus Find Camera</nme>
 		<pri>6</pri>
@@ -3377,8 +3377,8 @@ if (!r || !dens || !w) {
 			<label>Reset position: move the open screen's height slider · Shows the new value straight away</label><Str sr="arg0" ve="3">bussettings</Str><Str sr="arg1" ve="3">sl_y</Str><Str sr="arg2" ve="3">value</Str><Str sr="arg3" ve="3">%BusIslandY</Str><Int sr="arg4" val="0"/><Str sr="arg5" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrebuild</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task38">
-		<cdate>1791831295017</cdate>
-		<edate>1791831295017</edate>
+		<cdate>1791836653357</cdate>
+		<edate>1791836653357</edate>
 		<id>38</id>
 		<nme>Bus Start</nme>
 		<pri>6</pri>
@@ -3396,7 +3396,7 @@ if (!r || !dens || !w) {
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.59.202610122124</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>Settings: fill in defaults, check TflKey and BusRoutes · Resets empty or invalid settings</label>
@@ -4243,8 +4243,8 @@ record(busok === 'yes' ? 'start' : 'nostart', { stop: get('BusStateStopId'), nam
 		</Action>
 	</Task>
 	<Task sr="task60">
-		<cdate>1791831295017</cdate>
-		<edate>1791831295017</edate>
+		<cdate>1791836653357</cdate>
+		<edate>1791836653357</edate>
 		<id>60</id>
 		<nme>Bus Loop</nme>
 		<pri>6</pri>
@@ -4584,8 +4584,8 @@ var buspushm = get('BusStatePushM') || '30';
 		</Action>
 	</Task>
 	<Task sr="task59">
-		<cdate>1791831295017</cdate>
-		<edate>1791831295017</edate>
+		<cdate>1791836653357</cdate>
+		<edate>1791836653357</edate>
 		<id>59</id>
 		<nme>Bus Refresh</nme>
 		<pri>6</pri>
@@ -8975,40 +8975,40 @@ setGlobal('BusCacheTimetable', JSON.stringify(tt));
 		</Action>
 	</Task>
 	<Task sr="task79">
-		<cdate>1791831295018</cdate>
-		<edate>1791831295018</edate>
+		<cdate>1791836653360</cdate>
+		<edate>1791836653360</edate>
 		<id>79</id>
 		<nme>Bus Wake</nme>
 		<pri>6</pri>
 		<Action sr="act0" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.59.202610122124</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.59.202610122124</rhs></Condition></ConditionList></Action>
 		<Action sr="act2" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.59.202610122124</rhs></Condition></ConditionList></Action>
 		<Action sr="act3" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.59.202610122124</rhs></Condition></ConditionList></Action>
 		<Action sr="act4" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.59.202610122124</rhs></Condition></ConditionList></Action>
 		<Action sr="act5" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.59.202610122124</rhs></Condition></ConditionList></Action>
 		<Action sr="act6" ve="7">
 			<code>547</code>
 			<label>This build · Version and build time</label>
 			<Str sr="arg0" ve="3">%busbuild</Str>
-			<Str sr="arg1" ve="3">4.58.202610121954</Str>
+			<Str sr="arg1" ve="3">4.59.202610122124</Str>
 			<Int sr="arg2" val="0"/>
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.59.202610122124</rhs></Condition></ConditionList></Action>
 		<Action sr="act7" ve="7">
 			<code>129</code>
 			<label>Remember it was done for this build · BusStateVersion</label>
@@ -9034,11 +9034,11 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.59.202610122124</rhs></Condition></ConditionList></Action>
 		<Action sr="act8" ve="7">
 			<code>548</code>
 			<label>Say so · A short message</label>
-			<Str sr="arg0" ve="3">Bus countdown 4.58: profiles switched on</Str>
+			<Str sr="arg0" ve="3">Bus countdown 4.59: profiles switched on</Str>
 			<Int sr="arg1" val="0"/>
 			<Str sr="arg10" ve="3"/>
 			<Int sr="arg11" val="1"/>
@@ -9054,7 +9054,7 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg7" ve="3"/>
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.58.202610121954</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.59.202610122124</rhs></Condition></ConditionList></Action>
 		<Action sr="act9" ve="7">
 			<code>137</code>
 			<label>Only asked to switch the profiles: done · Started by another task with par1 "profiles"</label>
@@ -9421,8 +9421,8 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 		</Action>
 	</Task>
 	<Task sr="task32">
-		<cdate>1791831295018</cdate>
-		<edate>1791831295018</edate>
+		<cdate>1791836653360</cdate>
+		<edate>1791836653360</edate>
 		<id>32</id>
 		<nme>Bus End</nme>
 		<pri>6</pri>
@@ -9688,8 +9688,8 @@ setGlobal('BusStateMatch', '');
 		</Action>
 	</Task>
 	<Task sr="task31">
-		<cdate>1791831295018</cdate>
-		<edate>1791831295018</edate>
+		<cdate>1791836653360</cdate>
+		<edate>1791836653360</edate>
 		<id>31</id>
 		<nme>Bus Island</nme>
 		<pri>6</pri>
@@ -9854,8 +9854,8 @@ if (stops.length) {
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busdo</lhs><op>2</op><rhs>switch/open/close/open-grown/fit</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task62">
-		<cdate>1791831295018</cdate>
-		<edate>1791831295018</edate>
+		<cdate>1791836653360</cdate>
+		<edate>1791836653360</edate>
 		<id>62</id>
 		<nme>Bus Watch</nme>
 		<pri>6</pri>
@@ -10987,6 +10987,44 @@ function goesBack(st, gNow, onBus) {
   return leaving.length &gt; 0 &amp;&amp; leaving.every(function (cos) { return cos &lt; -0.5; });
 }
 
+// Moving along one of your routes (4.59): the same idea as followBus, without TfL. A bus in traffic
+// moves at walking pace now and then, but it keeps to its route's line and keeps going forward along
+// it; a walk after getting off soon stops doing one or the other. On Monday the 517 had no live data
+// all day, so there was no bus to follow, and Bus Watch had you off the bus for 41 of the 53 minutes
+// you rode it.
+//   movingAlong(win, minPace) -&gt; { pace } (metres a second along the line) or null
+// True when the window's positions (fixes 50 m or better, at least 3, over a minute or more) are all
+// within 40 m of one line in BusCacheSeq, never more than 25 m back along it, and average minPace or
+// more forward along it. Each position is placed on the line near the one before (300 m back to
+// 1500 m on), so a route that passes the same road twice can't jump between them.
+function movingAlong(rWin, minPace) {
+  var pts = rWin.filter(function (w) { return (w.acc || 15) &lt;= 50; });
+  if (pts.length &lt; 3) return null;
+  var span = (pts[pts.length - 1].t - pts[0].t) / 1000; if (span &lt; 60) return null;
+  var rSeqs = []; try { rSeqs = JSON.parse(get('BusCacheSeq') || '[]'); } catch (e) { rSeqs = []; }
+  var R = Math.PI / 180; var best = null;
+  rSeqs.forEach(function (sq) {
+    var cum = [0]; for (var c = 1; c &lt; sq.length; c++) cum.push(cum[c - 1] + metres(sq[c - 1][1], sq[c - 1][2], sq[c][1], sq[c][2]));
+    var alongs = []; var furthest = null;
+    for (var k = 0; k &lt; pts.length; k++) {
+      var p = pts[k]; var kx = Math.cos(p.lat * R) * 6371000 * R; var ky = 6371000 * R; var off = Infinity; var along = 0;
+      for (var j = 0; j &lt; sq.length - 1; j++) {
+        if (furthest !== null &amp;&amp; (cum[j + 1] &lt; furthest - 300 || cum[j] &gt; furthest + 1500)) continue;
+        var ax = (sq[j][2] - p.lon) * kx; var ay = (sq[j][1] - p.lat) * ky; var dx = (sq[j + 1][2] - p.lon) * kx - ax; var dy = (sq[j + 1][1] - p.lat) * ky - ay;
+        var len2 = dx * dx + dy * dy; if (!len2) continue;
+        var f = Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2)); var o = Math.sqrt(Math.pow(ax + f * dx, 2) + Math.pow(ay + f * dy, 2));
+        if (o &lt; off) { off = o; along = cum[j] + f * (cum[j + 1] - cum[j]); }
+      }
+      if (off &gt; 40) return;                                   // off this line
+      if (furthest !== null &amp;&amp; along &lt; furthest - 25) return;  // going back along it
+      alongs.push(along); furthest = Math.max(furthest === null ? along : furthest, along);
+    }
+    var pace = (alongs[alongs.length - 1] - alongs[0]) / span;
+    if (!best || pace &gt; best.pace) best = { pace: pace };
+  });
+  return best &amp;&amp; best.pace &gt;= minPace ? best : null;
+}
+
 var now = Date.now();
 var lat = parseFloat(loc('gl_latitude')); var lon = parseFloat(loc('gl_longitude'));
 var fixLat = lat; var fixLon = lon;    // the fix as Android gave it, before any averaging (recorded, 4.36)
@@ -11152,6 +11190,16 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
   var withBus = !!follow &amp;&amp; follow.with;
   if (withBus) { trip.withAt = now; setGlobal('BusStateLastBusAt', String(now)); }
   var keptOn = withBus || (!follow &amp;&amp; (accuracy || 15) &gt; 60 &amp;&amp; now - (trip.withAt || 0) &lt; 60000);
+  // Without TfL's word, still moving forward along one of your routes' lines (4.59, movingAlong): at
+  // 1.4 m/s or more within 2 minutes of last moving at bus speed (a crawl in traffic), 2.2 m/s after
+  // that (faster than anyone walks for long). On the recordings without TfL, it kept 137 of the 222
+  // minutes ridden as on the bus, up from 75. Getting off and walking on along the road still ends it:
+  // keptOnRoute only stops "off the bus, on foot", and the 2-minute "no longer coming up soon" timer
+  // still runs (the walk from Corvel Lodge ends it, as before).
+  var keptOnRoute = null;
+  if (!keptOn &amp;&amp; !follow &amp;&amp; (trip.s === 'onbus' || (trip.s === 'heading' &amp;&amp; trip.bus))) {
+    keptOnRoute = movingAlong(win, now - (parseInt(get('BusStateLastBusAt'), 10) || 0) &lt; 120000 ? 1.4 : 2.2);
+  }
 
   // ---- What this position means, from the current state --------------------------------------
   // Slowed down: the speed reading is walking pace or less (unknown counts as slow), or, since a rough
@@ -11249,6 +11297,13 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
       busaction = 'stop'; why = tripStop.n + ' is no longer coming up soon (' + Math.round(tripStop.d) + ' m at ' + Math.round(speed * 3.6) + ' km/h)';
       from('left', { leftD: Math.round(tripStop.d), slowN: 0, slowSince: 0, byBus: !!trip.rode });
     }
+    // Slow, but still moving forward along one of your routes (4.59): still on the bus, so a bus due
+    // when you get there stays yours. The timer above isn't reset, so getting off well short and
+    // walking on along the road still ends it after 2 minutes
+    else if (!bus &amp;&amp; keptOnRoute) {
+      why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m (slow: still along a route at ' + Math.round(keptOnRoute.pace * 3.6) + ' km/h)';
+      trip.walkN = 0; if (speed &gt; 2.5) { trip.slowN = 0; trip.slowSince = 0; }
+    }
     else {
       why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m'; if (bus || speed &gt; 2.5) { trip.slowN = 0; trip.slowSince = 0; }
       // Shown while on a bus, but now at walking pace on two checks in a row: you got off and are
@@ -11268,8 +11323,10 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
     // Unless TfL has the bus you got on still with you (4.58): on Thursday evening the 566 from Wexley
     // slowed to 2 km/h a minute out, the ride ended here, and Bus Watch had you on foot for the rest
     // of it. Once the bus has gone on without you (by its next stop), it ends as before.
-    if (trip.s === 'onbus' &amp;&amp; !bus &amp;&amp; speed &gt;= 0 &amp;&amp; speed &lt; 2 &amp;&amp; keptOn) {
-      why = 'on a bus, slow: ' + (follow ? follow.why : 'TfL had it with you a moment ago, and this fix is too rough to say otherwise');
+    // Or, without TfL, you're still moving forward along one of your routes (4.59): on Monday the 517
+    // had no live data, and crawls ended both rides to work within a few minutes of setting off
+    if (trip.s === 'onbus' &amp;&amp; !bus &amp;&amp; speed &gt;= 0 &amp;&amp; speed &lt; 2 &amp;&amp; (keptOn || keptOnRoute)) {
+      why = 'on a bus, slow: ' + (keptOnRoute ? 'still along a route at ' + Math.round(keptOnRoute.pace * 3.6) + ' km/h' : follow ? follow.why : 'TfL had it with you a moment ago, and this fix is too rough to say otherwise');
     } else if (trip.s === 'onbus' &amp;&amp; !bus &amp;&amp; speed &gt;= 0 &amp;&amp; speed &lt; 2) {
       var boarded = stops.filter(function (st) { return st.id === trip.stop; })[0];
       from('left', { leftD: boarded ? Math.round(boarded.d) : 0, maxD: trip.maxD || 0 });
@@ -11704,6 +11761,7 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
   bus: typeof bus !== 'undefined' &amp;&amp; bus ? 1 : 0, settled: typeof settled !== 'undefined' &amp;&amp; settled ? 1 : 0, rate: rateWant,
   kv: tmode ? tmode.nv : null, mode: tmode ? tmode.mode : null, mp: tmode ? tmode.p : null,   // travel mode on trial (4.34)
   fol: follow ? (follow.with ? 1 : 0) : undefined,                                  // TfL had the bus you got on with you (4.58)
+  rt: typeof keptOnRoute !== 'undefined' &amp;&amp; keptOnRoute ? +keptOnRoute.pace.toFixed(2) : undefined,   // kept on the bus by moving along a route, m/s (4.59)
   state: trip.s, stop: trip.stop || '', action: busaction, why: why, near: closest ? { n: closest.name, d: Math.round(closest.d), r: closest.radius } : null });
 </Str>
 			<Str sr="arg1" ve="3"/>
@@ -11929,8 +11987,8 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busaction</lhs><op>2</op><rhs>stop</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task72">
-		<cdate>1791831295019</cdate>
-		<edate>1791831295019</edate>
+		<cdate>1791836653361</cdate>
+		<edate>1791836653361</edate>
 		<id>72</id>
 		<nme>Bus Status</nme>
 		<pri>6</pri>

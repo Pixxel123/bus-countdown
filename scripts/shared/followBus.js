@@ -78,3 +78,41 @@ function goesBack(st, gNow, onBus) {
   });
   return leaving.length > 0 && leaving.every(function (cos) { return cos < -0.5; });
 }
+
+// Moving along one of your routes (4.59): the same idea as followBus, without TfL. A bus in traffic
+// moves at walking pace now and then, but it keeps to its route's line and keeps going forward along
+// it; a walk after getting off soon stops doing one or the other. On Monday the 517 had no live data
+// all day, so there was no bus to follow, and Bus Watch had you off the bus for 41 of the 53 minutes
+// you rode it.
+//   movingAlong(win, minPace) -> { pace } (metres a second along the line) or null
+// True when the window's positions (fixes 50 m or better, at least 3, over a minute or more) are all
+// within 40 m of one line in BusCacheSeq, never more than 25 m back along it, and average minPace or
+// more forward along it. Each position is placed on the line near the one before (300 m back to
+// 1500 m on), so a route that passes the same road twice can't jump between them.
+function movingAlong(rWin, minPace) {
+  var pts = rWin.filter(function (w) { return (w.acc || 15) <= 50; });
+  if (pts.length < 3) return null;
+  var span = (pts[pts.length - 1].t - pts[0].t) / 1000; if (span < 60) return null;
+  var rSeqs = []; try { rSeqs = JSON.parse(get('BusCacheSeq') || '[]'); } catch (e) { rSeqs = []; }
+  var R = Math.PI / 180; var best = null;
+  rSeqs.forEach(function (sq) {
+    var cum = [0]; for (var c = 1; c < sq.length; c++) cum.push(cum[c - 1] + metres(sq[c - 1][1], sq[c - 1][2], sq[c][1], sq[c][2]));
+    var alongs = []; var furthest = null;
+    for (var k = 0; k < pts.length; k++) {
+      var p = pts[k]; var kx = Math.cos(p.lat * R) * 6371000 * R; var ky = 6371000 * R; var off = Infinity; var along = 0;
+      for (var j = 0; j < sq.length - 1; j++) {
+        if (furthest !== null && (cum[j + 1] < furthest - 300 || cum[j] > furthest + 1500)) continue;
+        var ax = (sq[j][2] - p.lon) * kx; var ay = (sq[j][1] - p.lat) * ky; var dx = (sq[j + 1][2] - p.lon) * kx - ax; var dy = (sq[j + 1][1] - p.lat) * ky - ay;
+        var len2 = dx * dx + dy * dy; if (!len2) continue;
+        var f = Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2)); var o = Math.sqrt(Math.pow(ax + f * dx, 2) + Math.pow(ay + f * dy, 2));
+        if (o < off) { off = o; along = cum[j] + f * (cum[j + 1] - cum[j]); }
+      }
+      if (off > 40) return;                                   // off this line
+      if (furthest !== null && along < furthest - 25) return;  // going back along it
+      alongs.push(along); furthest = Math.max(furthest === null ? along : furthest, along);
+    }
+    var pace = (alongs[alongs.length - 1] - alongs[0]) / span;
+    if (!best || pace > best.pace) best = { pace: pace };
+  });
+  return best && best.pace >= minPace ? best : null;
+}

@@ -4,7 +4,12 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
-## [4.58] - 2026-10-12
+## [4.59] - 2026-10-12
+
+### Added
+
+- Moving along your route. With no word from TfL about the bus you're on (no live data for the route, or a bus Bus Watch didn't see you get on), a slow spell no longer ends the ride while you keep moving forward along one of your routes' lines: every position in the last few minutes within 40 m of it, never going back along it, and averaging 1.4 m/s or more within 2 minutes of last moving at bus speed (a crawl in traffic), or 2.2 m/s after that (faster than anyone walks for long). On Monday the 517 had no live data all day, so there was no bus to follow, and both rides to work were taken as over almost at once: 2.5 minutes after leaving Kiln Street, and 35 s after Bus Watch saw you on the second bus; replayed, both now last until you got off. On the recordings since Thursday, replayed without TfL's word on your bus, it keeps you on the bus for 137 of the 222 minutes you rode, up from 75 (Monday: 39 of 53, up from 12), for about a minute and a half more "on the bus" in all after getting off at work (Friday and Monday). Getting off well short and walking on along the road still ends a countdown 2 minutes later, as before (the Corvel Lodge walk): it only stops a crawl reading as "off the bus, on foot". The island shows and ends at the same moments as in 4.58 on all five days. TfL's word comes first: once it has the bus gone on without you, moving along its road doesn't keep you on it. Recorded as `rt` on each position it kept (the pace along the route, m/s).
+
 
 ### Added
 

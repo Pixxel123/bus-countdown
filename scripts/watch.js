@@ -213,6 +213,16 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
   var withBus = !!follow && follow.with;
   if (withBus) { trip.withAt = now; setGlobal('BusStateLastBusAt', String(now)); }
   var keptOn = withBus || (!follow && (accuracy || 15) > 60 && now - (trip.withAt || 0) < 60000);
+  // Without TfL's word, still moving forward along one of your routes' lines (4.59, movingAlong): at
+  // 1.4 m/s or more within 2 minutes of last moving at bus speed (a crawl in traffic), 2.2 m/s after
+  // that (faster than anyone walks for long). On the recordings without TfL, it kept 137 of the 222
+  // minutes ridden as on the bus, up from 75. Getting off and walking on along the road still ends it:
+  // keptOnRoute only stops "off the bus, on foot", and the 2-minute "no longer coming up soon" timer
+  // still runs (the walk from Corvel Lodge ends it, as before).
+  var keptOnRoute = null;
+  if (!keptOn && !follow && (trip.s === 'onbus' || (trip.s === 'heading' && trip.bus))) {
+    keptOnRoute = movingAlong(win, now - (parseInt(get('BusStateLastBusAt'), 10) || 0) < 120000 ? 1.4 : 2.2);
+  }
 
   // ---- What this position means, from the current state --------------------------------------
   // Slowed down: the speed reading is walking pace or less (unknown counts as slow), or, since a rough
@@ -310,6 +320,13 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
       busaction = 'stop'; why = tripStop.n + ' is no longer coming up soon (' + Math.round(tripStop.d) + ' m at ' + Math.round(speed * 3.6) + ' km/h)';
       from('left', { leftD: Math.round(tripStop.d), slowN: 0, slowSince: 0, byBus: !!trip.rode });
     }
+    // Slow, but still moving forward along one of your routes (4.59): still on the bus, so a bus due
+    // when you get there stays yours. The timer above isn't reset, so getting off well short and
+    // walking on along the road still ends it after 2 minutes
+    else if (!bus && keptOnRoute) {
+      why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m (slow: still along a route at ' + Math.round(keptOnRoute.pace * 3.6) + ' km/h)';
+      trip.walkN = 0; if (speed > 2.5) { trip.slowN = 0; trip.slowSince = 0; }
+    }
     else {
       why = 'heading to ' + tripStop.n + ', ' + Math.round(tripStop.d) + ' m'; if (bus || speed > 2.5) { trip.slowN = 0; trip.slowSince = 0; }
       // Shown while on a bus, but now at walking pace on two checks in a row: you got off and are
@@ -329,8 +346,10 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     // Unless TfL has the bus you got on still with you (4.58): on Thursday evening the 566 from Wexley
     // slowed to 2 km/h a minute out, the ride ended here, and Bus Watch had you on foot for the rest
     // of it. Once the bus has gone on without you (by its next stop), it ends as before.
-    if (trip.s === 'onbus' && !bus && speed >= 0 && speed < 2 && keptOn) {
-      why = 'on a bus, slow: ' + (follow ? follow.why : 'TfL had it with you a moment ago, and this fix is too rough to say otherwise');
+    // Or, without TfL, you're still moving forward along one of your routes (4.59): on Monday the 517
+    // had no live data, and crawls ended both rides to work within a few minutes of setting off
+    if (trip.s === 'onbus' && !bus && speed >= 0 && speed < 2 && (keptOn || keptOnRoute)) {
+      why = 'on a bus, slow: ' + (keptOnRoute ? 'still along a route at ' + Math.round(keptOnRoute.pace * 3.6) + ' km/h' : follow ? follow.why : 'TfL had it with you a moment ago, and this fix is too rough to say otherwise');
     } else if (trip.s === 'onbus' && !bus && speed >= 0 && speed < 2) {
       var boarded = stops.filter(function (st) { return st.id === trip.stop; })[0];
       from('left', { leftD: boarded ? Math.round(boarded.d) : 0, maxD: trip.maxD || 0 });
@@ -664,4 +683,5 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
   bus: typeof bus !== 'undefined' && bus ? 1 : 0, settled: typeof settled !== 'undefined' && settled ? 1 : 0, rate: rateWant,
   kv: tmode ? tmode.nv : null, mode: tmode ? tmode.mode : null, mp: tmode ? tmode.p : null,   // travel mode on trial (4.34)
   fol: follow ? (follow.with ? 1 : 0) : undefined,                                  // TfL had the bus you got on with you (4.58)
+  rt: typeof keptOnRoute !== 'undefined' && keptOnRoute ? +keptOnRoute.pace.toFixed(2) : undefined,   // kept on the bus by moving along a route, m/s (4.59)
   state: trip.s, stop: trip.stop || '', action: busaction, why: why, near: closest ? { n: closest.name, d: Math.round(closest.d), r: closest.radius } : null });
