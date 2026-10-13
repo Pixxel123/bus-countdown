@@ -19,7 +19,7 @@ function textWidth(t, font) {
 }
 function dotsWidth(n) { return n > 1 ? 10 + n * 4 + (n - 1) * 3 : 0; }
 function rightNeeded(buses, now) {
-  var SMALL = '600 11px system-ui, Roboto, sans-serif';
+  var SMALL = '600 12px system-ui, Roboto, sans-serif';          // "· 12 min" (4.62: 12 px, as the island draws it)
   var fitMins = function (t) { var m = Math.round((t - now) / 60000); return m < 1 ? 'Due' : String(m); };
   var widest = textWidth('Due');
   (buses || []).forEach(function (b) {

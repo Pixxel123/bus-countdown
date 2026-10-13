@@ -46,7 +46,7 @@ test('the main page has an entry for each page, saying what it is set to now', (
   assert.strictEqual(summaries[4], 'TfL key added, all permissions on');
   // Position is one level down, from Island
   const island = layout.root.content[0].children[4];
-  const pos = all(island).find((n) => n.type === 'Row' && n.eventHandlers);
+  const pos = all(island).find((n) => n.type === 'Row' && /^ent_/.test(n.id));   // (4.62: its choices are tappable rows too)
   assert.deepStrictEqual(pos.eventHandlers.handlers[0].actions[0], { type: 'SetVariable', variable: 'bus_page', value: 'position' });
 });
 

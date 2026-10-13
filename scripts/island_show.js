@@ -205,9 +205,12 @@ var PAGE = String.raw`<!doctype html>
   .d { color: #B7BFCD; font-size: 12px; overflow: hidden; text-overflow: ellipsis; min-width: 0; }             /* destination */
   .m { font-weight: 700; flex: none; }          /* minutes */
   .m.due { color: #7FD6A4; }
-  .m.old { opacity: .45; }                                  /* no fresh times for 2 refreshes */
+  .m.old { opacity: .55; }                                  /* no fresh times for 2 refreshes */
+  /* ...and the route dots go hollow (4.62), so old times aren't told apart by fading alone */
+  #p.stale .dots i { background: none; box-shadow: inset 0 0 0 1px #8A93A6; }
+  #p.stale .dots i.on { box-shadow: inset 0 0 0 1px #fff; }
   .m.sched { color: #9AA3B5; font-weight: 600; }            /* timetable, not live */
-  .m2 { flex: none; margin-left: -2px; font-size: 11px; font-weight: 600; color: #9AA3B5; white-space: pre; }   /* "· 12 min": the bus after */
+  .m2 { flex: none; margin-left: -2px; font-size: 12px; font-weight: 600; color: #9AA3B5; white-space: pre; }   /* "· 12 min": the bus after */
   .m.late { color: #F2C66B; }  .m.cancel { color: #FF8A80; }  /* ready for trains (V5) */
   .d.sched { font-style: italic; }
   .s { font-weight: 700; overflow: hidden; text-overflow: ellipsis; min-width: 0; }  /* stop name flash, "No buses" */
@@ -473,6 +476,8 @@ var PAGE = String.raw`<!doctype html>
     return true;
   }
 
+  // Times more than two refreshes old (no signal, TfL not answering)
+  function stale() { return !!(data && data.u && Date.now() - data.u > 2 * (data.r || 45000)); }
   /* Right half: minutes, plus one dot per route when there are several */
   function rightHtml(b, active, oneTime) {
     var n = buses().length, m = mins(b.t), dots = '', st = b.st || 'live';
@@ -480,7 +485,7 @@ var PAGE = String.raw`<!doctype html>
     if (st === 'cancel') m = 'Cancelled';
     var cls = st === 'live' ? (m === 'Due' ? ' due' : '') : ' ' + st;
     // Times more than two refreshes old: dimmed, so stale times don't look live
-    if (data && data.u && Date.now() - data.u > 2 * (data.r || 45000)) cls += ' old';
+    if (stale()) cls += ' old';
     if (st === 'sched') m = '~' + m;
     if (n > 1) {
       dots = '<span class="dots">';
@@ -578,6 +583,7 @@ var PAGE = String.raw`<!doctype html>
       var b = list[idx];
       L.innerHTML = (data && data.l ? '<span class="sl">' + esc(data.l) + '</span>' : '') +
                     '<span class="b' + (b.idle ? ' idle' : '') + '">' + esc(b.k) + '</span><span class="d' + (b.st === 'sched' ? ' sched' : '') + '">' + esc(b.d) + '</span>';
+      p.classList.toggle('stale', stale());
       R.innerHTML = rightHtml(b, idx);
       // Too wide for the times now showing: a bus has turned due since the refresh ("1 · 15 min" becoming
       // "Due · 14 min"). The island grows to fit in place, at once (4.57); if it can't, just the first time

@@ -1,8 +1,8 @@
 <TaskerData sr="" dvi="1" tv="6.7.6-beta">
 	<dmetric>1344.0,2992.0</dmetric>
 	<Profile sr="prof72" ve="2">
-		<cdate>1791878178433</cdate>
-		<edate>1791878178433</edate>
+		<cdate>1791892037246</cdate>
+		<edate>1791892037246</edate>
 		<flags>8</flags>
 		<id>72</id>
 		<mid0>79</mid0>
@@ -14,8 +14,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof74" ve="2">
-		<cdate>1791878178433</cdate>
-		<edate>1791878178433</edate>
+		<cdate>1791892037246</cdate>
+		<edate>1791892037246</edate>
 		<flags>8</flags>
 		<id>74</id>
 		<mid0>62</mid0>
@@ -33,8 +33,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof73" ve="2">
-		<cdate>1791878178433</cdate>
-		<edate>1791878178433</edate>
+		<cdate>1791892037246</cdate>
+		<edate>1791892037246</edate>
 		<flags>8</flags>
 		<id>73</id>
 		<mid0>59</mid0>
@@ -46,14 +46,14 @@
 		</State>
 	</Profile>
 	<Project sr="proj0" ve="2">
-		<cdate>1791878178433</cdate>
+		<cdate>1791892037246</cdate>
 		<name>Bus Countdown</name>
 		<pids>72,73,74</pids>
 		<tids>73,74,75,77,78,80,76,38,60,59,79,32,31,62,72</tids>
 	</Project>
 	<Task sr="task73">
-		<cdate>1791878178433</cdate>
-		<edate>1791878178433</edate>
+		<cdate>1791892037246</cdate>
+		<edate>1791892037246</edate>
 		<id>73</id>
 		<nme>Bus</nme>
 		<pri>6</pri>
@@ -178,11 +178,11 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.61.202610130856</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task74">
-		<cdate>1791878178434</cdate>
-		<edate>1791878178434</edate>
+		<cdate>1791892037246</cdate>
+		<edate>1791892037246</edate>
 		<id>74</id>
 		<nme>Bus Settings</nme>
 		<pri>6</pri>
@@ -201,7 +201,7 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.61.202610130856</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>First run? · Camera not measured yet</label>
@@ -518,6 +518,14 @@ function wifiName() {
   var name = raw.replace(/^"|"$/g, '').trim();
   return /^&lt;unknown ssid&gt;$|^0x$/i.test(name) ? '' : name;
 }
+// The stop's letter, from its TfL indicator ("Stop B" -&gt; B, "Stop BK" -&gt; BK). Stops without one
+// (indicators like "opp" or "-&gt;N", or none at all) get no letter, and the island shows none. Shared
+// by refresh.js and, for the stop a long press switches to, opposite.js (4.43).
+function stopLetter(name) {
+  var m = /\(([^)]*)\)\s*$/.exec(name || ''); var ind = m ? m[1].trim() : '';
+  var l = /^stop\s+([a-z][a-z0-9]?)$/i.exec(ind);
+  return l ? l[1].toUpperCase() : '';
+}
 // Screen variable names spell numbers with letters (0-9 become a-j: stop 1, route 566 -&gt;
 // sr_b_eggx_on). That turned out not to be why taps were lost (see BusTempTicks), but it keeps
 // names clear of Tasker's array naming (a name ending in digits reads as an array item).
@@ -584,7 +592,7 @@ function card(title, children) {
   return { type: 'Card', id: id('card'), style: 'Filled', modifiers: [{ type: 'FillWidth' }], children: [
     { type: 'Column', id: id('col'), verticalArrangement: 'SpacedBy', spacing: '10',
       modifiers: [{ type: 'FillWidth' }, { type: 'Padding', all: '16' }],
-      children: [text(title, 17, '', { maxLines: '1' })].concat(children) }] };
+      children: [text(title, 17)].concat(children) }] };
 }
 function row(children) { return { type: 'Row', id: id('row'), verticalAlignment: 'Center', horizontalArrangement: 'SpaceBetween', modifiers: [{ type: 'FillWidth' }], children: children }; }
 function input(label, value, variable) {
@@ -605,29 +613,61 @@ function segs(label, list, current, variable) {
       }),
       eventHandlers: { handlers: [out('selection_changed', 'selected_index', variable + '_i')] } }];
 }
-// Choices: one pattern everywhere (the same as routes and distances). Each option is a pair
-// of buttons ("✓ 45 s" and "45 s"); a tap swaps the tick and runs Bus Settings Button, which
-// saves the setting straight away. No Save button is needed.
+// Choices (4.62): rows that open, as Android's own Settings does it. Closed, a row says the setting and
+// what it's set to; a tap opens its options underneath, one to a line with a radio mark, and picking one
+// saves it straight away (Bus Settings Button, as before) and closes the list. Tapping the row again
+// closes it unchanged. Hidden parts of the screen still take up their spacing on the phone, so each
+// choice is a Column with no spacing, and the two radio marks share one Box.
+//   rowsOf(label, ov, options, extra): options are [{ label, summary, on, actions }]; ov is the screen
+//   variable that opens the list; extra goes under the list (Start within's box for a distance)
+function rowsOf(label, ov, options, extra) {
+  var open = '%' + ov + ' == "yes"';
+  var header = function (when, to, withSummary) {
+    return { type: 'Row', id: id('chh'), showWhen: when, verticalAlignment: 'Center', modifiers: [{ type: 'FillWidth' }, { type: 'Padding', vertical: '8' }],
+      eventHandlers: { handlers: [{ events: [{ type: 'click' }], actions: [setVar(ov, to)] }] },
+      children: [{ type: 'Column', id: id('chc'), verticalArrangement: 'SpacedBy', spacing: '2', children: [text(label, 16)].concat(withSummary
+        ? [{ type: 'Box', id: id('chs'), children: options.map(function (o) { return text(o.summary || o.label, 14, 'primary', { showWhen: o.on }); }) }] : []) }] };
+  };
+  var rows = options.map(function (o) {
+    return { type: 'Row', id: id('cho'), verticalAlignment: 'Center', horizontalArrangement: 'SpacedBy', spacing: '16',
+      modifiers: [{ type: 'FillWidth' }, { type: 'Padding', vertical: '10' }],
+      eventHandlers: { handlers: [{ events: [{ type: 'click' }], actions: o.actions.concat([setVar(ov, 'no')]) }] },
+      children: [{ type: 'Box', id: id('rad'), children: [
+        { type: 'Image', id: id('radon'), url: 'icon:RadioButtonChecked', tint: 'primary', showWhen: o.on, modifiers: [{ type: 'Size', width: '24', height: '24' }] },
+        { type: 'Image', id: id('radoff'), url: 'icon:RadioButtonUnchecked', tint: 'onSurfaceVariant', showWhen: '!(' + o.on + ')', modifiers: [{ type: 'Size', width: '24', height: '24' }] }] },
+        text(o.label, 16)] };
+  });
+  return [{ type: 'Column', id: id('ch'), modifiers: [{ type: 'FillWidth' }], children: [header('!(' + open + ')', 'yes', true), header(open, 'no', false),
+    { type: 'Column', id: id('chl'), showWhen: open, modifiers: [{ type: 'FillWidth' }], children: rows }].concat(extra || []) }];
+}
+// One setting's choices. The one in use is marked until another is picked (the screen variable ch_..._x
+// starts empty), and picking one saves it at once.
 function choices(label, list, current, setting) {
-  var cv = '%ch_' + setting.toLowerCase().replace(/[^a-z]/g, '') + '_x';
+  var key = setting.toLowerCase().replace(/[^a-z]/g, '');
+  var cv = '%ch_' + key + '_x';
   var values = list.map(function (p) { return String(p[1]); });
   var cur = values[closest(list, current)];
   var untouched = '(' + values.map(function (v) { return cv + ' != "' + v + '"'; }).join(' &amp; ') + ')';
-  var buttons = list.reduce(function (acc, p) {
-    var v = String(p[1]); var on = cv + ' == "' + v + '"' + (v === cur ? ' | ' + untouched : '');
-    var act = [setVar(cv.slice(1), v), runTask('Bus Settings Button', { busaction: 'set', bussetting: setting, busvalue: v })];
-    return acc.concat([
-      { type: 'Button', id: id('con'), text: '\u2713 ' + p[0], showWhen: on, eventHandlers: { handlers: [{ events: [{ type: 'click' }], actions: act }] } },
-      { type: 'Button', id: id('coff'), text: p[0], buttonColor: OFF_FILL, textColor: OFF_TEXT, showWhen: '!(' + on + ')',
-        eventHandlers: { handlers: [{ events: [{ type: 'click' }], actions: act }] } }]);
-  }, []);
-  var rows = [flow(buttons)];
-  return [text(label, 13, 'onSurfaceVariant')].concat(rows);
+  return rowsOf(label, 'op_' + key + '_x', list.map(function (p) {
+    var v = String(p[1]);
+    return { label: p[0], on: cv + ' == "' + v + '"' + (v === cur ? ' | ' + untouched : ''),
+             actions: [setVar(cv.slice(1), v), runTask('Bus Settings Button', { busaction: 'set', bussetting: setting, busvalue: v })] };
+  }));
+}
+// A small title over a group of settings (4.62), and a line under a setting saying what it does
+function groupTitle(t) { return text(t, 15, 'primary', { fontWeight: 'Bold' }); }
+function help(t) { return text(t, 13, 'onSurfaceVariant'); }
+// A line of text you can tap (4.62): the side switch and Remove stop. A Button has padding of its own,
+// which set its text in from the stop's name; a Row's text lines up with it.
+function textAction(label, color, actions, top) {
+  return { type: 'Row', id: id('act'), verticalAlignment: 'Center', modifiers: [{ type: 'Padding', top: top || '10', bottom: '10' }],
+           eventHandlers: { handlers: [{ events: [{ type: 'click' }], actions: actions }] },
+           children: [text(label, 15, color, { fontWeight: 'Bold' })] };
 }
 
 // Sliders have fixed ids (sl_w, sl_gap, sl_y) so Bus Find Camera can move them after Reset position
 function slider(label, min, max, step, value, variable) {
-  return [text(label, 14),
+  return [text(label + ' (was ' + value + ' dp)', 14),
     { type: 'Slider', id: 'sl_' + variable.replace(/^set_/, ''), min: String(min), max: String(max), steps: String(Math.round((max - min) / step) - 1), value: String(value),
       modifiers: [{ type: 'FillWidth' }], eventHandlers: { handlers: [out('slider_value_changed', 'value', variable)] } }];
 }
@@ -641,6 +681,7 @@ function flow(children) {
 // Unselected options: the theme name "surfaceVariant" wasn't applied (they showed as bare text),
 // so plain colours are used
 var OFF_FILL = '#343B48'; var OFF_TEXT = '#D5DBE6';
+var ERROR = '#FFB4AB';                       // Material 3's dark error colour (4.62: Remove stop)
 function button(label, actions) { return { type: 'Button', id: id('btn'), text: label, eventHandlers: { handlers: [{ events: [{ type: 'click' }], actions: actions }] } }; }
 function runTask(task, vars) { return { type: 'RunTask', task: task, variables: vars || {} }; }
 function setVar(v, value) { return { type: 'SetVariable', variable: v, value: value }; }
@@ -668,9 +709,10 @@ function page(pg, children) {
            modifiers: [{ type: 'FillWidth' }], children: children };
 }
 // A group of rows, as Settings draws them: one rounded block
-function group(children) {
+// (spacing '0': a list whose items are hidden and shown, which give themselves room above instead)
+function group(children, spacing) {
   return { type: 'Card', id: id('grp'), style: 'Filled', modifiers: [{ type: 'FillWidth' }], children: [
-    { type: 'Column', id: id('col'), verticalArrangement: 'SpacedBy', spacing: '10',
+    { type: 'Column', id: id('col'), verticalArrangement: 'SpacedBy', spacing: spacing || '10',
       modifiers: [{ type: 'FillWidth' }, { type: 'Padding', all: '16' }], children: children }] };
 }
 // An entry on the main page: its icon, its name and what it's set to now; a tap opens its page
@@ -692,8 +734,11 @@ function wifiBlock(label, current, inVar, setting, clearable) {
   if (clearable &amp;&amp; current)
     buttons.push(button('Clear', [setVar(usedVar, 'cleared'), runTask('Bus Settings Button', { busaction: 'set', bussetting: setting, busvalue: '' })]));
   if (buttons.length) parts.push(flow(buttons));
-  if (wifiNow) parts.push(text('Set to ' + wifiNow, 13, 'primary', { showWhen: '%' + usedVar + ' == "used"' }));
-  if (clearable) parts.push(text('Cleared', 13, 'primary', { showWhen: '%' + usedVar + ' == "cleared"' }));
+  // ("Set to" and "Cleared" share one place, as a hidden line still takes up its spacing, 4.62)
+  var said = [];
+  if (wifiNow) said.push(text('Set to ' + wifiNow, 13, 'primary', { showWhen: '%' + usedVar + ' == "used"' }));
+  if (clearable) said.push(text('Cleared', 13, 'primary', { showWhen: '%' + usedVar + ' == "cleared"' }));
+  if (said.length) parts.push({ type: 'Box', id: id('said'), children: said });
   return parts;
 }
 
@@ -759,32 +804,18 @@ function distanceParts(st, k) {
   var chosen = function (v) { return dv + ' == "' + v + '"'; };
   var untouched = '(' + [50, 100, 200].map(function (m) { return dv + ' != "' + m + '"'; }).join(' &amp; ') + ' &amp; ' + dv + ' != "custom")';
   var record = function (value) { return runTask('Bus Settings Button', { busaction: 'dist', busstop: letters(k), busvalue: value }); };
-  var distParts = [text('Start within', 13, 'onSurfaceVariant')];
-  distParts.push(flow(PRESETS.reduce(function (acc, m) {
-      var on = chosen(m) + (effective === m &amp;&amp; !isCustom ? ' | ' + untouched : '');
-      return acc.concat([
-        { type: 'Button', id: id('don'), text: '\u2713 ' + m + ' m', showWhen: on,
-          eventHandlers: { handlers: [{ events: [{ type: 'click' }], actions: [setVar('stop_d_' + letters(k) + '_x', String(m)), setVar('stop_e_' + letters(k) + '_x', 'no'), record(String(m))] }] } },
-        { type: 'Button', id: id('doff'), text: m + ' m', buttonColor: OFF_FILL, textColor: OFF_TEXT, showWhen: '!(' + on + ')',
-          eventHandlers: { handlers: [{ events: [{ type: 'click' }], actions: [setVar('stop_d_' + letters(k) + '_x', String(m)), setVar('stop_e_' + letters(k) + '_x', 'no'), record(String(m))] }] } }]);
-    }, [])));
-  // Custom: always the fourth button in the row, filled ("\u2713 Custom 70 m") only while a custom
-  // distance is in use. Tapping it shows a box to type the distance, and Use custom applies it.
-  // Tapping a preset hides the box again.
   var editVar = 'stop_e_' + letters(k) + '_x';
   var customOn = chosen('custom') + (isCustom ? ' | ' + untouched : '');
-  var openBox = [setVar(editVar, 'yes')];
-  distParts[1].children = distParts[1].children.concat([
-    { type: 'Button', id: id('cuon'), text: '\u2713 Custom' + (isCustom ? ' ' + effective + ' m' : ''), showWhen: customOn,
-      eventHandlers: { handlers: [{ events: [{ type: 'click' }], actions: openBox }] } },
-    { type: 'Button', id: id('cuoff'), text: 'Custom', buttonColor: OFF_FILL, textColor: OFF_TEXT, showWhen: '!(' + customOn + ')',
-      eventHandlers: { handlers: [{ events: [{ type: 'click' }], actions: openBox }] } }]);
+  var options = PRESETS.map(function (m) {
+    return { label: m + ' m', on: chosen(m) + (effective === m &amp;&amp; !isCustom ? ' | ' + untouched : ''),
+             actions: [setVar('stop_d_' + letters(k) + '_x', String(m)), setVar(editVar, 'no'), record(String(m))] };
+  }).concat([{ label: 'Custom', summary: isCustom ? 'Custom, ' + effective + ' m' : 'Custom', on: customOn, actions: [setVar(editVar, 'yes')] }]);
+  // Custom shows a box to type the distance, and Use custom applies it; picking a preset hides it again
   var box = input('Distance in metres (up to 200)', isCustom ? String(effective) : '', boxVar(k));
   box.showWhen = '%' + editVar + ' == "yes"';
-  distParts.push(box);
-  var use = button('Use custom', [setVar('stop_d_' + letters(k) + '_x', 'custom'), record('%' + boxVar(k))]);
-  use.showWhen = '%' + editVar + ' == "yes"';
-  distParts.push(use);
+  var use = button('Use custom', [setVar('stop_d_' + letters(k) + '_x', 'custom'), setVar(editVar, 'no'), record('%' + boxVar(k))]);
+  var distParts = rowsOf('Start within', 'op_d' + letters(k) + '_x', options, [{ type: 'Column', id: id('cust'), verticalArrangement: 'SpacedBy', spacing: '8',
+    showWhen: '%' + editVar + ' == "yes"', modifiers: [{ type: 'FillWidth' }], children: [box, use] }]);
   st.effective = effective;
   return distParts;
 }
@@ -833,40 +864,47 @@ function sideParts(k, withDistance) {
                                  modifiers: [{ type: 'FillWidth' }], children: distanceParts(st, k) });
   if (!(withDistance &amp;&amp; st.saved)) return parts;
   var rv = removedVar(k); var gone = '%' + rv + ' == "yes"';
-  var removeBtn = { type: 'Button', id: id('rmb'), text: 'Remove stop', buttonColor: OFF_FILL, textColor: OFF_TEXT,
-    eventHandlers: { handlers: [{ events: [{ type: 'click' }], actions: [setVar(rv, 'yes'),
-      runTask('Bus Settings Button', { busaction: 'remove', busstop: letters(k), busvalue: 'yes' })] }] } };
+  // (4.62: red text on a line of its own, with room above it, so it can't be taken for an unticked route)
+  var removeBtn = textAction('Remove stop', ERROR, [setVar(rv, 'yes'),
+    runTask('Bus Settings Button', { busaction: 'remove', busstop: letters(k), busvalue: 'yes' })], '18');
   var undoBtn = { type: 'Button', id: id('rmu'), text: 'Undo',
     eventHandlers: { handlers: [{ events: [{ type: 'click' }], actions: [setVar(rv, 'no'),
       runTask('Bus Settings Button', { busaction: 'remove', busstop: letters(k), busvalue: 'no' })] }] } };
-  return [
+  return [{ type: 'Box', id: id('rmx'), modifiers: [{ type: 'FillWidth' }], children: [
     { type: 'Column', id: id('keep'), showWhen: '!(' + gone + ')', verticalArrangement: 'SpacedBy', spacing: '6',
       modifiers: [{ type: 'FillWidth' }], children: parts.concat([removeBtn]) },
     { type: 'Row', id: id('gone'), showWhen: gone, verticalAlignment: 'Center', horizontalArrangement: 'SpaceBetween',
-      modifiers: [{ type: 'FillWidth' }], children: [text('Removed when you close Settings', 13, 'onSurfaceVariant'), undoBtn] }];
+      modifiers: [{ type: 'FillWidth' }], children: [text('Removed when you close Settings', 13, 'onSurfaceVariant'), undoBtn] }] }];
 }
 function unitBlock(unit, ui, withDistance, showWhen) {
-  var col = function (parts, when) {
+  var col = function (parts, when, top) {
     var c = { type: 'Column', id: id('col'), verticalArrangement: 'SpacedBy', spacing: '6', modifiers: [{ type: 'FillWidth' }], children: parts };
+    if (top) c.modifiers.push({ type: 'Padding', top: top });
     if (when) c.showWhen = when;
     return c;
   };
+  showWhen = showWhen || '';
   if (unit.length === 1) {
     var st = stopsShown[unit[0]];
-    return col([text(st.name, 16, '', { fontWeight: 'Bold' })].concat(sideParts(unit[0], withDistance)), showWhen);
+    return col([text(st.name, 16, '', { fontWeight: 'Bold' })].concat(sideParts(unit[0], withDistance)), showWhen, '16');
   }
   var side = '%pr_' + letters(ui) + '_x'; var sideB = side + ' == "b"';
+  // (4.62) The switch says where it goes ("Switch to Stop KJ \u21c4"; "other side" when that side has no
+  // letter), on a line of its own under the name, so a long name never squeezes it. (A bare "Stop KJ"
+  // there read as the name of the side showing.)
   var flip = function (to, when) {
-    return { type: 'IconButton', id: id('flip'), icon: 'icon:SwapHoriz', showWhen: when,
-             eventHandlers: { handlers: [{ events: [{ type: 'click' }], actions: [setVar(side.slice(1), to)] }] } };
+    var l = stopLetter(stopsShown[unit[to === 'b' ? 1 : 0]].name);
+    var f = textAction('Switch to ' + (l ? 'Stop ' + l : 'other side') + ' \u21c4', 'primary', [setVar(side.slice(1), to)], '2');
+    f.showWhen = when;
+    return f;
   };
   var title = String(stopsShown[unit[0]].name).replace(/\s*\([^)]*\)\s*$/, '');
+  var both = function (parts) { return { type: 'Box', id: id('sides'), modifiers: [{ type: 'FillWidth' }], children: parts }; };
   return col([
-    { type: 'Row', id: id('prow'), verticalAlignment: 'Center', horizontalArrangement: 'SpaceBetween', modifiers: [{ type: 'FillWidth' }],
-      children: [text(title, 16, '', { fontWeight: 'Bold' }), flip('b', '!(' + sideB + ')'), flip('a', sideB)] },
-    col(sideParts(unit[0], withDistance), '!(' + sideB + ')'),
-    col(sideParts(unit[1], withDistance), sideB)
-  ], showWhen);
+    text(title, 16, '', { fontWeight: 'Bold' }),
+    both([flip('b', '!(' + sideB + ')'), flip('a', sideB)]),
+    both([col(sideParts(unit[0], withDistance), '!(' + sideB + ')'), col(sideParts(unit[1], withDistance), sideB)])
+  ], showWhen, '16');
 }
 
 var yours = []; var others = [];
@@ -876,20 +914,26 @@ units.forEach(function (unit, ui) {
   others.push(unitBlock(unit, ui, false, '!(' + on + ')'));
 });
 
-var stopBlocks = [text('Tap the routes you use at each stop. \u21c4 switches to the other side of the road.', 13, 'onSurfaceVariant'),
-                  text('Your stops', 15, 'primary', { fontWeight: 'Bold' })].concat(yours,
-                 [text('Stops near you', 15, 'primary', { fontWeight: 'Bold' })], others);
-if (stopsShown.length === 0) stopBlocks.push(text('No stops found near you. Open Settings again near a stop you use.', 14, 'onSurfaceVariant'));
-var stopsPage = [group(stopBlocks)];
+// (4.62: no hint line above them; each switch says what it does)
+var stopBlocks = [text('Your stops', 15, 'primary', { fontWeight: 'Bold' })].concat(yours,
+                 [text('Stops near you', 15, 'primary', { fontWeight: 'Bold', modifiers: [{ type: 'Padding', top: '24' }] })], others);
+if (stopsShown.length === 0) stopBlocks.push(text('No stops found near you. Open Settings again near a stop you use.', 14, 'onSurfaceVariant', { modifiers: [{ type: 'Padding', top: '14' }] }));
+var stopsPage = [group(stopBlocks, '0')];
 
-var countdownPage = [group(
-  choices('Update every', P.refresh, get('BusRefresh') || 45, 'BusRefresh')
-  .concat(choices('Stop after', P.timeout, get('BusTimeout') || 30, 'BusTimeout'))
-  .concat(choices('Rotate routes every', P.rotate, get('BusRotate') || 6, 'BusRotate'))
-  .concat(choices('Manual start searches within', P.radius, get('BusRadius') || 300, 'BusRadius'))
-  .concat(choices('Heading to a stop', [['Off', 'off'], ['Walking', 'walk'], ['Walking + bus', 'both']], get('BusApproach') || 'both', 'BusApproach'))
-  .concat(choices('Minutes ahead', [['2', '2'], ['3', '3'], ['5', '5']], get('BusApproachMin') || '3', 'BusApproachMin'))
-  .concat(choices('Record trips (to Download, kept a week)', [['Off', 'off'], ['On', 'on']], get('BusRecord') || 'off', 'BusRecord')))];
+// (4.62: in three groups, each a title over a card)
+var countdownPage = [
+  groupTitle('While it runs'),
+  group(choices('Update every', P.refresh, get('BusRefresh') || 45, 'BusRefresh')
+    .concat(choices('Stop after', P.timeout, get('BusTimeout') || 30, 'BusTimeout'))
+    .concat(choices('Rotate routes every', P.rotate, get('BusRotate') || 6, 'BusRotate'))),
+  groupTitle('Starting one'),
+  group(choices('Manual start searches within', P.radius, get('BusRadius') || 300, 'BusRadius')
+    .concat(choices('Heading to a stop', [['Off', 'off'], ['Walking', 'walk'], ['Walking + bus', 'both']], get('BusApproach') || 'both', 'BusApproach'))
+    .concat(choices('Minutes ahead', [['2', '2'], ['3', '3'], ['5', '5']], get('BusApproachMin') || '3', 'BusApproachMin'))
+    .concat([help('How early the island comes up when you\u2019re heading for a stop.')])),
+  groupTitle('Recording'),
+  group(choices('Record trips', [['Off', 'off'], ['On', 'on']], get('BusRecord') || 'off', 'BusRecord')
+    .concat([help('One file a day in Download/Tasker-bus-trip-data, kept until you delete it.')]))];
 
 var wifiPage = [group(
   wifiBlock('Home Wi-Fi', get('BusHomeWifi'), 'home_wifi', 'BusHomeWifi', false)
@@ -897,9 +941,10 @@ var wifiPage = [group(
   .concat([text('No countdowns on these networks.', 13, 'onSurfaceVariant')])
   .concat(choices('On leaving, show the nearest stop\u2019s next buses', [['Work', 'work'], ['Home', 'home'], ['Both', 'both'], ['Off', 'off']],
                   get('BusLeaveShow') || 'work', 'BusLeaveShow'))
-  .concat(choices('Work heads-up (1 min when the screen turns on), from',
+  .concat(choices('Work heads-up from',
                   [['Off', 'off'], ['16:30', '16:30'], ['17:00', '17:00'], ['17:30', '17:30']], get('BusGlanceFrom') || '17:00', 'BusGlanceFrom'))
-  .concat(choices('until', [['17:30', '17:30'], ['18:00', '18:00'], ['18:30', '18:30'], ['19:00', '19:00']], get('BusGlanceTo') || '18:00', 'BusGlanceTo')))];
+  .concat(choices('Work heads-up until', [['17:30', '17:30'], ['18:00', '18:00'], ['18:30', '18:30'], ['19:00', '19:00']], get('BusGlanceTo') || '18:00', 'BusGlanceTo'))
+  .concat([help('Shows the next buses for a minute when the screen turns on at work.')]))];
 
 // Island
 var gap = parseInt(get('BusIslandGap'), 10) || 42;
@@ -911,7 +956,7 @@ var islandPage = [group(
   .concat(choices('Buzz when a bus is under 5 min away', [['On', 'on'], ['Off', 'off']], get('BusBuzz') || 'on', 'BusBuzz'))
   .concat(choices('Destination length', [['3 letters', '3'], ['6 letters', '6'], ['10 letters', '10']], get('BusDestLetters') || '3', 'BusDestLetters'))
   // The stop board (4.42): tap the island to see every bus at the stop
-  .concat(choices('Tap for the stop board: show', [['All routes', 'all'], ['Your routes', 'mine']], get('BusBoardRoutes') || 'all', 'BusBoardRoutes'))
+  .concat(choices('Stop board shows', [['All routes', 'all'], ['Your routes', 'mine']], get('BusBoardRoutes') || 'all', 'BusBoardRoutes'))
   .concat(choices('Stop board closes', [['After 10 s', '10'], ['After 30 s', '30'], ['When tapped', '0']], get('BusBoardSecs') || '10', 'BusBoardSecs'))),
   // Where the island sits is a page of its own, one level down
   group([entry('CropFree', 'Position', 'Camera gap ' + gap + ' dp, ' + y + ' dp from the top', 'position')])];
@@ -939,7 +984,18 @@ var PERMS = rebuild &amp;&amp; before.perms ? before.perms : [
   ['Battery unrestricted', loc('bp_battery') === 'true', 'app']
 ];
 var missing = PERMS.filter(function (p) { return !p[1]; });
-var setupPage = [group([input('TfL key', get('TflKey'), 'tfl_key')].concat(
+// The TfL key (4.62): hidden, as its last four characters and Change, which shows the box to type a new
+// one; with no key yet, the box straight away. The two share one place (a hidden part keeps its spacing).
+var KEY = get('TflKey'); var KEY_EDIT = '%key_edit_x == "yes"';
+var keyBox = input('TfL key', KEY, 'tfl_key');
+var keyParts = [keyBox];
+if (KEY) {
+  keyBox.showWhen = KEY_EDIT;
+  var masked = row([text('TfL key: \u2022\u2022\u2022\u2022' + KEY.slice(-4), 15), button('Change', [setVar('key_edit_x', 'yes')])]);
+  masked.showWhen = '!(' + KEY_EDIT + ')';
+  keyParts = [{ type: 'Box', id: id('key'), modifiers: [{ type: 'FillWidth' }], children: [masked, keyBox] }];
+}
+var setupPage = [group(keyParts.concat(
   missing.length
     ? [text('Needed:', 13, 'onSurfaceVariant')].concat(missing.map(function (p) {
         return row([text(p[0], 15), button('Turn on', [runTask('Bus Settings Button', { busaction: p[2] })])]);
@@ -947,8 +1003,16 @@ var setupPage = [group([input('TfL key', get('TflKey'), 'tfl_key')].concat(
     : [text('All permissions are on.', 14, 'primary')]))];
 
 // ---- The main page: an entry for each page, saying what it's set to now ----
-var myStops = stopsShown.filter(function (st) { return st.saved &amp;&amp; st.ticked.length; })
-  .map(function (st) { return String(st.name).replace(/\s*\([^)]*\)\s*$/, '') + ': ' + st.ticked.join(', '); });
+// (4.62) One line per road, as the Stops page shows them: with both sides saved, the routes ticked on
+// either side. Listed by stop, the two sides read as the same stop twice, as the name leaves the side off.
+var myStops = [];
+units.forEach(function (unit) {
+  var used = unit.filter(function (k) { return stopsShown[k].saved &amp;&amp; stopsShown[k].ticked.length; });
+  if (!used.length) return;
+  var routes = [];
+  used.forEach(function (k) { stopsShown[k].ticked.forEach(function (r) { if (routes.indexOf(r) &lt; 0) routes.push(r); }); });
+  myStops.push(String(stopsShown[used[0]].name).replace(/\s*\([^)]*\)\s*$/, '') + ': ' + routes.join(', '));
+});
 var label = function (list, current) { return list[closest(list, current)][0]; };
 var mainPage = (setup ? [text('Add your TfL key under Setup, then pick routes at your stops.', 14, 'onSurfaceVariant')] : []).concat([
   group([entry('DirectionsBus', 'Stops and routes', myStops.length ? myStops.join('; ') : 'Pick the routes you use at your stops', 'stops')]),
@@ -974,7 +1038,7 @@ var topBar = { type: 'TopAppBar', id: 'top_bar',
 var buslayout = JSON.stringify({
   name: 'Bus Settings', defaultDisplayMode: 'FullscreenWithResult',
   root: { type: 'Scaffold', id: 'root', topBar: [topBar],
-    content: [{ type: 'Column', id: 'body', verticalArrangement: 'SpacedBy', spacing: '12',
+    content: [{ type: 'Column', id: 'body',
       modifiers: [{ type: 'FillSize' }, { type: 'VerticalScroll' }, { type: 'Padding', horizontal: '16', top: '4', bottom: '24' }],
       children: [page('main', mainPage), page('stops', stopsPage), page('countdown', countdownPage), page('wifi', wifiPage),
                  page('island', islandPage), page('position', positionPage), page('setup', setupPage)] }] }
@@ -1643,8 +1707,8 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buslive</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task75">
-		<cdate>1791878178434</cdate>
-		<edate>1791878178434</edate>
+		<cdate>1791892037246</cdate>
+		<edate>1791892037246</edate>
 		<id>75</id>
 		<nme>Bus Settings Button</nme>
 		<pri>6</pri>
@@ -1776,8 +1840,8 @@ if (buspreview === 'yes') {
 			<label>Open it · Shows the Android settings page</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">startActivity {} (android.content.Intent)</Str><Str sr="arg3" ve="3">busint</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busintent</lhs><op>2</op><rhs>android*</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task77">
-		<cdate>1791878178434</cdate>
-		<edate>1791878178434</edate>
+		<cdate>1791892037247</cdate>
+		<edate>1791892037247</edate>
 		<id>77</id>
 		<nme>Bus Position</nme>
 		<pri>6</pri>
@@ -1989,7 +2053,7 @@ function textWidth(t, font) {
 }
 function dotsWidth(n) { return n &gt; 1 ? 10 + n * 4 + (n - 1) * 3 : 0; }
 function rightNeeded(buses, now) {
-  var SMALL = '600 11px system-ui, Roboto, sans-serif';
+  var SMALL = '600 12px system-ui, Roboto, sans-serif';          // "· 12 min" (4.62: 12 px, as the island draws it)
   var fitMins = function (t) { var m = Math.round((t - now) / 60000); return m &lt; 1 ? 'Due' : String(m); };
   var widest = textWidth('Due');
   (buses || []).forEach(function (b) {
@@ -2227,9 +2291,12 @@ var PAGE = String.raw`&lt;!doctype html&gt;
   .d { color: #B7BFCD; font-size: 12px; overflow: hidden; text-overflow: ellipsis; min-width: 0; }             /* destination */
   .m { font-weight: 700; flex: none; }          /* minutes */
   .m.due { color: #7FD6A4; }
-  .m.old { opacity: .45; }                                  /* no fresh times for 2 refreshes */
+  .m.old { opacity: .55; }                                  /* no fresh times for 2 refreshes */
+  /* ...and the route dots go hollow (4.62), so old times aren't told apart by fading alone */
+  #p.stale .dots i { background: none; box-shadow: inset 0 0 0 1px #8A93A6; }
+  #p.stale .dots i.on { box-shadow: inset 0 0 0 1px #fff; }
   .m.sched { color: #9AA3B5; font-weight: 600; }            /* timetable, not live */
-  .m2 { flex: none; margin-left: -2px; font-size: 11px; font-weight: 600; color: #9AA3B5; white-space: pre; }   /* "· 12 min": the bus after */
+  .m2 { flex: none; margin-left: -2px; font-size: 12px; font-weight: 600; color: #9AA3B5; white-space: pre; }   /* "· 12 min": the bus after */
   .m.late { color: #F2C66B; }  .m.cancel { color: #FF8A80; }  /* ready for trains (V5) */
   .d.sched { font-style: italic; }
   .s { font-weight: 700; overflow: hidden; text-overflow: ellipsis; min-width: 0; }  /* stop name flash, "No buses" */
@@ -2386,7 +2453,7 @@ var PAGE = String.raw`&lt;!doctype html&gt;
   }
   function dotsWidth(n) { return n &gt; 1 ? 10 + n * 4 + (n - 1) * 3 : 0; }
   function rightNeeded(buses, now) {
-    var SMALL = '600 11px system-ui, Roboto, sans-serif';
+    var SMALL = '600 12px system-ui, Roboto, sans-serif';          // "· 12 min" (4.62: 12 px, as the island draws it)
     var fitMins = function (t) { var m = Math.round((t - now) / 60000); return m &lt; 1 ? 'Due' : String(m); };
     var widest = textWidth('Due');
     (buses || []).forEach(function (b) {
@@ -2558,6 +2625,8 @@ var PAGE = String.raw`&lt;!doctype html&gt;
     return true;
   }
 
+  // Times more than two refreshes old (no signal, TfL not answering)
+  function stale() { return !!(data &amp;&amp; data.u &amp;&amp; Date.now() - data.u &gt; 2 * (data.r || 45000)); }
   /* Right half: minutes, plus one dot per route when there are several */
   function rightHtml(b, active, oneTime) {
     var n = buses().length, m = mins(b.t), dots = '', st = b.st || 'live';
@@ -2565,7 +2634,7 @@ var PAGE = String.raw`&lt;!doctype html&gt;
     if (st === 'cancel') m = 'Cancelled';
     var cls = st === 'live' ? (m === 'Due' ? ' due' : '') : ' ' + st;
     // Times more than two refreshes old: dimmed, so stale times don't look live
-    if (data &amp;&amp; data.u &amp;&amp; Date.now() - data.u &gt; 2 * (data.r || 45000)) cls += ' old';
+    if (stale()) cls += ' old';
     if (st === 'sched') m = '~' + m;
     if (n &gt; 1) {
       dots = '&lt;span class="dots"&gt;';
@@ -2663,6 +2732,7 @@ var PAGE = String.raw`&lt;!doctype html&gt;
       var b = list[idx];
       L.innerHTML = (data &amp;&amp; data.l ? '&lt;span class="sl"&gt;' + esc(data.l) + '&lt;/span&gt;' : '') +
                     '&lt;span class="b' + (b.idle ? ' idle' : '') + '"&gt;' + esc(b.k) + '&lt;/span&gt;&lt;span class="d' + (b.st === 'sched' ? ' sched' : '') + '"&gt;' + esc(b.d) + '&lt;/span&gt;';
+      p.classList.toggle('stale', stale());
       R.innerHTML = rightHtml(b, idx);
       // Too wide for the times now showing: a bus has turned due since the refresh ("1 · 15 min" becoming
       // "Due · 14 min"). The island grows to fit in place, at once (4.57); if it can't, just the first time
@@ -3118,8 +3188,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task78">
-		<cdate>1791878178434</cdate>
-		<edate>1791878178434</edate>
+		<cdate>1791892037247</cdate>
+		<edate>1791892037247</edate>
 		<id>78</id>
 		<nme>Bus Position Set</nme>
 		<pri>6</pri>
@@ -3137,8 +3207,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task80">
-		<cdate>1791878178434</cdate>
-		<edate>1791878178434</edate>
+		<cdate>1791892037247</cdate>
+		<edate>1791892037247</edate>
 		<id>80</id>
 		<nme>Bus Position Done</nme>
 		<pri>6</pri>
@@ -3243,8 +3313,8 @@ var busmsg = changed.length ? 'Saved: ' + changed.join(', ') : 'none';
 		</Action>
 	</Task>
 	<Task sr="task76">
-		<cdate>1791878178434</cdate>
-		<edate>1791878178434</edate>
+		<cdate>1791892037247</cdate>
+		<edate>1791892037247</edate>
 		<id>76</id>
 		<nme>Bus Find Camera</nme>
 		<pri>6</pri>
@@ -3377,8 +3447,8 @@ if (!r || !dens || !w) {
 			<label>Reset position: move the open screen's height slider · Shows the new value straight away</label><Str sr="arg0" ve="3">bussettings</Str><Str sr="arg1" ve="3">sl_y</Str><Str sr="arg2" ve="3">value</Str><Str sr="arg3" ve="3">%BusIslandY</Str><Int sr="arg4" val="0"/><Str sr="arg5" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrebuild</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task38">
-		<cdate>1791878178434</cdate>
-		<edate>1791878178434</edate>
+		<cdate>1791892037247</cdate>
+		<edate>1791892037247</edate>
 		<id>38</id>
 		<nme>Bus Start</nme>
 		<pri>6</pri>
@@ -3396,7 +3466,7 @@ if (!r || !dens || !w) {
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.61.202610130856</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>Settings: fill in defaults, check TflKey and BusRoutes · Resets empty or invalid settings</label>
@@ -4243,8 +4313,8 @@ record(busok === 'yes' ? 'start' : 'nostart', { stop: get('BusStateStopId'), nam
 		</Action>
 	</Task>
 	<Task sr="task60">
-		<cdate>1791878178434</cdate>
-		<edate>1791878178434</edate>
+		<cdate>1791892037247</cdate>
+		<edate>1791892037247</edate>
 		<id>60</id>
 		<nme>Bus Loop</nme>
 		<pri>6</pri>
@@ -4584,8 +4654,8 @@ var buspushm = get('BusStatePushM') || '30';
 		</Action>
 	</Task>
 	<Task sr="task59">
-		<cdate>1791878178434</cdate>
-		<edate>1791878178434</edate>
+		<cdate>1791892037247</cdate>
+		<edate>1791892037247</edate>
 		<id>59</id>
 		<nme>Bus Refresh</nme>
 		<pri>6</pri>
@@ -4889,7 +4959,7 @@ function textWidth(t, font) {
 }
 function dotsWidth(n) { return n &gt; 1 ? 10 + n * 4 + (n - 1) * 3 : 0; }
 function rightNeeded(buses, now) {
-  var SMALL = '600 11px system-ui, Roboto, sans-serif';
+  var SMALL = '600 12px system-ui, Roboto, sans-serif';          // "· 12 min" (4.62: 12 px, as the island draws it)
   var fitMins = function (t) { var m = Math.round((t - now) / 60000); return m &lt; 1 ? 'Due' : String(m); };
   var widest = textWidth('Due');
   (buses || []).forEach(function (b) {
@@ -5564,7 +5634,7 @@ function textWidth(t, font) {
 }
 function dotsWidth(n) { return n &gt; 1 ? 10 + n * 4 + (n - 1) * 3 : 0; }
 function rightNeeded(buses, now) {
-  var SMALL = '600 11px system-ui, Roboto, sans-serif';
+  var SMALL = '600 12px system-ui, Roboto, sans-serif';          // "· 12 min" (4.62: 12 px, as the island draws it)
   var fitMins = function (t) { var m = Math.round((t - now) / 60000); return m &lt; 1 ? 'Due' : String(m); };
   var widest = textWidth('Due');
   (buses || []).forEach(function (b) {
@@ -5802,9 +5872,12 @@ var PAGE = String.raw`&lt;!doctype html&gt;
   .d { color: #B7BFCD; font-size: 12px; overflow: hidden; text-overflow: ellipsis; min-width: 0; }             /* destination */
   .m { font-weight: 700; flex: none; }          /* minutes */
   .m.due { color: #7FD6A4; }
-  .m.old { opacity: .45; }                                  /* no fresh times for 2 refreshes */
+  .m.old { opacity: .55; }                                  /* no fresh times for 2 refreshes */
+  /* ...and the route dots go hollow (4.62), so old times aren't told apart by fading alone */
+  #p.stale .dots i { background: none; box-shadow: inset 0 0 0 1px #8A93A6; }
+  #p.stale .dots i.on { box-shadow: inset 0 0 0 1px #fff; }
   .m.sched { color: #9AA3B5; font-weight: 600; }            /* timetable, not live */
-  .m2 { flex: none; margin-left: -2px; font-size: 11px; font-weight: 600; color: #9AA3B5; white-space: pre; }   /* "· 12 min": the bus after */
+  .m2 { flex: none; margin-left: -2px; font-size: 12px; font-weight: 600; color: #9AA3B5; white-space: pre; }   /* "· 12 min": the bus after */
   .m.late { color: #F2C66B; }  .m.cancel { color: #FF8A80; }  /* ready for trains (V5) */
   .d.sched { font-style: italic; }
   .s { font-weight: 700; overflow: hidden; text-overflow: ellipsis; min-width: 0; }  /* stop name flash, "No buses" */
@@ -5961,7 +6034,7 @@ var PAGE = String.raw`&lt;!doctype html&gt;
   }
   function dotsWidth(n) { return n &gt; 1 ? 10 + n * 4 + (n - 1) * 3 : 0; }
   function rightNeeded(buses, now) {
-    var SMALL = '600 11px system-ui, Roboto, sans-serif';
+    var SMALL = '600 12px system-ui, Roboto, sans-serif';          // "· 12 min" (4.62: 12 px, as the island draws it)
     var fitMins = function (t) { var m = Math.round((t - now) / 60000); return m &lt; 1 ? 'Due' : String(m); };
     var widest = textWidth('Due');
     (buses || []).forEach(function (b) {
@@ -6133,6 +6206,8 @@ var PAGE = String.raw`&lt;!doctype html&gt;
     return true;
   }
 
+  // Times more than two refreshes old (no signal, TfL not answering)
+  function stale() { return !!(data &amp;&amp; data.u &amp;&amp; Date.now() - data.u &gt; 2 * (data.r || 45000)); }
   /* Right half: minutes, plus one dot per route when there are several */
   function rightHtml(b, active, oneTime) {
     var n = buses().length, m = mins(b.t), dots = '', st = b.st || 'live';
@@ -6140,7 +6215,7 @@ var PAGE = String.raw`&lt;!doctype html&gt;
     if (st === 'cancel') m = 'Cancelled';
     var cls = st === 'live' ? (m === 'Due' ? ' due' : '') : ' ' + st;
     // Times more than two refreshes old: dimmed, so stale times don't look live
-    if (data &amp;&amp; data.u &amp;&amp; Date.now() - data.u &gt; 2 * (data.r || 45000)) cls += ' old';
+    if (stale()) cls += ' old';
     if (st === 'sched') m = '~' + m;
     if (n &gt; 1) {
       dots = '&lt;span class="dots"&gt;';
@@ -6238,6 +6313,7 @@ var PAGE = String.raw`&lt;!doctype html&gt;
       var b = list[idx];
       L.innerHTML = (data &amp;&amp; data.l ? '&lt;span class="sl"&gt;' + esc(data.l) + '&lt;/span&gt;' : '') +
                     '&lt;span class="b' + (b.idle ? ' idle' : '') + '"&gt;' + esc(b.k) + '&lt;/span&gt;&lt;span class="d' + (b.st === 'sched' ? ' sched' : '') + '"&gt;' + esc(b.d) + '&lt;/span&gt;';
+      p.classList.toggle('stale', stale());
       R.innerHTML = rightHtml(b, idx);
       // Too wide for the times now showing: a bus has turned due since the refresh ("1 · 15 min" becoming
       // "Due · 14 min"). The island grows to fit in place, at once (4.57); if it can't, just the first time
@@ -6774,7 +6850,7 @@ function textWidth(t, font) {
 }
 function dotsWidth(n) { return n &gt; 1 ? 10 + n * 4 + (n - 1) * 3 : 0; }
 function rightNeeded(buses, now) {
-  var SMALL = '600 11px system-ui, Roboto, sans-serif';
+  var SMALL = '600 12px system-ui, Roboto, sans-serif';          // "· 12 min" (4.62: 12 px, as the island draws it)
   var fitMins = function (t) { var m = Math.round((t - now) / 60000); return m &lt; 1 ? 'Due' : String(m); };
   var widest = textWidth('Due');
   (buses || []).forEach(function (b) {
@@ -7420,7 +7496,7 @@ function textWidth(t, font) {
 }
 function dotsWidth(n) { return n &gt; 1 ? 10 + n * 4 + (n - 1) * 3 : 0; }
 function rightNeeded(buses, now) {
-  var SMALL = '600 11px system-ui, Roboto, sans-serif';
+  var SMALL = '600 12px system-ui, Roboto, sans-serif';          // "· 12 min" (4.62: 12 px, as the island draws it)
   var fitMins = function (t) { var m = Math.round((t - now) / 60000); return m &lt; 1 ? 'Due' : String(m); };
   var widest = textWidth('Due');
   (buses || []).forEach(function (b) {
@@ -7658,9 +7734,12 @@ var PAGE = String.raw`&lt;!doctype html&gt;
   .d { color: #B7BFCD; font-size: 12px; overflow: hidden; text-overflow: ellipsis; min-width: 0; }             /* destination */
   .m { font-weight: 700; flex: none; }          /* minutes */
   .m.due { color: #7FD6A4; }
-  .m.old { opacity: .45; }                                  /* no fresh times for 2 refreshes */
+  .m.old { opacity: .55; }                                  /* no fresh times for 2 refreshes */
+  /* ...and the route dots go hollow (4.62), so old times aren't told apart by fading alone */
+  #p.stale .dots i { background: none; box-shadow: inset 0 0 0 1px #8A93A6; }
+  #p.stale .dots i.on { box-shadow: inset 0 0 0 1px #fff; }
   .m.sched { color: #9AA3B5; font-weight: 600; }            /* timetable, not live */
-  .m2 { flex: none; margin-left: -2px; font-size: 11px; font-weight: 600; color: #9AA3B5; white-space: pre; }   /* "· 12 min": the bus after */
+  .m2 { flex: none; margin-left: -2px; font-size: 12px; font-weight: 600; color: #9AA3B5; white-space: pre; }   /* "· 12 min": the bus after */
   .m.late { color: #F2C66B; }  .m.cancel { color: #FF8A80; }  /* ready for trains (V5) */
   .d.sched { font-style: italic; }
   .s { font-weight: 700; overflow: hidden; text-overflow: ellipsis; min-width: 0; }  /* stop name flash, "No buses" */
@@ -7817,7 +7896,7 @@ var PAGE = String.raw`&lt;!doctype html&gt;
   }
   function dotsWidth(n) { return n &gt; 1 ? 10 + n * 4 + (n - 1) * 3 : 0; }
   function rightNeeded(buses, now) {
-    var SMALL = '600 11px system-ui, Roboto, sans-serif';
+    var SMALL = '600 12px system-ui, Roboto, sans-serif';          // "· 12 min" (4.62: 12 px, as the island draws it)
     var fitMins = function (t) { var m = Math.round((t - now) / 60000); return m &lt; 1 ? 'Due' : String(m); };
     var widest = textWidth('Due');
     (buses || []).forEach(function (b) {
@@ -7989,6 +8068,8 @@ var PAGE = String.raw`&lt;!doctype html&gt;
     return true;
   }
 
+  // Times more than two refreshes old (no signal, TfL not answering)
+  function stale() { return !!(data &amp;&amp; data.u &amp;&amp; Date.now() - data.u &gt; 2 * (data.r || 45000)); }
   /* Right half: minutes, plus one dot per route when there are several */
   function rightHtml(b, active, oneTime) {
     var n = buses().length, m = mins(b.t), dots = '', st = b.st || 'live';
@@ -7996,7 +8077,7 @@ var PAGE = String.raw`&lt;!doctype html&gt;
     if (st === 'cancel') m = 'Cancelled';
     var cls = st === 'live' ? (m === 'Due' ? ' due' : '') : ' ' + st;
     // Times more than two refreshes old: dimmed, so stale times don't look live
-    if (data &amp;&amp; data.u &amp;&amp; Date.now() - data.u &gt; 2 * (data.r || 45000)) cls += ' old';
+    if (stale()) cls += ' old';
     if (st === 'sched') m = '~' + m;
     if (n &gt; 1) {
       dots = '&lt;span class="dots"&gt;';
@@ -8094,6 +8175,7 @@ var PAGE = String.raw`&lt;!doctype html&gt;
       var b = list[idx];
       L.innerHTML = (data &amp;&amp; data.l ? '&lt;span class="sl"&gt;' + esc(data.l) + '&lt;/span&gt;' : '') +
                     '&lt;span class="b' + (b.idle ? ' idle' : '') + '"&gt;' + esc(b.k) + '&lt;/span&gt;&lt;span class="d' + (b.st === 'sched' ? ' sched' : '') + '"&gt;' + esc(b.d) + '&lt;/span&gt;';
+      p.classList.toggle('stale', stale());
       R.innerHTML = rightHtml(b, idx);
       // Too wide for the times now showing: a bus has turned due since the refresh ("1 · 15 min" becoming
       // "Due · 14 min"). The island grows to fit in place, at once (4.57); if it can't, just the first time
@@ -8975,40 +9057,40 @@ setGlobal('BusCacheTimetable', JSON.stringify(tt));
 		</Action>
 	</Task>
 	<Task sr="task79">
-		<cdate>1791878178436</cdate>
-		<edate>1791878178436</edate>
+		<cdate>1791892037248</cdate>
+		<edate>1791892037248</edate>
 		<id>79</id>
 		<nme>Bus Wake</nme>
 		<pri>6</pri>
 		<Action sr="act0" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.61.202610130856</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.61.202610130856</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
 		<Action sr="act2" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.61.202610130856</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
 		<Action sr="act3" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.61.202610130856</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
 		<Action sr="act4" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.61.202610130856</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
 		<Action sr="act5" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.61.202610130856</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
 		<Action sr="act6" ve="7">
 			<code>547</code>
 			<label>This build · Version and build time</label>
 			<Str sr="arg0" ve="3">%busbuild</Str>
-			<Str sr="arg1" ve="3">4.61.202610130856</Str>
+			<Str sr="arg1" ve="3">4.62.202610131247</Str>
 			<Int sr="arg2" val="0"/>
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.61.202610130856</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
 		<Action sr="act7" ve="7">
 			<code>129</code>
 			<label>Remember it was done for this build · BusStateVersion</label>
@@ -9034,11 +9116,11 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.61.202610130856</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
 		<Action sr="act8" ve="7">
 			<code>548</code>
 			<label>Say so · A short message</label>
-			<Str sr="arg0" ve="3">Bus countdown 4.61: profiles switched on</Str>
+			<Str sr="arg0" ve="3">Bus countdown 4.62: profiles switched on</Str>
 			<Int sr="arg1" val="0"/>
 			<Str sr="arg10" ve="3"/>
 			<Int sr="arg11" val="1"/>
@@ -9054,7 +9136,7 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg7" ve="3"/>
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.61.202610130856</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
 		<Action sr="act9" ve="7">
 			<code>137</code>
 			<label>Only asked to switch the profiles: done · Started by another task with par1 "profiles"</label>
@@ -9421,8 +9503,8 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 		</Action>
 	</Task>
 	<Task sr="task32">
-		<cdate>1791878178436</cdate>
-		<edate>1791878178436</edate>
+		<cdate>1791892037249</cdate>
+		<edate>1791892037249</edate>
 		<id>32</id>
 		<nme>Bus End</nme>
 		<pri>6</pri>
@@ -9688,8 +9770,8 @@ setGlobal('BusStateMatch', '');
 		</Action>
 	</Task>
 	<Task sr="task31">
-		<cdate>1791878178436</cdate>
-		<edate>1791878178436</edate>
+		<cdate>1791892037249</cdate>
+		<edate>1791892037249</edate>
 		<id>31</id>
 		<nme>Bus Island</nme>
 		<pri>6</pri>
@@ -9854,8 +9936,8 @@ if (stops.length) {
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busdo</lhs><op>2</op><rhs>switch/open/close/open-grown/fit</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task62">
-		<cdate>1791878178436</cdate>
-		<edate>1791878178436</edate>
+		<cdate>1791892037249</cdate>
+		<edate>1791892037249</edate>
 		<id>62</id>
 		<nme>Bus Watch</nme>
 		<pri>6</pri>
@@ -11972,8 +12054,8 @@ function recordName(d) {
 		</Action>
 	</Task>
 	<Task sr="task72">
-		<cdate>1791878178437</cdate>
-		<edate>1791878178437</edate>
+		<cdate>1791892037249</cdate>
+		<edate>1791892037249</edate>
 		<id>72</id>
 		<nme>Bus Status</nme>
 		<pri>6</pri>

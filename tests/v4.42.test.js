@@ -96,7 +96,7 @@ test('opening or closing it shows the times just fetched (under 20 s ago) rather
 // ---- 3. Settings --------------------------------------------------------------------------------
 test('the settings screen has both choices, and saves only known values', () => {
   const src = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'settings_open.js'), 'utf8');
-  assert.match(src, /choices\('Tap for the stop board: show', \[\['All routes', 'all'\], \['Your routes', 'mine'\]\]/);
+  assert.match(src, /choices\('Stop board shows', \[\['All routes', 'all'\], \['Your routes', 'mine'\]\]/);   // (4.62: a row of its own)
   assert.match(src, /choices\('Stop board closes', \[\['After 10 s', '10'\], \['After 30 s', '30'\], \['When tapped', '0'\]\]/);
   const g = {};
   run('settings_button.js', { globals: g, locals: { busaction: 'set', bussetting: 'BusBoardSecs', busvalue: '0' } });

@@ -4,6 +4,27 @@ Changes to Bus Countdown, newest first, in [Keep a Changelog](https://keepachang
 
 Each release's project file is on its [GitHub release](../../releases).
 
+## [4.62] - 2026-10-13
+
+### Changed
+
+- Settings' choices are rows, as in Android's own Settings. Each says what it's set to, and a tap shows the options with a radio mark. Picking one saves it, as before. Start within on the Stops page works the same way, and a few labels read as rows of their own ("Work heads-up until", "Stop board shows").
+- The Countdown page is in three groups: While it runs, Starting one and Recording. A line says what Minutes ahead does, and Record trips says where the files go and that they're kept until you delete them.
+- The switch to the other side of the road says where it goes ("Switch to Stop B ⇄") on a line of its own under the stop's name, so the hint line at the top of the page is gone.
+- Remove stop is red text on a line of its own, so it can't be taken for an unticked route.
+- The TfL key is hidden on the Setup page. Its last four characters show, with Change to type a new one.
+- The Position sliders say what each was set to when Settings opened ("Camera gap (was 42 dp)").
+- On the island, times two refreshes old hollow the route dots as well as fading the minutes, which fade to 55% rather than 45%. The bus after ("· 12 min") is 12 px rather than 11, and the island is fitted to it.
+
+### Fixed
+
+- A stop saved on both sides of the road is listed once on the Settings main page, with the routes ticked on either side. It showed as the same stop twice.
+- Hidden parts of Settings no longer leave gaps. Each page started lower than the one before it, by up to 72 dp on Setup, and a setting with a hidden line had extra space under it.
+
+### Added
+
+- A test that every version has a changelog heading of its own.
+
 ## [4.61] - 2026-10-13
 
 ### Changed

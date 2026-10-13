@@ -54,16 +54,19 @@ function all(node, out) {
   return out;
 }
 const page = (layout, name) => layout.root.content[0].children.find((c) => c.id === 'page_' + name);
-// The option ticked when the page opens: its tick also shows while none has been tapped (" | (...)")
-const ticked = (layout, setting) => all(page(layout, 'island')).find((n) => n.type === 'Button' && /^✓ /.test(n.text) &&
-  JSON.stringify(n.eventHandlers || {}).includes(setting) && / \| \(/.test(n.showWhen)).text;
+// The option marked when the page opens: it's also marked while none has been picked (" | (...)").
+// (4.62: choices are rows that open, each option a row with a radio mark)
+const options = (layout, setting) => all(page(layout, 'island')).filter((n) => n.type === 'Row' && /^cho_/.test(n.id) &&
+  JSON.stringify(n.eventHandlers || {}).includes('"' + setting + '"'));
+const ticked = (layout, setting) => options(layout, setting).find((r) => / \| \(/.test(r.children[0].children[0].showWhen)).children[1].text;
 
 test('the Island page has the choice, On unless it was turned off, and saves it straight away', () => {
-  const on = all(page(settings(), 'island')).filter((n) => n.type === 'Button' && JSON.stringify(n.eventHandlers || {}).includes('BusBuzz'));
-  assert.deepStrictEqual(on.map((n) => n.text), ['✓ On', 'On', '✓ Off', 'Off']);
+  const rows = options(settings(), 'BusBuzz');
+  assert.deepStrictEqual(rows.map((r) => r.children[1].text), ['On', 'Off']);
+  rows.forEach((r, i) => assert.ok(JSON.stringify(r.eventHandlers).includes('"busvalue":"' + ['on', 'off'][i] + '"')));
   assert.ok(all(page(settings(), 'island')).some((n) => n.type === 'Text' && /Buzz when a bus is under 5 min away/.test(n.text)));
-  assert.strictEqual(ticked(settings(), 'BusBuzz'), '✓ On');
-  assert.strictEqual(ticked(settings({ BusBuzz: 'off' }), 'BusBuzz'), '✓ Off');
+  assert.strictEqual(ticked(settings(), 'BusBuzz'), 'On');
+  assert.strictEqual(ticked(settings({ BusBuzz: 'off' }), 'BusBuzz'), 'Off');
 });
 
 test('Bus Settings Button saves on or off, and nothing else', () => {

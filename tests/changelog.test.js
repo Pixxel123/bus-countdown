@@ -24,3 +24,13 @@ test('every release has a date, newest first, and appears once', () => {
 test('every entry is under one of Keep a Changelog\'s headings', () => {
   for (const [, h] of log.matchAll(/^### (.+)$/gm)) assert.ok(['Added', 'Changed', 'Deprecated', 'Removed', 'Fixed', 'Security'].includes(h), h);
 });
+
+// Every version up to this one has a heading of its own (4.62). 4.59, 4.60 and 4.61 each replaced the
+// version before's heading instead of adding one, and 4.58 to 4.60 went missing until it was noticed.
+// There was no 4.1 to 4.4: the numbering went from 4 straight to 4.5.
+test('no version is missing its heading', () => {
+  const have = new Set(releases.map((r) => r.v));
+  const want = ['1', '2', '3', '4'];
+  for (let i = 5; i <= +VERSION.split('.')[1]; i++) want.push('4.' + i);
+  assert.deepStrictEqual(want.filter((v) => !have.has(v)), []);
+});

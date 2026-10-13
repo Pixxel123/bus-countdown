@@ -272,6 +272,10 @@ h1{text-wrap:balance}
 .isl.fit .dots{padding-left:4px}
 .isl .dots i{width:4px;height:4px;border-radius:2px;background:#5A6376}
 .isl .dots i.on{background:#fff}
+.isl .m.old{opacity:.55}
+.isl.m212 .m2{font-size:12px}
+.isl.stale .dots i{background:none;box-shadow:inset 0 0 0 1px #8A93A6}
+.isl.stale .dots i.on{box-shadow:inset 0 0 0 1px #fff}
 .isl svg{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .isl.v2{background:#000}
 .ntf{position:absolute;left:12px;right:12px;top:40px;background:#1B2130;color:#E8ECF3;border-radius:20px;padding:10px 16px;font-size:13px}
@@ -290,7 +294,7 @@ h1{text-wrap:balance}
     <button type="button" id="viewSettings" aria-pressed="false">Settings</button>
   </div>
   <div id="nowView">
-    <p class="eyebrow">Version 4.57</p>
+    <p class="eyebrow">Version 4.62</p>
     <h1>The island as built</h1>
     <p class="lede">Drawn by the island's own page from the project, at true scale on the top edge of a Pixel 8 Pro, 448 dp wide. Swipe it sideways to change route; pick Stop board to see it tapped open. Sample times, refreshed every 45 seconds as on the phone.</p>
 
@@ -349,12 +353,12 @@ h1{text-wrap:balance}
 
     <h2 class="ex-h">The next bus on your route</h2>
     <p class="lede">Riding the 517 into Wexley, the island also lists the next 517, 18 minutes behind you. Shown like any other bus, it can look like yours. Three variants made with impeccable’s generate method: the island’s identity written down first, then each variant changes one different thing (hierarchy, colour, structure) and is checked against that identity. The island has 2, since 4.31.</p>
-    <p class="lock"><b>Identity kept in every variant:</b> a black capsule 30 dp high round the camera; white 14 px bold minutes; a solid TfL-red route badge; the destination in 12 px #B7BFCD; the bus after in 11 px #9AA3B5; a 1.5 px white ring for the stop letter; 4 px dots, #5A6376 with the active one white; no shadows or decoration; terse numbers.</p>
+    <p class="lock"><b>Identity kept in every variant:</b> a black capsule 30 dp high round the camera; white 14 px bold minutes; a solid TfL-red route badge; the destination in 12 px #B7BFCD; the bus after in 12 px #9AA3B5 (11 px before 4.62); a 1.5 px white ring for the stop letter; 4 px dots, #5A6376 with the active one white, hollow when the times are old (4.62); no shadows or decoration; terse numbers.</p>
     <ol class="tl" id="explore2"></ol>
   </div>
 
   <div id="timelineView" hidden>
-    <p class="eyebrow">27 September to 11 October</p>
+    <p class="eyebrow">27 September to 13 October</p>
     <h1>Every change to the island</h1>
     <p class="lede">Newest first. Each card shows the island as that version drew it, with a sentence on what changed. Versions in between changed only what happens underneath, so they aren’t listed.</p>
     <ol class="tl" id="tl"></ol>
@@ -1047,7 +1051,7 @@ function textWidth(t, font) {
 }
 function dotsWidth(n) { return n > 1 ? 10 + n * 4 + (n - 1) * 3 : 0; }
 function rightNeeded(buses, now) {
-  var SMALL = '600 11px system-ui, Roboto, sans-serif';
+  var SMALL = '600 12px system-ui, Roboto, sans-serif';          // "· 12 min" (4.62: 12 px, as the island draws it)
   var fitMins = function (t) { var m = Math.round((t - now) / 60000); return m < 1 ? 'Due' : String(m); };
   var widest = textWidth('Due');
   (buses || []).forEach(function (b) {
@@ -1285,9 +1289,12 @@ var PAGE = String.raw`<!doctype html>
   .d { color: #B7BFCD; font-size: 12px; overflow: hidden; text-overflow: ellipsis; min-width: 0; }             /* destination */
   .m { font-weight: 700; flex: none; }          /* minutes */
   .m.due { color: #7FD6A4; }
-  .m.old { opacity: .45; }                                  /* no fresh times for 2 refreshes */
+  .m.old { opacity: .55; }                                  /* no fresh times for 2 refreshes */
+  /* ...and the route dots go hollow (4.62), so old times aren't told apart by fading alone */
+  #p.stale .dots i { background: none; box-shadow: inset 0 0 0 1px #8A93A6; }
+  #p.stale .dots i.on { box-shadow: inset 0 0 0 1px #fff; }
   .m.sched { color: #9AA3B5; font-weight: 600; }            /* timetable, not live */
-  .m2 { flex: none; margin-left: -2px; font-size: 11px; font-weight: 600; color: #9AA3B5; white-space: pre; }   /* "· 12 min": the bus after */
+  .m2 { flex: none; margin-left: -2px; font-size: 12px; font-weight: 600; color: #9AA3B5; white-space: pre; }   /* "· 12 min": the bus after */
   .m.late { color: #F2C66B; }  .m.cancel { color: #FF8A80; }  /* ready for trains (V5) */
   .d.sched { font-style: italic; }
   .s { font-weight: 700; overflow: hidden; text-overflow: ellipsis; min-width: 0; }  /* stop name flash, "No buses" */
@@ -1444,7 +1451,7 @@ ${'<'}script>
   }
   function dotsWidth(n) { return n > 1 ? 10 + n * 4 + (n - 1) * 3 : 0; }
   function rightNeeded(buses, now) {
-    var SMALL = '600 11px system-ui, Roboto, sans-serif';
+    var SMALL = '600 12px system-ui, Roboto, sans-serif';          // "· 12 min" (4.62: 12 px, as the island draws it)
     var fitMins = function (t) { var m = Math.round((t - now) / 60000); return m < 1 ? 'Due' : String(m); };
     var widest = textWidth('Due');
     (buses || []).forEach(function (b) {
@@ -1616,6 +1623,8 @@ ${'<'}script>
     return true;
   }
 
+  // Times more than two refreshes old (no signal, TfL not answering)
+  function stale() { return !!(data && data.u && Date.now() - data.u > 2 * (data.r || 45000)); }
   /* Right half: minutes, plus one dot per route when there are several */
   function rightHtml(b, active, oneTime) {
     var n = buses().length, m = mins(b.t), dots = '', st = b.st || 'live';
@@ -1623,7 +1632,7 @@ ${'<'}script>
     if (st === 'cancel') m = 'Cancelled';
     var cls = st === 'live' ? (m === 'Due' ? ' due' : '') : ' ' + st;
     // Times more than two refreshes old: dimmed, so stale times don't look live
-    if (data && data.u && Date.now() - data.u > 2 * (data.r || 45000)) cls += ' old';
+    if (stale()) cls += ' old';
     if (st === 'sched') m = '~' + m;
     if (n > 1) {
       dots = '<span class="dots">';
@@ -1721,6 +1730,7 @@ ${'<'}script>
       var b = list[idx];
       L.innerHTML = (data && data.l ? '<span class="sl">' + esc(data.l) + '</span>' : '') +
                     '<span class="b' + (b.idle ? ' idle' : '') + '">' + esc(b.k) + '</span><span class="d' + (b.st === 'sched' ? ' sched' : '') + '">' + esc(b.d) + '</span>';
+      p.classList.toggle('stale', stale());
       R.innerHTML = rightHtml(b, idx);
       // Too wide for the times now showing: a bus has turned due since the refresh ("1 · 15 min" becoming
       // "Due · 14 min"). The island grows to fit in place, at once (4.57); if it can't, just the first time
@@ -2157,7 +2167,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
     tilde: function (n) { return tw('~88') + tw(' · ~88 min', '600 11px system-ui, Roboto, sans-serif') + 4 + dotsW(n); },   // 4.14, 4.15
     now: function (n) { return Math.max(tw('~88 min'), tw('88') + tw(' · 88 min', '600 11px system-ui, Roboto, sans-serif')) + 4 + dotsW(n); },   // 4.16 to 4.45
     // 4.46: fitted to the times shown, and the dots 10 dp clear of them
-    fit: function (n, f) { return (f.m2 ? tw(f.m) + tw(' · ' + f.m2 + ' min', '600 11px system-ui, Roboto, sans-serif') : tw(f.m)) + 4 + (n > 1 ? 10 + n * 4 + (n - 1) * 3 : 0); }
+    fit: function (n, f) { return (f.m2 ? tw(f.m) + tw(' · ' + f.m2 + ' min', '600 ' + (f.m2px || 11) + 'px system-ui, Roboto, sans-serif') : tw(f.m)) + 4 + (n > 1 ? 10 + n * 4 + (n - 1) * 3 : 0); }
   };
   function leftFor(f) {
     if (f.leftW) return f.leftW;
@@ -2174,7 +2184,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
     if ((f.dots || 1) > 1) { dots = '<span class="dots">'; for (var i = 0; i < f.dots; i++) dots += '<i' + (i === (f.on || 0) ? ' class="on"' : '') + '></i>'; dots += '</span>'; }
     var right = '<span class="m' + (f.mCls ? ' ' + f.mCls : '') + '">' + f.m + '</span>' + (f.m2 ? '<span class="m2">· ' + f.m2 + ' min</span>' : '') + (f.after ? '<span class="m2"> ' + f.after + '</span>' : '') + dots;
     var ring = f.border ? '<svg width="' + W + '" height="30" viewBox="0 0 ' + W + ' 30"><rect x="1" y="1" width="' + (W - 2) + '" height="28" rx="14" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"/></svg>' : '';
-    return '<div class="isl' + (f.right === 'fit' ? ' fit' : '') + '" style="left:' + x + 'px;top:9px;width:' + W + 'px;padding:0 ' + PAD + 'px">' + ring +
+    return '<div class="isl' + (f.right === 'fit' ? ' fit' : '') + (f.stale ? ' stale' : '') + (f.m2px === 12 ? ' m212' : '') + '" style="left:' + x + 'px;top:9px;width:' + W + 'px;padding:0 ' + PAD + 'px">' + ring +
       '<span class="h" style="width:' + L + 'px' + slide + '">' + (f.name ? '<span class="s">' + f.name + '</span>' :   // 4.48: a stop just switched to
       (f.ring ? '<span class="sl">' + f.ring + '</span>' : '') + '<span class="b' + (f.hollow ? ' hollow' : '') + (f.idle ? ' idle' : '') + '">' + f.k + '</span>' +
       '<span class="d' + (f.dCls ? ' ' + f.dCls : '') + '">' + f.d + '</span>') + '</span>' +
@@ -2202,6 +2212,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
     v431: { ring: 'D', letters: 3, right: 'now', k: '517', idle: true, d: 'Holbry', m: '18 min', dots: 2, on: 1 },
     v447: { board: true, wide: true, ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2,
       rows: [['517', '', 'Holbry', '14', '33 · 52'], ['566', '', 'Fernleigh Village', '5', '17 · 29'], ['289', 'other', 'Ordwick', '3', '15 · 27'], ['N68', 'other', 'Kelbury Bus Garage', '26 min', '']] },
+    v462: { ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', mCls: 'old', m2: '17', m2px: 12, dots: 2, stale: true },
     v457: { ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: 'Due', mCls: 'due', m2: '14', dots: 2 },
     v456: { arriving: true, ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Wexley', m: '2', m2: '15', dots: 2 },
     v448: { name: 'Stop D · Wexley / Thornacre Precinct', ring: 'D', letters: 3, right: 'fit', k: '566', d: 'Fernleigh Village', m: '5', m2: '17', dots: 2 },
@@ -2229,6 +2240,7 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
   }
   // Newest first, only the versions that changed how the island looks: [version, date, look, what changed]
   var VERSIONS = [
+    ['4.62', '13 Oct', 'v462', 'Times two refreshes old (no refresh has arrived) hollow the route dots as well as fading the minutes, which now fade to 55% rather than 45%. The bus after is 12 px rather than 11, and the island is fitted to it.'],
     ['4.57', '11 Oct', 'v457', 'Shrinks at the next refresh with 8 dp or more to spare, rather than two in a row. A bus turning due between refreshes keeps the next one\u2019s time: the island grows to fit \u201cDue \u00b7 14 min\u201d the moment it turns due, where it used to drop the second time and leave \u201cDue\u201d alone in a gap.'],
     ['4.56', '9 Oct', 'v456', 'Hold the island for the other side of the road and it changes the moment the hold is long enough, its route and times sliding in. Before, it waited for Tasker, dimmed, then showed the stop\u2019s name on the left for 0.6 s.'],
     ['4.48', '9 Oct', 'v448', 'Hold the island for the other side of the road and its times show as soon as it changes, with the stop\u2019s name on the left for 0.6 s; before, the name filled the island for 1.2 s first.'],
