@@ -22,13 +22,15 @@ if (loc('http_response_code') === '200' && loc('busfollowv')) {
       .slice(0, 12);
     var bus = loc('busfollowv');
     setGlobal('BusStateFollow', JSON.stringify({ v: bus, at: now, n: calls }));
-    record('follow', { v: bus, n: calls.slice(0, 6).map(function (p) { return [p[0], Math.round((p[1] - now) / 1000)]; }) });
+    record('follow', { v: bus, n: calls.slice(0, 6).map(function (p) { return [p[0], Math.round((p[1] - now) / 1000)]; }), took: tookMs() });
     answered = true;
   } catch (e) {}
 }
 // For follow_due.js: answered (ask again in 20 to 45 s), or failed once more (wait longer each time)
 var tried = null; try { tried = JSON.parse(get('BusStateFollowTry') || 'null'); } catch (e) { tried = null; }
 if (tried && loc('busfollowv')) setGlobal('BusStateFollowTry', JSON.stringify({ v: tried.v, at: tried.at, fails: answered ? 0 : (tried.fails || 0) + 1 }));
-if (!answered && loc('busfollowv')) record('follow', { v: loc('busfollowv'), fail: loc('http_response_code') || 'no reply' });
+if (!answered && loc('busfollowv')) record('follow', { v: loc('busfollowv'), fail: loc('http_response_code') || 'no reply', took: tookMs() });
+// How long TfL took to answer (4.61), from when follow_due.js counted it as tried, just before asking
+function tookMs() { var tr = null; try { tr = JSON.parse(get('BusStateFollowTry') || 'null'); } catch (e) { tr = null; } return tr && tr.at ? now - tr.at : undefined; }
 
 /* @include record */

@@ -207,7 +207,7 @@ def request_positions(mode, cond=None):
         deco(set_str(set_str(T['VARSET'], 0, '%BusStatePush'), 1, f'GPS, {what}'), '   GPS worked', ('%BusStatePush', 2, 'not requested'))]
 
 PROFILES = ['Bus Moved', 'Bus Screen On', 'Bus Hide When Sideways']
-VERSION = '4.60'
+VERSION = '4.61'
 BUILD = VERSION + '.' + time.strftime('%Y%m%d%H%M')     # changes with every build
 
 def profile_status(name, on, label, cond=None):
@@ -562,9 +562,10 @@ TASKS = [
     deco(set_str(set_str(T['VARSET'], 0, '%buscaller'), 1, 'profile=moved'), 'Started by Bus Moved: Android pushed a position', ('%caller1', 2, '*Bus Moved*')),
     deco(set_str(set_str(T['VARSET'], 0, '%buscaller'), 1, 'profile=wake'), 'Started by Bus Wake: the screen just came on', ('%par1', 2, 'wake')),
     deco(set_str(set_str(T['VARSET'], 0, '%buscaller'), 1, 'profile=loop'), 'Started by Bus Loop: no positions pushed lately', ('%par1', 2, 'loop')),
+    varset('%busstart', '%TIMEMS', 'When this check started (the trip recorder notes how long it took, 4.61)'),
     *wifi_name(),
+    # Its line, if the Wi-Fi changed, is written with the check's below: one write a check (4.61)
     js('wifi_save.js', 'Remember it for the other tasks'),
-    *record_steps(),
     # Pushed: read the position Android just sent (its own copy in the message is unreadable)
     varset('%busmovedok', 'yes', 'Assume a position will be found'),
     java('buslm', 'CONTEXT', 'getSystemService {Object} (String)', 'location', 'Pushed: Android location service', ('%buscaller', 2, 'profile=moved')),
@@ -580,31 +581,42 @@ TASKS = [
     js('watch_due.js', 'Home or work Wi-Fi? Really left it? (50 m away, or gone for two checks)'),
     perform('Bus End', 'On home or work Wi-Fi during a countdown: end it', ('%busend', 2, 'yes'), par1='wifi'),
     perform('Bus Start', 'Just left home or work Wi-Fi: show the next buses from your nearest stop', ('%busleave', 2, 'yes'), par1='leaving'),
-    stop('No new fix needed: staying put away from your stops, or on home or work Wi-Fi (there was one under 2 minutes ago, or that place already has 10 positions; 4.55)', ('%busquiet', 2, 'yes')),
-    # Otherwise: fetch one
-    deco(T['GETLOC'], 'Otherwise: get my location', ('%buscaller', 3, 'profile=moved'), cont=True),
-    deco(js('loc_age.js', '   Is it recent? (Android sometimes hands back an old one)'), None, ('%buscaller', 3, 'profile=moved')),
-    deco(set_int(T['GETLOC'], 9, 1), '   Too old: try again with GPS', ('%busstale', 2, 'yes'), cont=True),
-    stop('No position: nothing to do', ('%busmovedok', 3, 'yes')),
-    js('place_record.js', 'On home or work Wi-Fi? Remember where it is'),
-    stop('On home or work Wi-Fi: nothing more to check', ('%busdue', 2, 'no')),
-    # Following your bus (4.58): riding a bus Bus Watch has named, TfL is asked which stops it calls at
-    # next, so watch.js can tell a crawl in traffic from getting off. Before watch.js, so this check
-    # uses the answer; a failed request carries on, and Bus Watch uses the last for up to 2 minutes.
-    js('follow_due.js', 'Riding a bus Bus Watch has named? Ask TfL where it is (every 45 s at most, 20 s while slow)'),
-    if_('%busfollow', 2, 'yes', 'Yes: ask now'),
-      http('https://api.tfl.gov.uk/Vehicle/%busfollowv/Arrivals?app_key=%TflKey', '   Ask TfL which stops your bus calls at next (5 s at most: Bus Watch waits for it)', timeout=5),
-      js('follow_store.js', '   Keep them for Bus Watch'),
-      *record_steps(),
+    # Each "nothing more to do" below skips to writing what was recorded, rather than stopping there,
+    # so a Wi-Fi line is never left unwritten (4.61; they were Stop actions before)
+    if_('%busquiet', 3, 'yes', 'A new fix needed? (not when staying put away from your stops, or on home or work Wi-Fi, with one under 2 minutes ago, or that place already has 10 positions; 4.55)'),
+      # Otherwise: fetch one
+      deco(T['GETLOC'], '   Otherwise: get my location', ('%buscaller', 3, 'profile=moved'), cont=True),
+      deco(js('loc_age.js', '      Is it recent? (Android sometimes hands back an old one)'), None, ('%buscaller', 3, 'profile=moved')),
+      deco(set_int(T['GETLOC'], 9, 1), '      Too old: try again with GPS', ('%busstale', 2, 'yes'), cont=True),
+      if_('%busmovedok', 2, 'yes', '   Got a position? (if Android couldn\'t say where you are, nothing to do)'),
+        js('place_record.js', '      On home or work Wi-Fi? Remember where it is'),
+        if_('%busdue', 3, 'no', '      Not on home or work Wi-Fi: check it (no location is needed there)'),
+          js('watch.js', '         Where are you in the trip? Move it on'),
+        endif(),
+      endif(),
     endif(),
-    js('watch.js', 'Where are you in the trip? Move it on'),
+    # Everything this check recorded (the Wi-Fi changing, the check itself), in one write (4.61: was
+    # one after each script), before the island is started or ended, so the file stays in order
     *record_steps(),
-    # %buscaller, not %caller1: runs from a profile or another task are all marked profile=...
-    flash('%busnote', 'Say what it found and why (only when run by hand)', ('%buscaller', 3, 'profile*')),
-    *request_positions('var', ('%buspushmode', 3, 'none')),
-    perform('Bus Start', 'Arrived: start the countdown (for the saved stop you are at)', ('%busaction', 2, 'start'), pri=9, par1='arrived'),
-    perform('Bus Start', 'Heading to a saved stop: show its next buses early', ('%busaction', 2, 'approach'), pri=9, par1='approach'),
-    perform('Bus End', 'Left: end the countdown', ('%busaction', 2, 'stop'), pri=9, par1='watch'),
+    if_('%busaction', 2, 'none/start/approach/stop', 'Checked: act on it (only when the check above ran)'),
+      # %buscaller, not %caller1: runs from a profile or another task are all marked profile=...
+      flash('%busnote', '   Say what it found and why (only when run by hand)', ('%buscaller', 3, 'profile*')),
+      *request_positions('var', ('%buspushmode', 3, 'none')),
+      perform('Bus Start', '   Arrived: start the countdown (for the saved stop you are at)', ('%busaction', 2, 'start'), pri=9, par1='arrived'),
+      perform('Bus Start', '   Heading to a saved stop: show its next buses early', ('%busaction', 2, 'approach'), pri=9, par1='approach'),
+      perform('Bus End', '   Left: end the countdown', ('%busaction', 2, 'stop'), pri=9, par1='watch'),
+      # Following your bus (4.58): riding a bus Bus Watch has named, TfL is asked which stops it calls
+      # at next, so watch.js can tell a crawl in traffic from getting off. Last of all since 4.61, for
+      # the next check: nothing waits on TfL (it took up to a second, or 5 on a poor signal, before
+      # each check), watch.js trusts a reply for 2 minutes anyway, and it asks as soon as a check finds
+      # you on a bus rather than one check later. A failed request carries on as before.
+      js('follow_due.js', '   Riding a bus Bus Watch has named? Ask TfL where it is, for the next check (every 45 s at most, 20 s while slow)'),
+      if_('%busfollow', 2, 'yes', '   Yes: ask now'),
+        http('https://api.tfl.gov.uk/Vehicle/%busfollowv/Arrivals?app_key=%TflKey', '      Ask TfL which stops your bus calls at next (5 s at most)', timeout=5),
+        js('follow_store.js', '      Keep them for the next check'),
+        *record_steps(),
+      endif(),
+    endif(),
  ]),
  (72, 'Bus Status', [
     # However it's run (Status or Debugging in the Bus menu, or the run button in Tasker), the full

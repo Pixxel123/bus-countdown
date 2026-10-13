@@ -93,8 +93,8 @@ const MID_TASK_PERFORMS = {
   'Bus Loop -> Bus End': 'time is up: the loop stops on its next step anyway',
   'Bus Loop -> Bus Watch': 'safety net: the check runs while the loop goes on to refresh',
   'Bus Loop -> Bus Refresh': 'the refresh runs while the loop waits for the next one',
-  'Bus Watch -> Bus End': 'home or work Wi-Fi: Bus Watch stops itself on the next step',
-  'Bus Watch -> Bus Start': 'just left work: Bus Watch stops on the next steps (no location needed)',
+  'Bus Watch -> Bus End': 'home or work Wi-Fi: the rest of the check is skipped, and only what it recorded is written (4.61); or ended by the check: only the request about your bus comes after (4.61), for the next check, and it never touches the island',
+  'Bus Watch -> Bus Start': 'just left work: the rest of the check is skipped (no location needed), and only what it recorded is written (4.61); or started by the check: only the request about your bus comes after, for the next check',
 };
 
 test('every Perform Task with steps after it is listed, with why that is safe', () => {
@@ -139,13 +139,14 @@ test('Bus End copies %par1 into %busreason before its script runs', () => {
   assert.match(labelOf(second), /^Note it in the debugging log/);
 });
 
-test('Bus Watch stops before getting a fix when staying put far away, and only then', () => {
+test('Bus Watch skips getting a fix when staying put far away, and only then', () => {
+  // Since 4.61 an If around the rest of the check rather than a Stop, so what was recorded is still written
   const acts = rawActions('Bus Watch');
   const quiet = acts.findIndex((a) => a.includes('<lhs>%busquiet</lhs>'));
-  const getloc = acts.findIndex((a) => /^Otherwise: get my location/.test(labelOf(a)));
-  assert.ok(quiet > -1 && getloc > -1 && quiet < getloc, 'the stop comes before the first location step');
-  assert.match(acts[quiet], /<code>137<\/code>/);
-  assert.match(acts[quiet], /<rhs>yes<\/rhs>/);
+  const getloc = acts.findIndex((a) => /^\s*Otherwise: get my location/.test(labelOf(a)));
+  assert.ok(quiet > -1 && getloc > -1 && quiet < getloc, 'it comes before the first location step');
+  assert.match(acts[quiet], /<code>37<\/code>/);
+  assert.match(acts[quiet], /<op>3<\/op><rhs>yes<\/rhs>/);
 });
 
 test('Bus Start and Bus Settings create the recordings folder when Record trips is on', () => {

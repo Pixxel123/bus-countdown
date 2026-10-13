@@ -173,13 +173,14 @@ test('the reply is kept soonest first, a stop once, and recorded', () => {
   assert.strictEqual(g.BusStateFollow, before, 'a failed request keeps the last');
 });
 
-test('Bus Watch asks just before watch.js, and records what it got', () => {
+test('Bus Watch asks after watch.js, for the next check, and records what it got (4.61)', () => {
   const xml = fs.readFileSync(path.join(__dirname, '..', 'Bus_Countdown.prj.xml'), 'utf8');
   const task = xml.match(/<nme>Bus Watch<\/nme>[\s\S]*?<\/Task>/)[0];
   // Each in turn, after the one before
   let from = 0;
-  for (const step of ['Riding a bus Bus Watch has named? Ask TfL where it is', 'Ask TfL which stops your bus calls at next', 'Vehicle/%busfollowv/Arrivals?app_key=%TflKey',
-    'Keep them for Bus Watch', 'Trip recorder on: write what was just recorded', 'Where are you in the trip? Move it on']) {
+  for (const step of ['Where are you in the trip? Move it on', 'Trip recorder on: write what was just recorded', 'Left: end the countdown',
+    'Riding a bus Bus Watch has named? Ask TfL where it is', 'Ask TfL which stops your bus calls at next', 'Vehicle/%busfollowv/Arrivals?app_key=%TflKey',
+    'Keep them for the next check', 'Trip recorder on: write what was just recorded']) {
     const i = task.indexOf(step, from);
     assert.ok(i > 0, step); from = i;
   }

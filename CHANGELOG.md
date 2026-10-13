@@ -4,7 +4,18 @@ All notable changes to Bus Countdown are listed here, newest first. The format f
 
 Each release's project file is attached to its [GitHub release](../../releases). Stop names and routes in these notes are the stand-ins used throughout the repository.
 
-## [4.60] - 2026-10-13
+## [4.61] - 2026-10-13
+
+### Changed
+
+- While you ride, TfL is asked about your bus at the end of each check, for the next one, rather than at the start. Each check waited for the answer, about a second in Monday's run log and up to 5 s on a poor signal, before deciding anything, including starting or ending the island. Bus Watch already trusts an answer for 2 minutes, so using the one from the check before changes little: when it's TfL that says you've got off, that's seen one check later (15 to 20 s while you crawl). It now also asks as soon as a check finds you on a bus, rather than one check later, and never asks on the check that ends a ride.
+- Bus Watch writes what a check recorded once, after the check, instead of after each script that recorded something (the Wi-Fi changing, then the check). Its three "nothing more to do" points (staying put far from your stops, no position, on home or work Wi-Fi) skip to that write rather than stopping, so a Wi-Fi line is never left unwritten. Bus Watch is 100 steps rather than 116, with one write a check, or two while it asks TfL about your bus.
+- Everything that places you on a route (following your bus, moving along a route, the stop coming up by bus, how far past a stop you are, the other side of the road) shares one reading of the route lists and one set of sums (`scripts/shared/routeLines.js`), in place of four copies and up to five readings a check. Replayed on every recording since 6 October, every check and every refresh comes out exactly as in 4.60.
+
+### Added
+
+- Timings in the trip recorder: each check, how long it took to get to deciding from Bus Watch starting (`ms`), and each answer about your bus, how long TfL took (`took`). So a day's recording shows where the time goes.
+
 
 ### Fixed
 

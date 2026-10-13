@@ -46,6 +46,7 @@
 /* @include loc */
 /* @include metres */
 /* @include travelMode */
+/* @include routeLines */
 /* @include followBus */
 
 var now = Date.now();
@@ -590,7 +591,6 @@ function homeOrWork(st) {
 // Where you are along a route: the nearest segment of any route's line of stops (within 60 m), and
 // the first saved stop after it, measured along the route. Returns { st, along } or null.
 function alongRoute(maxAlong) {
-  var seqs = []; try { seqs = JSON.parse(get('BusCacheSeq') || '[]'); } catch (e) {}
   var savedById = {}; stops.forEach(function (st) { savedById[st.id] = st; });
   var R = Math.PI / 180; var kx = Math.cos(lat * R) * 6371000 * R; var ky = 6371000 * R;   // degrees to metres, locally
   // Your direction of travel, as a unit vector (east, north): Android's bearing, or else the way the
@@ -605,22 +605,18 @@ function alongRoute(maxAlong) {
     var tl = Math.sqrt(tx * tx + ty * ty); if (tl < 20) return null; tx /= tl; ty /= tl;
   } else return null;
   var found = null;
-  seqs.forEach(function (seq) {
+  routeLines().forEach(function (line) {
+    var seq = line.seq;
     for (var i = 0; i < seq.length - 1; i++) {
-      var ax = (seq[i][2] - lon) * kx; var ay = (seq[i][1] - lat) * ky; var bx = (seq[i + 1][2] - lon) * kx; var by = (seq[i + 1][1] - lat) * ky;
-      var dx = bx - ax; var dy = by - ay; var len2 = dx * dx + dy * dy;
-      if (!len2 || (dx * tx + dy * ty) / Math.sqrt(len2) < 0.5) continue;      // runs the other way
-      var f = Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2));
-      var off = Math.sqrt(Math.pow(ax + f * dx, 2) + Math.pow(ay + f * dy, 2));
-      if (off > 60) continue;
+      var on = onSegment(line, i, lat, lon);
+      if (!on || (on.dx * tx + on.dy * ty) / on.len < 0.5) continue;       // runs the other way
+      if (on.off > 60) continue;
       // From this point, walk along the route to the first saved stop ahead
-      var along = Math.sqrt(len2) * (1 - f);
-      for (var j = i + 1; j < seq.length && along <= maxAlong; j++) {
-        if (savedById[seq[j][0]] && along > 30) {
-          if (!found || along < found.along) found = { st: savedById[seq[j][0]], along: along };
+      for (var j = i + 1; j < seq.length && line.cum[j] - on.along <= maxAlong; j++) {
+        if (savedById[seq[j][0]] && line.cum[j] - on.along > 30) {
+          if (!found || line.cum[j] - on.along < found.along) found = { st: savedById[seq[j][0]], along: line.cum[j] - on.along };
           break;
         }
-        if (j < seq.length - 1) along += metres(seq[j][1], seq[j][2], seq[j + 1][1], seq[j + 1][2]);
       }
     }
   });
@@ -631,19 +627,13 @@ function alongRoute(maxAlong) {
 // (BusCacheSeq) is followed on from it for up to 2 km, and you're placed on the nearest segment within
 // 60 m. Metres along the route from the stop, or -1 when you're not on one of its routes beyond it.
 function pastAlong(st) {
-  var seqs = []; try { seqs = JSON.parse(get('BusCacheSeq') || '[]'); } catch (e) {}
-  var R = Math.PI / 180; var kx = Math.cos(lat * R) * 6371000 * R; var ky = 6371000 * R;
   var best = -1; var bestOff = 60;
-  seqs.forEach(function (seq) {
+  routeLines().forEach(function (line) {
+    var seq = line.seq;
     var i0 = -1; for (var i = 0; i < seq.length && i0 < 0; i++) if (seq[i][0] === st.id) i0 = i;
-    var along = 0;
-    for (var j = i0; i0 >= 0 && j < seq.length - 1 && along <= 2000; j++) {
-      var ax = (seq[j][2] - lon) * kx; var ay = (seq[j][1] - lat) * ky; var dx = (seq[j + 1][2] - lon) * kx - ax; var dy = (seq[j + 1][1] - lat) * ky - ay;
-      var len2 = dx * dx + dy * dy; if (!len2) continue;
-      var f = Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2));
-      var off = Math.sqrt(Math.pow(ax + f * dx, 2) + Math.pow(ay + f * dy, 2));
-      if (off <= bestOff) { bestOff = off; best = along + f * Math.sqrt(len2); }
-      along += Math.sqrt(len2);
+    for (var j = i0; i0 >= 0 && j < seq.length - 1 && line.cum[j] - line.cum[i0] <= 2000; j++) {
+      var on = onSegment(line, j, lat, lon);
+      if (on && on.off <= bestOff) { bestOff = on.off; best = on.along - line.cum[i0]; }
     }
   });
   return best;
@@ -715,5 +705,6 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
   bus: typeof bus !== 'undefined' && bus ? 1 : 0, settled: typeof settled !== 'undefined' && settled ? 1 : 0, rate: rateWant,
   kv: tmode ? tmode.nv : null, mode: tmode ? tmode.mode : null, mp: tmode ? tmode.p : null,   // travel mode on trial (4.34)
   fol: follow ? (follow.with ? 1 : 0) : undefined,                                  // TfL had the bus you got on with you (4.58)
+  ms: loc('busstart') ? now - parseInt(loc('busstart'), 10) : undefined,             // how long the check took to get here, from Bus Watch starting (4.61)
   rt: typeof keptOnRoute !== 'undefined' && keptOnRoute ? +keptOnRoute.pace.toFixed(2) : undefined,   // kept on the bus by moving along a route, m/s (4.59)
   state: trip.s, stop: trip.stop || '', action: busaction, why: why, near: closest ? { n: closest.name, d: Math.round(closest.d), r: closest.radius } : null });

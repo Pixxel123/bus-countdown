@@ -134,7 +134,16 @@ test('no script writes a file itself; Tasker writes what each recorded straight 
     const s = actions(taskBody(task));
     s.forEach((a, i) => {
       if (a.code === 129 && /@include record|function record\(kind, data\)/.test(a.text)) {
-        assert.match(s[i + 1].text, /Trip recorder on: write what was just recorded/, `${task}: straight after step ${i + 1}`);
+        // Bus Watch (4.61): the Wi-Fi line waits for the check's, and both are written together, with
+        // nothing that could end the task in between
+        if (task === 'Bus Watch' && /wifiRole/.test(a.text)) {
+          const w = s.findIndex((b, j) => j > i && /Trip recorder on: write what was just recorded/.test(b.text));
+          assert.ok(w > i && !s.slice(i, w).some((b) => b.code === 137), `${task}: written later, step ${i + 1}`);
+          return;
+        }
+        // (only End Ifs in between: Bus Watch's check runs inside a few, 4.61)
+        let k = i + 1; while (s[k] && s[k].code === 38) k++;
+        assert.match(s[k].text, /Trip recorder on: write what was just recorded/, `${task}: straight after step ${i + 1}`);
       }
     });
   }
