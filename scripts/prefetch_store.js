@@ -44,10 +44,10 @@ if (loc('http_response_code') === '200' && loc('busprestop')) {
       if (!byRoute[x[0]]) { if (others.length >= 8) return; byRoute[x[0]] = { k: x[0], d: x[3], t: [] }; others.push(byRoute[x[0]]); }
       if (byRoute[x[0]].t.length < 3) byRoute[x[0]].t.push(x[2]);
     });
-    var stops = []; try { stops = JSON.parse(get('BusStateNearbyStops') || '[]'); } catch (e) { stops = []; }
+    var stops = getJSON('BusStateNearbyStops', []);
     var stop = stops.filter(function (s) { return s.id === loc('busprestop'); })[0] || { name: '' };
-    var cur = {}; try { cur = JSON.parse(get('BusStateIslandData') || '{}') || {}; } catch (e) { cur = {}; }
-    var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) { byStop = {}; }
+    var cur = getJSON('BusStateIslandData', {});
+    var byStop = getJSON('BusStateIslandByStop', {});
     byStop[loc('busprestop')] = { u: now, r: cur.r, rot: cur.rot, s: loc('busprestop'), n: stop.name, l: stopLetter(stop.name), b: perRoute, a: others };
     // The 4 stops with the newest times, as refresh.js keeps them
     setGlobal('BusStateIslandByStop', JSON.stringify(Object.keys(byStop).sort(function (a, b) { return byStop[b].u - byStop[a].u; }).slice(0, 4)

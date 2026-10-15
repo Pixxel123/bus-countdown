@@ -4,6 +4,20 @@ Changes to Bus Countdown, newest first, in [Keep a Changelog](https://keepachang
 
 Each release's project file is on its [GitHub release](../../releases).
 
+## [4.63] - 2026-10-14
+
+### Changed
+
+- Tidier code, same rules. Saved state is read by one helper rather than 47 copies of the same lines, and how you've been moving (speed, trend, pace away, closing in, settled, staying put, when you left a stop) is worked out in one shared piece rather than inside Bus Watch. All seven recorded days replay identically: every script run, and every global after it.
+
+### Fixed
+
+- A saved state holding null is read as empty, rather than stopping Bus Watch, Bus Refresh, Bus Status, Bus Loop or the prefetch with an error.
+
+### Added
+
+- `npm run compare`: replays recorded days through an earlier release and the code as it is now, and lists every difference, so a release can be checked against real trips before it goes on the phone.
+
 ## [4.62] - 2026-10-13
 
 ### Changed

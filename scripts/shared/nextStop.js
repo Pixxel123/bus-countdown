@@ -5,10 +5,10 @@
 // once. at: the time; cur: the island's data now (its refresh and rotation times are kept). null with
 // fewer than two stops.
 function nextStop(at, cur) {
-  var stops = []; try { stops = JSON.parse(get('BusStateNearbyStops') || '[]') || []; } catch (e) { stops = []; }
+  var stops = getJSON('BusStateNearbyStops', []);
   if (stops.length < 2) return null;
   var i = ((parseInt(get('BusStateStopIndex'), 10) || 0) + 1) % stops.length;
-  var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) { byStop = {}; }
+  var byStop = getJSON('BusStateIslandByStop', {});
   var was = byStop[stops[i].id];
   return { i: i, stop: stops[i], d: was && at - was.u < 3 * 60000 ? was
     : { u: at, r: cur.r, rot: cur.rot, s: stops[i].id, n: stops[i].name, l: stopLetter(stops[i].name), b: [], a: [], w: 1 } };

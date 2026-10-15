@@ -23,7 +23,7 @@ if (busdone === 'yes' && get('BusStateGlance') !== '') {
 // Time's up, but you're still waiting at the stop (Bus Watch's trip state is "at the stop": it only
 // leaves that when you move off): carry on for another BusTimeout, up to 2 hours from the start. The
 // limit is there for a countdown that never noticed you'd left.
-var trip = {}; try { trip = JSON.parse(get('BusStateTrip') || '{}'); } catch (e) {}
+var trip = getJSON('BusStateTrip', {});
 var startedAt = parseInt(get('BusStateStartedAt'), 10) || 0;
 if (busdone === 'yes' && trip.s === 'atstop' && trip.stop === get('BusStateStopId') && startedAt && Date.now() - startedAt < 2 * 3600000) {
   setGlobal('BusStateEndAt', String(Math.min(Date.now() + (parseFloat(get('BusTimeout')) || 30) * 60000, startedAt + 2 * 3600000)));
@@ -46,7 +46,7 @@ var buswait = String(get('SCREEN') === 'off' ? base : Math.max(15, Math.min(chos
 var lastPush = parseInt(get('BusStateLastPush'), 10) || 0;
 // Standing still (the last speed Bus Watch saw was walking pace or less), Android rightly sends
 // nothing: positions come when you move 20 m. Then silence only counts after 10 minutes.
-var win = []; try { win = JSON.parse(get('BusStateWindow') || '[]'); } catch (e) {}
+var win = getJSON('BusStateWindow', []);
 var lastSpeed = win.length ? win[win.length - 1].spd : -1;
 var quietFor = (lastSpeed >= 0 && lastSpeed <= 0.8) ? 600000 : 120000;
 var busnopush = (get('SCREEN') !== 'off' && Date.now() - lastPush > quietFor) ? 'yes' : 'no';

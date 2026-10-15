@@ -21,5 +21,5 @@ var auto = /^task=Bus (Loop|Wake)$/.test(loc('busrefby')) || /^(open|close)$/.te
 var busfresh = auto && get('BusStateFetchStop') === get('BusStateStopId') && now - lastAt >= 0 && now - lastAt < 20000 ? 'yes' : 'no';
 // A long press to the stop Bus Refresh got ready (4.45): its times, fetched under 90 s ago, are used
 // at once ("cached"), and nothing waits for TfL
-var ready = {}; try { ready = JSON.parse(get('BusStatePrefetch') || '{}') || {}; } catch (e) { ready = {}; }
+var ready = getJSON('BusStatePrefetch', {});
 if (loc('busrefpar') === 'switch' && ready.s === get('BusStateStopId') && now - ready.at >= 0 && now - ready.at < 90000) busfresh = 'cached';

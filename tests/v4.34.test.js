@@ -147,8 +147,8 @@ test('in the project: %caller1 copied, the check, then fetching to buzzing skipp
 });
 
 // ---- 5. Travel mode, on trial ------------------------------------------------------------------------
-const ctx = { Math, JSON, setGlobal: (k, v) => { ctx.G[k] = String(v); }, get: (k) => ctx.G[k] || '', G: {} };
-vm.createContext(ctx); vm.runInContext(compose('/* @include metres */\n/* @include travelMode */'), ctx);
+const ctx = { Math, JSON, String, setGlobal: (k, v) => { ctx.G[k] = String(v); }, global: (k) => ctx.G[k], G: {} };   // (4.63: get and getJSON from shared/get.js)
+vm.createContext(ctx); vm.runInContext(compose('/* @include get */\n/* @include metres */\n/* @include travelMode */'), ctx);
 const ride = (points) => { ctx.G = {}; return points.map(([t, metresNorth, acc]) => ctx.travelMode(T0 + t * 1000, LAT + m(metresNorth), LON, acc)); };
 const rnd = (i) => { const s = Math.sin(i * 12.9898 + 78.233) * 43758.5453; return s - Math.floor(s); };
 test('sitting indoors, the position wandering 30–60 m: still', () => {

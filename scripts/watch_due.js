@@ -53,7 +53,7 @@ var lastWifi = get('BusStateLastWifi');
 var hereLat = parseFloat(loc('gl_latitude'));
 var hereLon = parseFloat(loc('gl_longitude'));
 function metresFrom(placeVar) {
-  var at = null; try { at = JSON.parse(get(placeVar) || 'null'); } catch (e) {}
+  var at = getJSON(placeVar, null);
   if (!at || !at.lat || isNaN(hereLat) || isNaN(hereLon)) return null;
   return metres(hereLat, hereLon, at.lat, at.lon);
 }
@@ -90,7 +90,7 @@ var quietFar = fromWake && !countdownOn && get('BusStatePushMode') === 'far' && 
 // take one: getting it held Tasker for up to 7 seconds at every screen-on, and every other task with it
 // (4.55). Pushed positions still refine it, and a run by hand still checks.
 function learned(placeVar) {
-  var at = null; try { at = JSON.parse(get(placeVar) || 'null'); } catch (e) {}
+  var at = getJSON(placeVar, null);
   return !!(at && at.lat && at.n >= 10);
 }
 var placeKnown = fromWake && (onHome ? learned('BusHomeAt') : onWork ? learned('BusWorkAt') : false);

@@ -14,13 +14,13 @@
    ================================================================== */
 /* @include get */
 var now = Date.now();
-var trip = {}; try { trip = JSON.parse(get('BusStateTrip') || '{}') || {}; } catch (e) { trip = {}; }
-var boarded = null; try { boarded = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) { boarded = null; }
-var last = null; try { last = JSON.parse(get('BusStateFollow') || 'null'); } catch (e) { last = null; }
-var win = []; try { win = JSON.parse(get('BusStateWindow') || '[]'); } catch (e) { win = []; }
+var trip = getJSON('BusStateTrip', {});
+var boarded = getJSON('BusStateBoarded', null);
+var last = getJSON('BusStateFollow', null);
+var win = getJSON('BusStateWindow', []);
 var riding = trip.s === 'onbus' || (trip.s === 'heading' && !!trip.bus);
 var named = !!boarded && !!boarded.v && boarded.sure !== false && now - (boarded.at || 0) < 2 * 3600000;
-var tried = null; try { tried = JSON.parse(get('BusStateFollowTry') || 'null'); } catch (e) { tried = null; }
+var tried = getJSON('BusStateFollowTry', null);
 var lastSpd = win.length ? win[win.length - 1].spd : -1;
 var fails = tried && tried.v === (boarded && boarded.v) ? tried.fails || 0 : 0;
 var lastAsk = Math.max(last && last.v === (boarded && boarded.v) ? last.at : 0, tried && tried.v === (boarded && boarded.v) ? tried.at : 0);

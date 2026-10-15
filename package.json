@@ -6,7 +6,8 @@
     "test": "node build/lint.js && node --test",
     "build": "python3 build/assemble.py && python3 build/mockup.py",
     "lint": "node build/lint.js",
-    "replay": "node build/replay.js"
+    "replay": "node build/replay.js",
+    "compare": "node build/replay-compare.js"
   },
   "devDependencies": {
     "eslint": "^9.39.5",

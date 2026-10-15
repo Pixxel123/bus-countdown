@@ -48,6 +48,7 @@
 /* @include travelMode */
 /* @include routeLines */
 /* @include followBus */
+/* @include movement */
 
 var now = Date.now();
 var lat = parseFloat(loc('gl_latitude')); var lon = parseFloat(loc('gl_longitude'));
@@ -75,7 +76,7 @@ var trip = { s: 'idle' };
 
 if (!stale && !isNaN(lat) && !isNaN(lon)) {
   // ---- Sliding window of recent positions, with smoothing ----------------------------------
-  var win = []; try { win = JSON.parse(get('BusStateWindow') || '[]'); } catch (e) {}
+  var win = getJSON('BusStateWindow', []);
   win = win.filter(function (w) { return now - w.t < 5 * 60000; });        // only the last 5 minutes
   // A poor fix (over 25 m) is averaged with the previous one, weighted by how accurate each is
   var prevW = win.length ? win[win.length - 1] : null;
@@ -110,19 +111,8 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     // Travel mode (4.34), on trial: recorded and shown in Bus Status, but nothing below reads it
     try { tmode = travelMode(fixT, lat, lon, accuracy); setGlobal('BusStateMode', JSON.stringify({ t: now, m: tmode.mode, p: tmode.p, v: tmode.nv })); } catch (e) { tmode = null; }
   }
-  // Speed: the median of the last three readings, so one jumpy fix can't fake (or hide) a bus
-  var recent = win.map(function (w) { return w.spd; }).filter(function (v) { return v >= 0; }).slice(-3).sort(function (a, c) { return a - c; });
-  var speed = recent.length ? recent[Math.floor(recent.length / 2)] : -1;
-  // Moving away from a point: the trend of your distance from it across the window (least squares, m/s)
-  function trend(pLat, pLon) {
-    var part = win.slice(-4);                         // the most recent positions only
-    if (part.length < 3) return 0;
-    var xs = part.map(function (w) { return (w.t - part[0].t) / 1000; }); var ys = part.map(function (w) { return metres(w.lat, w.lon, pLat, pLon); });
-    var n = xs.length; var mx = 0; var my = 0; var sxy = 0; var sxx = 0; var k;
-    for (k = 0; k < n; k++) { mx += xs[k] / n; my += ys[k] / n; }
-    for (k = 0; k < n; k++) { sxy += (xs[k] - mx) * (ys[k] - my); sxx += (xs[k] - mx) * (xs[k] - mx); }
-    return sxx > 0 ? sxy / sxx : 0;
-  }
+  // Speed (median of the last three readings) and the rest of how you've been moving: shared/movement.js
+  var speed = moveSpeed(win);
 
   // ---- Saved stops: distances, circles, the nearest ------------------------------------------
   var defaultR = parseFloat(get('BusNearRadius')) || 50;
@@ -153,7 +143,7 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
   // countdown itself is what stops Tasker.
   function restartLost() {
     var at = stops.filter(function (st) { return st.id === trip.stop; })[0];
-    var before = null; try { before = JSON.parse(get('BusStateLostAt') || 'null'); } catch (e) { before = null; }
+    var before = getJSON('BusStateLostAt', null);
     lostNote = 'the countdown at ' + (at ? at.n : 'the stop') + ' stopped without ending (Tasker restarted?)';
     if (!at || (trip.s === 'atstop' ? at.d > endAtFor(at) : at.d > (trip.minD || at.d) + 100)) return false;
     if (trip.s === 'atstop' && speed > 4.2) return false;      // already pulling away on a bus, just past the stop
@@ -163,7 +153,7 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
   }
 
   // ---- The trip state, kept in step with what's actually happening --------------------------
-  try { trip = JSON.parse(get('BusStateTrip') || '{"s":"idle"}'); } catch (e) { trip = { s: 'idle' }; }
+  trip = getJSON('BusStateTrip', { s: 'idle' });
   var running = get('BusStateRunning') === '1' && /(^|,)Bus Loop(,|$)/.test(get('TRUN'));
   // Lost, not ended (4.58): the running flag is still set, but Bus Loop has gone. Only Bus End clears
   // the flag (a swipe, time up, Wi-Fi, walking away), so Tasker itself stopped: it restarted, or
@@ -184,7 +174,7 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     // Ended without us (swiped, timed out, got home): treat it as left
     var was = stops.filter(function (st) { return st.id === trip.stop; })[0];
     trip = { s: 'left', stop: trip.stop, since: now, leftD: was ? Math.round(was.d) : 0, wasAt: trip.s === 'atstop' || (trip.minD || 9999) <= (was ? was.r : 0),
-      leftAt: was && was.d > was.r ? leftTime(was) || now : now, atAt: trip.s === 'atstop' ? trip.since : 0 };   // still there: now
+      leftAt: was && was.d > was.r ? moveLeftAt(win, was) || now : now, atAt: trip.s === 'atstop' ? trip.since : 0 };   // still there: now
   }
   // Swiped away (Bus End notes it in BusStateSnooze: the stop, and when): nothing starts anywhere
   // until you've got near the stop and then away from it, clear of all your stops, or for 30 minutes.
@@ -227,28 +217,11 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
   }
 
   // ---- What this position means, from the current state --------------------------------------
-  // Slowed down: the speed reading is walking pace or less (unknown counts as slow), or, since a rough
-  // fix makes the reading bounce about even when you're standing still, you've hardly got anywhere:
-  // over the last 30 to 90 seconds of positions, less than 25 m from where you were, under 0.5 m/s.
-  // Walking past a stop covers 40 m or more in that time.
-  var settled = (function () {
-    var recentW = win.filter(function (w) { return fixT - w.t <= 90000; });
-    if (recentW.length < 3) return false;
-    var a = recentW[0]; var z = recentW[recentW.length - 1]; var span = (z.t - a.t) / 1000;
-    if (span < 30) return false;
-    var moved = metres(a.lat, a.lon, z.lat, z.lon);
-    return moved < 25 && moved / span < 0.5;
-  })();
-  // Staying put somewhere, allowing for indoor GPS wander: at least 4 positions over 2 minutes or more
-  // (in the last 5), all within 80 m of where they average out. Walking 2 minutes covers 170 m. Only
-  // used to slow the pushes down far from your stops (Tuesday evening indoors, the fix wandered 30
-  // to 70 m, so "settled" above never held).
-  var staying = (function () {
-    if (win.length < 4 || win[win.length - 1].t - win[0].t < 120000) return false;
-    var mLat = 0; var mLon = 0;
-    win.forEach(function (w) { mLat += w.lat / win.length; mLon += w.lon / win.length; });
-    return win.every(function (w) { return metres(w.lat, w.lon, mLat, mLon) <= 80; });
-  })();
+  // Slowed down: the speed reading is walking pace or less (unknown counts as slow), or you've hardly
+  // got anywhere over the last 30 to 90 seconds (moveSettled). Staying put somewhere (moveStaying) only
+  // slows the pushes down far from your stops.
+  var settled = moveSettled(win, fixT);
+  var staying = moveStaying(win);
   var slow = speed < 0 || speed <= 0.8 || settled;
   var lastTwo = win.map(function (w) { return w.spd; }).filter(function (v) { return v >= 0; }).slice(-2);
   var busTwice = lastTwo.length === 2 && lastTwo[0] > 4.2 && lastTwo[1] > 4.2;
@@ -257,21 +230,12 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
   // when last known; b, when last at bus speed. While TfL has your bus with you, from its stops (the
   // stop before its next one, to that one): that lasts a minute or two after you get off, while the
   // window is your walk, so the window is only used at bus speed, over 60 m or more.
-  var headWas = null; try { headWas = JSON.parse(get('BusStateHeading') || 'null'); } catch (e) { headWas = null; }
+  var headWas = getJSON('BusStateHeading', null);
   if (bus && win.length >= 2 && metres(win[0].lat, win[0].lon, win[win.length - 1].lat, win[win.length - 1].lon) >= 60) {
     setGlobal('BusStateHeading', JSON.stringify({ t: now, b: now, a: [win[0].lat, win[0].lon], z: [win[win.length - 1].lat, win[win.length - 1].lon] }));
   } else if (withBus && follow.dir) {
     setGlobal('BusStateHeading', JSON.stringify({ t: now, b: headWas && headWas.b ? headWas.b : 0, a: follow.dir[0], z: follow.dir[1] }));
   }
-  // Steady pace away from a stop: the fastest average over 90 seconds or more of the window. Walking
-  // tops out under 2 m/s even with GPS error; over 2.2 m/s for that long is a bus, however slowly it
-  // crawled through traffic (Tuesday, leaving Wexley on the 566: 2.6 m/s for nearly 3 minutes, which
-  // a single speed reading never showed)
-  var paceAway = function (st) {
-    var best = 0;
-    win.forEach(function (w) { var dt = (fixT - w.t) / 1000; if (dt >= 90) best = Math.max(best, (st.d - metres(w.lat, w.lon, st.lat, st.lon)) / dt); });
-    return best;
-  };
   // On a bus lately (in the last 5 minutes): BusStateLastBusAt. Used to keep the bus you got on, and
   // (with 15 minutes, below) to tell getting off at the stop by home or work from walking up to it
   if (bus) setGlobal('BusStateLastBusAt', String(now));
@@ -282,19 +246,19 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
   // rare; a run by hand still starts it.
   var offBusLately = now - (parseInt(get('BusStateLastBusAt'), 10) || 0) < 15 * 60000;
   if (trip.s === 'atstop' && tripStop) {
-    var away = trend(tripStop.lat, tripStop.lon);
+    var away = moveTrend(win, tripStop.lat, tripStop.lon);
     if (bus && away > 1 && tripStop.d > tripStop.r * 0.5) {
       busaction = 'stop'; why = 'on the bus, away from ' + tripStop.n + noteBoarded(tripStop); from('onbus', { boardedAt: tripStop.id });
-    } else if (tripStop.d > Math.max(tripStop.r + 50, 120) && paceAway(tripStop) > 2.2) {
-      busaction = 'stop'; why = 'on the bus, away from ' + tripStop.n + ' (' + Math.round(paceAway(tripStop) * 3.6) + ' km/h for the last few minutes)' + noteBoarded(tripStop);
+    } else if (tripStop.d > Math.max(tripStop.r + 50, 120) && movePaceAway(win, fixT, tripStop) > 2.2) {
+      busaction = 'stop'; why = 'on the bus, away from ' + tripStop.n + ' (' + Math.round(movePaceAway(win, fixT, tripStop) * 3.6) + ' km/h for the last few minutes)' + noteBoarded(tripStop);
       setGlobal('BusStateLastBusAt', String(now)); from('onbus', { boardedAt: tripStop.id });
     } else if (tripStop.d > endAtFor(tripStop) || (away > 0.4 && win.length >= 3 && tripStop.d > Math.max(tripStop.r + 50, 120))) {
       busaction = 'stop'; why = 'walking away from ' + tripStop.n;
-      from('left', { leftD: Math.round(tripStop.d), walked: true, leftAt: leftTime(tripStop) || now, atAt: trip.since, wasAt: true });
+      from('left', { leftD: Math.round(tripStop.d), walked: true, leftAt: moveLeftAt(win, tripStop) || now, atAt: trip.since, wasAt: true });
     } else why = 'waiting at ' + tripStop.n;
   } else if (trip.s === 'heading' && tripStop) {
     trip.minD = Math.min(trip.minD || tripStop.d, Math.round(tripStop.d));
-    var awayH = trend(tripStop.lat, tripStop.lon);
+    var awayH = moveTrend(win, tripStop.lat, tripStop.lon);
     // Passing it on a bus: when you weren't already riding towards it (walking to it, or a countdown
     // from the heads-up or leaving work), it takes the last two readings both fast, not two of the last
     // three: on Wednesday evening one high reading from Android after a jumpy fix ended a walk as "on
@@ -303,7 +267,7 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     if (trip.bus) trip.rode = true;      // rode towards it at some point (for "still on the bus", 4.39)
     if (tripStop.d <= tripStop.r && slow) { from('atstop'); why = 'reached ' + tripStop.n; }
     else if (passBus && awayH > 1 && tripStop.d > endAtFor(tripStop)) { busaction = 'stop'; why = 'passed ' + tripStop.n + ' on a bus'; from('onbus'); }
-    else if (trip.minD <= tripStop.r && awayH > 0.4 && tripStop.d > Math.max(tripStop.r + 50, 120)) { busaction = 'stop'; why = 'went past ' + tripStop.n; from('left', { leftD: Math.round(tripStop.d), byBus: !!trip.rode, wasAt: !trip.rode || !get('BusStateBoarded'), leftAt: leftTime(tripStop) || now }); }
+    else if (trip.minD <= tripStop.r && awayH > 0.4 && tripStop.d > Math.max(tripStop.r + 50, 120)) { busaction = 'stop'; why = 'went past ' + tripStop.n; from('left', { leftD: Math.round(tripStop.d), byBus: !!trip.rode, wasAt: !trip.rode || !get('BusStateBoarded'), leftAt: moveLeftAt(win, tripStop) || now }); }
     else if (tripStop.d > trip.minD + 200 && tripStop.d > endAtFor(tripStop)) { busaction = 'stop'; why = (passBus ? 'passed ' : 'turned away from ') + tripStop.n; from(passBus ? 'onbus' : 'left', { leftD: Math.round(tripStop.d) }); }
     // No longer coming up soon: shown while on a bus, but you got off (or slowed right down) well short
     // of it. At walking pace or slower, and more than twice BusApproachMin away at that pace, on three
@@ -373,7 +337,7 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     if (trip.s === 'left' && trip.wasAt && now - trip.since < 5 * 60000) {
       var boardStop = stops.filter(function (st) { return st.id === trip.stop; })[0];
       var past = boardStop ? pastAlong(boardStop) : -1;
-      var boardLeft = Math.max(trip.leftAt || trip.since, boardStop ? leftTime(boardStop) : 0);   // your last position at the stop, if later
+      var boardLeft = Math.max(trip.leftAt || trip.since, boardStop ? moveLeftAt(win, boardStop) : 0);   // your last position at the stop, if later
       var sinceLeft = (fixT - boardLeft) / 1000;
       if (past >= 150 && past / Math.max(1, sinceLeft) > 2.5) {
         afterAll = 'on a bus from ' + boardStop.n + ' (' + Math.round(past) + ' m along its route in ' + Math.round(sinceLeft) + ' s)' +
@@ -386,8 +350,8 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     // keeps the trip, and the recording, right)
     if (trip.s === 'left' && trip.walked && now - trip.since < 5 * 60000) {
       var leftFrom = stops.filter(function (st) { return st.id === trip.stop; })[0];
-      if (leftFrom && paceAway(leftFrom) > 2.2) {
-        afterAll = 'on a bus after all, from ' + leftFrom.n + ' (' + Math.round(paceAway(leftFrom) * 3.6) + ' km/h for the last few minutes)' +
+      if (leftFrom && movePaceAway(win, fixT, leftFrom) > 2.2) {
+        afterAll = 'on a bus after all, from ' + leftFrom.n + ' (' + Math.round(movePaceAway(win, fixT, leftFrom) * 3.6) + ' km/h for the last few minutes)' +
           noteBoarded(leftFrom, { leftAt: trip.leftAt || trip.since, arrivedAt: trip.atAt });
         setGlobal('BusStateLastBusAt', String(now)); from('onbus', { boardedAt: leftFrom.id, leftD: Math.round(leftFrom.d), walked: false });
       }
@@ -399,8 +363,8 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     // got on is kept as it was: you're still on it.
     if (trip.s === 'left' && trip.byBus && now - trip.since < 5 * 60000) {
       var passedStop = stops.filter(function (st) { return st.id === trip.stop; })[0];
-      if (passedStop && paceAway(passedStop) > 2.2) {
-        afterAll = 'still on the bus past ' + passedStop.n + ' (' + Math.round(paceAway(passedStop) * 3.6) + ' km/h for the last few minutes)';
+      if (passedStop && movePaceAway(win, fixT, passedStop) > 2.2) {
+        afterAll = 'still on the bus past ' + passedStop.n + ' (' + Math.round(movePaceAway(win, fixT, passedStop) * 3.6) + ' km/h for the last few minutes)';
         setGlobal('BusStateLastBusAt', String(now)); from('onbus', { leftD: Math.round(passedStop.d), rode: false });
       }
     }
@@ -446,7 +410,7 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
   // (The stop is looked up again: a new heading set just now is for a different stop than tripStop)
   var etaStop = trip.s === 'heading' && trip.bus ? stops.filter(function (st) { return st.id === trip.stop; })[0] : null;
   if (etaStop) {
-    var closing = closingSpeed(etaStop);
+    var closing = moveClosing(win, fixT, etaStop);
     if (closing > 0.5) { trip.eta = Math.round(fixT + etaStop.d / closing * 1000); trip.etaAt = now; }
   }
   if (afterAll && busaction === 'none') why = afterAll;
@@ -504,33 +468,14 @@ function approaching() {
 function walkingTo(st) {
   if ((get('BusApproach') || 'both') === 'off' || speed <= 0.8 || speed > 2.5 || st.d <= 30) return null;
   var limit = (parseFloat(get('BusApproachMin')) || 3) * 60;
-  var closing = closingSpeed(st);
+  var closing = moveClosing(win, fixT, st);
   if (closing < Math.max(0.5, 0.6 * speed) || st.d / speed > limit) return null;
   var place = homeOrWork(st);
   if (place) {
-    var pAt = null; try { pAt = JSON.parse(get(place === 'home' ? 'BusHomeAt' : 'BusWorkAt') || 'null'); } catch (e) { pAt = null; }
-    if (pAt && closingSpeed({ lat: pAt.lat, lon: pAt.lon, d: metres(lat, lon, pAt.lat, pAt.lon) }) > 0.3) return null;
+    var pAt = getJSON(place === 'home' ? 'BusHomeAt' : 'BusWorkAt', null);
+    if (pAt && moveClosing(win, fixT, { lat: pAt.lat, lon: pAt.lon, d: metres(lat, lon, pAt.lat, pAt.lon) }) > 0.3) return null;
   }
   return { why: 'heading to ' + st.n + ' (' + Math.round(st.d) + ' m, about ' + Math.max(1, Math.round(st.d / speed / 60)) + ' min on foot, getting nearer at ' + Math.round(closing * 3.6) + ' km/h)' };
-}
-
-// How fast you've been closing in on a stop (m/s): your distance from it now against a position 45
-// seconds to 4 minutes back (the oldest such in the window). Straight-line both times, so a bend in
-// the road affects both alike. -1 when there's nothing to go on.
-function closingSpeed(st) {
-  for (var i = 0; i < win.length; i++) {
-    var dt = (fixT - win[i].t) / 1000;
-    if (dt >= 45 && dt <= 240) return (metres(win[i].lat, win[i].lon, st.lat, st.lon) - st.d) / dt;
-  }
-  return -1;
-}
-
-// When you left a stop: the last position within 40 m of it, or failing that inside its circle (0 if
-// the window no longer has one)
-function leftTime(st) {
-  var near = 0; var inCircle = 0;
-  win.forEach(function (w) { var d = metres(w.lat, w.lon, st.lat, st.lon); if (d <= 40) near = w.t; if (d <= st.r) inCircle = w.t; });
-  return near || inCircle;
 }
 
 // Which bus you got on at a stop: the one TfL had arriving nearest the time you left it, from the
@@ -543,11 +488,11 @@ function leftTime(st) {
 // (for checking TfL's predictions). Returns a note for the reason, or ''.
 function noteBoarded(st, hint) {
   hint = hint || {};
-  var seenHere = {}; try { seenHere = JSON.parse(get('BusStateSeen') || '{}'); } catch (e) {}
+  var seenHere = getJSON('BusStateSeen', {});
   if (seenHere.s !== st.id) { setGlobal('BusStateBoarded', ''); return ''; }
-  var leftAt = leftTime(st) || hint.leftAt || now;
+  var leftAt = moveLeftAt(win, st) || hint.leftAt || now;
   var arrivedAt = hint.arrivedAt || (trip.s === 'atstop' ? trip.since : 0);
-  var cameOn = null; try { cameOn = JSON.parse(get('BusStateCameOn') || 'null'); } catch (e) {}
+  var cameOn = getJSON('BusStateCameOn', null);
   var cameOnHere = !!cameOn && cameOn.stop === st.id && now - cameOn.at < 30 * 60000;
   var best = null;
   // Stayed on: the bus you came in on was still at the stop when you left (TfL still listed it, or
@@ -583,7 +528,7 @@ function noteBoarded(st, hint) {
 function homeOrWork(st) {
   var places = [['home', 'BusHomeAt'], ['work', 'BusWorkAt']];
   for (var i = 0; i < places.length; i++) {
-    var at = null; try { at = JSON.parse(get(places[i][1]) || 'null'); } catch (e) { at = null; }
+    var at = getJSON(places[i][1], null);
     if (at && at.lat !== undefined && metres(st.lat, st.lon, at.lat, at.lon) <= 400) return places[i][0];
   }
   return '';
@@ -670,7 +615,7 @@ var busnote = stale ? 'Bus Watch: no fresh location (GPS needs a view of the sky
 var RATES = { countdown: ['10000', '20'], dwell: ['15000', '0'], near: ['5000', '10'], arrive: ['20000', '30'], far: ['60000', '100'] };
 var rateNow = get('BusStatePushMode') || 'arrive';
 var edgeNow = closest ? closest.edge : Infinity;
-var farAt = null; try { farAt = JSON.parse(get('BusStateFarAt') || 'null'); } catch (e) { farAt = null; }
+var farAt = getJSON('BusStateFarAt', null);
 var stillFar = rateNow === 'far' && farAt && !isNaN(lat) && edgeNow > 250 && metres(lat, lon, farAt.lat, farAt.lon) < 150;
 var goFar = typeof staying !== 'undefined' && (staying || settled) && !byBusLately && edgeNow > 300;
 var rateWant = (trip.s === 'heading' || trip.s === 'atstop') ? 'countdown'

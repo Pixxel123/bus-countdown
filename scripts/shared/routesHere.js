@@ -3,7 +3,7 @@
 // this, so a route dropping out of TfL's predictions, or coming back, never changes its size.
 function routesHere(showing) {
   var mine = get('BusRoutes').split(',').map(function (s) { return s.trim(); });
-  var stop = null; try { stop = JSON.parse(get('BusCacheStops') || '{}')[get('BusStateStopId')]; } catch (e) {}
+  var stop = getJSON('BusCacheStops', {})[get('BusStateStopId')];
   var here = stop && stop.r ? stop.r.filter(function (r) { return mine.indexOf(r) > -1; }).length : 0;
   return Math.max(1, here, showing || 0);
 }

@@ -12,8 +12,8 @@
 // so nothing that needs a quick answer waits on it: it only stops a slow spell ending a ride.
 // Needs routeLines (shared/routeLines.js) and metres.
 function followBus(fLat, fLon, fAcc, fNow) {
-  var fb = null; try { fb = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) { fb = null; }
-  var ff = null; try { ff = JSON.parse(get('BusStateFollow') || 'null'); } catch (e) { ff = null; }
+  var fb = getJSON('BusStateBoarded', null);
+  var ff = getJSON('BusStateFollow', null);
   if (!fb || !fb.v || fb.sure === false || !ff || ff.v !== fb.v || fNow - ff.at > 120000 || (fAcc || 15) > 60) return null;
   // Stops still to come: TfL's times move on by themselves, so a reply a minute old still says where
   // the bus is now (one due up to 30 s ago may be standing there yet)
@@ -57,7 +57,7 @@ function followBus(fLat, fLon, fAcc, fNow) {
 // last 9 minutes to Kiln Street, so only TfL's word gave its way); once you're off it, only within 2
 // minutes of last moving at bus speed, so crossing the road for a bus back soon shows its countdown.
 function goesBack(st, gNow, onBus) {
-  var hd = null; try { hd = JSON.parse(get('BusStateHeading') || 'null'); } catch (e) { hd = null; }
+  var hd = getJSON('BusStateHeading', null);
   if (!hd || !hd.a || !hd.z || (onBus ? gNow - hd.t > 3 * 60000 : gNow - (hd.b || 0) > 2 * 60000)) return false;
   var a = hd.a; var z = hd.z;
   var R = Math.PI / 180; var kx = Math.cos(st.lat * R); var tx = (z[1] - a[1]) * kx; var ty = z[0] - a[0];

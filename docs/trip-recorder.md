@@ -24,3 +24,11 @@ npm run replay -- bus-trip-2026-10-13-Tue.jsonl
 ```
 
 It plays every position through Bus Watch, and every TfL reply through Bus Refresh (showing when it would buzz), and marks each position where the current rules decide differently from what happened on the phone (`≠`), which is how a change can be checked against real trips before it reaches the phone. Each position is played as Android gave it: a poor fix the phone averaged with the one before is taken from `rlat` and `rlon`, or, in recordings from before 4.37, the averaging is undone, so it isn't averaged twice (which smoothed away the jumps that misled the phone on Wednesday evening). Countdowns you started by hand, or that ended for another reason (Wi-Fi, time's up), are played as they happened. In recordings from before 4.27, where endings carry no reason, an ending written up to 2 s after a position that stopped the countdown on the phone is taken as Bus Watch's own and left to today's rules. The replay itself is `build/replay-core.js`, which the tests use too.
+
+To see what a change does to your trips before it goes on the phone (4.63), compare the last release with the code as it is now:
+
+```
+npm run compare -- v4.62 bus-trip-2026-10-13-Tue.jsonl
+```
+
+It replays the day through both, and lists every position or TfL reply that comes out differently, and the first script run whose outputs or global variables differ. A change that only tidies the code should show none. `--wifi` also runs Bus Watch's Wi-Fi rules before each position, with the network you were on from the recording's `wifi` lines.

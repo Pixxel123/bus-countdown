@@ -10,7 +10,7 @@ var wifi = get('BusStateWifi');
 var which = wifi && wifi === get('BusHomeWifi') ? 'BusHomeAt' : wifi && wifi === get('BusWorkWifi') ? 'BusWorkAt' : '';
 var lat = parseFloat(loc('gl_latitude')); var lon = parseFloat(loc('gl_longitude'));
 if (which && !isNaN(lat) && !isNaN(lon)) {
-  var at = null; try { at = JSON.parse(get(which) || 'null'); } catch (e) {}
+  var at = getJSON(which, null);
   var n = at && at.n ? Math.min(at.n, 9) : 0;
   at = n ? { lat: (at.lat * n + lat) / (n + 1), lon: (at.lon * n + lon) / (n + 1), n: n + 1 } : { lat: lat, lon: lon, n: 1 };
   setGlobal(which, JSON.stringify({ lat: +at.lat.toFixed(6), lon: +at.lon.toFixed(6), n: at.n }));

@@ -6,7 +6,7 @@
 //   and metres along the route to each. Read once per script run.
 function routeLines() {
   if (routeLines.lines) return routeLines.lines;          // kept on the function, so Tasker doesn't hand it back as a local
-  var seqs = []; try { seqs = JSON.parse(get('BusCacheSeq') || '[]') || []; } catch (e) { seqs = []; }
+  var seqs = getJSON('BusCacheSeq', []);
   routeLines.lines = seqs.map(function (sq) {
     var cum = [0]; for (var c = 1; c < sq.length; c++) cum.push(cum[c - 1] + metres(sq[c - 1][1], sq[c - 1][2], sq[c][1], sq[c][2]));
     return { seq: sq, cum: cum };

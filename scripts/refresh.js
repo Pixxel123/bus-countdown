@@ -61,7 +61,7 @@ otherBuses.forEach(function (x) {
 // failed fetch, stays on its last countdown, shown with "~" as an estimate, while it's still at
 // least 2 minutes away and was seen in the last 3 minutes. Closer than that, it has probably come
 // and gone, so it's dropped.
-var seenBefore = {}; try { seenBefore = JSON.parse(get('BusStateSeen') || '{}'); } catch (e) {}
+var seenBefore = getJSON('BusStateSeen', {});
 var remembered = seenBefore.s === get('BusStateStopId') ? (seenBefore.b || []) : [];
 var listed = {}; deps.forEach(function (x) { if (x.v) listed[x.k + '|' + x.v] = true; });
 var keptNow = [];
@@ -102,15 +102,15 @@ deps.sort(function (a, b) { return a.t - b.t; });
 // Status says which bus you're on and when you'll get there. BusStateMatch keeps the state between
 // refreshes (cleared once you're not riding).
 var stopId = get('BusStateStopId');
-var tripNow = {}; try { tripNow = JSON.parse(get('BusStateTrip') || '{}'); } catch (e) {}
+var tripNow = getJSON('BusStateTrip', {});
 var riding = tripNow.s === 'heading' && !!tripNow.bus && tripNow.stop === stopId;
-var match = {}; try { match = JSON.parse(get('BusStateMatch') || '{}'); } catch (e) {}
+var match = getJSON('BusStateMatch', {});
 // A match from another stop, or more than 10 minutes old (a countdown that ended mid-ride), is
 // forgotten: an old one would read as "your bus has already arrived" and let your own bus buzz (4.32)
 if (match.stop !== stopId || now - (match.at || 0) > 10 * 60000) match = { stop: stopId, n: 0 };
 var yourBus = null;
 if (riding) {
-  var boarded = null; try { boarded = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) {}
+  var boarded = getJSON('BusStateBoarded', null);
   var boardedHere = boarded && now - boarded.at < 90 * 60000 && deps.some(function (x) { return x.v === boarded.v; });
   if (boardedHere) { if (match.v !== boarded.v || match.by !== 'boarded') match = { stop: stopId, k: boarded.k, v: boarded.v, n: 2, by: 'boarded', firm: boarded.sure !== false }; }
   else if (tripNow.eta && now - (tripNow.etaAt || 0) < 120000) {
@@ -203,7 +203,7 @@ deps.forEach(function (x) {
 //   on just after one, felt like one long buzz: BusStateBuzzAt).
 //   Riding a bus towards the stop: never your own bus. Until it's known which that is, no buzz at all;
 //   once it is, only a connection (due after you get there) can buzz.
-var buzzed = {}; try { buzzed = JSON.parse(get('BusStateBuzzed') || '{}'); } catch (e) {}
+var buzzed = getJSON('BusStateBuzzed', {});
 var keyOf = function (x) { return get('BusStateStopId') + '|' + x.k + '|' + (x.v || Math.round(x.t / 60000)); };
 var stillHere = {};
 var busbuzz = 'no';               // its own "var": Tasker only passes back results declared this way
@@ -287,7 +287,7 @@ var nextHere = nextStop(now, islandData);
 setGlobal('BusStateIslandData', JSON.stringify(Object.assign({}, islandData, { fit: want }, nextHere ? { nx: nextHere.d } : {})));   // fit: the right half's width (4.46)
 // Each stop's last island data, for the 4 stops fetched most recently (4.43): a long press shows the
 // stop it switches to at once, with these times if they're under 3 minutes old (opposite.js)
-var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) {}
+var byStop = getJSON('BusStateIslandByStop', {});
 byStop[islandData.s] = islandData;
 setGlobal('BusStateIslandByStop', JSON.stringify(Object.keys(byStop).sort(function (a, b) { return byStop[b].u - byStop[a].u; }).slice(0, 4)
   .reduce(function (o, k) { o[k] = byStop[k]; return o; }, {})));

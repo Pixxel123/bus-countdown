@@ -10,7 +10,7 @@ var running = get('BusStateRunning') === '1' && /(^|,)Bus Loop(,|$)/.test(get('T
 lines.push(running
   ? 'Countdown running at ' + (get('BusStateStopName') || '?') + ' (' + (get('BusStyle') === 'chip' ? 'status bar' : 'island') + ')'
   : 'No countdown running');
-var snoozeNow = null; try { snoozeNow = JSON.parse(get('BusStateSnooze') || 'null'); } catch (e) {}
+var snoozeNow = getJSON('BusStateSnooze', null);
 if (snoozeNow && Date.now() - snoozeNow.at < 30 * 60000)
   lines.push('Snoozed until you\u2019ve been to that stop and left it, or ' + new Date(snoozeNow.at + 30 * 60000).toTimeString().slice(0, 5) + ' at the latest (you swiped it away)');
 
@@ -44,24 +44,24 @@ lines.push('Wi-Fi now: ' + (ssidNow && !/^<unknown ssid>$/i.test(ssidNow) ? ssid
 var lastPush = parseInt(get('BusStateLastPush'), 10) || 0;
 if (get('BusStateRunning') === '1') lines.push('Position updates: ' + (get('BusStatePush') || 'not requested') +
   (lastPush ? ', last ' + Math.round((Date.now() - lastPush) / 1000) + ' s ago' : ''));
-var trip = {}; try { trip = JSON.parse(get('BusStateTrip') || '{}'); } catch (e) {}
+var trip = getJSON('BusStateTrip', {});
 var stopNames = {}; get('BusPlaces').split('\n').forEach(function (r) { var p = r.split('|'); if (p[1]) stopNames[p[1]] = p[2]; });
 lines.push('Trip: ' + ({ idle: 'idle', heading: 'heading to a stop', atstop: 'at the stop', onbus: 'on a bus', left: 'just left a stop' }[trip.s] || 'idle') +
   (trip.stop && stopNames[trip.stop] ? ' (' + stopNames[trip.stop] + ')' : '') + (trip.since ? ', since ' + new Date(trip.since).toTimeString().slice(0, 5) : ''));
-var matchNow = {}; try { matchNow = JSON.parse(get('BusStateMatch') || '{}'); } catch (e) {}
+var matchNow = getJSON('BusStateMatch', {});
 if (matchNow.note && running && Date.now() - (matchNow.at || 0) < 10 * 60000) lines.push('Your bus: ' + matchNow.note);
-var boardedNow = null; try { boardedNow = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) {}
+var boardedNow = getJSON('BusStateBoarded', null);
 if (boardedNow && Date.now() - boardedNow.at < 90 * 60000)
   lines.push('Last got on: the ' + boardedNow.k + ' (' + boardedNow.v + ') at ' + (stopNames[boardedNow.stop] || boardedNow.stop) + ', ' + new Date(boardedNow.at).toTimeString().slice(0, 5) +
     (trip.s === 'onbus' || (trip.s === 'heading' && trip.bus) ? '' : ' (off it now)'));
-var modeNow = null; try { modeNow = JSON.parse(get('BusStateMode') || 'null'); } catch (e) {}
+var modeNow = getJSON('BusStateMode', null);
 if (modeNow && Date.now() - modeNow.t < 10 * 60000) {
   var mi = ['still', 'walk', 'ride'].indexOf(modeNow.m);
   lines.push('Travel mode (on trial, not used yet): ' + ({ still: 'still', walk: 'walking', ride: 'riding' }[modeNow.m] || '?') + ', ' + (mi > -1 && modeNow.p ? modeNow.p[mi] : '?') + '% sure' + (isFinite(modeNow.v) ? ', ' + Math.round(modeNow.v * 3.6) + ' km/h' : ''));
 }
 // Following your bus (4.58): what TfL last said about the bus you got on, in the last 10 minutes
-var followNow = null; try { followNow = JSON.parse(get('BusStateFollow') || 'null'); } catch (e) { followNow = null; }
-var followTry = null; try { followTry = JSON.parse(get('BusStateFollowTry') || 'null'); } catch (e) { followTry = null; }
+var followNow = getJSON('BusStateFollow', null);
+var followTry = getJSON('BusStateFollowTry', null);
 if (followNow && Date.now() - followNow.at < 10 * 60000) {
   var followNext = (followNow.n || []).filter(function (x) { return x[1] >= Date.now() - 30000; })[0];
   lines.push('Following your bus: ' + followNow.v + ', asked ' + Math.round((Date.now() - followNow.at) / 1000) + ' s ago' +

@@ -1,8 +1,8 @@
 <TaskerData sr="" dvi="1" tv="6.7.6-beta">
 	<dmetric>1344.0,2992.0</dmetric>
 	<Profile sr="prof72" ve="2">
-		<cdate>1791892037246</cdate>
-		<edate>1791892037246</edate>
+		<cdate>1792001973738</cdate>
+		<edate>1792001973738</edate>
 		<flags>8</flags>
 		<id>72</id>
 		<mid0>79</mid0>
@@ -14,8 +14,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof74" ve="2">
-		<cdate>1791892037246</cdate>
-		<edate>1791892037246</edate>
+		<cdate>1792001973738</cdate>
+		<edate>1792001973738</edate>
 		<flags>8</flags>
 		<id>74</id>
 		<mid0>62</mid0>
@@ -33,8 +33,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof73" ve="2">
-		<cdate>1791892037246</cdate>
-		<edate>1791892037246</edate>
+		<cdate>1792001973738</cdate>
+		<edate>1792001973738</edate>
 		<flags>8</flags>
 		<id>73</id>
 		<mid0>59</mid0>
@@ -46,14 +46,14 @@
 		</State>
 	</Profile>
 	<Project sr="proj0" ve="2">
-		<cdate>1791892037246</cdate>
+		<cdate>1792001973738</cdate>
 		<name>Bus Countdown</name>
 		<pids>72,73,74</pids>
 		<tids>73,74,75,77,78,80,76,38,60,59,79,32,31,62,72</tids>
 	</Project>
 	<Task sr="task73">
-		<cdate>1791892037246</cdate>
-		<edate>1791892037246</edate>
+		<cdate>1792001973739</cdate>
+		<edate>1792001973739</edate>
 		<id>73</id>
 		<nme>Bus</nme>
 		<pri>6</pri>
@@ -178,11 +178,11 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task74">
-		<cdate>1791892037246</cdate>
-		<edate>1791892037246</edate>
+		<cdate>1792001973739</cdate>
+		<edate>1792001973739</edate>
 		<id>74</id>
 		<nme>Bus Settings</nme>
 		<pri>6</pri>
@@ -201,7 +201,7 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>First run? · Camera not measured yet</label>
@@ -496,6 +496,13 @@ Time in milliseconds that it took for Tasker to get the location&lt;/_array_net.
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -1114,6 +1121,13 @@ setGlobal('BusTempSettings', JSON.stringify({ mine: mine, near: near, wifiNow: w
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -1288,6 +1302,13 @@ setGlobal('BusTempRemoved', '');
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 
 var routes = get('BusRoutes').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
 var key = routes.join(','); var today = new Date().toDateString();
@@ -1490,6 +1511,13 @@ if (code === '200') {
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 
 if (busfetch === 'yes') {
   var pool = get('BusTempFetchStops') || '{}';
@@ -1527,6 +1555,13 @@ if (busfetch === 'yes') {
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // Distance in metres between two points (flat-earth approximation: accurate to well under 1% over a
 // few kilometres, which is all this ever measures)
 function metres(aLat, aLon, bLat, bLon) {
@@ -1608,6 +1643,13 @@ setGlobal('BusTempOpposite', '');
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -1707,8 +1749,8 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buslive</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task75">
-		<cdate>1791892037246</cdate>
-		<edate>1791892037246</edate>
+		<cdate>1792001973739</cdate>
+		<edate>1792001973739</edate>
 		<id>75</id>
 		<nme>Bus Settings Button</nme>
 		<pri>6</pri>
@@ -1738,6 +1780,13 @@ function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' 
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 
 var action = loc('busaction');
 
@@ -1840,8 +1889,8 @@ if (buspreview === 'yes') {
 			<label>Open it · Shows the Android settings page</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">startActivity {} (android.content.Intent)</Str><Str sr="arg3" ve="3">busint</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busintent</lhs><op>2</op><rhs>android*</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task77">
-		<cdate>1791892037247</cdate>
-		<edate>1791892037247</edate>
+		<cdate>1792001973739</cdate>
+		<edate>1792001973739</edate>
 		<id>77</id>
 		<nme>Bus Position</nme>
 		<pri>6</pri>
@@ -1905,6 +1954,13 @@ function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' 
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 
 var action = loc('busaction');
 
@@ -2020,6 +2076,13 @@ if (buspreview === 'yes') {
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -2028,7 +2091,7 @@ function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' 
 // this, so a route dropping out of TfL's predictions, or coming back, never changes its size.
 function routesHere(showing) {
   var mine = get('BusRoutes').split(',').map(function (s) { return s.trim(); });
-  var stop = null; try { stop = JSON.parse(get('BusCacheStops') || '{}')[get('BusStateStopId')]; } catch (e) {}
+  var stop = getJSON('BusCacheStops', {})[get('BusStateStopId')];
   var here = stop &amp;&amp; stop.r ? stop.r.filter(function (r) { return mine.indexOf(r) &gt; -1; }).length : 0;
   return Math.max(1, here, showing || 0);
 }
@@ -3110,6 +3173,13 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 var chip = get('BusStyle') === 'chip';
 var gap = Math.min(80, Math.max(26, parseInt(get('BusIslandGap'), 10) || 42));
 var topY = parseInt(get('BusIslandY'), 10); if (!(topY &gt;= 0)) topY = 9; topY = Math.min(24, topY);   // (not "top": the web page's own)
@@ -3188,8 +3258,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task78">
-		<cdate>1791892037247</cdate>
-		<edate>1791892037247</edate>
+		<cdate>1792001973740</cdate>
+		<edate>1792001973740</edate>
 		<id>78</id>
 		<nme>Bus Position Set</nme>
 		<pri>6</pri>
@@ -3207,8 +3277,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task80">
-		<cdate>1791892037247</cdate>
-		<edate>1791892037247</edate>
+		<cdate>1792001973740</cdate>
+		<edate>1792001973740</edate>
 		<id>80</id>
 		<nme>Bus Position Done</nme>
 		<pri>6</pri>
@@ -3230,6 +3300,13 @@ function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' 
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 var changed = [];
 function slid(setting, v, lo, hi, what) {
   var x = loc(v);
@@ -3313,8 +3390,8 @@ var busmsg = changed.length ? 'Saved: ' + changed.join(', ') : 'none';
 		</Action>
 	</Task>
 	<Task sr="task76">
-		<cdate>1791892037247</cdate>
-		<edate>1791892037247</edate>
+		<cdate>1792001973740</cdate>
+		<edate>1792001973740</edate>
 		<id>76</id>
 		<nme>Bus Find Camera</nme>
 		<pri>6</pri>
@@ -3447,8 +3524,8 @@ if (!r || !dens || !w) {
 			<label>Reset position: move the open screen's height slider · Shows the new value straight away</label><Str sr="arg0" ve="3">bussettings</Str><Str sr="arg1" ve="3">sl_y</Str><Str sr="arg2" ve="3">value</Str><Str sr="arg3" ve="3">%BusIslandY</Str><Int sr="arg4" val="0"/><Str sr="arg5" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrebuild</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task38">
-		<cdate>1791892037247</cdate>
-		<edate>1791892037247</edate>
+		<cdate>1792001973740</cdate>
+		<edate>1792001973740</edate>
 		<id>38</id>
 		<nme>Bus Start</nme>
 		<pri>6</pri>
@@ -3466,7 +3543,7 @@ if (!r || !dens || !w) {
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>Settings: fill in defaults, check TflKey and BusRoutes · Resets empty or invalid settings</label>
@@ -3480,6 +3557,13 @@ if (!r || !dens || !w) {
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 function atLeast(min) { return function (v) { return parseFloat(v) &gt;= min; }; }
 
 var SETTINGS = [
@@ -3747,6 +3831,13 @@ Time in milliseconds that it took for Tasker to get the location&lt;/_array_net.
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 
 var routes = get('BusRoutes').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
 var key = routes.join(','); var today = new Date().toDateString();
@@ -3949,6 +4040,13 @@ if (code === '200') {
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 
 if (busfetch === 'yes') {
   var pool = get('BusTempFetchStops') || '{}';
@@ -3984,6 +4082,13 @@ if (busfetch === 'yes') {
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -4313,8 +4418,8 @@ record(busok === 'yes' ? 'start' : 'nostart', { stop: get('BusStateStopId'), nam
 		</Action>
 	</Task>
 	<Task sr="task60">
-		<cdate>1791892037247</cdate>
-		<edate>1791892037247</edate>
+		<cdate>1792001973740</cdate>
+		<edate>1792001973740</edate>
 		<id>60</id>
 		<nme>Bus Loop</nme>
 		<pri>6</pri>
@@ -4424,6 +4529,13 @@ var buscycles = String(Math.max(1, Math.ceil(timeout * 60 / Math.min(refresh, 15
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 var busdone = Date.now() &gt;= (parseInt(get('BusStateEndAt'), 10) || 0) ? 'yes' : 'no';
 // A heads-up's minute is up: if you've left the office Wi-Fi by now, carry on as a normal countdown
 // for the walk; still at your desk, it ends
@@ -4438,7 +4550,7 @@ if (busdone === 'yes' &amp;&amp; get('BusStateGlance') !== '') {
 // Time's up, but you're still waiting at the stop (Bus Watch's trip state is "at the stop": it only
 // leaves that when you move off): carry on for another BusTimeout, up to 2 hours from the start. The
 // limit is there for a countdown that never noticed you'd left.
-var trip = {}; try { trip = JSON.parse(get('BusStateTrip') || '{}'); } catch (e) {}
+var trip = getJSON('BusStateTrip', {});
 var startedAt = parseInt(get('BusStateStartedAt'), 10) || 0;
 if (busdone === 'yes' &amp;&amp; trip.s === 'atstop' &amp;&amp; trip.stop === get('BusStateStopId') &amp;&amp; startedAt &amp;&amp; Date.now() - startedAt &lt; 2 * 3600000) {
   setGlobal('BusStateEndAt', String(Math.min(Date.now() + (parseFloat(get('BusTimeout')) || 30) * 60000, startedAt + 2 * 3600000)));
@@ -4461,7 +4573,7 @@ var buswait = String(get('SCREEN') === 'off' ? base : Math.max(15, Math.min(chos
 var lastPush = parseInt(get('BusStateLastPush'), 10) || 0;
 // Standing still (the last speed Bus Watch saw was walking pace or less), Android rightly sends
 // nothing: positions come when you move 20 m. Then silence only counts after 10 minutes.
-var win = []; try { win = JSON.parse(get('BusStateWindow') || '[]'); } catch (e) {}
+var win = getJSON('BusStateWindow', []);
 var lastSpeed = win.length ? win[win.length - 1].spd : -1;
 var quietFor = (lastSpeed &gt;= 0 &amp;&amp; lastSpeed &lt;= 0.8) ? 600000 : 120000;
 var busnopush = (get('SCREEN') !== 'off' &amp;&amp; Date.now() - lastPush &gt; quietFor) ? 'yes' : 'no';
@@ -4517,6 +4629,13 @@ if (busnopush === 'yes') debugLog('Safety net: no position pushed for ' + Math.r
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 var buspushms = get('BusStatePushMs') || '20000';
 var buspushm = get('BusStatePushM') || '30';
 </Str>
@@ -4654,8 +4773,8 @@ var buspushm = get('BusStatePushM') || '30';
 		</Action>
 	</Task>
 	<Task sr="task59">
-		<cdate>1791892037247</cdate>
-		<edate>1791892037247</edate>
+		<cdate>1792001973740</cdate>
+		<edate>1792001973740</edate>
 		<id>59</id>
 		<nme>Bus Refresh</nme>
 		<pri>6</pri>
@@ -4703,6 +4822,13 @@ function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' 
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 var conf = loc('busconfig');
 var land = /\bland\b/.test(conf); var port = /\bport\b/.test(conf);
 var editingAt = parseInt(get('BusStateEditing'), 10) || 0;
@@ -4804,6 +4930,13 @@ setGlobal('BusStateFullscreenInfo', (land ? 'sideways' : 'upright') + (editing ?
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -4817,7 +4950,7 @@ var auto = /^task=Bus (Loop|Wake)$/.test(loc('busrefby')) || /^(open|close)$/.te
 var busfresh = auto &amp;&amp; get('BusStateFetchStop') === get('BusStateStopId') &amp;&amp; now - lastAt &gt;= 0 &amp;&amp; now - lastAt &lt; 20000 ? 'yes' : 'no';
 // A long press to the stop Bus Refresh got ready (4.45): its times, fetched under 90 s ago, are used
 // at once ("cached"), and nothing waits for TfL
-var ready = {}; try { ready = JSON.parse(get('BusStatePrefetch') || '{}') || {}; } catch (e) { ready = {}; }
+var ready = getJSON('BusStatePrefetch', {});
 if (loc('busrefpar') === 'switch' &amp;&amp; ready.s === get('BusStateStopId') &amp;&amp; now - ready.at &gt;= 0 &amp;&amp; now - ready.at &lt; 90000) busfresh = 'cached';
 </Str>
 			<Str sr="arg1" ve="3"/>
@@ -4869,7 +5002,14 @@ if (loc('busrefpar') === 'switch' &amp;&amp; ready.s === get('BusStateStopId') &
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
-var ready = {}; try { ready = JSON.parse(get('BusStatePrefetch') || '{}') || {}; } catch (e) { ready = {}; }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
+var ready = getJSON('BusStatePrefetch', {});
 var now = Date.now();
 var http_response_code = '200';
 var http_data = JSON.stringify((ready.b || []).map(function (x) {
@@ -4926,6 +5066,13 @@ var buscachedat = String(ready.at || now);
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -4934,7 +5081,7 @@ function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' 
 // this, so a route dropping out of TfL's predictions, or coming back, never changes its size.
 function routesHere(showing) {
   var mine = get('BusRoutes').split(',').map(function (s) { return s.trim(); });
-  var stop = null; try { stop = JSON.parse(get('BusCacheStops') || '{}')[get('BusStateStopId')]; } catch (e) {}
+  var stop = getJSON('BusCacheStops', {})[get('BusStateStopId')];
   var here = stop &amp;&amp; stop.r ? stop.r.filter(function (r) { return mine.indexOf(r) &gt; -1; }).length : 0;
   return Math.max(1, here, showing || 0);
 }
@@ -5117,7 +5264,7 @@ otherBuses.forEach(function (x) {
 // failed fetch, stays on its last countdown, shown with "~" as an estimate, while it's still at
 // least 2 minutes away and was seen in the last 3 minutes. Closer than that, it has probably come
 // and gone, so it's dropped.
-var seenBefore = {}; try { seenBefore = JSON.parse(get('BusStateSeen') || '{}'); } catch (e) {}
+var seenBefore = getJSON('BusStateSeen', {});
 var remembered = seenBefore.s === get('BusStateStopId') ? (seenBefore.b || []) : [];
 var listed = {}; deps.forEach(function (x) { if (x.v) listed[x.k + '|' + x.v] = true; });
 var keptNow = [];
@@ -5158,15 +5305,15 @@ deps.sort(function (a, b) { return a.t - b.t; });
 // Status says which bus you're on and when you'll get there. BusStateMatch keeps the state between
 // refreshes (cleared once you're not riding).
 var stopId = get('BusStateStopId');
-var tripNow = {}; try { tripNow = JSON.parse(get('BusStateTrip') || '{}'); } catch (e) {}
+var tripNow = getJSON('BusStateTrip', {});
 var riding = tripNow.s === 'heading' &amp;&amp; !!tripNow.bus &amp;&amp; tripNow.stop === stopId;
-var match = {}; try { match = JSON.parse(get('BusStateMatch') || '{}'); } catch (e) {}
+var match = getJSON('BusStateMatch', {});
 // A match from another stop, or more than 10 minutes old (a countdown that ended mid-ride), is
 // forgotten: an old one would read as "your bus has already arrived" and let your own bus buzz (4.32)
 if (match.stop !== stopId || now - (match.at || 0) &gt; 10 * 60000) match = { stop: stopId, n: 0 };
 var yourBus = null;
 if (riding) {
-  var boarded = null; try { boarded = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) {}
+  var boarded = getJSON('BusStateBoarded', null);
   var boardedHere = boarded &amp;&amp; now - boarded.at &lt; 90 * 60000 &amp;&amp; deps.some(function (x) { return x.v === boarded.v; });
   if (boardedHere) { if (match.v !== boarded.v || match.by !== 'boarded') match = { stop: stopId, k: boarded.k, v: boarded.v, n: 2, by: 'boarded', firm: boarded.sure !== false }; }
   else if (tripNow.eta &amp;&amp; now - (tripNow.etaAt || 0) &lt; 120000) {
@@ -5259,7 +5406,7 @@ deps.forEach(function (x) {
 //   on just after one, felt like one long buzz: BusStateBuzzAt).
 //   Riding a bus towards the stop: never your own bus. Until it's known which that is, no buzz at all;
 //   once it is, only a connection (due after you get there) can buzz.
-var buzzed = {}; try { buzzed = JSON.parse(get('BusStateBuzzed') || '{}'); } catch (e) {}
+var buzzed = getJSON('BusStateBuzzed', {});
 var keyOf = function (x) { return get('BusStateStopId') + '|' + x.k + '|' + (x.v || Math.round(x.t / 60000)); };
 var stillHere = {};
 var busbuzz = 'no';               // its own "var": Tasker only passes back results declared this way
@@ -5307,10 +5454,10 @@ function stopLetter(name) {
 // once. at: the time; cur: the island's data now (its refresh and rotation times are kept). null with
 // fewer than two stops.
 function nextStop(at, cur) {
-  var stops = []; try { stops = JSON.parse(get('BusStateNearbyStops') || '[]') || []; } catch (e) { stops = []; }
+  var stops = getJSON('BusStateNearbyStops', []);
   if (stops.length &lt; 2) return null;
   var i = ((parseInt(get('BusStateStopIndex'), 10) || 0) + 1) % stops.length;
-  var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) { byStop = {}; }
+  var byStop = getJSON('BusStateIslandByStop', {});
   var was = byStop[stops[i].id];
   return { i: i, stop: stops[i], d: was &amp;&amp; at - was.u &lt; 3 * 60000 ? was
     : { u: at, r: cur.r, rot: cur.rot, s: stops[i].id, n: stops[i].name, l: stopLetter(stops[i].name), b: [], a: [], w: 1 } };
@@ -5364,7 +5511,7 @@ var nextHere = nextStop(now, islandData);
 setGlobal('BusStateIslandData', JSON.stringify(Object.assign({}, islandData, { fit: want }, nextHere ? { nx: nextHere.d } : {})));   // fit: the right half's width (4.46)
 // Each stop's last island data, for the 4 stops fetched most recently (4.43): a long press shows the
 // stop it switches to at once, with these times if they're under 3 minutes old (opposite.js)
-var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) {}
+var byStop = getJSON('BusStateIslandByStop', {});
 byStop[islandData.s] = islandData;
 setGlobal('BusStateIslandByStop', JSON.stringify(Object.keys(byStop).sort(function (a, b) { return byStop[b].u - byStop[a].u; }).slice(0, 4)
   .reduce(function (o, k) { o[k] = byStop[k]; return o; }, {})));
@@ -5565,6 +5712,13 @@ function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' 
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 var conf = loc('busconfig');
 var land = /\bland\b/.test(conf); var port = /\bport\b/.test(conf);
 var editingAt = parseInt(get('BusStateEditing'), 10) || 0;
@@ -5601,6 +5755,13 @@ setGlobal('BusStateFullscreenInfo', (land ? 'sideways' : 'upright') + (editing ?
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -5609,7 +5770,7 @@ function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' 
 // this, so a route dropping out of TfL's predictions, or coming back, never changes its size.
 function routesHere(showing) {
   var mine = get('BusRoutes').split(',').map(function (s) { return s.trim(); });
-  var stop = null; try { stop = JSON.parse(get('BusCacheStops') || '{}')[get('BusStateStopId')]; } catch (e) {}
+  var stop = getJSON('BusCacheStops', {})[get('BusStateStopId')];
   var here = stop &amp;&amp; stop.r ? stop.r.filter(function (r) { return mine.indexOf(r) &gt; -1; }).length : 0;
   return Math.max(1, here, showing || 0);
 }
@@ -6760,7 +6921,14 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
-var ready = {}; try { ready = JSON.parse(get('BusStatePrefetch') || '{}') || {}; } catch (e) { ready = {}; }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
+var ready = getJSON('BusStatePrefetch', {});
 var now = Date.now();
 var http_response_code = '200';
 var http_data = JSON.stringify((ready.b || []).map(function (x) {
@@ -6817,6 +6985,13 @@ var buscachedat = String(ready.at || now);
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -6825,7 +7000,7 @@ function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' 
 // this, so a route dropping out of TfL's predictions, or coming back, never changes its size.
 function routesHere(showing) {
   var mine = get('BusRoutes').split(',').map(function (s) { return s.trim(); });
-  var stop = null; try { stop = JSON.parse(get('BusCacheStops') || '{}')[get('BusStateStopId')]; } catch (e) {}
+  var stop = getJSON('BusCacheStops', {})[get('BusStateStopId')];
   var here = stop &amp;&amp; stop.r ? stop.r.filter(function (r) { return mine.indexOf(r) &gt; -1; }).length : 0;
   return Math.max(1, here, showing || 0);
 }
@@ -7008,7 +7183,7 @@ otherBuses.forEach(function (x) {
 // failed fetch, stays on its last countdown, shown with "~" as an estimate, while it's still at
 // least 2 minutes away and was seen in the last 3 minutes. Closer than that, it has probably come
 // and gone, so it's dropped.
-var seenBefore = {}; try { seenBefore = JSON.parse(get('BusStateSeen') || '{}'); } catch (e) {}
+var seenBefore = getJSON('BusStateSeen', {});
 var remembered = seenBefore.s === get('BusStateStopId') ? (seenBefore.b || []) : [];
 var listed = {}; deps.forEach(function (x) { if (x.v) listed[x.k + '|' + x.v] = true; });
 var keptNow = [];
@@ -7049,15 +7224,15 @@ deps.sort(function (a, b) { return a.t - b.t; });
 // Status says which bus you're on and when you'll get there. BusStateMatch keeps the state between
 // refreshes (cleared once you're not riding).
 var stopId = get('BusStateStopId');
-var tripNow = {}; try { tripNow = JSON.parse(get('BusStateTrip') || '{}'); } catch (e) {}
+var tripNow = getJSON('BusStateTrip', {});
 var riding = tripNow.s === 'heading' &amp;&amp; !!tripNow.bus &amp;&amp; tripNow.stop === stopId;
-var match = {}; try { match = JSON.parse(get('BusStateMatch') || '{}'); } catch (e) {}
+var match = getJSON('BusStateMatch', {});
 // A match from another stop, or more than 10 minutes old (a countdown that ended mid-ride), is
 // forgotten: an old one would read as "your bus has already arrived" and let your own bus buzz (4.32)
 if (match.stop !== stopId || now - (match.at || 0) &gt; 10 * 60000) match = { stop: stopId, n: 0 };
 var yourBus = null;
 if (riding) {
-  var boarded = null; try { boarded = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) {}
+  var boarded = getJSON('BusStateBoarded', null);
   var boardedHere = boarded &amp;&amp; now - boarded.at &lt; 90 * 60000 &amp;&amp; deps.some(function (x) { return x.v === boarded.v; });
   if (boardedHere) { if (match.v !== boarded.v || match.by !== 'boarded') match = { stop: stopId, k: boarded.k, v: boarded.v, n: 2, by: 'boarded', firm: boarded.sure !== false }; }
   else if (tripNow.eta &amp;&amp; now - (tripNow.etaAt || 0) &lt; 120000) {
@@ -7150,7 +7325,7 @@ deps.forEach(function (x) {
 //   on just after one, felt like one long buzz: BusStateBuzzAt).
 //   Riding a bus towards the stop: never your own bus. Until it's known which that is, no buzz at all;
 //   once it is, only a connection (due after you get there) can buzz.
-var buzzed = {}; try { buzzed = JSON.parse(get('BusStateBuzzed') || '{}'); } catch (e) {}
+var buzzed = getJSON('BusStateBuzzed', {});
 var keyOf = function (x) { return get('BusStateStopId') + '|' + x.k + '|' + (x.v || Math.round(x.t / 60000)); };
 var stillHere = {};
 var busbuzz = 'no';               // its own "var": Tasker only passes back results declared this way
@@ -7198,10 +7373,10 @@ function stopLetter(name) {
 // once. at: the time; cur: the island's data now (its refresh and rotation times are kept). null with
 // fewer than two stops.
 function nextStop(at, cur) {
-  var stops = []; try { stops = JSON.parse(get('BusStateNearbyStops') || '[]') || []; } catch (e) { stops = []; }
+  var stops = getJSON('BusStateNearbyStops', []);
   if (stops.length &lt; 2) return null;
   var i = ((parseInt(get('BusStateStopIndex'), 10) || 0) + 1) % stops.length;
-  var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) { byStop = {}; }
+  var byStop = getJSON('BusStateIslandByStop', {});
   var was = byStop[stops[i].id];
   return { i: i, stop: stops[i], d: was &amp;&amp; at - was.u &lt; 3 * 60000 ? was
     : { u: at, r: cur.r, rot: cur.rot, s: stops[i].id, n: stops[i].name, l: stopLetter(stops[i].name), b: [], a: [], w: 1 } };
@@ -7255,7 +7430,7 @@ var nextHere = nextStop(now, islandData);
 setGlobal('BusStateIslandData', JSON.stringify(Object.assign({}, islandData, { fit: want }, nextHere ? { nx: nextHere.d } : {})));   // fit: the right half's width (4.46)
 // Each stop's last island data, for the 4 stops fetched most recently (4.43): a long press shows the
 // stop it switches to at once, with these times if they're under 3 minutes old (opposite.js)
-var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) {}
+var byStop = getJSON('BusStateIslandByStop', {});
 byStop[islandData.s] = islandData;
 setGlobal('BusStateIslandByStop', JSON.stringify(Object.keys(byStop).sort(function (a, b) { return byStop[b].u - byStop[a].u; }).slice(0, 4)
   .reduce(function (o, k) { o[k] = byStop[k]; return o; }, {})));
@@ -7427,6 +7602,13 @@ function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' 
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 var conf = loc('busconfig');
 var land = /\bland\b/.test(conf); var port = /\bport\b/.test(conf);
 var editingAt = parseInt(get('BusStateEditing'), 10) || 0;
@@ -7463,6 +7645,13 @@ setGlobal('BusStateFullscreenInfo', (land ? 'sideways' : 'upright') + (editing ?
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -7471,7 +7660,7 @@ function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' 
 // this, so a route dropping out of TfL's predictions, or coming back, never changes its size.
 function routesHere(showing) {
   var mine = get('BusRoutes').split(',').map(function (s) { return s.trim(); });
-  var stop = null; try { stop = JSON.parse(get('BusCacheStops') || '{}')[get('BusStateStopId')]; } catch (e) {}
+  var stop = getJSON('BusCacheStops', {})[get('BusStateStopId')];
   var here = stop &amp;&amp; stop.r ? stop.r.filter(function (r) { return mine.indexOf(r) &gt; -1; }).length : 0;
   return Math.max(1, here, showing || 0);
 }
@@ -8593,6 +8782,13 @@ var busanim = /^[12]$/.test(get('BusStateIslandShown')) ? 'None' : 'FadeIn';
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -8675,6 +8871,13 @@ var busttroute = global('BusTempTimetableRoutes').split(',')[parseInt(i, 10) - 1
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -8756,10 +8959,17 @@ setGlobal('BusCacheTimetable', JSON.stringify(tt));
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
-var stops = []; try { stops = JSON.parse(get('BusStateNearbyStops') || '[]'); } catch (e) { stops = []; }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
+var stops = getJSON('BusStateNearbyStops', []);
 var next = stops.length &gt; 1 ? stops[((parseInt(get('BusStateStopIndex'), 10) || 0) + 1) % stops.length] : null;   // as opposite.js picks it
 if (next &amp;&amp; next.id === get('BusStateStopId')) next = null;
-var ready = {}; try { ready = JSON.parse(get('BusStatePrefetch') || '{}') || {}; } catch (e) { ready = {}; }
+var ready = getJSON('BusStatePrefetch', {});
 var now = Date.now();
 var fresh = !!next &amp;&amp; ready.s === next.id &amp;&amp; now - ready.at &gt;= 0 &amp;&amp; now - ready.at &lt; 40000;
 var busprefetch = next &amp;&amp; get('BusStateRunning') === '1' &amp;&amp; get('SCREEN') !== 'off' &amp;&amp; !fresh ? 'yes' : 'no';
@@ -8818,6 +9028,13 @@ var busttstop = busprestop;
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -8836,10 +9053,10 @@ function stopLetter(name) {
 // once. at: the time; cur: the island's data now (its refresh and rotation times are kept). null with
 // fewer than two stops.
 function nextStop(at, cur) {
-  var stops = []; try { stops = JSON.parse(get('BusStateNearbyStops') || '[]') || []; } catch (e) { stops = []; }
+  var stops = getJSON('BusStateNearbyStops', []);
   if (stops.length &lt; 2) return null;
   var i = ((parseInt(get('BusStateStopIndex'), 10) || 0) + 1) % stops.length;
-  var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) { byStop = {}; }
+  var byStop = getJSON('BusStateIslandByStop', {});
   var was = byStop[stops[i].id];
   return { i: i, stop: stops[i], d: was &amp;&amp; at - was.u &lt; 3 * 60000 ? was
     : { u: at, r: cur.r, rot: cur.rot, s: stops[i].id, n: stops[i].name, l: stopLetter(stops[i].name), b: [], a: [], w: 1 } };
@@ -8870,10 +9087,10 @@ if (loc('http_response_code') === '200' &amp;&amp; loc('busprestop')) {
       if (!byRoute[x[0]]) { if (others.length &gt;= 8) return; byRoute[x[0]] = { k: x[0], d: x[3], t: [] }; others.push(byRoute[x[0]]); }
       if (byRoute[x[0]].t.length &lt; 3) byRoute[x[0]].t.push(x[2]);
     });
-    var stops = []; try { stops = JSON.parse(get('BusStateNearbyStops') || '[]'); } catch (e) { stops = []; }
+    var stops = getJSON('BusStateNearbyStops', []);
     var stop = stops.filter(function (s) { return s.id === loc('busprestop'); })[0] || { name: '' };
-    var cur = {}; try { cur = JSON.parse(get('BusStateIslandData') || '{}') || {}; } catch (e) { cur = {}; }
-    var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) { byStop = {}; }
+    var cur = getJSON('BusStateIslandData', {});
+    var byStop = getJSON('BusStateIslandByStop', {});
     byStop[loc('busprestop')] = { u: now, r: cur.r, rot: cur.rot, s: loc('busprestop'), n: stop.name, l: stopLetter(stop.name), b: perRoute, a: others };
     // The 4 stops with the newest times, as refresh.js keeps them
     setGlobal('BusStateIslandByStop', JSON.stringify(Object.keys(byStop).sort(function (a, b) { return byStop[b].u - byStop[a].u; }).slice(0, 4)
@@ -8913,6 +9130,13 @@ if (loc('http_response_code') === '200' &amp;&amp; loc('busprestop')) {
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -8995,6 +9219,13 @@ var busttroute = global('BusTempTimetableRoutes').split(',')[parseInt(i, 10) - 1
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -9057,40 +9288,40 @@ setGlobal('BusCacheTimetable', JSON.stringify(tt));
 		</Action>
 	</Task>
 	<Task sr="task79">
-		<cdate>1791892037248</cdate>
-		<edate>1791892037248</edate>
+		<cdate>1792001973741</cdate>
+		<edate>1792001973741</edate>
 		<id>79</id>
 		<nme>Bus Wake</nme>
 		<pri>6</pri>
 		<Action sr="act0" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
 		<Action sr="act2" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
 		<Action sr="act3" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
 		<Action sr="act4" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
 		<Action sr="act5" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
 		<Action sr="act6" ve="7">
 			<code>547</code>
 			<label>This build · Version and build time</label>
 			<Str sr="arg0" ve="3">%busbuild</Str>
-			<Str sr="arg1" ve="3">4.62.202610131247</Str>
+			<Str sr="arg1" ve="3">4.63.202610141919</Str>
 			<Int sr="arg2" val="0"/>
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
 		<Action sr="act7" ve="7">
 			<code>129</code>
 			<label>Remember it was done for this build · BusStateVersion</label>
@@ -9116,11 +9347,11 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
 		<Action sr="act8" ve="7">
 			<code>548</code>
 			<label>Say so · A short message</label>
-			<Str sr="arg0" ve="3">Bus countdown 4.62: profiles switched on</Str>
+			<Str sr="arg0" ve="3">Bus countdown 4.63: profiles switched on</Str>
 			<Int sr="arg1" val="0"/>
 			<Str sr="arg10" ve="3"/>
 			<Int sr="arg11" val="1"/>
@@ -9136,7 +9367,7 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg7" ve="3"/>
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.62.202610131247</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
 		<Action sr="act9" ve="7">
 			<code>137</code>
 			<label>Only asked to switch the profiles: done · Started by another task with par1 "profiles"</label>
@@ -9187,6 +9418,13 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 var buspushms = get('BusStatePushMs') || '20000';
 var buspushm = get('BusStatePushM') || '30';
 </Str>
@@ -9441,6 +9679,13 @@ if (wifiNow !== wifiBefore) {
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 function minutes(hhmm) { var m = /^(\d{1,2}):(\d{2})$/.exec(hhmm || ''); return m ? +m[1] * 60 + +m[2] : -1; }
 
 // The Wi-Fi network you're on, as Bus Wake or Bus Moved last saw it
@@ -9503,8 +9748,8 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 		</Action>
 	</Task>
 	<Task sr="task32">
-		<cdate>1791892037249</cdate>
-		<edate>1791892037249</edate>
+		<cdate>1792001973741</cdate>
+		<edate>1792001973741</edate>
 		<id>32</id>
 		<nme>Bus End</nme>
 		<pri>6</pri>
@@ -9770,8 +10015,8 @@ setGlobal('BusStateMatch', '');
 		</Action>
 	</Task>
 	<Task sr="task31">
-		<cdate>1791892037249</cdate>
-		<edate>1791892037249</edate>
+		<cdate>1792001973741</cdate>
+		<edate>1792001973741</edate>
 		<id>31</id>
 		<nme>Bus Island</nme>
 		<pri>6</pri>
@@ -9803,6 +10048,13 @@ setGlobal('BusStateMatch', '');
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // The stop's letter, from its TfL indicator ("Stop B" -&gt; B, "Stop BK" -&gt; BK). Stops without one
 // (indicators like "opp" or "-&gt;N", or none at all) get no letter, and the island shows none. Shared
 // by refresh.js and, for the stop a long press switches to, opposite.js (4.43).
@@ -9818,10 +10070,10 @@ function stopLetter(name) {
 // once. at: the time; cur: the island's data now (its refresh and rotation times are kept). null with
 // fewer than two stops.
 function nextStop(at, cur) {
-  var stops = []; try { stops = JSON.parse(get('BusStateNearbyStops') || '[]') || []; } catch (e) { stops = []; }
+  var stops = getJSON('BusStateNearbyStops', []);
   if (stops.length &lt; 2) return null;
   var i = ((parseInt(get('BusStateStopIndex'), 10) || 0) + 1) % stops.length;
-  var byStop = {}; try { byStop = JSON.parse(get('BusStateIslandByStop') || '{}') || {}; } catch (e) { byStop = {}; }
+  var byStop = getJSON('BusStateIslandByStop', {});
   var was = byStop[stops[i].id];
   return { i: i, stop: stops[i], d: was &amp;&amp; at - was.u &lt; 3 * 60000 ? was
     : { u: at, r: cur.r, rot: cur.rot, s: stops[i].id, n: stops[i].name, l: stopLetter(stops[i].name), b: [], a: [], w: 1 } };
@@ -9936,8 +10188,8 @@ if (stops.length) {
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busdo</lhs><op>2</op><rhs>switch/open/close/open-grown/fit</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task62">
-		<cdate>1791892037249</cdate>
-		<edate>1791892037249</edate>
+		<cdate>1792001973741</cdate>
+		<edate>1792001973741</edate>
 		<id>62</id>
 		<nme>Bus Watch</nme>
 		<pri>6</pri>
@@ -10181,6 +10433,13 @@ debugLog('Position pushed' + (m ? '' : ', but unreadable') + (busspeed !== '' ? 
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -10243,7 +10502,7 @@ var lastWifi = get('BusStateLastWifi');
 var hereLat = parseFloat(loc('gl_latitude'));
 var hereLon = parseFloat(loc('gl_longitude'));
 function metresFrom(placeVar) {
-  var at = null; try { at = JSON.parse(get(placeVar) || 'null'); } catch (e) {}
+  var at = getJSON(placeVar, null);
   if (!at || !at.lat || isNaN(hereLat) || isNaN(hereLon)) return null;
   return metres(hereLat, hereLon, at.lat, at.lon);
 }
@@ -10280,7 +10539,7 @@ var quietFar = fromWake &amp;&amp; !countdownOn &amp;&amp; get('BusStatePushMode
 // take one: getting it held Tasker for up to 7 seconds at every screen-on, and every other task with it
 // (4.55). Pushed positions still refine it, and a run by hand still checks.
 function learned(placeVar) {
-  var at = null; try { at = JSON.parse(get(placeVar) || 'null'); } catch (e) {}
+  var at = getJSON(placeVar, null);
   return !!(at &amp;&amp; at.lat &amp;&amp; at.n &gt;= 10);
 }
 var placeKnown = fromWake &amp;&amp; (onHome ? learned('BusHomeAt') : onWork ? learned('BusWorkAt') : false);
@@ -10503,6 +10762,13 @@ Time in milliseconds that it took for Tasker to get the location&lt;/_array_net.
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -10510,7 +10776,7 @@ var wifi = get('BusStateWifi');
 var which = wifi &amp;&amp; wifi === get('BusHomeWifi') ? 'BusHomeAt' : wifi &amp;&amp; wifi === get('BusWorkWifi') ? 'BusWorkAt' : '';
 var lat = parseFloat(loc('gl_latitude')); var lon = parseFloat(loc('gl_longitude'));
 if (which &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
-  var at = null; try { at = JSON.parse(get(which) || 'null'); } catch (e) {}
+  var at = getJSON(which, null);
   var n = at &amp;&amp; at.n ? Math.min(at.n, 9) : 0;
   at = n ? { lat: (at.lat * n + lat) / (n + 1), lon: (at.lon * n + lon) / (n + 1), n: n + 1 } : { lat: lat, lon: lon, n: 1 };
   setGlobal(which, JSON.stringify({ lat: +at.lat.toFixed(6), lon: +at.lon.toFixed(6), n: at.n }));
@@ -10574,6 +10840,13 @@ if (which &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -10606,7 +10879,7 @@ function bearingTo(aLat, aLon, bLat, bLon) {
 //     only uses what has happened so far, as the phone must. The speed it reads is the filter's,
 //     measured over the last minute or more, which averages out GPS wander indoors.
 function travelMode(t, lat, lon, acc) {
-  var kf = null; try { kf = JSON.parse(get('BusStateKF') || 'null'); } catch (e) { kf = null; }
+  var kf = getJSON('BusStateKF', null);
   if (kf &amp;&amp; t &lt;= kf.t + 500 &amp;&amp; kf.out) return kf.out;                 // the same position again
   var rad = Math.PI / 180;
   var r = Math.max(15, (acc || 30) * 1.5);                           // Android's accuracy is optimistic
@@ -10672,7 +10945,7 @@ function travelMode(t, lat, lon, acc) {
 //   and metres along the route to each. Read once per script run.
 function routeLines() {
   if (routeLines.lines) return routeLines.lines;          // kept on the function, so Tasker doesn't hand it back as a local
-  var seqs = []; try { seqs = JSON.parse(get('BusCacheSeq') || '[]') || []; } catch (e) { seqs = []; }
+  var seqs = getJSON('BusCacheSeq', []);
   routeLines.lines = seqs.map(function (sq) {
     var cum = [0]; for (var c = 1; c &lt; sq.length; c++) cum.push(cum[c - 1] + metres(sq[c - 1][1], sq[c - 1][2], sq[c][1], sq[c][2]));
     return { seq: sq, cum: cum };
@@ -10719,8 +10992,8 @@ function nearestOnLine(line, pLat, pLon, from, to, keep) {
 // so nothing that needs a quick answer waits on it: it only stops a slow spell ending a ride.
 // Needs routeLines (shared/routeLines.js) and metres.
 function followBus(fLat, fLon, fAcc, fNow) {
-  var fb = null; try { fb = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) { fb = null; }
-  var ff = null; try { ff = JSON.parse(get('BusStateFollow') || 'null'); } catch (e) { ff = null; }
+  var fb = getJSON('BusStateBoarded', null);
+  var ff = getJSON('BusStateFollow', null);
   if (!fb || !fb.v || fb.sure === false || !ff || ff.v !== fb.v || fNow - ff.at &gt; 120000 || (fAcc || 15) &gt; 60) return null;
   // Stops still to come: TfL's times move on by themselves, so a reply a minute old still says where
   // the bus is now (one due up to 30 s ago may be standing there yet)
@@ -10764,7 +11037,7 @@ function followBus(fLat, fLon, fAcc, fNow) {
 // last 9 minutes to Kiln Street, so only TfL's word gave its way); once you're off it, only within 2
 // minutes of last moving at bus speed, so crossing the road for a bus back soon shows its countdown.
 function goesBack(st, gNow, onBus) {
-  var hd = null; try { hd = JSON.parse(get('BusStateHeading') || 'null'); } catch (e) { hd = null; }
+  var hd = getJSON('BusStateHeading', null);
   if (!hd || !hd.a || !hd.z || (onBus ? gNow - hd.t &gt; 3 * 60000 : gNow - (hd.b || 0) &gt; 2 * 60000)) return false;
   var a = hd.a; var z = hd.z;
   var R = Math.PI / 180; var kx = Math.cos(st.lat * R); var tx = (z[1] - a[1]) * kx; var ty = z[0] - a[0];
@@ -10809,6 +11082,80 @@ function movingAlong(rWin, minPace) {
   });
   return best &amp;&amp; best.pace &gt;= minPace ? best : null;
 }
+// How you've been moving, from Bus Watch's window of recent positions (BusStateWindow: up to 6, the
+// last 5 minutes, each { t, lat, lon, acc, spd }). Gathered here in 4.63; each worked the same in
+// watch.js before. fixT is the newest position's time (ms); st is a stop as watch.js has it
+// ({ lat, lon, d (metres from you now), r (its circle) }).
+
+// Speed: the median of the last three readings, so one jumpy fix can't fake (or hide) a bus.
+// -1 when there's none
+function moveSpeed(win) {
+  var recent = win.map(function (w) { return w.spd; }).filter(function (v) { return v &gt;= 0; }).slice(-3).sort(function (a, c) { return a - c; });
+  return recent.length ? recent[Math.floor(recent.length / 2)] : -1;
+}
+
+// Moving away from a point: the trend of your distance from it across the window (least squares, m/s)
+function moveTrend(win, pLat, pLon) {
+  var part = win.slice(-4);                         // the most recent positions only
+  if (part.length &lt; 3) return 0;
+  var xs = part.map(function (w) { return (w.t - part[0].t) / 1000; }); var ys = part.map(function (w) { return metres(w.lat, w.lon, pLat, pLon); });
+  var n = xs.length; var mx = 0; var my = 0; var sxy = 0; var sxx = 0; var k;
+  for (k = 0; k &lt; n; k++) { mx += xs[k] / n; my += ys[k] / n; }
+  for (k = 0; k &lt; n; k++) { sxy += (xs[k] - mx) * (ys[k] - my); sxx += (xs[k] - mx) * (xs[k] - mx); }
+  return sxx &gt; 0 ? sxy / sxx : 0;
+}
+
+// Slowed down, though a rough fix makes the speed reading bounce about even when you're standing
+// still: over the last 30 to 90 seconds of positions, less than 25 m from where you were, under
+// 0.5 m/s. Walking past a stop covers 40 m or more in that time.
+function moveSettled(win, fixT) {
+  var recentW = win.filter(function (w) { return fixT - w.t &lt;= 90000; });
+  if (recentW.length &lt; 3) return false;
+  var a = recentW[0]; var z = recentW[recentW.length - 1]; var span = (z.t - a.t) / 1000;
+  if (span &lt; 30) return false;
+  var moved = metres(a.lat, a.lon, z.lat, z.lon);
+  return moved &lt; 25 &amp;&amp; moved / span &lt; 0.5;
+}
+
+// Staying put somewhere, allowing for indoor GPS wander: at least 4 positions over 2 minutes or more
+// (in the last 5), all within 80 m of where they average out. Walking 2 minutes covers 170 m. Only
+// used to slow the pushes down far from your stops (Tuesday evening indoors, the fix wandered 30
+// to 70 m, so moveSettled never held).
+function moveStaying(win) {
+  if (win.length &lt; 4 || win[win.length - 1].t - win[0].t &lt; 120000) return false;
+  var mLat = 0; var mLon = 0;
+  win.forEach(function (w) { mLat += w.lat / win.length; mLon += w.lon / win.length; });
+  return win.every(function (w) { return metres(w.lat, w.lon, mLat, mLon) &lt;= 80; });
+}
+
+// Steady pace away from a stop: the fastest average over 90 seconds or more of the window. Walking
+// tops out under 2 m/s even with GPS error; over 2.2 m/s for that long is a bus, however slowly it
+// crawled through traffic (Tuesday, leaving Wexley on the 566: 2.6 m/s for nearly 3 minutes, which
+// a single speed reading never showed)
+function movePaceAway(win, fixT, st) {
+  var best = 0;
+  win.forEach(function (w) { var dt = (fixT - w.t) / 1000; if (dt &gt;= 90) best = Math.max(best, (st.d - metres(w.lat, w.lon, st.lat, st.lon)) / dt); });
+  return best;
+}
+
+// How fast you've been closing in on a stop (m/s): your distance from it now against a position 45
+// seconds to 4 minutes back (the oldest such in the window). Straight-line both times, so a bend in
+// the road affects both alike. -1 when there's nothing to go on.
+function moveClosing(win, fixT, st) {
+  for (var i = 0; i &lt; win.length; i++) {
+    var dt = (fixT - win[i].t) / 1000;
+    if (dt &gt;= 45 &amp;&amp; dt &lt;= 240) return (metres(win[i].lat, win[i].lon, st.lat, st.lon) - st.d) / dt;
+  }
+  return -1;
+}
+
+// When you left a stop: the last position within 40 m of it, or failing that inside its circle (0 if
+// the window no longer has one)
+function moveLeftAt(win, st) {
+  var near = 0; var inCircle = 0;
+  win.forEach(function (w) { var d = metres(w.lat, w.lon, st.lat, st.lon); if (d &lt;= 40) near = w.t; if (d &lt;= st.r) inCircle = w.t; });
+  return near || inCircle;
+}
 
 var now = Date.now();
 var lat = parseFloat(loc('gl_latitude')); var lon = parseFloat(loc('gl_longitude'));
@@ -10836,7 +11183,7 @@ var trip = { s: 'idle' };
 
 if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
   // ---- Sliding window of recent positions, with smoothing ----------------------------------
-  var win = []; try { win = JSON.parse(get('BusStateWindow') || '[]'); } catch (e) {}
+  var win = getJSON('BusStateWindow', []);
   win = win.filter(function (w) { return now - w.t &lt; 5 * 60000; });        // only the last 5 minutes
   // A poor fix (over 25 m) is averaged with the previous one, weighted by how accurate each is
   var prevW = win.length ? win[win.length - 1] : null;
@@ -10871,19 +11218,8 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
     // Travel mode (4.34), on trial: recorded and shown in Bus Status, but nothing below reads it
     try { tmode = travelMode(fixT, lat, lon, accuracy); setGlobal('BusStateMode', JSON.stringify({ t: now, m: tmode.mode, p: tmode.p, v: tmode.nv })); } catch (e) { tmode = null; }
   }
-  // Speed: the median of the last three readings, so one jumpy fix can't fake (or hide) a bus
-  var recent = win.map(function (w) { return w.spd; }).filter(function (v) { return v &gt;= 0; }).slice(-3).sort(function (a, c) { return a - c; });
-  var speed = recent.length ? recent[Math.floor(recent.length / 2)] : -1;
-  // Moving away from a point: the trend of your distance from it across the window (least squares, m/s)
-  function trend(pLat, pLon) {
-    var part = win.slice(-4);                         // the most recent positions only
-    if (part.length &lt; 3) return 0;
-    var xs = part.map(function (w) { return (w.t - part[0].t) / 1000; }); var ys = part.map(function (w) { return metres(w.lat, w.lon, pLat, pLon); });
-    var n = xs.length; var mx = 0; var my = 0; var sxy = 0; var sxx = 0; var k;
-    for (k = 0; k &lt; n; k++) { mx += xs[k] / n; my += ys[k] / n; }
-    for (k = 0; k &lt; n; k++) { sxy += (xs[k] - mx) * (ys[k] - my); sxx += (xs[k] - mx) * (xs[k] - mx); }
-    return sxx &gt; 0 ? sxy / sxx : 0;
-  }
+  // Speed (median of the last three readings) and the rest of how you've been moving: shared/movement.js
+  var speed = moveSpeed(win);
 
   // ---- Saved stops: distances, circles, the nearest ------------------------------------------
   var defaultR = parseFloat(get('BusNearRadius')) || 50;
@@ -10914,7 +11250,7 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
   // countdown itself is what stops Tasker.
   function restartLost() {
     var at = stops.filter(function (st) { return st.id === trip.stop; })[0];
-    var before = null; try { before = JSON.parse(get('BusStateLostAt') || 'null'); } catch (e) { before = null; }
+    var before = getJSON('BusStateLostAt', null);
     lostNote = 'the countdown at ' + (at ? at.n : 'the stop') + ' stopped without ending (Tasker restarted?)';
     if (!at || (trip.s === 'atstop' ? at.d &gt; endAtFor(at) : at.d &gt; (trip.minD || at.d) + 100)) return false;
     if (trip.s === 'atstop' &amp;&amp; speed &gt; 4.2) return false;      // already pulling away on a bus, just past the stop
@@ -10924,7 +11260,7 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
   }
 
   // ---- The trip state, kept in step with what's actually happening --------------------------
-  try { trip = JSON.parse(get('BusStateTrip') || '{"s":"idle"}'); } catch (e) { trip = { s: 'idle' }; }
+  trip = getJSON('BusStateTrip', { s: 'idle' });
   var running = get('BusStateRunning') === '1' &amp;&amp; /(^|,)Bus Loop(,|$)/.test(get('TRUN'));
   // Lost, not ended (4.58): the running flag is still set, but Bus Loop has gone. Only Bus End clears
   // the flag (a swipe, time up, Wi-Fi, walking away), so Tasker itself stopped: it restarted, or
@@ -10945,7 +11281,7 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
     // Ended without us (swiped, timed out, got home): treat it as left
     var was = stops.filter(function (st) { return st.id === trip.stop; })[0];
     trip = { s: 'left', stop: trip.stop, since: now, leftD: was ? Math.round(was.d) : 0, wasAt: trip.s === 'atstop' || (trip.minD || 9999) &lt;= (was ? was.r : 0),
-      leftAt: was &amp;&amp; was.d &gt; was.r ? leftTime(was) || now : now, atAt: trip.s === 'atstop' ? trip.since : 0 };   // still there: now
+      leftAt: was &amp;&amp; was.d &gt; was.r ? moveLeftAt(win, was) || now : now, atAt: trip.s === 'atstop' ? trip.since : 0 };   // still there: now
   }
   // Swiped away (Bus End notes it in BusStateSnooze: the stop, and when): nothing starts anywhere
   // until you've got near the stop and then away from it, clear of all your stops, or for 30 minutes.
@@ -10988,28 +11324,11 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
   }
 
   // ---- What this position means, from the current state --------------------------------------
-  // Slowed down: the speed reading is walking pace or less (unknown counts as slow), or, since a rough
-  // fix makes the reading bounce about even when you're standing still, you've hardly got anywhere:
-  // over the last 30 to 90 seconds of positions, less than 25 m from where you were, under 0.5 m/s.
-  // Walking past a stop covers 40 m or more in that time.
-  var settled = (function () {
-    var recentW = win.filter(function (w) { return fixT - w.t &lt;= 90000; });
-    if (recentW.length &lt; 3) return false;
-    var a = recentW[0]; var z = recentW[recentW.length - 1]; var span = (z.t - a.t) / 1000;
-    if (span &lt; 30) return false;
-    var moved = metres(a.lat, a.lon, z.lat, z.lon);
-    return moved &lt; 25 &amp;&amp; moved / span &lt; 0.5;
-  })();
-  // Staying put somewhere, allowing for indoor GPS wander: at least 4 positions over 2 minutes or more
-  // (in the last 5), all within 80 m of where they average out. Walking 2 minutes covers 170 m. Only
-  // used to slow the pushes down far from your stops (Tuesday evening indoors, the fix wandered 30
-  // to 70 m, so "settled" above never held).
-  var staying = (function () {
-    if (win.length &lt; 4 || win[win.length - 1].t - win[0].t &lt; 120000) return false;
-    var mLat = 0; var mLon = 0;
-    win.forEach(function (w) { mLat += w.lat / win.length; mLon += w.lon / win.length; });
-    return win.every(function (w) { return metres(w.lat, w.lon, mLat, mLon) &lt;= 80; });
-  })();
+  // Slowed down: the speed reading is walking pace or less (unknown counts as slow), or you've hardly
+  // got anywhere over the last 30 to 90 seconds (moveSettled). Staying put somewhere (moveStaying) only
+  // slows the pushes down far from your stops.
+  var settled = moveSettled(win, fixT);
+  var staying = moveStaying(win);
   var slow = speed &lt; 0 || speed &lt;= 0.8 || settled;
   var lastTwo = win.map(function (w) { return w.spd; }).filter(function (v) { return v &gt;= 0; }).slice(-2);
   var busTwice = lastTwo.length === 2 &amp;&amp; lastTwo[0] &gt; 4.2 &amp;&amp; lastTwo[1] &gt; 4.2;
@@ -11018,21 +11337,12 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
   // when last known; b, when last at bus speed. While TfL has your bus with you, from its stops (the
   // stop before its next one, to that one): that lasts a minute or two after you get off, while the
   // window is your walk, so the window is only used at bus speed, over 60 m or more.
-  var headWas = null; try { headWas = JSON.parse(get('BusStateHeading') || 'null'); } catch (e) { headWas = null; }
+  var headWas = getJSON('BusStateHeading', null);
   if (bus &amp;&amp; win.length &gt;= 2 &amp;&amp; metres(win[0].lat, win[0].lon, win[win.length - 1].lat, win[win.length - 1].lon) &gt;= 60) {
     setGlobal('BusStateHeading', JSON.stringify({ t: now, b: now, a: [win[0].lat, win[0].lon], z: [win[win.length - 1].lat, win[win.length - 1].lon] }));
   } else if (withBus &amp;&amp; follow.dir) {
     setGlobal('BusStateHeading', JSON.stringify({ t: now, b: headWas &amp;&amp; headWas.b ? headWas.b : 0, a: follow.dir[0], z: follow.dir[1] }));
   }
-  // Steady pace away from a stop: the fastest average over 90 seconds or more of the window. Walking
-  // tops out under 2 m/s even with GPS error; over 2.2 m/s for that long is a bus, however slowly it
-  // crawled through traffic (Tuesday, leaving Wexley on the 566: 2.6 m/s for nearly 3 minutes, which
-  // a single speed reading never showed)
-  var paceAway = function (st) {
-    var best = 0;
-    win.forEach(function (w) { var dt = (fixT - w.t) / 1000; if (dt &gt;= 90) best = Math.max(best, (st.d - metres(w.lat, w.lon, st.lat, st.lon)) / dt); });
-    return best;
-  };
   // On a bus lately (in the last 5 minutes): BusStateLastBusAt. Used to keep the bus you got on, and
   // (with 15 minutes, below) to tell getting off at the stop by home or work from walking up to it
   if (bus) setGlobal('BusStateLastBusAt', String(now));
@@ -11043,19 +11353,19 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
   // rare; a run by hand still starts it.
   var offBusLately = now - (parseInt(get('BusStateLastBusAt'), 10) || 0) &lt; 15 * 60000;
   if (trip.s === 'atstop' &amp;&amp; tripStop) {
-    var away = trend(tripStop.lat, tripStop.lon);
+    var away = moveTrend(win, tripStop.lat, tripStop.lon);
     if (bus &amp;&amp; away &gt; 1 &amp;&amp; tripStop.d &gt; tripStop.r * 0.5) {
       busaction = 'stop'; why = 'on the bus, away from ' + tripStop.n + noteBoarded(tripStop); from('onbus', { boardedAt: tripStop.id });
-    } else if (tripStop.d &gt; Math.max(tripStop.r + 50, 120) &amp;&amp; paceAway(tripStop) &gt; 2.2) {
-      busaction = 'stop'; why = 'on the bus, away from ' + tripStop.n + ' (' + Math.round(paceAway(tripStop) * 3.6) + ' km/h for the last few minutes)' + noteBoarded(tripStop);
+    } else if (tripStop.d &gt; Math.max(tripStop.r + 50, 120) &amp;&amp; movePaceAway(win, fixT, tripStop) &gt; 2.2) {
+      busaction = 'stop'; why = 'on the bus, away from ' + tripStop.n + ' (' + Math.round(movePaceAway(win, fixT, tripStop) * 3.6) + ' km/h for the last few minutes)' + noteBoarded(tripStop);
       setGlobal('BusStateLastBusAt', String(now)); from('onbus', { boardedAt: tripStop.id });
     } else if (tripStop.d &gt; endAtFor(tripStop) || (away &gt; 0.4 &amp;&amp; win.length &gt;= 3 &amp;&amp; tripStop.d &gt; Math.max(tripStop.r + 50, 120))) {
       busaction = 'stop'; why = 'walking away from ' + tripStop.n;
-      from('left', { leftD: Math.round(tripStop.d), walked: true, leftAt: leftTime(tripStop) || now, atAt: trip.since, wasAt: true });
+      from('left', { leftD: Math.round(tripStop.d), walked: true, leftAt: moveLeftAt(win, tripStop) || now, atAt: trip.since, wasAt: true });
     } else why = 'waiting at ' + tripStop.n;
   } else if (trip.s === 'heading' &amp;&amp; tripStop) {
     trip.minD = Math.min(trip.minD || tripStop.d, Math.round(tripStop.d));
-    var awayH = trend(tripStop.lat, tripStop.lon);
+    var awayH = moveTrend(win, tripStop.lat, tripStop.lon);
     // Passing it on a bus: when you weren't already riding towards it (walking to it, or a countdown
     // from the heads-up or leaving work), it takes the last two readings both fast, not two of the last
     // three: on Wednesday evening one high reading from Android after a jumpy fix ended a walk as "on
@@ -11064,7 +11374,7 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
     if (trip.bus) trip.rode = true;      // rode towards it at some point (for "still on the bus", 4.39)
     if (tripStop.d &lt;= tripStop.r &amp;&amp; slow) { from('atstop'); why = 'reached ' + tripStop.n; }
     else if (passBus &amp;&amp; awayH &gt; 1 &amp;&amp; tripStop.d &gt; endAtFor(tripStop)) { busaction = 'stop'; why = 'passed ' + tripStop.n + ' on a bus'; from('onbus'); }
-    else if (trip.minD &lt;= tripStop.r &amp;&amp; awayH &gt; 0.4 &amp;&amp; tripStop.d &gt; Math.max(tripStop.r + 50, 120)) { busaction = 'stop'; why = 'went past ' + tripStop.n; from('left', { leftD: Math.round(tripStop.d), byBus: !!trip.rode, wasAt: !trip.rode || !get('BusStateBoarded'), leftAt: leftTime(tripStop) || now }); }
+    else if (trip.minD &lt;= tripStop.r &amp;&amp; awayH &gt; 0.4 &amp;&amp; tripStop.d &gt; Math.max(tripStop.r + 50, 120)) { busaction = 'stop'; why = 'went past ' + tripStop.n; from('left', { leftD: Math.round(tripStop.d), byBus: !!trip.rode, wasAt: !trip.rode || !get('BusStateBoarded'), leftAt: moveLeftAt(win, tripStop) || now }); }
     else if (tripStop.d &gt; trip.minD + 200 &amp;&amp; tripStop.d &gt; endAtFor(tripStop)) { busaction = 'stop'; why = (passBus ? 'passed ' : 'turned away from ') + tripStop.n; from(passBus ? 'onbus' : 'left', { leftD: Math.round(tripStop.d) }); }
     // No longer coming up soon: shown while on a bus, but you got off (or slowed right down) well short
     // of it. At walking pace or slower, and more than twice BusApproachMin away at that pace, on three
@@ -11134,7 +11444,7 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
     if (trip.s === 'left' &amp;&amp; trip.wasAt &amp;&amp; now - trip.since &lt; 5 * 60000) {
       var boardStop = stops.filter(function (st) { return st.id === trip.stop; })[0];
       var past = boardStop ? pastAlong(boardStop) : -1;
-      var boardLeft = Math.max(trip.leftAt || trip.since, boardStop ? leftTime(boardStop) : 0);   // your last position at the stop, if later
+      var boardLeft = Math.max(trip.leftAt || trip.since, boardStop ? moveLeftAt(win, boardStop) : 0);   // your last position at the stop, if later
       var sinceLeft = (fixT - boardLeft) / 1000;
       if (past &gt;= 150 &amp;&amp; past / Math.max(1, sinceLeft) &gt; 2.5) {
         afterAll = 'on a bus from ' + boardStop.n + ' (' + Math.round(past) + ' m along its route in ' + Math.round(sinceLeft) + ' s)' +
@@ -11147,8 +11457,8 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
     // keeps the trip, and the recording, right)
     if (trip.s === 'left' &amp;&amp; trip.walked &amp;&amp; now - trip.since &lt; 5 * 60000) {
       var leftFrom = stops.filter(function (st) { return st.id === trip.stop; })[0];
-      if (leftFrom &amp;&amp; paceAway(leftFrom) &gt; 2.2) {
-        afterAll = 'on a bus after all, from ' + leftFrom.n + ' (' + Math.round(paceAway(leftFrom) * 3.6) + ' km/h for the last few minutes)' +
+      if (leftFrom &amp;&amp; movePaceAway(win, fixT, leftFrom) &gt; 2.2) {
+        afterAll = 'on a bus after all, from ' + leftFrom.n + ' (' + Math.round(movePaceAway(win, fixT, leftFrom) * 3.6) + ' km/h for the last few minutes)' +
           noteBoarded(leftFrom, { leftAt: trip.leftAt || trip.since, arrivedAt: trip.atAt });
         setGlobal('BusStateLastBusAt', String(now)); from('onbus', { boardedAt: leftFrom.id, leftD: Math.round(leftFrom.d), walked: false });
       }
@@ -11160,8 +11470,8 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
     // got on is kept as it was: you're still on it.
     if (trip.s === 'left' &amp;&amp; trip.byBus &amp;&amp; now - trip.since &lt; 5 * 60000) {
       var passedStop = stops.filter(function (st) { return st.id === trip.stop; })[0];
-      if (passedStop &amp;&amp; paceAway(passedStop) &gt; 2.2) {
-        afterAll = 'still on the bus past ' + passedStop.n + ' (' + Math.round(paceAway(passedStop) * 3.6) + ' km/h for the last few minutes)';
+      if (passedStop &amp;&amp; movePaceAway(win, fixT, passedStop) &gt; 2.2) {
+        afterAll = 'still on the bus past ' + passedStop.n + ' (' + Math.round(movePaceAway(win, fixT, passedStop) * 3.6) + ' km/h for the last few minutes)';
         setGlobal('BusStateLastBusAt', String(now)); from('onbus', { leftD: Math.round(passedStop.d), rode: false });
       }
     }
@@ -11207,7 +11517,7 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
   // (The stop is looked up again: a new heading set just now is for a different stop than tripStop)
   var etaStop = trip.s === 'heading' &amp;&amp; trip.bus ? stops.filter(function (st) { return st.id === trip.stop; })[0] : null;
   if (etaStop) {
-    var closing = closingSpeed(etaStop);
+    var closing = moveClosing(win, fixT, etaStop);
     if (closing &gt; 0.5) { trip.eta = Math.round(fixT + etaStop.d / closing * 1000); trip.etaAt = now; }
   }
   if (afterAll &amp;&amp; busaction === 'none') why = afterAll;
@@ -11265,33 +11575,14 @@ function approaching() {
 function walkingTo(st) {
   if ((get('BusApproach') || 'both') === 'off' || speed &lt;= 0.8 || speed &gt; 2.5 || st.d &lt;= 30) return null;
   var limit = (parseFloat(get('BusApproachMin')) || 3) * 60;
-  var closing = closingSpeed(st);
+  var closing = moveClosing(win, fixT, st);
   if (closing &lt; Math.max(0.5, 0.6 * speed) || st.d / speed &gt; limit) return null;
   var place = homeOrWork(st);
   if (place) {
-    var pAt = null; try { pAt = JSON.parse(get(place === 'home' ? 'BusHomeAt' : 'BusWorkAt') || 'null'); } catch (e) { pAt = null; }
-    if (pAt &amp;&amp; closingSpeed({ lat: pAt.lat, lon: pAt.lon, d: metres(lat, lon, pAt.lat, pAt.lon) }) &gt; 0.3) return null;
+    var pAt = getJSON(place === 'home' ? 'BusHomeAt' : 'BusWorkAt', null);
+    if (pAt &amp;&amp; moveClosing(win, fixT, { lat: pAt.lat, lon: pAt.lon, d: metres(lat, lon, pAt.lat, pAt.lon) }) &gt; 0.3) return null;
   }
   return { why: 'heading to ' + st.n + ' (' + Math.round(st.d) + ' m, about ' + Math.max(1, Math.round(st.d / speed / 60)) + ' min on foot, getting nearer at ' + Math.round(closing * 3.6) + ' km/h)' };
-}
-
-// How fast you've been closing in on a stop (m/s): your distance from it now against a position 45
-// seconds to 4 minutes back (the oldest such in the window). Straight-line both times, so a bend in
-// the road affects both alike. -1 when there's nothing to go on.
-function closingSpeed(st) {
-  for (var i = 0; i &lt; win.length; i++) {
-    var dt = (fixT - win[i].t) / 1000;
-    if (dt &gt;= 45 &amp;&amp; dt &lt;= 240) return (metres(win[i].lat, win[i].lon, st.lat, st.lon) - st.d) / dt;
-  }
-  return -1;
-}
-
-// When you left a stop: the last position within 40 m of it, or failing that inside its circle (0 if
-// the window no longer has one)
-function leftTime(st) {
-  var near = 0; var inCircle = 0;
-  win.forEach(function (w) { var d = metres(w.lat, w.lon, st.lat, st.lon); if (d &lt;= 40) near = w.t; if (d &lt;= st.r) inCircle = w.t; });
-  return near || inCircle;
 }
 
 // Which bus you got on at a stop: the one TfL had arriving nearest the time you left it, from the
@@ -11304,11 +11595,11 @@ function leftTime(st) {
 // (for checking TfL's predictions). Returns a note for the reason, or ''.
 function noteBoarded(st, hint) {
   hint = hint || {};
-  var seenHere = {}; try { seenHere = JSON.parse(get('BusStateSeen') || '{}'); } catch (e) {}
+  var seenHere = getJSON('BusStateSeen', {});
   if (seenHere.s !== st.id) { setGlobal('BusStateBoarded', ''); return ''; }
-  var leftAt = leftTime(st) || hint.leftAt || now;
+  var leftAt = moveLeftAt(win, st) || hint.leftAt || now;
   var arrivedAt = hint.arrivedAt || (trip.s === 'atstop' ? trip.since : 0);
-  var cameOn = null; try { cameOn = JSON.parse(get('BusStateCameOn') || 'null'); } catch (e) {}
+  var cameOn = getJSON('BusStateCameOn', null);
   var cameOnHere = !!cameOn &amp;&amp; cameOn.stop === st.id &amp;&amp; now - cameOn.at &lt; 30 * 60000;
   var best = null;
   // Stayed on: the bus you came in on was still at the stop when you left (TfL still listed it, or
@@ -11344,7 +11635,7 @@ function noteBoarded(st, hint) {
 function homeOrWork(st) {
   var places = [['home', 'BusHomeAt'], ['work', 'BusWorkAt']];
   for (var i = 0; i &lt; places.length; i++) {
-    var at = null; try { at = JSON.parse(get(places[i][1]) || 'null'); } catch (e) { at = null; }
+    var at = getJSON(places[i][1], null);
     if (at &amp;&amp; at.lat !== undefined &amp;&amp; metres(st.lat, st.lon, at.lat, at.lon) &lt;= 400) return places[i][0];
   }
   return '';
@@ -11431,7 +11722,7 @@ var busnote = stale ? 'Bus Watch: no fresh location (GPS needs a view of the sky
 var RATES = { countdown: ['10000', '20'], dwell: ['15000', '0'], near: ['5000', '10'], arrive: ['20000', '30'], far: ['60000', '100'] };
 var rateNow = get('BusStatePushMode') || 'arrive';
 var edgeNow = closest ? closest.edge : Infinity;
-var farAt = null; try { farAt = JSON.parse(get('BusStateFarAt') || 'null'); } catch (e) { farAt = null; }
+var farAt = getJSON('BusStateFarAt', null);
 var stillFar = rateNow === 'far' &amp;&amp; farAt &amp;&amp; !isNaN(lat) &amp;&amp; edgeNow &gt; 250 &amp;&amp; metres(lat, lon, farAt.lat, farAt.lon) &lt; 150;
 var goFar = typeof staying !== 'undefined' &amp;&amp; (staying || settled) &amp;&amp; !byBusLately &amp;&amp; edgeNow &gt; 300;
 var rateWant = (trip.s === 'heading' || trip.s === 'atstop') ? 'countdown'
@@ -11825,14 +12116,21 @@ record('check', { src: caller || 'hand', lat: isNaN(lat) ? null : +lat.toFixed(6
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 var now = Date.now();
-var trip = {}; try { trip = JSON.parse(get('BusStateTrip') || '{}') || {}; } catch (e) { trip = {}; }
-var boarded = null; try { boarded = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) { boarded = null; }
-var last = null; try { last = JSON.parse(get('BusStateFollow') || 'null'); } catch (e) { last = null; }
-var win = []; try { win = JSON.parse(get('BusStateWindow') || '[]'); } catch (e) { win = []; }
+var trip = getJSON('BusStateTrip', {});
+var boarded = getJSON('BusStateBoarded', null);
+var last = getJSON('BusStateFollow', null);
+var win = getJSON('BusStateWindow', []);
 var riding = trip.s === 'onbus' || (trip.s === 'heading' &amp;&amp; !!trip.bus);
 var named = !!boarded &amp;&amp; !!boarded.v &amp;&amp; boarded.sure !== false &amp;&amp; now - (boarded.at || 0) &lt; 2 * 3600000;
-var tried = null; try { tried = JSON.parse(get('BusStateFollowTry') || 'null'); } catch (e) { tried = null; }
+var tried = getJSON('BusStateFollowTry', null);
 var lastSpd = win.length ? win[win.length - 1].spd : -1;
 var fails = tried &amp;&amp; tried.v === (boarded &amp;&amp; boarded.v) ? tried.fails || 0 : 0;
 var lastAsk = Math.max(last &amp;&amp; last.v === (boarded &amp;&amp; boarded.v) ? last.at : 0, tried &amp;&amp; tried.v === (boarded &amp;&amp; boarded.v) ? tried.at : 0);
@@ -11888,6 +12186,13 @@ if (busfollow === 'yes') setGlobal('BusStateFollowTry', JSON.stringify({ v: boar
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // One of this task's local variables (Tasker passes them in as plain variables), trimmed, or '' if it
 // isn't set
 function loc(n) { try { var v = eval('typeof ' + n + ' === "undefined" ? "" : ' + n); return (v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); } catch (e) { return ''; } }
@@ -11906,11 +12211,11 @@ if (loc('http_response_code') === '200' &amp;&amp; loc('busfollowv')) {
   } catch (e) {}
 }
 // For follow_due.js: answered (ask again in 20 to 45 s), or failed once more (wait longer each time)
-var tried = null; try { tried = JSON.parse(get('BusStateFollowTry') || 'null'); } catch (e) { tried = null; }
+var tried = getJSON('BusStateFollowTry', null);
 if (tried &amp;&amp; loc('busfollowv')) setGlobal('BusStateFollowTry', JSON.stringify({ v: tried.v, at: tried.at, fails: answered ? 0 : (tried.fails || 0) + 1 }));
 if (!answered &amp;&amp; loc('busfollowv')) record('follow', { v: loc('busfollowv'), fail: loc('http_response_code') || 'no reply', took: tookMs() });
 // How long TfL took to answer (4.61), from when follow_due.js counted it as tried, just before asking
-function tookMs() { var tr = null; try { tr = JSON.parse(get('BusStateFollowTry') || 'null'); } catch (e) { tr = null; } return tr &amp;&amp; tr.at ? now - tr.at : undefined; }
+function tookMs() { var tr = getJSON('BusStateFollowTry', null); return tr &amp;&amp; tr.at ? now - tr.at : undefined; }
 
 // Trip recorder (Settings: Record trips, BusRecord on). Each call adds one line of JSON for a file in
 // Download/Tasker-bus-trip-data (Downloads in the Files app), one per day, named by its date and
@@ -12054,8 +12359,8 @@ function recordName(d) {
 		</Action>
 	</Task>
 	<Task sr="task72">
-		<cdate>1791892037249</cdate>
-		<edate>1791892037249</edate>
+		<cdate>1792001973742</cdate>
+		<edate>1792001973742</edate>
 		<id>72</id>
 		<nme>Bus Status</nme>
 		<pri>6</pri>
@@ -12069,6 +12374,13 @@ function recordName(d) {
 // A Tasker global variable, trimmed, or '' if it isn't set (Tasker leaves an unset variable as its own
 // name, starting with %)
 function get(n) { var v = global(n); return (v === undefined || v === null || String(v).charAt(0) === '%') ? '' : String(v).trim(); }
+// A global variable holding JSON, read (4.63): fallback when it's empty, isn't JSON, or is JSON's null
+function getJSON(n, fallback) {
+  var raw = get(n); var v = null;
+  if (!raw) return fallback;
+  try { v = JSON.parse(raw); } catch (e) { return fallback; }
+  return v === null || v === undefined ? fallback : v;
+}
 // Trip recorder (Settings: Record trips, BusRecord on). Each call adds one line of JSON for a file in
 // Download/Tasker-bus-trip-data (Downloads in the Files app), one per day, named by its date and
 // weekday: bus-trip-2026-10-12-Mon.jsonl (4.58; before, bus-trip-Mon.jsonl was started afresh each
@@ -12117,7 +12429,7 @@ var running = get('BusStateRunning') === '1' &amp;&amp; /(^|,)Bus Loop(,|$)/.tes
 lines.push(running
   ? 'Countdown running at ' + (get('BusStateStopName') || '?') + ' (' + (get('BusStyle') === 'chip' ? 'status bar' : 'island') + ')'
   : 'No countdown running');
-var snoozeNow = null; try { snoozeNow = JSON.parse(get('BusStateSnooze') || 'null'); } catch (e) {}
+var snoozeNow = getJSON('BusStateSnooze', null);
 if (snoozeNow &amp;&amp; Date.now() - snoozeNow.at &lt; 30 * 60000)
   lines.push('Snoozed until you\u2019ve been to that stop and left it, or ' + new Date(snoozeNow.at + 30 * 60000).toTimeString().slice(0, 5) + ' at the latest (you swiped it away)');
 
@@ -12151,24 +12463,24 @@ lines.push('Wi-Fi now: ' + (ssidNow &amp;&amp; !/^&lt;unknown ssid&gt;$/i.test(s
 var lastPush = parseInt(get('BusStateLastPush'), 10) || 0;
 if (get('BusStateRunning') === '1') lines.push('Position updates: ' + (get('BusStatePush') || 'not requested') +
   (lastPush ? ', last ' + Math.round((Date.now() - lastPush) / 1000) + ' s ago' : ''));
-var trip = {}; try { trip = JSON.parse(get('BusStateTrip') || '{}'); } catch (e) {}
+var trip = getJSON('BusStateTrip', {});
 var stopNames = {}; get('BusPlaces').split('\n').forEach(function (r) { var p = r.split('|'); if (p[1]) stopNames[p[1]] = p[2]; });
 lines.push('Trip: ' + ({ idle: 'idle', heading: 'heading to a stop', atstop: 'at the stop', onbus: 'on a bus', left: 'just left a stop' }[trip.s] || 'idle') +
   (trip.stop &amp;&amp; stopNames[trip.stop] ? ' (' + stopNames[trip.stop] + ')' : '') + (trip.since ? ', since ' + new Date(trip.since).toTimeString().slice(0, 5) : ''));
-var matchNow = {}; try { matchNow = JSON.parse(get('BusStateMatch') || '{}'); } catch (e) {}
+var matchNow = getJSON('BusStateMatch', {});
 if (matchNow.note &amp;&amp; running &amp;&amp; Date.now() - (matchNow.at || 0) &lt; 10 * 60000) lines.push('Your bus: ' + matchNow.note);
-var boardedNow = null; try { boardedNow = JSON.parse(get('BusStateBoarded') || 'null'); } catch (e) {}
+var boardedNow = getJSON('BusStateBoarded', null);
 if (boardedNow &amp;&amp; Date.now() - boardedNow.at &lt; 90 * 60000)
   lines.push('Last got on: the ' + boardedNow.k + ' (' + boardedNow.v + ') at ' + (stopNames[boardedNow.stop] || boardedNow.stop) + ', ' + new Date(boardedNow.at).toTimeString().slice(0, 5) +
     (trip.s === 'onbus' || (trip.s === 'heading' &amp;&amp; trip.bus) ? '' : ' (off it now)'));
-var modeNow = null; try { modeNow = JSON.parse(get('BusStateMode') || 'null'); } catch (e) {}
+var modeNow = getJSON('BusStateMode', null);
 if (modeNow &amp;&amp; Date.now() - modeNow.t &lt; 10 * 60000) {
   var mi = ['still', 'walk', 'ride'].indexOf(modeNow.m);
   lines.push('Travel mode (on trial, not used yet): ' + ({ still: 'still', walk: 'walking', ride: 'riding' }[modeNow.m] || '?') + ', ' + (mi &gt; -1 &amp;&amp; modeNow.p ? modeNow.p[mi] : '?') + '% sure' + (isFinite(modeNow.v) ? ', ' + Math.round(modeNow.v * 3.6) + ' km/h' : ''));
 }
 // Following your bus (4.58): what TfL last said about the bus you got on, in the last 10 minutes
-var followNow = null; try { followNow = JSON.parse(get('BusStateFollow') || 'null'); } catch (e) { followNow = null; }
-var followTry = null; try { followTry = JSON.parse(get('BusStateFollowTry') || 'null'); } catch (e) { followTry = null; }
+var followNow = getJSON('BusStateFollow', null);
+var followTry = getJSON('BusStateFollowTry', null);
 if (followNow &amp;&amp; Date.now() - followNow.at &lt; 10 * 60000) {
   var followNext = (followNow.n || []).filter(function (x) { return x[1] &gt;= Date.now() - 30000; })[0];
   lines.push('Following your bus: ' + followNow.v + ', asked ' + Math.round((Date.now() - followNow.at) / 1000) + ' s ago' +

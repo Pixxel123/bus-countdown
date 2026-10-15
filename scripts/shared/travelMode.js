@@ -15,7 +15,7 @@
 //     only uses what has happened so far, as the phone must. The speed it reads is the filter's,
 //     measured over the last minute or more, which averages out GPS wander indoors.
 function travelMode(t, lat, lon, acc) {
-  var kf = null; try { kf = JSON.parse(get('BusStateKF') || 'null'); } catch (e) { kf = null; }
+  var kf = getJSON('BusStateKF', null);
   if (kf && t <= kf.t + 500 && kf.out) return kf.out;                 // the same position again
   var rad = Math.PI / 180;
   var r = Math.max(15, (acc || 30) * 1.5);                           // Android's accuracy is optimistic

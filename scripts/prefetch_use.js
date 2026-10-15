@@ -8,7 +8,7 @@
    Output: http_response_code, http_data, buscachedat
    ================================================================== */
 /* @include get */
-var ready = {}; try { ready = JSON.parse(get('BusStatePrefetch') || '{}') || {}; } catch (e) { ready = {}; }
+var ready = getJSON('BusStatePrefetch', {});
 var now = Date.now();
 var http_response_code = '200';
 var http_data = JSON.stringify((ready.b || []).map(function (x) {
