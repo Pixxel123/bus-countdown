@@ -1,8 +1,8 @@
 <TaskerData sr="" dvi="1" tv="6.7.6-beta">
 	<dmetric>1344.0,2992.0</dmetric>
 	<Profile sr="prof72" ve="2">
-		<cdate>1792001973738</cdate>
-		<edate>1792001973738</edate>
+		<cdate>1792002657494</cdate>
+		<edate>1792002657494</edate>
 		<flags>8</flags>
 		<id>72</id>
 		<mid0>79</mid0>
@@ -14,8 +14,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof74" ve="2">
-		<cdate>1792001973738</cdate>
-		<edate>1792001973738</edate>
+		<cdate>1792002657494</cdate>
+		<edate>1792002657494</edate>
 		<flags>8</flags>
 		<id>74</id>
 		<mid0>62</mid0>
@@ -33,8 +33,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof73" ve="2">
-		<cdate>1792001973738</cdate>
-		<edate>1792001973738</edate>
+		<cdate>1792002657494</cdate>
+		<edate>1792002657494</edate>
 		<flags>8</flags>
 		<id>73</id>
 		<mid0>59</mid0>
@@ -46,14 +46,14 @@
 		</State>
 	</Profile>
 	<Project sr="proj0" ve="2">
-		<cdate>1792001973738</cdate>
+		<cdate>1792002657494</cdate>
 		<name>Bus Countdown</name>
 		<pids>72,73,74</pids>
 		<tids>73,74,75,77,78,80,76,38,60,59,79,32,31,62,72</tids>
 	</Project>
 	<Task sr="task73">
-		<cdate>1792001973739</cdate>
-		<edate>1792001973739</edate>
+		<cdate>1792002657494</cdate>
+		<edate>1792002657494</edate>
 		<id>73</id>
 		<nme>Bus</nme>
 		<pri>6</pri>
@@ -178,11 +178,11 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task74">
-		<cdate>1792001973739</cdate>
-		<edate>1792001973739</edate>
+		<cdate>1792002657494</cdate>
+		<edate>1792002657494</edate>
 		<id>74</id>
 		<nme>Bus Settings</nme>
 		<pri>6</pri>
@@ -201,7 +201,7 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>First run? · Camera not measured yet</label>
@@ -1749,8 +1749,8 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buslive</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task75">
-		<cdate>1792001973739</cdate>
-		<edate>1792001973739</edate>
+		<cdate>1792002657495</cdate>
+		<edate>1792002657495</edate>
 		<id>75</id>
 		<nme>Bus Settings Button</nme>
 		<pri>6</pri>
@@ -1889,8 +1889,8 @@ if (buspreview === 'yes') {
 			<label>Open it · Shows the Android settings page</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">startActivity {} (android.content.Intent)</Str><Str sr="arg3" ve="3">busint</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busintent</lhs><op>2</op><rhs>android*</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task77">
-		<cdate>1792001973739</cdate>
-		<edate>1792001973739</edate>
+		<cdate>1792002657495</cdate>
+		<edate>1792002657495</edate>
 		<id>77</id>
 		<nme>Bus Position</nme>
 		<pri>6</pri>
@@ -3258,8 +3258,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task78">
-		<cdate>1792001973740</cdate>
-		<edate>1792001973740</edate>
+		<cdate>1792002657495</cdate>
+		<edate>1792002657495</edate>
 		<id>78</id>
 		<nme>Bus Position Set</nme>
 		<pri>6</pri>
@@ -3277,8 +3277,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task80">
-		<cdate>1792001973740</cdate>
-		<edate>1792001973740</edate>
+		<cdate>1792002657495</cdate>
+		<edate>1792002657495</edate>
 		<id>80</id>
 		<nme>Bus Position Done</nme>
 		<pri>6</pri>
@@ -3390,8 +3390,8 @@ var busmsg = changed.length ? 'Saved: ' + changed.join(', ') : 'none';
 		</Action>
 	</Task>
 	<Task sr="task76">
-		<cdate>1792001973740</cdate>
-		<edate>1792001973740</edate>
+		<cdate>1792002657495</cdate>
+		<edate>1792002657495</edate>
 		<id>76</id>
 		<nme>Bus Find Camera</nme>
 		<pri>6</pri>
@@ -3524,8 +3524,8 @@ if (!r || !dens || !w) {
 			<label>Reset position: move the open screen's height slider · Shows the new value straight away</label><Str sr="arg0" ve="3">bussettings</Str><Str sr="arg1" ve="3">sl_y</Str><Str sr="arg2" ve="3">value</Str><Str sr="arg3" ve="3">%BusIslandY</Str><Int sr="arg4" val="0"/><Str sr="arg5" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrebuild</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task38">
-		<cdate>1792001973740</cdate>
-		<edate>1792001973740</edate>
+		<cdate>1792002657495</cdate>
+		<edate>1792002657495</edate>
 		<id>38</id>
 		<nme>Bus Start</nme>
 		<pri>6</pri>
@@ -3543,7 +3543,7 @@ if (!r || !dens || !w) {
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>Settings: fill in defaults, check TflKey and BusRoutes · Resets empty or invalid settings</label>
@@ -4418,8 +4418,8 @@ record(busok === 'yes' ? 'start' : 'nostart', { stop: get('BusStateStopId'), nam
 		</Action>
 	</Task>
 	<Task sr="task60">
-		<cdate>1792001973740</cdate>
-		<edate>1792001973740</edate>
+		<cdate>1792002657495</cdate>
+		<edate>1792002657495</edate>
 		<id>60</id>
 		<nme>Bus Loop</nme>
 		<pri>6</pri>
@@ -4773,8 +4773,8 @@ var buspushm = get('BusStatePushM') || '30';
 		</Action>
 	</Task>
 	<Task sr="task59">
-		<cdate>1792001973740</cdate>
-		<edate>1792001973740</edate>
+		<cdate>1792002657495</cdate>
+		<edate>1792002657495</edate>
 		<id>59</id>
 		<nme>Bus Refresh</nme>
 		<pri>6</pri>
@@ -9288,40 +9288,40 @@ setGlobal('BusCacheTimetable', JSON.stringify(tt));
 		</Action>
 	</Task>
 	<Task sr="task79">
-		<cdate>1792001973741</cdate>
-		<edate>1792001973741</edate>
+		<cdate>1792002657496</cdate>
+		<edate>1792002657496</edate>
 		<id>79</id>
 		<nme>Bus Wake</nme>
 		<pri>6</pri>
 		<Action sr="act0" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
 		<Action sr="act2" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
 		<Action sr="act3" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
 		<Action sr="act4" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
 		<Action sr="act5" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
 		<Action sr="act6" ve="7">
 			<code>547</code>
 			<label>This build · Version and build time</label>
 			<Str sr="arg0" ve="3">%busbuild</Str>
-			<Str sr="arg1" ve="3">4.63.202610141919</Str>
+			<Str sr="arg1" ve="3">4.64.202610141930</Str>
 			<Int sr="arg2" val="0"/>
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
 		<Action sr="act7" ve="7">
 			<code>129</code>
 			<label>Remember it was done for this build · BusStateVersion</label>
@@ -9347,11 +9347,11 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
 		<Action sr="act8" ve="7">
 			<code>548</code>
 			<label>Say so · A short message</label>
-			<Str sr="arg0" ve="3">Bus countdown 4.63: profiles switched on</Str>
+			<Str sr="arg0" ve="3">Bus countdown 4.64: profiles switched on</Str>
 			<Int sr="arg1" val="0"/>
 			<Str sr="arg10" ve="3"/>
 			<Int sr="arg11" val="1"/>
@@ -9367,7 +9367,7 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg7" ve="3"/>
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.63.202610141919</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
 		<Action sr="act9" ve="7">
 			<code>137</code>
 			<label>Only asked to switch the profiles: done · Started by another task with par1 "profiles"</label>
@@ -9515,7 +9515,8 @@ var buspushm = get('BusStatePushM') || '30';
    this). Everything else uses this saved copy, BusStateWifi, instead
    of asking again. A change goes in the trip recorder, so a recording
    shows when you left the office or got home (for timing the walk to
-   the stop).
+   the stop). Coming off home or work Wi-Fi is kept with its time
+   (BusStateWifiLeftAt, 4.64).
    ================================================================== */
 // The Wi-Fi network you're on, from Android's answer (busssid, read by the task's Java steps just
 // before), without the quotes Android adds; '' when not connected (Android says "&lt;unknown ssid&gt;")
@@ -9572,6 +9573,9 @@ setGlobal('BusStateWifi', wifiNow);
 if (wifiNow !== wifiBefore) {
   var wifiRole = function (n) { return !n ? 'none' : n === global('BusHomeWifi') ? 'home' : n === global('BusWorkWifi') ? 'work' : 'other'; };
   record('wifi', { from: wifiRole(wifiBefore), to: wifiRole(wifiNow) });
+  // Just came off home or work Wi-Fi (4.64): which, and when, so Bus Watch can tell a drop while you're
+  // still there from leaving (BusStateWifiLeftAt)
+  if (wifiRole(wifiBefore) === 'home' || wifiRole(wifiBefore) === 'work') setGlobal('BusStateWifiLeftAt', JSON.stringify({ p: wifiRole(wifiBefore), t: Date.now() }));
 }
 </Str>
 			<Str sr="arg1" ve="3"/>
@@ -9748,8 +9752,8 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 		</Action>
 	</Task>
 	<Task sr="task32">
-		<cdate>1792001973741</cdate>
-		<edate>1792001973741</edate>
+		<cdate>1792002657496</cdate>
+		<edate>1792002657496</edate>
 		<id>32</id>
 		<nme>Bus End</nme>
 		<pri>6</pri>
@@ -10015,8 +10019,8 @@ setGlobal('BusStateMatch', '');
 		</Action>
 	</Task>
 	<Task sr="task31">
-		<cdate>1792001973741</cdate>
-		<edate>1792001973741</edate>
+		<cdate>1792002657496</cdate>
+		<edate>1792002657496</edate>
 		<id>31</id>
 		<nme>Bus Island</nme>
 		<pri>6</pri>
@@ -10188,8 +10192,8 @@ if (stops.length) {
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busdo</lhs><op>2</op><rhs>switch/open/close/open-grown/fit</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task62">
-		<cdate>1792001973741</cdate>
-		<edate>1792001973741</edate>
+		<cdate>1792002657496</cdate>
+		<edate>1792002657496</edate>
 		<id>62</id>
 		<nme>Bus Watch</nme>
 		<pri>6</pri>
@@ -10266,7 +10270,8 @@ if (stops.length) {
    this). Everything else uses this saved copy, BusStateWifi, instead
    of asking again. A change goes in the trip recorder, so a recording
    shows when you left the office or got home (for timing the walk to
-   the stop).
+   the stop). Coming off home or work Wi-Fi is kept with its time
+   (BusStateWifiLeftAt, 4.64).
    ================================================================== */
 // The Wi-Fi network you're on, from Android's answer (busssid, read by the task's Java steps just
 // before), without the quotes Android adds; '' when not connected (Android says "&lt;unknown ssid&gt;")
@@ -10323,6 +10328,9 @@ setGlobal('BusStateWifi', wifiNow);
 if (wifiNow !== wifiBefore) {
   var wifiRole = function (n) { return !n ? 'none' : n === global('BusHomeWifi') ? 'home' : n === global('BusWorkWifi') ? 'work' : 'other'; };
   record('wifi', { from: wifiRole(wifiBefore), to: wifiRole(wifiNow) });
+  // Just came off home or work Wi-Fi (4.64): which, and when, so Bus Watch can tell a drop while you're
+  // still there from leaving (BusStateWifiLeftAt)
+  if (wifiRole(wifiBefore) === 'home' || wifiRole(wifiBefore) === 'work') setGlobal('BusStateWifiLeftAt', JSON.stringify({ p: wifiRole(wifiBefore), t: Date.now() }));
 }
 </Str>
 			<Str sr="arg1" ve="3"/>
@@ -10496,11 +10504,18 @@ function known(n) { return n !== '' &amp;&amp; (n === get('BusHomeWifi') || n ==
 var countdownOn = get('BusStateRunning') === '1' &amp;&amp; /(^|,)Bus Loop(,|$)/.test(get('TRUN'));
 var lastWifi = get('BusStateLastWifi');
 // Losing home or work Wi-Fi only counts as leaving once you're also 50 m from that place (its position
-// is recorded in BusHomeAt / BusWorkAt), or, with no position to go on, once the Wi-Fi has stayed
-// gone for two checks in a row. Until then the last network is kept (BusStateLastWifi) and the
+// is recorded in BusHomeAt / BusWorkAt), or, with no position to go on (not even a recent one, below),
+// once the Wi-Fi has stayed gone for two checks in a row. Until then the last network is kept (BusStateLastWifi) and the
 // checks off it are counted (BusStateOffWifi), so a brief drop at your desk is ignored.
 var hereLat = parseFloat(loc('gl_latitude'));
 var hereLon = parseFloat(loc('gl_longitude'));
+// The screen coming on gets its fix after this, so it has no position here. Since 4.64 the newest one
+// Bus Watch kept stands in, if it's under 3 minutes old and good to 50 m: on Tuesday 13 October the
+// work Wi-Fi dropped at your desk, and the second screen-on without it, 8 m from work and two minutes
+// after a fix there, was taken for leaving and showed the next buses
+var winNow = getJSON('BusStateWindow', []);
+var newest = Array.isArray(winNow) &amp;&amp; winNow.length ? winNow[winNow.length - 1] : null;
+if ((isNaN(hereLat) || isNaN(hereLon)) &amp;&amp; newest &amp;&amp; Date.now() - newest.t &lt; 180000 &amp;&amp; (newest.acc || 15) &lt;= 50) { hereLat = newest.lat; hereLon = newest.lon; }
 function metresFrom(placeVar) {
   var at = getJSON(placeVar, null);
   if (!at || !at.lat || isNaN(hereLat) || isNaN(hereLon)) return null;
@@ -10532,7 +10547,7 @@ if (busleave === 'yes') setGlobal('BusStateStartMode', 'leaving|' + Date.now());
 // Staying put well away from your stops (Bus Watch has slowed the pushes right down: BusStatePushMode
 // is "far"), the screen coming on doesn't need a fresh GPS fix if there was one in the last 2 minutes
 // (Tuesday evening, 39 screen-on checks in under an hour, sitting in the same place)
-var lastFix = 0; try { var winNow = JSON.parse(get('BusStateWindow') || '[]'); lastFix = winNow.length ? winNow[winNow.length - 1].t : 0; } catch (e) {}
+var lastFix = newest ? newest.t : 0;
 var quietFar = fromWake &amp;&amp; !countdownOn &amp;&amp; get('BusStatePushMode') === 'far' &amp;&amp; Date.now() - lastFix &lt; 120000;
 // On home or work Wi-Fi the fix is only used to refine where that place is (place_record.js), whose
 // running average stops gaining weight at 10 positions. Once it has them, the screen coming on doesn't
@@ -11486,6 +11501,12 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
     // side of the road (4.58). Only within 3 minutes of last moving at bus speed while on a bus, 2 once
     // off it: having got off, you may well cross the road for a bus back, or walk to a connection. A
     // run by hand still shows it.
+    // Just off home or work Wi-Fi and still there (4.64): no countdown at the stop by that place while
+    // you're within 30 m of it, in the 5 minutes since the Wi-Fi went. On Tuesday 13 October at 15:21
+    // the work Wi-Fi dropped for a few minutes at your desk, 8 m from where work is, and the stop by
+    // work started its countdown. Leaving, the first position was 17 to 93 m out; at 50 m this held up
+    // a real departure (43 m) by 40 s
+    else if (arrival &amp;&amp; !byHand &amp;&amp; stillThere(arrival)) why = 'just off ' + homeOrWork(arrival) + ' Wi-Fi, and still there (' + stillThere(arrival) + ' m away): no countdown';
     else if (arrival &amp;&amp; !byHand &amp;&amp; goesBack(arrival, now, trip.s === 'onbus')) why = (trip.s === 'onbus' ? 'on a bus' : 'just off a bus') + ' by ' + arrival.n + ', but its buses go back the way you came: no countdown';
     // Walking towards it inside its circle (4.60): shown now, as it would be heading for it from
     // outside the circle. On Tuesday 13 October Ashenhurst (Stop U), with a 200 m circle, waited 2
@@ -11640,6 +11661,19 @@ function homeOrWork(st) {
   }
   return '';
 }
+// Off home or work Wi-Fi in the last 5 minutes (BusStateWifiLeftAt, from wifi_save.js) and still within
+// 30 m of that place (BusHomeAt / BusWorkAt), for a stop by it: how far you are from the place, in
+// whole metres (at least 1), or 0 when not
+function stillThere(st) {
+  var place = homeOrWork(st);
+  var left = getJSON('BusStateWifiLeftAt', null);
+  if (!place || !left || left.p !== place || !(now - left.t &gt;= 0 &amp;&amp; now - left.t &lt;= 5 * 60000)) return 0;
+  var at = getJSON(place === 'home' ? 'BusHomeAt' : 'BusWorkAt', null);
+  if (!at || at.lat === undefined) return 0;
+  var d = metres(lat, lon, at.lat, at.lon);
+  return d &lt;= 30 ? Math.max(1, Math.round(d)) : 0;
+}
+
 // Where you are along a route: the nearest segment of any route's line of stops (within 60 m), and
 // the first saved stop after it, measured along the route. Returns { st, along } or null.
 function alongRoute(maxAlong) {
@@ -12359,8 +12393,8 @@ function recordName(d) {
 		</Action>
 	</Task>
 	<Task sr="task72">
-		<cdate>1792001973742</cdate>
-		<edate>1792001973742</edate>
+		<cdate>1792002657497</cdate>
+		<edate>1792002657497</edate>
 		<id>72</id>
 		<nme>Bus Status</nme>
 		<pri>6</pri>

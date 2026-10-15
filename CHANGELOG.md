@@ -4,6 +4,16 @@ Changes to Bus Countdown, newest first, in [Keep a Changelog](https://keepachang
 
 Each release's project file is on its [GitHub release](../../releases).
 
+## [4.64] - 2026-10-14
+
+### Fixed
+
+- A Wi-Fi drop while you're still at home or work no longer starts a countdown. For 5 minutes after home or work Wi-Fi goes, the stop by that place doesn't start while you're within 30 m of it, and the screen coming on, which gets its fix after the Wi-Fi rules, uses the newest position Bus Watch kept (under 3 minutes old) to tell whether you've left. On the recordings this takes away the two pop-ups at your desk on Tuesday afternoon and changes nothing else.
+
+### Changed
+
+- A replay plays each change of Wi-Fi, and `npm run compare -- --wifi` plays Bus Watch's Wi-Fi rules as the phone does, so a change to them can be checked against recorded days too.
+
 ## [4.63] - 2026-10-14
 
 ### Changed

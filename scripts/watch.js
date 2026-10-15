@@ -379,6 +379,12 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
     // side of the road (4.58). Only within 3 minutes of last moving at bus speed while on a bus, 2 once
     // off it: having got off, you may well cross the road for a bus back, or walk to a connection. A
     // run by hand still shows it.
+    // Just off home or work Wi-Fi and still there (4.64): no countdown at the stop by that place while
+    // you're within 30 m of it, in the 5 minutes since the Wi-Fi went. On Tuesday 13 October at 15:21
+    // the work Wi-Fi dropped for a few minutes at your desk, 8 m from where work is, and the stop by
+    // work started its countdown. Leaving, the first position was 17 to 93 m out; at 50 m this held up
+    // a real departure (43 m) by 40 s
+    else if (arrival && !byHand && stillThere(arrival)) why = 'just off ' + homeOrWork(arrival) + ' Wi-Fi, and still there (' + stillThere(arrival) + ' m away): no countdown';
     else if (arrival && !byHand && goesBack(arrival, now, trip.s === 'onbus')) why = (trip.s === 'onbus' ? 'on a bus' : 'just off a bus') + ' by ' + arrival.n + ', but its buses go back the way you came: no countdown';
     // Walking towards it inside its circle (4.60): shown now, as it would be heading for it from
     // outside the circle. On Tuesday 13 October Ashenhurst (Stop U), with a 200 m circle, waited 2
@@ -533,6 +539,19 @@ function homeOrWork(st) {
   }
   return '';
 }
+// Off home or work Wi-Fi in the last 5 minutes (BusStateWifiLeftAt, from wifi_save.js) and still within
+// 30 m of that place (BusHomeAt / BusWorkAt), for a stop by it: how far you are from the place, in
+// whole metres (at least 1), or 0 when not
+function stillThere(st) {
+  var place = homeOrWork(st);
+  var left = getJSON('BusStateWifiLeftAt', null);
+  if (!place || !left || left.p !== place || !(now - left.t >= 0 && now - left.t <= 5 * 60000)) return 0;
+  var at = getJSON(place === 'home' ? 'BusHomeAt' : 'BusWorkAt', null);
+  if (!at || at.lat === undefined) return 0;
+  var d = metres(lat, lon, at.lat, at.lon);
+  return d <= 30 ? Math.max(1, Math.round(d)) : 0;
+}
+
 // Where you are along a route: the nearest segment of any route's line of stops (within 60 m), and
 // the first saved stop after it, measured along the route. Returns { st, along } or null.
 function alongRoute(maxAlong) {

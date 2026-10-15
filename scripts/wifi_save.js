@@ -4,7 +4,8 @@
    this). Everything else uses this saved copy, BusStateWifi, instead
    of asking again. A change goes in the trip recorder, so a recording
    shows when you left the office or got home (for timing the walk to
-   the stop).
+   the stop). Coming off home or work Wi-Fi is kept with its time
+   (BusStateWifiLeftAt, 4.64).
    ================================================================== */
 /* @include wifiName */
 /* @include record */
@@ -14,4 +15,7 @@ setGlobal('BusStateWifi', wifiNow);
 if (wifiNow !== wifiBefore) {
   var wifiRole = function (n) { return !n ? 'none' : n === global('BusHomeWifi') ? 'home' : n === global('BusWorkWifi') ? 'work' : 'other'; };
   record('wifi', { from: wifiRole(wifiBefore), to: wifiRole(wifiNow) });
+  // Just came off home or work Wi-Fi (4.64): which, and when, so Bus Watch can tell a drop while you're
+  // still there from leaving (BusStateWifiLeftAt)
+  if (wifiRole(wifiBefore) === 'home' || wifiRole(wifiBefore) === 'work') setGlobal('BusStateWifiLeftAt', JSON.stringify({ p: wifiRole(wifiBefore), t: Date.now() }));
 }

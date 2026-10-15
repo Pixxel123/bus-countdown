@@ -34,12 +34,12 @@ test('getJSON: the value, or the fallback when it is empty, not JSON, or null', 
   const a = read('', {}); a.x = 1; assert.deepStrictEqual(read('', {}), {});
 });
 
-test('the copies of the read are gone: one left, which reads more than the JSON', () => {
+test('the copies of the read are gone (4.64: the last one too)', () => {
   const left = [];
   for (const f of fs.readdirSync(scripts).filter((n) => n.endsWith('.js')).map((n) => n).concat(fs.readdirSync(path.join(scripts, 'shared')).map((n) => 'shared/' + n))) {
     code(f).split('\n').forEach((l, i) => { if (/try \{[^}]*JSON\.parse\(get\(/.test(l)) left.push(`${f}:${i + 1}`); });
   }
-  assert.deepStrictEqual(left.map((l) => l.split(':')[0]), ['watch_due.js'], left.join('\n'));
+  assert.deepStrictEqual(left, []);
 });
 
 test('a saved state holding null no longer stops Bus Watch, Bus Refresh, Bus Status or Bus Loop', () => {

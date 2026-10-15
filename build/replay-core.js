@@ -1,6 +1,7 @@
 // The replay itself, shared by build/replay.js (npm run replay) and the tests (tests/tuesday.test.js).
 // Plays a recorded day's lines through today's rules: each "check" through Bus Watch (watch.js), each
-// "tfl" through Bus Refresh (refresh.js), and starts, ends and swipes the way the tasks would.
+// "tfl" through Bus Refresh (refresh.js), each "wifi" through wifi_save.js (4.64), and starts, ends and
+// swipes the way the tasks would.
 // Returns one entry per line played: { t, k, line (as recorded), and what today's rules decided }.
 'use strict';
 const { run } = require('../tests/harness');
@@ -53,6 +54,16 @@ function replay(lines, extraGlobals) {
       const yours = match.n >= 2 && l.b.some((b) => b[1] === match.v) ? match.v : null;
       out.push({ t: l.t, k: 'tfl', line: l, buzz: r.busbuzz, soonest: soonest ? { k: soonest.k, v: soonest.v, min: (soonest.t - l.t) / 60000, st: soonest.st, d: soonest.d } : null,
         yours, shown: shown.map((b) => b.v || ''), match, trip: JSON.parse(g.BusStateTrip || '{}') });
+      continue;
+    }
+    // A change of Wi-Fi network (4.64): played through wifi_save.js as the check that noticed it did, so
+    // Bus Watch knows when you came off home or work Wi-Fi. Recorded as home, work, other or none; the
+    // names are the day's own (from its setup line), and any other network is "Another network"
+    if (l.k === 'wifi') {
+      const name = (role) => role === 'home' ? g.BusHomeWifi || '' : role === 'work' ? g.BusWorkWifi || '' : role === 'other' ? 'Another network' : '';
+      g.BusStateWifi = name(l.from);
+      run('wifi_save.js', { globals: g, now: l.t, locals: { busssid: name(l.to) ? '"' + name(l.to) + '"' : '<unknown ssid>' } });
+      out.push({ t: l.t, k: 'wifi', line: l, note: `Wi-Fi: ${l.from} to ${l.to}` });
       continue;
     }
     // TfL's word on the bus you're riding (4.58): as follow_store.js kept it on the phone
