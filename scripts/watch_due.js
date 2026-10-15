@@ -53,12 +53,15 @@ var lastWifi = get('BusStateLastWifi');
 var hereLat = parseFloat(loc('gl_latitude'));
 var hereLon = parseFloat(loc('gl_longitude'));
 // The screen coming on gets its fix after this, so it has no position here. Since 4.64 the newest one
-// Bus Watch kept stands in, if it's under 3 minutes old and good to 50 m: on Tuesday 13 October the
-// work Wi-Fi dropped at your desk, and the second screen-on without it, 8 m from work and two minutes
-// after a fix there, was taken for leaving and showed the next buses
-var winNow = getJSON('BusStateWindow', []);
-var newest = Array.isArray(winNow) && winNow.length ? winNow[winNow.length - 1] : null;
-if ((isNaN(hereLat) || isNaN(hereLon)) && newest && Date.now() - newest.t < 180000 && (newest.acc || 15) <= 50) { hereLat = newest.lat; hereLon = newest.lon; }
+// Bus Watch kept stands in, if it's under 3 minutes old and good to 50 m: in one recording the work
+// Wi-Fi dropped at the desk, and the second screen-on without it, 8 m from work and two minutes after a
+// fix there, was taken for leaving and showed the next buses. A fix with no accuracy (or 0, which
+// Android never gives) counts as 15 m, as everywhere else in Bus Watch.
+var recentFixes = getJSON('BusStateWindow', []);
+var newestFix = Array.isArray(recentFixes) && recentFixes.length ? recentFixes[recentFixes.length - 1] : null;
+if ((isNaN(hereLat) || isNaN(hereLon)) && newestFix && Date.now() - newestFix.t < 180000 && (newestFix.acc || 15) <= 50) {
+  hereLat = newestFix.lat; hereLon = newestFix.lon;
+}
 function metresFrom(placeVar) {
   var at = getJSON(placeVar, null);
   if (!at || !at.lat || isNaN(hereLat) || isNaN(hereLon)) return null;
@@ -90,7 +93,7 @@ if (busleave === 'yes') setGlobal('BusStateStartMode', 'leaving|' + Date.now());
 // Staying put well away from your stops (Bus Watch has slowed the pushes right down: BusStatePushMode
 // is "far"), the screen coming on doesn't need a fresh GPS fix if there was one in the last 2 minutes
 // (Tuesday evening, 39 screen-on checks in under an hour, sitting in the same place)
-var lastFix = newest ? newest.t : 0;
+var lastFix = newestFix ? newestFix.t : 0;
 var quietFar = fromWake && !countdownOn && get('BusStatePushMode') === 'far' && Date.now() - lastFix < 120000;
 // On home or work Wi-Fi the fix is only used to refine where that place is (place_record.js), whose
 // running average stops gaining weight at 10 positions. Once it has them, the screen coming on doesn't

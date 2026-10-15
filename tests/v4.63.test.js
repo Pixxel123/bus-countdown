@@ -67,11 +67,11 @@ test('movement: trend away from a point, from the last four positions', () => {
 
 test('movement: settled, staying put, pace away, closing in, and when you left a stop', () => {
   const still = [0, 30, 60, 90].map((s) => at(s, s % 60 ? 5 : 0));
-  assert.strictEqual(ctx.moveSettled(still, T0 + 90000), true);
-  assert.strictEqual(ctx.moveSettled([0, 30, 60].map((s) => at(s, s * 1.4)), T0 + 60000), false, 'walking');
+  assert.strictEqual(ctx.moveSlowedDown(still, T0 + 90000), true);
+  assert.strictEqual(ctx.moveSlowedDown([0, 30, 60].map((s) => at(s, s * 1.4)), T0 + 60000), false, 'walking');
   const wander = [0, 40, 80, 120, 160].map((s, i) => at(s, [0, 60, -40, 50, -30][i]));
-  assert.strictEqual(ctx.moveStaying(wander), true, 'indoor wander within 80 m');
-  assert.strictEqual(ctx.moveStaying(wander.slice(0, 3)), false, 'under 2 minutes');
+  assert.strictEqual(ctx.moveStayingPut(wander), true, 'indoor wander within 80 m');
+  assert.strictEqual(ctx.moveStayingPut(wander.slice(0, 3)), false, 'under 2 minutes');
   const stop = { lat: LAT, lon: LON, r: 60 };
   const ride = [0, 30, 60, 90, 120].map((s) => at(s, s * 3));
   const now = Object.assign({}, stop, { d: 360 });

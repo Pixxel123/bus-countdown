@@ -1,7 +1,7 @@
-// V4.64: a Wi-Fi drop while you're still at home or work no longer starts a countdown. On Tuesday 13
-// October the work Wi-Fi dropped for six minutes at your desk: the stop by work started its countdown
-// (you were 8 m from work), and two minutes later the second screen-on without the Wi-Fi was taken for
-// leaving and showed the next buses again. Now, just off home or work Wi-Fi (in the last 5 minutes) and
+// V4.64: a Wi-Fi drop while you're still at home or work no longer starts a countdown. In one recording
+// the work Wi-Fi dropped for six minutes at the desk: the stop by work started its countdown (8 m from
+// work), and two minutes later the second screen-on without the Wi-Fi was taken for leaving and
+// showed the next buses again. Now, just off home or work Wi-Fi (in the last 5 minutes) and
 // within 30 m of that place, the stop by it doesn't start; and a screen-on check, which gets its fix
 // after the Wi-Fi rules, has the newest position Bus Watch kept (under 3 minutes old) stand in for it.
 'use strict';
@@ -20,8 +20,8 @@ const world = (extra) => Object.assign({ BusPlaces: `bus|W1|Work Stop|${STOP[0]}
 
 test('coming off home or work Wi-Fi is kept with its time; other changes are not', () => {
   const save = (before, now) => { const g = world({ BusStateWifi: before }); run('wifi_save.js', { globals: g, now: T, locals: { busssid: now } }); return g.BusStateWifiLeftAt; };
-  assert.deepStrictEqual(JSON.parse(save('Office', '<unknown ssid>')), { p: 'work', t: T });
-  assert.deepStrictEqual(JSON.parse(save('Home', '"Cafe"')), { p: 'home', t: T });
+  assert.deepStrictEqual(JSON.parse(save('Office', '<unknown ssid>')), { place: 'work', at: T });
+  assert.deepStrictEqual(JSON.parse(save('Home', '"Cafe"')), { place: 'home', at: T });
   assert.strictEqual(save('', '"Office"'), undefined, 'getting to work');
   assert.strictEqual(save('Cafe', '<unknown ssid>'), undefined, 'leaving another network');
   assert.strictEqual(save('Office', '"Office"'), undefined, 'no change');
@@ -29,7 +29,7 @@ test('coming off home or work Wi-Fi is kept with its time; other changes are not
 
 // One check at the stop by work: metres from where work is, seconds since the work Wi-Fi went
 function check(fromWork, leftAgo, extra, caller = 'profile=wake') {
-  const g = world(Object.assign({ BusStateWifiLeftAt: leftAgo === null ? '' : JSON.stringify({ p: 'work', t: T - leftAgo * 1000 }) }, extra));
+  const g = world(Object.assign({ BusStateWifiLeftAt: leftAgo === null ? '' : JSON.stringify({ place: 'work', at: T - leftAgo * 1000 }) }, extra));
   return run('watch.js', { globals: g, now: T, locals: { buscaller: caller, gl_latitude: String(LAT + m(fromWork)), gl_longitude: String(LON),
     gl_time_seconds: String(T / 1000 - 2), busspeed: '', busbearing: '', busacc: '15' } });
 }
@@ -41,11 +41,11 @@ test('just off work Wi-Fi and still at your desk: the stop by work does not star
 });
 
 test('it still starts once you are 30 m or more from work, after 5 minutes, without the Wi-Fi change, or by hand', () => {
-  assert.strictEqual(check(43, 2).busaction, 'start', 'leaving: the first position was 43 m out on Tuesday at 16:53');
+  assert.strictEqual(check(43, 2).busaction, 'start', 'leaving: the first position was 43 m out in that recording');
   assert.strictEqual(check(8, 6 * 60).busaction, 'start', 'off the Wi-Fi for over 5 minutes');
   assert.strictEqual(check(8, null).busaction, 'start', 'never on work Wi-Fi');
   assert.strictEqual(check(8, 2, {}, '').busaction, 'start', 'run by hand');
-  const home = check(8, 2, { BusStateWifiLeftAt: JSON.stringify({ p: 'home', t: T - 2000 }) });
+  const home = check(8, 2, { BusStateWifiLeftAt: JSON.stringify({ place: 'home', at: T - 2000 }) });
   assert.strictEqual(home.busaction, 'start', 'off home Wi-Fi says nothing about the stop by work');
 });
 
@@ -81,7 +81,7 @@ test('a replay plays the Wi-Fi changes through wifi_save.js, so the rule works o
   const { out, globals } = replay(day);
   assert.deepStrictEqual(out.map((o) => o.k), ['wifi', 'check', 'check']);
   assert.strictEqual(out[0].note, 'Wi-Fi: work to none');
-  assert.deepStrictEqual(JSON.parse(globals.BusStateWifiLeftAt), { p: 'work', t: T - 2000 });
+  assert.deepStrictEqual(JSON.parse(globals.BusStateWifiLeftAt), { place: 'work', at: T - 2000 });
   assert.strictEqual(out[1].action, 'none', 'just off it, at your desk');
   assert.strictEqual(out[2].action, 'start', 'still off it nearly 7 minutes later: then it starts, as before');
 });

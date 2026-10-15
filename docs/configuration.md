@@ -64,7 +64,7 @@ Variables starting with `BusState`, `BusCache` or `BusTemp` are managed by the p
 - `BusStateMatch`, `BusStateBoarded`, `BusStateCameOn`: the bus you're riding (while it's being worked out, and once known), the bus you last got on, and the bus you last came in on (see [Which bus you're on](how-it-works.md#which-bus-youre-on)).
 - `BusStateFollow`, `BusStateFollowTry`, `BusStateHeading`: following your bus (4.58): TfL's latest list of the stops the bus you got on calls at next (registration, when fetched, and each stop with its expected time and name); the last request (when, and how many in a row failed, for the back-off); and the way the bus was last going (two points, when, and when last at bus speed).
 - `BusStateKF`, `BusStateMode`: the travel mode on trial (4.34): the filter's state between positions, and the latest mode for Bus Status.
-- `BusStateWifiLeftAt`: the last time you came off home or work Wi-Fi, and which (4.64), so a drop while you're still there doesn't start the stop by that place.
+- `BusStateWifiLeftAt`: the last time you came off home or work Wi-Fi, and which (4.64): `{ place, at }` (`{ p, t }` in 4.64, not read since 4.65), so a drop while you're still there doesn't start the stop by that place.
 - `BusStateFetchAt`, `BusStateFetchStop`: when times last arrived, and for which stop (no second fetch within 20 s).
 - `BusStateNextAt`: when the next bus is due (or your own bus reaches the stop), as a time, so Bus Loop can tell with the screen off when it's within 8 minutes.
 - `BusStateLastBusAt`: when you were last moving at bus speed (for stops by home and work). `BusStateFarAt`: where you settled, while positions are slowed down far from your stops. `BusStateEndWhy`: why Bus Watch ended the countdown, for the recorder.

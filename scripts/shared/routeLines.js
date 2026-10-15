@@ -2,14 +2,15 @@
 // following your bus, moving along a route, the stop coming up by bus, how far past a stop you are.
 // Each used to read BusCacheSeq and work out its own distances, up to five times a check, with four
 // copies of the same sums. Needs metres (shared/metres.js).
-//   routeLines() -> [{ seq, cum }]: each route's stops in order, [[id, lat, lon], ...] (BusCacheSeq),
-//   and metres along the route to each. Read once per script run.
+//   routeLines() -> [{ seq, metresAlong }]: each route's stops in order, [[id, lat, lon], ...]
+//   (BusCacheSeq), and the running total of metres along the route to each (0 at the first). Read once per script run.
 function routeLines() {
   if (routeLines.lines) return routeLines.lines;          // kept on the function, so Tasker doesn't hand it back as a local
   var seqs = getJSON('BusCacheSeq', []);
-  routeLines.lines = seqs.map(function (sq) {
-    var cum = [0]; for (var c = 1; c < sq.length; c++) cum.push(cum[c - 1] + metres(sq[c - 1][1], sq[c - 1][2], sq[c][1], sq[c][2]));
-    return { seq: sq, cum: cum };
+  routeLines.lines = seqs.map(function (stops) {
+    var metresAlong = [0];
+    for (var i = 1; i < stops.length; i++) metresAlong.push(metresAlong[i - 1] + metres(stops[i - 1][1], stops[i - 1][2], stops[i][1], stops[i][2]));
+    return { seq: stops, metresAlong: metresAlong };
   });
   return routeLines.lines;
 }
@@ -24,7 +25,7 @@ function onSegment(line, j, pLat, pLon) {
   var ax = (a[2] - pLon) * kx; var ay = (a[1] - pLat) * ky; var dx = (b[2] - pLon) * kx - ax; var dy = (b[1] - pLat) * ky - ay;
   var len2 = dx * dx + dy * dy; if (!len2) return null;
   var f = Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2));
-  return { off: Math.sqrt(Math.pow(ax + f * dx, 2) + Math.pow(ay + f * dy, 2)), f: f, along: line.cum[j] + f * (line.cum[j + 1] - line.cum[j]),
+  return { off: Math.sqrt(Math.pow(ax + f * dx, 2) + Math.pow(ay + f * dy, 2)), f: f, along: line.metresAlong[j] + f * (line.metresAlong[j + 1] - line.metresAlong[j]),
     dx: dx, dy: dy, len: Math.sqrt(len2), j: j };
 }
 

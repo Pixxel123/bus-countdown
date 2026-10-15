@@ -1,8 +1,8 @@
 <TaskerData sr="" dvi="1" tv="6.7.6-beta">
 	<dmetric>1344.0,2992.0</dmetric>
 	<Profile sr="prof72" ve="2">
-		<cdate>1792002657494</cdate>
-		<edate>1792002657494</edate>
+		<cdate>1792059105839</cdate>
+		<edate>1792059105839</edate>
 		<flags>8</flags>
 		<id>72</id>
 		<mid0>79</mid0>
@@ -14,8 +14,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof74" ve="2">
-		<cdate>1792002657494</cdate>
-		<edate>1792002657494</edate>
+		<cdate>1792059105839</cdate>
+		<edate>1792059105839</edate>
 		<flags>8</flags>
 		<id>74</id>
 		<mid0>62</mid0>
@@ -33,8 +33,8 @@
 		</Event>
 	</Profile>
 	<Profile sr="prof73" ve="2">
-		<cdate>1792002657494</cdate>
-		<edate>1792002657494</edate>
+		<cdate>1792059105839</cdate>
+		<edate>1792059105839</edate>
 		<flags>8</flags>
 		<id>73</id>
 		<mid0>59</mid0>
@@ -46,14 +46,14 @@
 		</State>
 	</Profile>
 	<Project sr="proj0" ve="2">
-		<cdate>1792002657494</cdate>
+		<cdate>1792059105839</cdate>
 		<name>Bus Countdown</name>
 		<pids>72,73,74</pids>
 		<tids>73,74,75,77,78,80,76,38,60,59,79,32,31,62,72</tids>
 	</Project>
 	<Task sr="task73">
-		<cdate>1792002657494</cdate>
-		<edate>1792002657494</edate>
+		<cdate>1792059105840</cdate>
+		<edate>1792059105840</edate>
 		<id>73</id>
 		<nme>Bus</nme>
 		<pri>6</pri>
@@ -178,11 +178,11 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.65.202610151111</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task74">
-		<cdate>1792002657494</cdate>
-		<edate>1792002657494</edate>
+		<cdate>1792059105840</cdate>
+		<edate>1792059105840</edate>
 		<id>74</id>
 		<nme>Bus Settings</nme>
 		<pri>6</pri>
@@ -201,7 +201,7 @@ var busmenu = (running ? 'End countdown' : 'Start countdown') + ',Settings,Statu
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.65.202610151111</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>First run? · Camera not measured yet</label>
@@ -1749,8 +1749,8 @@ var busoppmsg = saved.length ? 'Also saved: ' + saved.join(', ') : 'Not saved: '
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%buslive</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task75">
-		<cdate>1792002657495</cdate>
-		<edate>1792002657495</edate>
+		<cdate>1792059105840</cdate>
+		<edate>1792059105840</edate>
 		<id>75</id>
 		<nme>Bus Settings Button</nme>
 		<pri>6</pri>
@@ -1889,8 +1889,8 @@ if (buspreview === 'yes') {
 			<label>Open it · Shows the Android settings page</label><Str sr="arg0" ve="3"></Str><Str sr="arg1" ve="3">CONTEXT</Str><Str sr="arg2" ve="3">startActivity {} (android.content.Intent)</Str><Str sr="arg3" ve="3">busint</Str><Str sr="arg4" ve="3"/><Str sr="arg5" ve="3"/><Str sr="arg6" ve="3"/><Str sr="arg7" ve="3"/><Str sr="arg8" ve="3"/><Str sr="arg9" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busintent</lhs><op>2</op><rhs>android*</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task77">
-		<cdate>1792002657495</cdate>
-		<edate>1792002657495</edate>
+		<cdate>1792059105840</cdate>
+		<edate>1792059105840</edate>
 		<id>77</id>
 		<nme>Bus Position</nme>
 		<pri>6</pri>
@@ -3258,8 +3258,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task78">
-		<cdate>1792002657495</cdate>
-		<edate>1792002657495</edate>
+		<cdate>1792059105840</cdate>
+		<edate>1792059105840</edate>
 		<id>78</id>
 		<nme>Bus Position Set</nme>
 		<pri>6</pri>
@@ -3277,8 +3277,8 @@ var busy = String(Math.max(120, screenH - PANEL_H - 48));
 		</Action>
 	</Task>
 	<Task sr="task80">
-		<cdate>1792002657495</cdate>
-		<edate>1792002657495</edate>
+		<cdate>1792059105840</cdate>
+		<edate>1792059105840</edate>
 		<id>80</id>
 		<nme>Bus Position Done</nme>
 		<pri>6</pri>
@@ -3390,8 +3390,8 @@ var busmsg = changed.length ? 'Saved: ' + changed.join(', ') : 'none';
 		</Action>
 	</Task>
 	<Task sr="task76">
-		<cdate>1792002657495</cdate>
-		<edate>1792002657495</edate>
+		<cdate>1792059105840</cdate>
+		<edate>1792059105840</edate>
 		<id>76</id>
 		<nme>Bus Find Camera</nme>
 		<pri>6</pri>
@@ -3524,8 +3524,8 @@ if (!r || !dens || !w) {
 			<label>Reset position: move the open screen's height slider · Shows the new value straight away</label><Str sr="arg0" ve="3">bussettings</Str><Str sr="arg1" ve="3">sl_y</Str><Str sr="arg2" ve="3">value</Str><Str sr="arg3" ve="3">%BusIslandY</Str><Int sr="arg4" val="0"/><Str sr="arg5" ve="3"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busrebuild</lhs><op>2</op><rhs>yes</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task38">
-		<cdate>1792002657495</cdate>
-		<edate>1792002657495</edate>
+		<cdate>1792059105840</cdate>
+		<edate>1792059105840</edate>
 		<id>38</id>
 		<nme>Bus Start</nme>
 		<pri>6</pri>
@@ -3543,7 +3543,7 @@ if (!r || !dens || !w) {
 			<Str sr="arg7" ve="3"/>
 			<Int sr="arg8" val="0"/>
 			<Int sr="arg9" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.65.202610151111</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7">
 			<code>129</code>
 			<label>Settings: fill in defaults, check TflKey and BusRoutes · Resets empty or invalid settings</label>
@@ -4418,8 +4418,8 @@ record(busok === 'yes' ? 'start' : 'nostart', { stop: get('BusStateStopId'), nam
 		</Action>
 	</Task>
 	<Task sr="task60">
-		<cdate>1792002657495</cdate>
-		<edate>1792002657495</edate>
+		<cdate>1792059105840</cdate>
+		<edate>1792059105840</edate>
 		<id>60</id>
 		<nme>Bus Loop</nme>
 		<pri>6</pri>
@@ -4773,8 +4773,8 @@ var buspushm = get('BusStatePushM') || '30';
 		</Action>
 	</Task>
 	<Task sr="task59">
-		<cdate>1792002657495</cdate>
-		<edate>1792002657495</edate>
+		<cdate>1792059105840</cdate>
+		<edate>1792059105840</edate>
 		<id>59</id>
 		<nme>Bus Refresh</nme>
 		<pri>6</pri>
@@ -9288,40 +9288,40 @@ setGlobal('BusCacheTimetable', JSON.stringify(tt));
 		</Action>
 	</Task>
 	<Task sr="task79">
-		<cdate>1792002657496</cdate>
-		<edate>1792002657496</edate>
+		<cdate>1792059105842</cdate>
+		<edate>1792059105842</edate>
 		<id>79</id>
 		<nme>Bus Wake</nme>
 		<pri>6</pri>
 		<Action sr="act0" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.65.202610151111</rhs></Condition></ConditionList></Action>
 		<Action sr="act1" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
+			<label>Bus Moved: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Moved</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.65.202610151111</rhs></Condition></ConditionList></Action>
 		<Action sr="act2" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.65.202610151111</rhs></Condition></ConditionList></Action>
 		<Action sr="act3" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
+			<label>Bus Screen On: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Screen On</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.65.202610151111</rhs></Condition></ConditionList></Action>
 		<Action sr="act4" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: off · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="0"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.65.202610151111</rhs></Condition></ConditionList></Action>
 		<Action sr="act5" ve="7"><code>159</code>
 			<se>false</se>
-			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
+			<label>Bus Hide When Sideways: on · Switched off and on again, so an imported profile starts listening</label><Str sr="arg0" ve="3">Bus Hide When Sideways</Str><Int sr="arg1" val="1"/><ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.65.202610151111</rhs></Condition></ConditionList></Action>
 		<Action sr="act6" ve="7">
 			<code>547</code>
 			<label>This build · Version and build time</label>
 			<Str sr="arg0" ve="3">%busbuild</Str>
-			<Str sr="arg1" ve="3">4.64.202610141930</Str>
+			<Str sr="arg1" ve="3">4.65.202610151111</Str>
 			<Int sr="arg2" val="0"/>
 			<Int sr="arg3" val="0"/>
 			<Int sr="arg4" val="0"/>
 			<Int sr="arg5" val="3"/>
 			<Int sr="arg6" val="0"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.65.202610151111</rhs></Condition></ConditionList></Action>
 		<Action sr="act7" ve="7">
 			<code>129</code>
 			<label>Remember it was done for this build · BusStateVersion</label>
@@ -9347,11 +9347,11 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg1" ve="3"/>
 			<Int sr="arg2" val="1"/>
 			<Int sr="arg3" val="45"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%BusStateVersion</lhs><op>3</op><rhs>4.65.202610151111</rhs></Condition></ConditionList></Action>
 		<Action sr="act8" ve="7">
 			<code>548</code>
 			<label>Say so · A short message</label>
-			<Str sr="arg0" ve="3">Bus countdown 4.64: profiles switched on</Str>
+			<Str sr="arg0" ve="3">Bus countdown 4.65: profiles switched on</Str>
 			<Int sr="arg1" val="0"/>
 			<Str sr="arg10" ve="3"/>
 			<Int sr="arg11" val="1"/>
@@ -9367,7 +9367,7 @@ debugLog('Profiles switched off and on (Bus Moved, Bus Screen On, Bus Hide When 
 			<Str sr="arg7" ve="3"/>
 			<Str sr="arg8" ve="3"/>
 			<Int sr="arg9" val="1"/>
-		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.64.202610141930</rhs></Condition></ConditionList></Action>
+		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busbuild</lhs><op>2</op><rhs>4.65.202610151111</rhs></Condition></ConditionList></Action>
 		<Action sr="act9" ve="7">
 			<code>137</code>
 			<label>Only asked to switch the profiles: done · Started by another task with par1 "profiles"</label>
@@ -9516,7 +9516,7 @@ var buspushm = get('BusStatePushM') || '30';
    of asking again. A change goes in the trip recorder, so a recording
    shows when you left the office or got home (for timing the walk to
    the stop). Coming off home or work Wi-Fi is kept with its time
-   (BusStateWifiLeftAt, 4.64).
+   (BusStateWifiLeftAt: { place, at }, 4.64; until 4.65 { p, t }).
    ================================================================== */
 // The Wi-Fi network you're on, from Android's answer (busssid, read by the task's Java steps just
 // before), without the quotes Android adds; '' when not connected (Android says "&lt;unknown ssid&gt;")
@@ -9567,15 +9567,17 @@ function recordName(d) {
   var two = function (n) { return (n &lt; 10 ? '0' : '') + n; };
   return 'bus-trip-' + d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()) + '-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] + '.jsonl';
 }
+// What a network is to you: home, work, another, or none
+function wifiRole(name) { return !name ? 'none' : name === global('BusHomeWifi') ? 'home' : name === global('BusWorkWifi') ? 'work' : 'other'; }
 var wifiBefore = global('BusStateWifi') || '';
 var wifiNow = wifiName();
 setGlobal('BusStateWifi', wifiNow);
 if (wifiNow !== wifiBefore) {
-  var wifiRole = function (n) { return !n ? 'none' : n === global('BusHomeWifi') ? 'home' : n === global('BusWorkWifi') ? 'work' : 'other'; };
-  record('wifi', { from: wifiRole(wifiBefore), to: wifiRole(wifiNow) });
+  var roles = { from: wifiRole(wifiBefore), to: wifiRole(wifiNow) };
+  record('wifi', roles);
   // Just came off home or work Wi-Fi (4.64): which, and when, so Bus Watch can tell a drop while you're
   // still there from leaving (BusStateWifiLeftAt)
-  if (wifiRole(wifiBefore) === 'home' || wifiRole(wifiBefore) === 'work') setGlobal('BusStateWifiLeftAt', JSON.stringify({ p: wifiRole(wifiBefore), t: Date.now() }));
+  if (roles.from === 'home' || roles.from === 'work') setGlobal('BusStateWifiLeftAt', JSON.stringify({ place: roles.from, at: Date.now() }));
 }
 </Str>
 			<Str sr="arg1" ve="3"/>
@@ -9752,8 +9754,8 @@ var busglance = (inWindow &amp;&amp; !running &amp;&amp; wifiNow !== '' &amp;&am
 		</Action>
 	</Task>
 	<Task sr="task32">
-		<cdate>1792002657496</cdate>
-		<edate>1792002657496</edate>
+		<cdate>1792059105842</cdate>
+		<edate>1792059105842</edate>
 		<id>32</id>
 		<nme>Bus End</nme>
 		<pri>6</pri>
@@ -10019,8 +10021,8 @@ setGlobal('BusStateMatch', '');
 		</Action>
 	</Task>
 	<Task sr="task31">
-		<cdate>1792002657496</cdate>
-		<edate>1792002657496</edate>
+		<cdate>1792059105842</cdate>
+		<edate>1792059105842</edate>
 		<id>31</id>
 		<nme>Bus Island</nme>
 		<pri>6</pri>
@@ -10192,8 +10194,8 @@ if (stops.length) {
 		<ConditionList sr="if"><Condition sr="c0" ve="3"><lhs>%busdo</lhs><op>2</op><rhs>switch/open/close/open-grown/fit</rhs></Condition></ConditionList></Action>
 	</Task>
 	<Task sr="task62">
-		<cdate>1792002657496</cdate>
-		<edate>1792002657496</edate>
+		<cdate>1792059105842</cdate>
+		<edate>1792059105842</edate>
 		<id>62</id>
 		<nme>Bus Watch</nme>
 		<pri>6</pri>
@@ -10271,7 +10273,7 @@ if (stops.length) {
    of asking again. A change goes in the trip recorder, so a recording
    shows when you left the office or got home (for timing the walk to
    the stop). Coming off home or work Wi-Fi is kept with its time
-   (BusStateWifiLeftAt, 4.64).
+   (BusStateWifiLeftAt: { place, at }, 4.64; until 4.65 { p, t }).
    ================================================================== */
 // The Wi-Fi network you're on, from Android's answer (busssid, read by the task's Java steps just
 // before), without the quotes Android adds; '' when not connected (Android says "&lt;unknown ssid&gt;")
@@ -10322,15 +10324,17 @@ function recordName(d) {
   var two = function (n) { return (n &lt; 10 ? '0' : '') + n; };
   return 'bus-trip-' + d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()) + '-' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] + '.jsonl';
 }
+// What a network is to you: home, work, another, or none
+function wifiRole(name) { return !name ? 'none' : name === global('BusHomeWifi') ? 'home' : name === global('BusWorkWifi') ? 'work' : 'other'; }
 var wifiBefore = global('BusStateWifi') || '';
 var wifiNow = wifiName();
 setGlobal('BusStateWifi', wifiNow);
 if (wifiNow !== wifiBefore) {
-  var wifiRole = function (n) { return !n ? 'none' : n === global('BusHomeWifi') ? 'home' : n === global('BusWorkWifi') ? 'work' : 'other'; };
-  record('wifi', { from: wifiRole(wifiBefore), to: wifiRole(wifiNow) });
+  var roles = { from: wifiRole(wifiBefore), to: wifiRole(wifiNow) };
+  record('wifi', roles);
   // Just came off home or work Wi-Fi (4.64): which, and when, so Bus Watch can tell a drop while you're
   // still there from leaving (BusStateWifiLeftAt)
-  if (wifiRole(wifiBefore) === 'home' || wifiRole(wifiBefore) === 'work') setGlobal('BusStateWifiLeftAt', JSON.stringify({ p: wifiRole(wifiBefore), t: Date.now() }));
+  if (roles.from === 'home' || roles.from === 'work') setGlobal('BusStateWifiLeftAt', JSON.stringify({ place: roles.from, at: Date.now() }));
 }
 </Str>
 			<Str sr="arg1" ve="3"/>
@@ -10510,12 +10514,15 @@ var lastWifi = get('BusStateLastWifi');
 var hereLat = parseFloat(loc('gl_latitude'));
 var hereLon = parseFloat(loc('gl_longitude'));
 // The screen coming on gets its fix after this, so it has no position here. Since 4.64 the newest one
-// Bus Watch kept stands in, if it's under 3 minutes old and good to 50 m: on Tuesday 13 October the
-// work Wi-Fi dropped at your desk, and the second screen-on without it, 8 m from work and two minutes
-// after a fix there, was taken for leaving and showed the next buses
-var winNow = getJSON('BusStateWindow', []);
-var newest = Array.isArray(winNow) &amp;&amp; winNow.length ? winNow[winNow.length - 1] : null;
-if ((isNaN(hereLat) || isNaN(hereLon)) &amp;&amp; newest &amp;&amp; Date.now() - newest.t &lt; 180000 &amp;&amp; (newest.acc || 15) &lt;= 50) { hereLat = newest.lat; hereLon = newest.lon; }
+// Bus Watch kept stands in, if it's under 3 minutes old and good to 50 m: in one recording the work
+// Wi-Fi dropped at the desk, and the second screen-on without it, 8 m from work and two minutes after a
+// fix there, was taken for leaving and showed the next buses. A fix with no accuracy (or 0, which
+// Android never gives) counts as 15 m, as everywhere else in Bus Watch.
+var recentFixes = getJSON('BusStateWindow', []);
+var newestFix = Array.isArray(recentFixes) &amp;&amp; recentFixes.length ? recentFixes[recentFixes.length - 1] : null;
+if ((isNaN(hereLat) || isNaN(hereLon)) &amp;&amp; newestFix &amp;&amp; Date.now() - newestFix.t &lt; 180000 &amp;&amp; (newestFix.acc || 15) &lt;= 50) {
+  hereLat = newestFix.lat; hereLon = newestFix.lon;
+}
 function metresFrom(placeVar) {
   var at = getJSON(placeVar, null);
   if (!at || !at.lat || isNaN(hereLat) || isNaN(hereLon)) return null;
@@ -10547,7 +10554,7 @@ if (busleave === 'yes') setGlobal('BusStateStartMode', 'leaving|' + Date.now());
 // Staying put well away from your stops (Bus Watch has slowed the pushes right down: BusStatePushMode
 // is "far"), the screen coming on doesn't need a fresh GPS fix if there was one in the last 2 minutes
 // (Tuesday evening, 39 screen-on checks in under an hour, sitting in the same place)
-var lastFix = newest ? newest.t : 0;
+var lastFix = newestFix ? newestFix.t : 0;
 var quietFar = fromWake &amp;&amp; !countdownOn &amp;&amp; get('BusStatePushMode') === 'far' &amp;&amp; Date.now() - lastFix &lt; 120000;
 // On home or work Wi-Fi the fix is only used to refine where that place is (place_record.js), whose
 // running average stops gaining weight at 10 positions. Once it has them, the screen coming on doesn't
@@ -10956,14 +10963,15 @@ function travelMode(t, lat, lon, acc) {
 // following your bus, moving along a route, the stop coming up by bus, how far past a stop you are.
 // Each used to read BusCacheSeq and work out its own distances, up to five times a check, with four
 // copies of the same sums. Needs metres (shared/metres.js).
-//   routeLines() -&gt; [{ seq, cum }]: each route's stops in order, [[id, lat, lon], ...] (BusCacheSeq),
-//   and metres along the route to each. Read once per script run.
+//   routeLines() -&gt; [{ seq, metresAlong }]: each route's stops in order, [[id, lat, lon], ...]
+//   (BusCacheSeq), and the running total of metres along the route to each (0 at the first). Read once per script run.
 function routeLines() {
   if (routeLines.lines) return routeLines.lines;          // kept on the function, so Tasker doesn't hand it back as a local
   var seqs = getJSON('BusCacheSeq', []);
-  routeLines.lines = seqs.map(function (sq) {
-    var cum = [0]; for (var c = 1; c &lt; sq.length; c++) cum.push(cum[c - 1] + metres(sq[c - 1][1], sq[c - 1][2], sq[c][1], sq[c][2]));
-    return { seq: sq, cum: cum };
+  routeLines.lines = seqs.map(function (stops) {
+    var metresAlong = [0];
+    for (var i = 1; i &lt; stops.length; i++) metresAlong.push(metresAlong[i - 1] + metres(stops[i - 1][1], stops[i - 1][2], stops[i][1], stops[i][2]));
+    return { seq: stops, metresAlong: metresAlong };
   });
   return routeLines.lines;
 }
@@ -10978,7 +10986,7 @@ function onSegment(line, j, pLat, pLon) {
   var ax = (a[2] - pLon) * kx; var ay = (a[1] - pLat) * ky; var dx = (b[2] - pLon) * kx - ax; var dy = (b[1] - pLat) * ky - ay;
   var len2 = dx * dx + dy * dy; if (!len2) return null;
   var f = Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2));
-  return { off: Math.sqrt(Math.pow(ax + f * dx, 2) + Math.pow(ay + f * dy, 2)), f: f, along: line.cum[j] + f * (line.cum[j + 1] - line.cum[j]),
+  return { off: Math.sqrt(Math.pow(ax + f * dx, 2) + Math.pow(ay + f * dy, 2)), f: f, along: line.metresAlong[j] + f * (line.metresAlong[j + 1] - line.metresAlong[j]),
     dx: dx, dy: dy, len: Math.sqrt(len2), j: j };
 }
 
@@ -11007,21 +11015,21 @@ function nearestOnLine(line, pLat, pLon, from, to, keep) {
 // so nothing that needs a quick answer waits on it: it only stops a slow spell ending a ride.
 // Needs routeLines (shared/routeLines.js) and metres.
 function followBus(fLat, fLon, fAcc, fNow) {
-  var fb = getJSON('BusStateBoarded', null);
-  var ff = getJSON('BusStateFollow', null);
-  if (!fb || !fb.v || fb.sure === false || !ff || ff.v !== fb.v || fNow - ff.at &gt; 120000 || (fAcc || 15) &gt; 60) return null;
+  var boardedNow = getJSON('BusStateBoarded', null);
+  var followNow = getJSON('BusStateFollow', null);
+  if (!boardedNow || !boardedNow.v || boardedNow.sure === false || !followNow || followNow.v !== boardedNow.v || fNow - followNow.at &gt; 120000 || (fAcc || 15) &gt; 60) return null;
   // Stops still to come: TfL's times move on by themselves, so a reply a minute old still says where
   // the bus is now (one due up to 30 s ago may be standing there yet)
-  var ahead = (ff.n || []).filter(function (x) { return x[1] &gt;= fNow - 30000; });
+  var ahead = (followNow.n || []).filter(function (x) { return x[1] &gt;= fNow - 30000; });
   if (!ahead.length) return null;
   // The bus's line of stops: one with its next stop, and the one after that further on (so it's the
   // right direction), from BusCacheSeq
   var line = null; var at = -1; var sure = false;
   routeLines().forEach(function (ln) {
-    var sq = ln.seq;
-    var k = -1; for (var i = 1; i &lt; sq.length &amp;&amp; k &lt; 0; i++) if (sq[i][0] === ahead[0][0]) k = i;
+    var stops = ln.seq;
+    var k = -1; for (var i = 1; i &lt; stops.length &amp;&amp; k &lt; 0; i++) if (stops[i][0] === ahead[0][0]) k = i;
     if (k &lt; 1) return;
-    var onward = ahead.length &lt; 2 || sq.slice(k + 1).some(function (p) { return p[0] === ahead[1][0]; });
+    var onward = ahead.length &lt; 2 || stops.slice(k + 1).some(function (p) { return p[0] === ahead[1][0]; });
     if (!line || (onward &amp;&amp; !sure)) { line = ln; at = k; sure = onward; }
   });
   // With two or more stops ahead, a line that has them in that order, or nothing: at the end of a
@@ -11029,14 +11037,14 @@ function followBus(fLat, fLon, fAcc, fNow) {
   if (!line || (ahead.length &gt;= 2 &amp;&amp; !sure)) return null;
   // Where you are on the line: the nearest segment near the bus (from 6 stops before its next stop
   // to 4 after)
-  var seq = line.seq; var cum = line.cum;
+  var seq = line.seq; var metresAlong = line.metresAlong;
   var near = nearestOnLine(line, fLat, fLon, at - 6, at + 4);
   var off = near ? near.off : Infinity; var you = near ? near.along : 0;
   var nextName = ahead[0][2] || 'its next stop';
-  var route = fb.k ? 'the ' + fb.k : 'your bus';
+  var route = boardedNow.k ? 'the ' + boardedNow.k : 'your bus';
   if (off &gt; 100) return { with: false, why: route + ' is on another road (' + Math.round(off) + ' m away)' };
-  if (you &lt; cum[at - 1] - 150) return { with: false, why: route + ' has gone on, to ' + nextName };
-  if (you &gt; cum[at] + 150) return { with: false, why: route + ' is behind you, still to reach ' + nextName };
+  if (you &lt; metresAlong[at - 1] - 150) return { with: false, why: route + ' has gone on, to ' + nextName };
+  if (you &gt; metresAlong[at] + 150) return { with: false, why: route + ' is behind you, still to reach ' + nextName };
   // dir: the way the bus is going, from the stop before its next one to that stop (for goesBack: the
   // bus's way, whatever your feet are doing)
   return { with: true, why: route + ' is still with you (next stop ' + nextName + ')', dir: [[seq[at - 1][1], seq[at - 1][2]], [seq[at][1], seq[at][2]]] };
@@ -11052,16 +11060,18 @@ function followBus(fLat, fLon, fAcc, fNow) {
 // last 9 minutes to Kiln Street, so only TfL's word gave its way); once you're off it, only within 2
 // minutes of last moving at bus speed, so crossing the road for a bus back soon shows its countdown.
 function goesBack(st, gNow, onBus) {
-  var hd = getJSON('BusStateHeading', null);
-  if (!hd || !hd.a || !hd.z || (onBus ? gNow - hd.t &gt; 3 * 60000 : gNow - (hd.b || 0) &gt; 2 * 60000)) return false;
-  var a = hd.a; var z = hd.z;
-  var R = Math.PI / 180; var kx = Math.cos(st.lat * R); var tx = (z[1] - a[1]) * kx; var ty = z[0] - a[0];
+  // BusStateHeading: { a (where the bus was), z (where it got to), t (when that was kept), b (last at
+  // bus speed) }, positions as [lat, lon]
+  var headingNow = getJSON('BusStateHeading', null);
+  if (!headingNow || !headingNow.a || !headingNow.z || (onBus ? gNow - headingNow.t &gt; 3 * 60000 : gNow - (headingNow.b || 0) &gt; 2 * 60000)) return false;
+  var headFrom = headingNow.a; var headTo = headingNow.z;
+  var R = Math.PI / 180; var kx = Math.cos(st.lat * R); var tx = (headTo[1] - headFrom[1]) * kx; var ty = headTo[0] - headFrom[0];
   var leaving = [];
   routeLines().forEach(function (ln) {
-    var sq = ln.seq;
-    for (var i = 0; i &lt; sq.length - 1; i++) {
-      if (sq[i][0] !== st.id) continue;
-      var dx = (sq[i + 1][2] - sq[i][2]) * kx; var dy = sq[i + 1][1] - sq[i][1]; var dl = Math.sqrt(dx * dx + dy * dy);
+    var stops = ln.seq;
+    for (var i = 0; i &lt; stops.length - 1; i++) {
+      if (stops[i][0] !== st.id) continue;
+      var dx = (stops[i + 1][2] - stops[i][2]) * kx; var dy = stops[i + 1][1] - stops[i][1]; var dl = Math.sqrt(dx * dx + dy * dy);
       if (dl) leaving.push((dx * tx + dy * ty) / (dl * Math.sqrt(tx * tx + ty * ty)));
     }
   });
@@ -11084,8 +11094,8 @@ function movingAlong(rWin, minPace) {
   var span = (pts[pts.length - 1].t - pts[0].t) / 1000; if (span &lt; 60) return null;
   var best = null;
   routeLines().forEach(function (ln) {
-    var cum = ln.cum; var alongs = []; var furthest = null;
-    var nearFurthest = function (j) { return furthest === null || !(cum[j + 1] &lt; furthest - 300 || cum[j] &gt; furthest + 1500); };
+    var metresAlong = ln.metresAlong; var alongs = []; var furthest = null;
+    var nearFurthest = function (j) { return furthest === null || !(metresAlong[j + 1] &lt; furthest - 300 || metresAlong[j] &gt; furthest + 1500); };
     for (var k = 0; k &lt; pts.length; k++) {
       var near = nearestOnLine(ln, pts[k].lat, pts[k].lon, 0, undefined, nearFurthest);
       if (!near || near.off &gt; 40) return;                               // off this line
@@ -11099,58 +11109,63 @@ function movingAlong(rWin, minPace) {
 }
 // How you've been moving, from Bus Watch's window of recent positions (BusStateWindow: up to 6, the
 // last 5 minutes, each { t, lat, lon, acc, spd }). Gathered here in 4.63; each worked the same in
-// watch.js before. fixT is the newest position's time (ms); st is a stop as watch.js has it
-// ({ lat, lon, d (metres from you now), r (its circle) }).
+// watch.js before. win is that window, oldest first; fixT is the newest position's time (ms); st is a
+// stop as watch.js has it ({ lat, lon, d (metres from you now), r (its circle) }).
 
 // Speed: the median of the last three readings, so one jumpy fix can't fake (or hide) a bus.
 // -1 when there's none
 function moveSpeed(win) {
-  var recent = win.map(function (w) { return w.spd; }).filter(function (v) { return v &gt;= 0; }).slice(-3).sort(function (a, c) { return a - c; });
-  return recent.length ? recent[Math.floor(recent.length / 2)] : -1;
+  var lastSpeeds = win.map(function (fix) { return fix.spd; }).filter(function (v) { return v &gt;= 0; }).slice(-3).sort(function (x, y) { return x - y; });
+  return lastSpeeds.length ? lastSpeeds[Math.floor(lastSpeeds.length / 2)] : -1;
 }
 
-// Moving away from a point: the trend of your distance from it across the window (least squares, m/s)
-function moveTrend(win, pLat, pLon) {
-  var part = win.slice(-4);                         // the most recent positions only
-  if (part.length &lt; 3) return 0;
-  var xs = part.map(function (w) { return (w.t - part[0].t) / 1000; }); var ys = part.map(function (w) { return metres(w.lat, w.lon, pLat, pLon); });
-  var n = xs.length; var mx = 0; var my = 0; var sxy = 0; var sxx = 0; var k;
-  for (k = 0; k &lt; n; k++) { mx += xs[k] / n; my += ys[k] / n; }
-  for (k = 0; k &lt; n; k++) { sxy += (xs[k] - mx) * (ys[k] - my); sxx += (xs[k] - mx) * (xs[k] - mx); }
-  return sxx &gt; 0 ? sxy / sxx : 0;
+// Moving away from a point: the trend of your distance from it across the window (m/s): the slope of
+// a straight line fitted through (seconds, metres away) by least squares, covariance over variance
+function moveTrend(win, fromLat, fromLon) {
+  var latest = win.slice(-4);                       // the most recent positions only
+  if (latest.length &lt; 3) return 0;
+  var secs = latest.map(function (fix) { return (fix.t - latest[0].t) / 1000; });
+  var away = latest.map(function (fix) { return metres(fix.lat, fix.lon, fromLat, fromLon); });
+  var n = secs.length; var meanSecs = 0; var meanAway = 0; var covariance = 0; var variance = 0; var k;
+  for (k = 0; k &lt; n; k++) { meanSecs += secs[k] / n; meanAway += away[k] / n; }
+  for (k = 0; k &lt; n; k++) { covariance += (secs[k] - meanSecs) * (away[k] - meanAway); variance += (secs[k] - meanSecs) * (secs[k] - meanSecs); }
+  return variance &gt; 0 ? covariance / variance : 0;
 }
 
 // Slowed down, though a rough fix makes the speed reading bounce about even when you're standing
 // still: over the last 30 to 90 seconds of positions, less than 25 m from where you were, under
 // 0.5 m/s. Walking past a stop covers 40 m or more in that time.
-function moveSettled(win, fixT) {
-  var recentW = win.filter(function (w) { return fixT - w.t &lt;= 90000; });
-  if (recentW.length &lt; 3) return false;
-  var a = recentW[0]; var z = recentW[recentW.length - 1]; var span = (z.t - a.t) / 1000;
-  if (span &lt; 30) return false;
-  var moved = metres(a.lat, a.lon, z.lat, z.lon);
-  return moved &lt; 25 &amp;&amp; moved / span &lt; 0.5;
+function moveSlowedDown(win, fixT) {
+  var lastNinety = win.filter(function (fix) { return fixT - fix.t &lt;= 90000; });
+  if (lastNinety.length &lt; 3) return false;
+  var first = lastNinety[0]; var last = lastNinety[lastNinety.length - 1]; var spanSecs = (last.t - first.t) / 1000;
+  if (spanSecs &lt; 30) return false;
+  var moved = metres(first.lat, first.lon, last.lat, last.lon);
+  return moved &lt; 25 &amp;&amp; moved / spanSecs &lt; 0.5;
 }
 
 // Staying put somewhere, allowing for indoor GPS wander: at least 4 positions over 2 minutes or more
 // (in the last 5), all within 80 m of where they average out. Walking 2 minutes covers 170 m. Only
-// used to slow the pushes down far from your stops (Tuesday evening indoors, the fix wandered 30
-// to 70 m, so moveSettled never held).
-function moveStaying(win) {
+// used to slow the pushes down far from your stops (indoors one evening, the fix wandered 30 to 70
+// m, so moveSlowedDown never held).
+function moveStayingPut(win) {
   if (win.length &lt; 4 || win[win.length - 1].t - win[0].t &lt; 120000) return false;
-  var mLat = 0; var mLon = 0;
-  win.forEach(function (w) { mLat += w.lat / win.length; mLon += w.lon / win.length; });
-  return win.every(function (w) { return metres(w.lat, w.lon, mLat, mLon) &lt;= 80; });
+  var centreLat = 0; var centreLon = 0;
+  win.forEach(function (fix) { centreLat += fix.lat / win.length; centreLon += fix.lon / win.length; });
+  return win.every(function (fix) { return metres(fix.lat, fix.lon, centreLat, centreLon) &lt;= 80; });
 }
 
 // Steady pace away from a stop: the fastest average over 90 seconds or more of the window. Walking
 // tops out under 2 m/s even with GPS error; over 2.2 m/s for that long is a bus, however slowly it
-// crawled through traffic (Tuesday, leaving Wexley on the 566: 2.6 m/s for nearly 3 minutes, which
-// a single speed reading never showed)
+// crawled through traffic (one recorded ride: 2.6 m/s for nearly 3 minutes, which a single speed
+// reading never showed)
 function movePaceAway(win, fixT, st) {
-  var best = 0;
-  win.forEach(function (w) { var dt = (fixT - w.t) / 1000; if (dt &gt;= 90) best = Math.max(best, (st.d - metres(w.lat, w.lon, st.lat, st.lon)) / dt); });
-  return best;
+  var bestPace = 0;
+  win.forEach(function (fix) {
+    var secsBack = (fixT - fix.t) / 1000;
+    if (secsBack &gt;= 90) bestPace = Math.max(bestPace, (st.d - metres(fix.lat, fix.lon, st.lat, st.lon)) / secsBack);
+  });
+  return bestPace;
 }
 
 // How fast you've been closing in on a stop (m/s): your distance from it now against a position 45
@@ -11158,8 +11173,8 @@ function movePaceAway(win, fixT, st) {
 // the road affects both alike. -1 when there's nothing to go on.
 function moveClosing(win, fixT, st) {
   for (var i = 0; i &lt; win.length; i++) {
-    var dt = (fixT - win[i].t) / 1000;
-    if (dt &gt;= 45 &amp;&amp; dt &lt;= 240) return (metres(win[i].lat, win[i].lon, st.lat, st.lon) - st.d) / dt;
+    var secsBack = (fixT - win[i].t) / 1000;
+    if (secsBack &gt;= 45 &amp;&amp; secsBack &lt;= 240) return (metres(win[i].lat, win[i].lon, st.lat, st.lon) - st.d) / secsBack;
   }
   return -1;
 }
@@ -11167,9 +11182,9 @@ function moveClosing(win, fixT, st) {
 // When you left a stop: the last position within 40 m of it, or failing that inside its circle (0 if
 // the window no longer has one)
 function moveLeftAt(win, st) {
-  var near = 0; var inCircle = 0;
-  win.forEach(function (w) { var d = metres(w.lat, w.lon, st.lat, st.lon); if (d &lt;= 40) near = w.t; if (d &lt;= st.r) inCircle = w.t; });
-  return near || inCircle;
+  var lastNearAt = 0; var lastInCircleAt = 0;
+  win.forEach(function (fix) { var d = metres(fix.lat, fix.lon, st.lat, st.lon); if (d &lt;= 40) lastNearAt = fix.t; if (d &lt;= st.r) lastInCircleAt = fix.t; });
+  return lastNearAt || lastInCircleAt;
 }
 
 var now = Date.now();
@@ -11340,10 +11355,10 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
 
   // ---- What this position means, from the current state --------------------------------------
   // Slowed down: the speed reading is walking pace or less (unknown counts as slow), or you've hardly
-  // got anywhere over the last 30 to 90 seconds (moveSettled). Staying put somewhere (moveStaying) only
+  // got anywhere over the last 30 to 90 seconds (moveSlowedDown). Staying put somewhere (moveStayingPut) only
   // slows the pushes down far from your stops.
-  var settled = moveSettled(win, fixT);
-  var staying = moveStaying(win);
+  var settled = moveSlowedDown(win, fixT);
+  var staying = moveStayingPut(win);
   var slow = speed &lt; 0 || speed &lt;= 0.8 || settled;
   var lastTwo = win.map(function (w) { return w.spd; }).filter(function (v) { return v &gt;= 0; }).slice(-2);
   var busTwice = lastTwo.length === 2 &amp;&amp; lastTwo[0] &gt; 4.2 &amp;&amp; lastTwo[1] &gt; 4.2;
@@ -11495,18 +11510,19 @@ if (!stale &amp;&amp; !isNaN(lat) &amp;&amp; !isNaN(lon)) {
       if (leftStop) trip.maxD = Math.max(trip.maxD || 0, Math.round(leftStop.d));
     }
     var arrival = insideStops.filter(function (st) { return !justLeft(st); })[0];
+    var wifiStay = null;                              // stillThere(arrival), when it's asked
     if (arrival &amp;&amp; (snoozed &amp;&amp; !byHand)) why = 'snoozed: you swiped it away; it comes back once you\u2019ve been to that stop and left it, or at ' + new Date(snoozedAt + 30 * 60000).toTimeString().slice(0, 5);
     else if (arrival &amp;&amp; offBusLately &amp;&amp; !byHand &amp;&amp; homeOrWork(arrival)) why = 'off the bus at ' + arrival.n + ', by ' + homeOrWork(arrival) + ': no countdown (you\u2019ve arrived)';
+    // Just off home or work Wi-Fi and still there (4.64): no countdown at the stop by that place while
+    // you're within 30 m of it, in the 5 minutes since the Wi-Fi went. In one recording the work Wi-Fi
+    // dropped for a few minutes at the desk, 8 m from where work is, and the stop by work started its
+    // countdown. Leaving, the first position was 17 to 93 m out; at 50 m this held up a real departure
+    // (43 m) by 40 s
+    else if (arrival &amp;&amp; !byHand &amp;&amp; (wifiStay = stillThere(arrival))) why = 'just off ' + wifiStay.place + ' Wi-Fi, and still there (' + wifiStay.metres + ' m away): no countdown';
     // On a bus, or just off one, by a stop whose buses all go back the way the bus was going: the other
     // side of the road (4.58). Only within 3 minutes of last moving at bus speed while on a bus, 2 once
     // off it: having got off, you may well cross the road for a bus back, or walk to a connection. A
     // run by hand still shows it.
-    // Just off home or work Wi-Fi and still there (4.64): no countdown at the stop by that place while
-    // you're within 30 m of it, in the 5 minutes since the Wi-Fi went. On Tuesday 13 October at 15:21
-    // the work Wi-Fi dropped for a few minutes at your desk, 8 m from where work is, and the stop by
-    // work started its countdown. Leaving, the first position was 17 to 93 m out; at 50 m this held up
-    // a real departure (43 m) by 40 s
-    else if (arrival &amp;&amp; !byHand &amp;&amp; stillThere(arrival)) why = 'just off ' + homeOrWork(arrival) + ' Wi-Fi, and still there (' + stillThere(arrival) + ' m away): no countdown';
     else if (arrival &amp;&amp; !byHand &amp;&amp; goesBack(arrival, now, trip.s === 'onbus')) why = (trip.s === 'onbus' ? 'on a bus' : 'just off a bus') + ' by ' + arrival.n + ', but its buses go back the way you came: no countdown';
     // Walking towards it inside its circle (4.60): shown now, as it would be heading for it from
     // outside the circle. On Tuesday 13 October Ashenhurst (Stop U), with a 200 m circle, waited 2
@@ -11600,8 +11616,8 @@ function walkingTo(st) {
   if (closing &lt; Math.max(0.5, 0.6 * speed) || st.d / speed &gt; limit) return null;
   var place = homeOrWork(st);
   if (place) {
-    var pAt = getJSON(place === 'home' ? 'BusHomeAt' : 'BusWorkAt', null);
-    if (pAt &amp;&amp; moveClosing(win, fixT, { lat: pAt.lat, lon: pAt.lon, d: metres(lat, lon, pAt.lat, pAt.lon) }) &gt; 0.3) return null;
+    var placeAt = getJSON(place === 'home' ? 'BusHomeAt' : 'BusWorkAt', null);
+    if (placeAt &amp;&amp; moveClosing(win, fixT, { lat: placeAt.lat, lon: placeAt.lon, d: metres(lat, lon, placeAt.lat, placeAt.lon) }) &gt; 0.3) return null;
   }
   return { why: 'heading to ' + st.n + ' (' + Math.round(st.d) + ' m, about ' + Math.max(1, Math.round(st.d / speed / 60)) + ' min on foot, getting nearer at ' + Math.round(closing * 3.6) + ' km/h)' };
 }
@@ -11662,16 +11678,16 @@ function homeOrWork(st) {
   return '';
 }
 // Off home or work Wi-Fi in the last 5 minutes (BusStateWifiLeftAt, from wifi_save.js) and still within
-// 30 m of that place (BusHomeAt / BusWorkAt), for a stop by it: how far you are from the place, in
-// whole metres (at least 1), or 0 when not
+// 30 m of that place (BusHomeAt / BusWorkAt), for a stop by it: { place ('home' or 'work'), metres
+// (how far you are from it, whole, at least 1) }, or null when not
 function stillThere(st) {
   var place = homeOrWork(st);
-  var left = getJSON('BusStateWifiLeftAt', null);
-  if (!place || !left || left.p !== place || !(now - left.t &gt;= 0 &amp;&amp; now - left.t &lt;= 5 * 60000)) return 0;
-  var at = getJSON(place === 'home' ? 'BusHomeAt' : 'BusWorkAt', null);
-  if (!at || at.lat === undefined) return 0;
-  var d = metres(lat, lon, at.lat, at.lon);
-  return d &lt;= 30 ? Math.max(1, Math.round(d)) : 0;
+  var wifiLeft = getJSON('BusStateWifiLeftAt', null);
+  if (!place || !wifiLeft || wifiLeft.place !== place || !(now - wifiLeft.at &gt;= 0 &amp;&amp; now - wifiLeft.at &lt;= 5 * 60000)) return null;
+  var placeAt = getJSON(place === 'home' ? 'BusHomeAt' : 'BusWorkAt', null);
+  if (!placeAt || placeAt.lat === undefined) return null;
+  var fromPlace = metres(lat, lon, placeAt.lat, placeAt.lon);
+  return fromPlace &lt;= 30 ? { place: place, metres: Math.max(1, Math.round(fromPlace)) } : null;
 }
 
 // Where you are along a route: the nearest segment of any route's line of stops (within 60 m), and
@@ -11698,9 +11714,9 @@ function alongRoute(maxAlong) {
       if (!on || (on.dx * tx + on.dy * ty) / on.len &lt; 0.5) continue;       // runs the other way
       if (on.off &gt; 60) continue;
       // From this point, walk along the route to the first saved stop ahead
-      for (var j = i + 1; j &lt; seq.length &amp;&amp; line.cum[j] - on.along &lt;= maxAlong; j++) {
-        if (savedById[seq[j][0]] &amp;&amp; line.cum[j] - on.along &gt; 30) {
-          if (!found || line.cum[j] - on.along &lt; found.along) found = { st: savedById[seq[j][0]], along: line.cum[j] - on.along };
+      for (var j = i + 1; j &lt; seq.length &amp;&amp; line.metresAlong[j] - on.along &lt;= maxAlong; j++) {
+        if (savedById[seq[j][0]] &amp;&amp; line.metresAlong[j] - on.along &gt; 30) {
+          if (!found || line.metresAlong[j] - on.along &lt; found.along) found = { st: savedById[seq[j][0]], along: line.metresAlong[j] - on.along };
           break;
         }
       }
@@ -11717,9 +11733,9 @@ function pastAlong(st) {
   routeLines().forEach(function (line) {
     var seq = line.seq;
     var i0 = -1; for (var i = 0; i &lt; seq.length &amp;&amp; i0 &lt; 0; i++) if (seq[i][0] === st.id) i0 = i;
-    for (var j = i0; i0 &gt;= 0 &amp;&amp; j &lt; seq.length - 1 &amp;&amp; line.cum[j] - line.cum[i0] &lt;= 2000; j++) {
+    for (var j = i0; i0 &gt;= 0 &amp;&amp; j &lt; seq.length - 1 &amp;&amp; line.metresAlong[j] - line.metresAlong[i0] &lt;= 2000; j++) {
       var on = onSegment(line, j, lat, lon);
-      if (on &amp;&amp; on.off &lt;= bestOff) { bestOff = on.off; best = on.along - line.cum[i0]; }
+      if (on &amp;&amp; on.off &lt;= bestOff) { bestOff = on.off; best = on.along - line.metresAlong[i0]; }
     }
   });
   return best;
@@ -12393,8 +12409,8 @@ function recordName(d) {
 		</Action>
 	</Task>
 	<Task sr="task72">
-		<cdate>1792002657497</cdate>
-		<edate>1792002657497</edate>
+		<cdate>1792059105843</cdate>
+		<edate>1792059105843</edate>
 		<id>72</id>
 		<nme>Bus Status</nme>
 		<pri>6</pri>

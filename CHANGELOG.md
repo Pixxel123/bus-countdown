@@ -4,6 +4,17 @@ Changes to Bus Countdown, newest first, in [Keep a Changelog](https://keepachang
 
 Each release's project file is on its [GitHub release](../../releases).
 
+## [4.65] - 2026-10-15
+
+### Changed
+
+- Clearer names, same rules. Short or cryptic names in the shared route, movement and following code and in `npm run compare` are spelled out (the running distance along a route is `metresAlong`, the two "not going anywhere" tests are `moveSlowedDown` and `moveStayingPut`), and comments say "in one recording" rather than naming days.
+- `BusStateWifiLeftAt` is kept as `{ place, at }`. A value kept by 4.64 isn't read, so in the 5 minutes after updating a Wi-Fi drop at home or work can still start a countdown once.
+
+### Added
+
+- Tests for a drop, back on, then a second drop, and for the edges of the 4.64 rule (30 m, 5 minutes).
+
 ## [4.64] - 2026-10-14
 
 ### Fixed
@@ -18,7 +29,7 @@ Each release's project file is on its [GitHub release](../../releases).
 
 ### Changed
 
-- Tidier code, same rules. Saved state is read by one helper rather than 47 copies of the same lines, and how you've been moving (speed, trend, pace away, closing in, settled, staying put, when you left a stop) is worked out in one shared piece rather than inside Bus Watch. All seven recorded days replay identically: every script run, and every global after it.
+- Tidier code, same rules. Saved state is read by one helper rather than 47 copies of the same lines, and how you've been moving (speed, trend, pace away, closing in, settled, staying put, when you left a stop) is worked out in one shared piece rather than inside Bus Watch. Recorded days replay identically, every script run and every global after it, apart from the one fix below.
 
 ### Fixed
 

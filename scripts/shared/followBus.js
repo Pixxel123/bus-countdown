@@ -12,21 +12,21 @@
 // so nothing that needs a quick answer waits on it: it only stops a slow spell ending a ride.
 // Needs routeLines (shared/routeLines.js) and metres.
 function followBus(fLat, fLon, fAcc, fNow) {
-  var fb = getJSON('BusStateBoarded', null);
-  var ff = getJSON('BusStateFollow', null);
-  if (!fb || !fb.v || fb.sure === false || !ff || ff.v !== fb.v || fNow - ff.at > 120000 || (fAcc || 15) > 60) return null;
+  var boardedNow = getJSON('BusStateBoarded', null);
+  var followNow = getJSON('BusStateFollow', null);
+  if (!boardedNow || !boardedNow.v || boardedNow.sure === false || !followNow || followNow.v !== boardedNow.v || fNow - followNow.at > 120000 || (fAcc || 15) > 60) return null;
   // Stops still to come: TfL's times move on by themselves, so a reply a minute old still says where
   // the bus is now (one due up to 30 s ago may be standing there yet)
-  var ahead = (ff.n || []).filter(function (x) { return x[1] >= fNow - 30000; });
+  var ahead = (followNow.n || []).filter(function (x) { return x[1] >= fNow - 30000; });
   if (!ahead.length) return null;
   // The bus's line of stops: one with its next stop, and the one after that further on (so it's the
   // right direction), from BusCacheSeq
   var line = null; var at = -1; var sure = false;
   routeLines().forEach(function (ln) {
-    var sq = ln.seq;
-    var k = -1; for (var i = 1; i < sq.length && k < 0; i++) if (sq[i][0] === ahead[0][0]) k = i;
+    var stops = ln.seq;
+    var k = -1; for (var i = 1; i < stops.length && k < 0; i++) if (stops[i][0] === ahead[0][0]) k = i;
     if (k < 1) return;
-    var onward = ahead.length < 2 || sq.slice(k + 1).some(function (p) { return p[0] === ahead[1][0]; });
+    var onward = ahead.length < 2 || stops.slice(k + 1).some(function (p) { return p[0] === ahead[1][0]; });
     if (!line || (onward && !sure)) { line = ln; at = k; sure = onward; }
   });
   // With two or more stops ahead, a line that has them in that order, or nothing: at the end of a
@@ -34,14 +34,14 @@ function followBus(fLat, fLon, fAcc, fNow) {
   if (!line || (ahead.length >= 2 && !sure)) return null;
   // Where you are on the line: the nearest segment near the bus (from 6 stops before its next stop
   // to 4 after)
-  var seq = line.seq; var cum = line.cum;
+  var seq = line.seq; var metresAlong = line.metresAlong;
   var near = nearestOnLine(line, fLat, fLon, at - 6, at + 4);
   var off = near ? near.off : Infinity; var you = near ? near.along : 0;
   var nextName = ahead[0][2] || 'its next stop';
-  var route = fb.k ? 'the ' + fb.k : 'your bus';
+  var route = boardedNow.k ? 'the ' + boardedNow.k : 'your bus';
   if (off > 100) return { with: false, why: route + ' is on another road (' + Math.round(off) + ' m away)' };
-  if (you < cum[at - 1] - 150) return { with: false, why: route + ' has gone on, to ' + nextName };
-  if (you > cum[at] + 150) return { with: false, why: route + ' is behind you, still to reach ' + nextName };
+  if (you < metresAlong[at - 1] - 150) return { with: false, why: route + ' has gone on, to ' + nextName };
+  if (you > metresAlong[at] + 150) return { with: false, why: route + ' is behind you, still to reach ' + nextName };
   // dir: the way the bus is going, from the stop before its next one to that stop (for goesBack: the
   // bus's way, whatever your feet are doing)
   return { with: true, why: route + ' is still with you (next stop ' + nextName + ')', dir: [[seq[at - 1][1], seq[at - 1][2]], [seq[at][1], seq[at][2]]] };
@@ -57,16 +57,18 @@ function followBus(fLat, fLon, fAcc, fNow) {
 // last 9 minutes to Kiln Street, so only TfL's word gave its way); once you're off it, only within 2
 // minutes of last moving at bus speed, so crossing the road for a bus back soon shows its countdown.
 function goesBack(st, gNow, onBus) {
-  var hd = getJSON('BusStateHeading', null);
-  if (!hd || !hd.a || !hd.z || (onBus ? gNow - hd.t > 3 * 60000 : gNow - (hd.b || 0) > 2 * 60000)) return false;
-  var a = hd.a; var z = hd.z;
-  var R = Math.PI / 180; var kx = Math.cos(st.lat * R); var tx = (z[1] - a[1]) * kx; var ty = z[0] - a[0];
+  // BusStateHeading: { a (where the bus was), z (where it got to), t (when that was kept), b (last at
+  // bus speed) }, positions as [lat, lon]
+  var headingNow = getJSON('BusStateHeading', null);
+  if (!headingNow || !headingNow.a || !headingNow.z || (onBus ? gNow - headingNow.t > 3 * 60000 : gNow - (headingNow.b || 0) > 2 * 60000)) return false;
+  var headFrom = headingNow.a; var headTo = headingNow.z;
+  var R = Math.PI / 180; var kx = Math.cos(st.lat * R); var tx = (headTo[1] - headFrom[1]) * kx; var ty = headTo[0] - headFrom[0];
   var leaving = [];
   routeLines().forEach(function (ln) {
-    var sq = ln.seq;
-    for (var i = 0; i < sq.length - 1; i++) {
-      if (sq[i][0] !== st.id) continue;
-      var dx = (sq[i + 1][2] - sq[i][2]) * kx; var dy = sq[i + 1][1] - sq[i][1]; var dl = Math.sqrt(dx * dx + dy * dy);
+    var stops = ln.seq;
+    for (var i = 0; i < stops.length - 1; i++) {
+      if (stops[i][0] !== st.id) continue;
+      var dx = (stops[i + 1][2] - stops[i][2]) * kx; var dy = stops[i + 1][1] - stops[i][1]; var dl = Math.sqrt(dx * dx + dy * dy);
       if (dl) leaving.push((dx * tx + dy * ty) / (dl * Math.sqrt(tx * tx + ty * ty)));
     }
   });
@@ -89,8 +91,8 @@ function movingAlong(rWin, minPace) {
   var span = (pts[pts.length - 1].t - pts[0].t) / 1000; if (span < 60) return null;
   var best = null;
   routeLines().forEach(function (ln) {
-    var cum = ln.cum; var alongs = []; var furthest = null;
-    var nearFurthest = function (j) { return furthest === null || !(cum[j + 1] < furthest - 300 || cum[j] > furthest + 1500); };
+    var metresAlong = ln.metresAlong; var alongs = []; var furthest = null;
+    var nearFurthest = function (j) { return furthest === null || !(metresAlong[j + 1] < furthest - 300 || metresAlong[j] > furthest + 1500); };
     for (var k = 0; k < pts.length; k++) {
       var near = nearestOnLine(ln, pts[k].lat, pts[k].lon, 0, undefined, nearFurthest);
       if (!near || near.off > 40) return;                               // off this line

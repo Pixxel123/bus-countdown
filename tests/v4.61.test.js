@@ -76,7 +76,7 @@ test('the shared sums: where a point falls on a route line, and the nearest poin
   vm.runInContext(compose('/* @include get */\n/* @include metres */\n/* @include routeLines */') +
     '\nvar line = routeLines()[0]; var mid = onSegment(line, 0, 51.37 + ' + m(250) + ', -0.28 + 10 / 69600); var near = nearestOnLine(line, 51.37 + ' + m(520) + ', -0.28 + 300 / 69600);' +
     '\nvar again = routeLines() === routeLines(); var skipFirst = nearestOnLine(line, 51.37 + ' + m(250) + ', -0.28, 0, undefined, function (j) { return j > 0; });', ctx);
-  assert.ok(Math.abs(ctx.line.cum[2] - 1000) < 2, String(ctx.line.cum[2]));
+  assert.ok(Math.abs(ctx.line.metresAlong[2] - 1000) < 2, String(ctx.line.metresAlong[2]));
   assert.ok(Math.abs(ctx.mid.off - 10) < 0.5 && Math.abs(ctx.mid.along - 250) < 1 && Math.abs(ctx.mid.f - 0.5) < 0.01, JSON.stringify(ctx.mid));
   assert.strictEqual(ctx.near.j, 1);
   assert.ok(Math.abs(ctx.near.off - 20) < 0.5 && Math.abs(ctx.near.along - 800) < 2, JSON.stringify(ctx.near));

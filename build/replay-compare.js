@@ -29,70 +29,70 @@ function replayLogged(dir, lines, wifi) {
     const real = harness.run;
     harness.__compare = { real, log: null, lines: [], setup: {}, wifi: false };
     harness.run = function (name, opts) {
-      const c = harness.__compare;
-      const nameOf = (role) => role === 'home' ? c.setup.BusHomeWifi : role === 'work' ? c.setup.BusWorkWifi : role === 'other' ? 'Another network' : '';
-      if (c.wifi && name === 'watch.js') {
+      const state = harness.__compare;
+      const nameOf = (role) => role === 'home' ? state.setup.BusHomeWifi : role === 'work' ? state.setup.BusWorkWifi : role === 'other' ? 'Another network' : '';
+      if (state.wifi && name === 'watch.js') {
         // Getting to home or work Wi-Fi: the check that noticed left no line (nothing more to do there),
         // but its Wi-Fi rules ran, so they're run here, at that moment, as a screen-on check
-        for (const l of c.lines) {
-          if (l.t > opts.now) break;
-          if (l.k !== 'wifi' || l.t <= c.lastT || (l.to !== 'home' && l.to !== 'work')) continue;
-          const rj = real('watch_due.js', { globals: opts.globals, now: l.t, locals: { buscaller: 'profile=wake', busssid: '"' + nameOf(l.to) + '"' } });
-          c.log.push(entry('watch_due.js', rj, opts.globals, l.t));
+        for (const line of state.lines) {
+          if (line.t > opts.now) break;
+          if (line.k !== 'wifi' || line.t <= state.lastT || (line.to !== 'home' && line.to !== 'work')) continue;
+          const arrivalRun = real('watch_due.js', { globals: opts.globals, now: line.t, locals: { buscaller: 'profile=wake', busssid: '"' + nameOf(line.to) + '"' } });
+          state.log.push(entry('watch_due.js', arrivalRun, opts.globals, line.t));
         }
-        c.lastT = opts.now;
+        state.lastT = opts.now;
         let last = null;
-        for (const l of c.lines) { if (l.t > opts.now) break; if (l.k === 'wifi') last = l; }
+        for (const line of state.lines) { if (line.t > opts.now) break; if (line.k === 'wifi') last = line; }
         const ssid = nameOf(last ? last.to : 'none');
         // A screen-on check has no position yet when the Wi-Fi rules run (the fix comes after)
         const locals = Object.assign({}, opts.locals, { busssid: ssid ? '"' + ssid + '"' : '<unknown ssid>' });
         if (/^profile=(wake|loop)$/.test(locals.buscaller)) { delete locals.gl_latitude; delete locals.gl_longitude; }
-        const r0 = real('watch_due.js', { globals: opts.globals, now: opts.now, locals });
-        c.log.push(entry('watch_due.js', r0, opts.globals, opts.now));
-        const g = opts.globals;
+        const wifiRulesRun = real('watch_due.js', { globals: opts.globals, now: opts.now, locals });
+        state.log.push(entry('watch_due.js', wifiRulesRun, opts.globals, opts.now));
+        const globals = opts.globals;
         // What the task does next: end the countdown, or start one for the stop the phone showed when
         // it did the same (else your nearest), and check no further on home or work Wi-Fi
-        if (r0.busend === 'yes' && g.BusStateRunning === '1') {
-          g.BusStateRunning = '0'; g.TRUN = '';
-          c.wifiDecisions.push({ t: opts.now, k: 'wifi rules', d: 'home or work Wi-Fi: the countdown ends' });
+        if (wifiRulesRun.busend === 'yes' && globals.BusStateRunning === '1') {
+          globals.BusStateRunning = '0'; globals.TRUN = '';
+          state.wifiDecisions.push({ t: opts.now, k: 'wifi rules', d: 'home or work Wi-Fi: the countdown ends' });
         }
-        if (r0.busleave === 'yes') {
-          const was = c.leaving.find((l) => Math.abs(l.t - opts.now) <= 60000);
-          const rows = (g.BusPlaces || '').split('\n').map((x) => x.split('|')).filter((p) => p[0] === 'bus');
-          const near = rows.map((p) => ({ id: p[1], n: p[2], d: Math.hypot(parseFloat(p[3]) - parseFloat(opts.locals.gl_latitude), (parseFloat(p[4]) - parseFloat(opts.locals.gl_longitude)) * 0.62) }))
-            .sort((x, y) => x.d - y.d)[0];
-          g.BusStateRunning = '1'; g.TRUN = 'Bus Loop';
-          g.BusStateStopId = was ? was.stop : near ? near.id : g.BusStateStopId; g.BusStateStopName = was ? was.name : near ? near.n : g.BusStateStopName;
-          c.wifiDecisions.push({ t: opts.now, k: 'wifi rules', d: 'left ' + (r0.leftWhich || 'home or work') + ' Wi-Fi: a countdown for ' + g.BusStateStopName });
+        if (wifiRulesRun.busleave === 'yes') {
+          const was = state.leaving.find((line) => Math.abs(line.t - opts.now) <= 60000);
+          const rows = (globals.BusPlaces || '').split('\n').map((text) => text.split('|')).filter((row) => row[0] === 'bus');
+          const near = rows.map((row) => ({ id: row[1], n: row[2], d: Math.hypot(parseFloat(row[3]) - parseFloat(opts.locals.gl_latitude), (parseFloat(row[4]) - parseFloat(opts.locals.gl_longitude)) * 0.62) }))
+            .sort((nearer, further) => nearer.d - further.d)[0];
+          globals.BusStateRunning = '1'; globals.TRUN = 'Bus Loop';
+          globals.BusStateStopId = was ? was.stop : near ? near.id : globals.BusStateStopId; globals.BusStateStopName = was ? was.name : near ? near.n : globals.BusStateStopName;
+          state.wifiDecisions.push({ t: opts.now, k: 'wifi rules', d: 'left ' + (wifiRulesRun.leftWhich || 'home or work') + ' Wi-Fi: a countdown for ' + globals.BusStateStopName });
         }
-        if (r0.busdue === 'no' && /^profile/.test(locals.buscaller || '')) {
-          c.log.push({ name: 'watch.js', now: opts.now, text: JSON.stringify(['watch.js', 'not run: ' + r0.why]) });
-          const trip = g.BusStateTrip;
-          return { busaction: '', why: 'not checked: ' + r0.why, trip };
+        if (wifiRulesRun.busdue === 'no' && /^profile/.test(locals.buscaller || '')) {
+          state.log.push({ name: 'watch.js', now: opts.now, text: JSON.stringify(['watch.js', 'not run: ' + wifiRulesRun.why]) });
+          const trip = globals.BusStateTrip;
+          return { busaction: '', why: 'not checked: ' + wifiRulesRun.why, trip };
         }
       }
       const r = real(name, opts);
-      c.log.push(entry(name, r, opts.globals, opts.now));
+      state.log.push(entry(name, r, opts.globals, opts.now));
       return r;
     };
   }
-  const c = harness.__compare;
+  const state = harness.__compare;
   // With the Wi-Fi rules played, countdowns they start or end on the phone are theirs to decide here
-  c.leaving = wifi ? lines.filter((l) => l.k === 'start' && l.mode === 'leaving') : [];
-  if (wifi) lines = lines.filter((l) => !(l.k === 'start' && l.mode === 'leaving') && !(l.k === 'end' && l.from === 'wifi'));
-  c.log = []; c.wifiDecisions = []; c.lastT = 0; c.lines = lines; c.setup = ((lines.find((l) => l.k === 'setup') || {}).vars) || {}; c.wifi = !!wifi;
+  state.leaving = wifi ? lines.filter((line) => line.k === 'start' && line.mode === 'leaving') : [];
+  if (wifi) lines = lines.filter((line) => !(line.k === 'start' && line.mode === 'leaving') && !(line.k === 'end' && line.from === 'wifi'));
+  state.log = []; state.wifiDecisions = []; state.lastT = 0; state.lines = lines; state.setup = ((lines.find((line) => line.k === 'setup') || {}).vars) || {}; state.wifi = !!wifi;
   const { replay } = require(path.join(dir, 'build', 'replay-core'));
   const out = replay(lines).out;
-  return { runs: c.log, out, wifi: c.wifiDecisions };
+  return { runs: state.log, out, wifi: state.wifiDecisions };
 }
 
 // A script's outputs as Tasker sees them (its top-level variables that are text, numbers or true/false)
 // and every global variable after it
-function entry(name, r, g, now) {
+function entry(name, r, globals, now) {
   const outs = Object.keys(r).filter((k) => ['string', 'number', 'boolean'].includes(typeof r[k])).sort().map((k) => [k, r[k]]);
-  return { name, now, text: JSON.stringify([name, outs, Object.keys(g).sort().map((k) => [k, g[k]])]) };
+  return { name, now, text: JSON.stringify([name, outs, Object.keys(globals).sort().map((k) => [k, globals[k]])]) };
 }
-const unpack = (e) => { const [, outs, gs] = JSON.parse(e.text); return { name: e.name, now: e.now, outs, g: Object.fromEntries(gs) }; };
+const unpack = (e) => { const [, outs, gs] = JSON.parse(e.text); return { name: e.name, now: e.now, outs, globals: Object.fromEntries(gs) }; };
 
 // What each position and each TfL reply led to, in a form to compare and to show
 function decision(o) {
@@ -112,30 +112,30 @@ function compareDirs(dirA, dirB, lines, opts) {
   // Scripts only one version's replay runs (a newer replay may play more kinds of line) are counted,
   // and left out of the run-by-run comparison
   const namesA = new Set(a.runs.map((r) => r.name)); const namesB = new Set(b.runs.map((r) => r.name));
-  const only = (runs, other) => { const c = {}; runs.filter((r) => !other.has(r.name)).forEach((r) => { c[r.name] = (c[r.name] || 0) + 1; }); return c; };
+  const only = (runs, other) => { const counts = {}; runs.filter((r) => !other.has(r.name)).forEach((r) => { counts[r.name] = (counts[r.name] || 0) + 1; }); return counts; };
   const onlyBefore = only(a.runs, namesB); const onlyNow = only(b.runs, namesA);
   const ra = a.runs.filter((r) => namesB.has(r.name)); const rb = b.runs.filter((r) => namesA.has(r.name));
   let firstRun = null;
   const n = Math.max(ra.length, rb.length);
   for (let i = 0; i < n && !firstRun; i++) {
     if (ra[i] && rb[i] && ra[i].text === rb[i].text) continue;
-    const x = ra[i] && unpack(ra[i]); const y = rb[i] && unpack(rb[i]);
-    const keys = x && y ? Array.from(new Set(Object.keys(x.g).concat(Object.keys(y.g)))).filter((k) => x.g[k] !== y.g[k]) : [];
-    const outs = x && y ? Array.from(new Set(x.outs.map((o) => o[0]).concat(y.outs.map((o) => o[0]))))
-      .filter((k) => JSON.stringify((x.outs.find((o) => o[0] === k) || [])[1]) !== JSON.stringify((y.outs.find((o) => o[0] === k) || [])[1])) : [];
-    firstRun = { i, t: (x || y).now, script: (x || y).name, other: x && y && x.name !== y.name ? y.name : '', globals: keys, outputs: outs,
-      before: x ? Object.fromEntries(keys.map((k) => [k, x.g[k]])) : null, now: y ? Object.fromEntries(keys.map((k) => [k, y.g[k]])) : null };
+    const runA = ra[i] && unpack(ra[i]); const runB = rb[i] && unpack(rb[i]);
+    const keys = runA && runB ? Array.from(new Set(Object.keys(runA.globals).concat(Object.keys(runB.globals)))).filter((k) => runA.globals[k] !== runB.globals[k]) : [];
+    const outs = runA && runB ? Array.from(new Set(runA.outs.map((out) => out[0]).concat(runB.outs.map((out) => out[0]))))
+      .filter((k) => JSON.stringify((runA.outs.find((out) => out[0] === k) || [])[1]) !== JSON.stringify((runB.outs.find((out) => out[0] === k) || [])[1])) : [];
+    firstRun = { i, t: (runA || runB).now, script: (runA || runB).name, other: runA && runB && runA.name !== runB.name ? runB.name : '', globals: keys, outputs: outs,
+      before: runA ? Object.fromEntries(keys.map((k) => [k, runA.globals[k]])) : null, now: runB ? Object.fromEntries(keys.map((k) => [k, runB.globals[k]])) : null };
   }
   const decisions = [];
   // Matched by time and kind (an earlier version may not have played every kind of line), leaving out
   // the Wi-Fi changes themselves, which are what happened rather than anything decided
   const keyed = (out) => { const m = new Map(); const n = {}; out.filter((o) => o.k !== 'wifi').forEach((o) => { const k = o.t + '|' + o.k; n[k] = (n[k] || 0) + 1; m.set(k + '|' + n[k], o); }); return m; };
   const ka = keyed(a.out.concat(a.wifi)); const kb = keyed(b.out.concat(b.wifi));
-  const keys = Array.from(new Set(Array.from(ka.keys()).concat(Array.from(kb.keys())))).sort((x, y) => parseInt(x, 10) - parseInt(y, 10));
+  const keys = Array.from(new Set(Array.from(ka.keys()).concat(Array.from(kb.keys())))).sort((keyA, keyB) => parseInt(keyA, 10) - parseInt(keyB, 10));
   for (const k of keys) {
-    const o = ka.get(k); const p = kb.get(k);
-    const x = o ? (o.d || decision(o)) : '(nothing)'; const y = p ? (p.d || decision(p)) : '(nothing)';
-    if (x !== y) decisions.push({ t: (o || p).t, k: (o || p).k, before: x, now: y });
+    const was = ka.get(k); const is = kb.get(k);
+    const before = was ? (was.d || decision(was)) : '(nothing)'; const now = is ? (is.d || decision(is)) : '(nothing)';
+    if (before !== now) decisions.push({ t: (was || is).t, k: (was || is).k, before, now });
   }
   const extra = Object.keys(onlyBefore).length + Object.keys(onlyNow).length;
   return { runs: Math.max(a.runs.length, b.runs.length), same: !firstRun && !decisions.length && !extra, firstRun, decisions, onlyBefore, onlyNow };

@@ -218,10 +218,10 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
 
   // ---- What this position means, from the current state --------------------------------------
   // Slowed down: the speed reading is walking pace or less (unknown counts as slow), or you've hardly
-  // got anywhere over the last 30 to 90 seconds (moveSettled). Staying put somewhere (moveStaying) only
+  // got anywhere over the last 30 to 90 seconds (moveSlowedDown). Staying put somewhere (moveStayingPut) only
   // slows the pushes down far from your stops.
-  var settled = moveSettled(win, fixT);
-  var staying = moveStaying(win);
+  var settled = moveSlowedDown(win, fixT);
+  var staying = moveStayingPut(win);
   var slow = speed < 0 || speed <= 0.8 || settled;
   var lastTwo = win.map(function (w) { return w.spd; }).filter(function (v) { return v >= 0; }).slice(-2);
   var busTwice = lastTwo.length === 2 && lastTwo[0] > 4.2 && lastTwo[1] > 4.2;
@@ -373,18 +373,19 @@ if (!stale && !isNaN(lat) && !isNaN(lon)) {
       if (leftStop) trip.maxD = Math.max(trip.maxD || 0, Math.round(leftStop.d));
     }
     var arrival = insideStops.filter(function (st) { return !justLeft(st); })[0];
+    var wifiStay = null;                              // stillThere(arrival), when it's asked
     if (arrival && (snoozed && !byHand)) why = 'snoozed: you swiped it away; it comes back once you\u2019ve been to that stop and left it, or at ' + new Date(snoozedAt + 30 * 60000).toTimeString().slice(0, 5);
     else if (arrival && offBusLately && !byHand && homeOrWork(arrival)) why = 'off the bus at ' + arrival.n + ', by ' + homeOrWork(arrival) + ': no countdown (you\u2019ve arrived)';
+    // Just off home or work Wi-Fi and still there (4.64): no countdown at the stop by that place while
+    // you're within 30 m of it, in the 5 minutes since the Wi-Fi went. In one recording the work Wi-Fi
+    // dropped for a few minutes at the desk, 8 m from where work is, and the stop by work started its
+    // countdown. Leaving, the first position was 17 to 93 m out; at 50 m this held up a real departure
+    // (43 m) by 40 s
+    else if (arrival && !byHand && (wifiStay = stillThere(arrival))) why = 'just off ' + wifiStay.place + ' Wi-Fi, and still there (' + wifiStay.metres + ' m away): no countdown';
     // On a bus, or just off one, by a stop whose buses all go back the way the bus was going: the other
     // side of the road (4.58). Only within 3 minutes of last moving at bus speed while on a bus, 2 once
     // off it: having got off, you may well cross the road for a bus back, or walk to a connection. A
     // run by hand still shows it.
-    // Just off home or work Wi-Fi and still there (4.64): no countdown at the stop by that place while
-    // you're within 30 m of it, in the 5 minutes since the Wi-Fi went. On Tuesday 13 October at 15:21
-    // the work Wi-Fi dropped for a few minutes at your desk, 8 m from where work is, and the stop by
-    // work started its countdown. Leaving, the first position was 17 to 93 m out; at 50 m this held up
-    // a real departure (43 m) by 40 s
-    else if (arrival && !byHand && stillThere(arrival)) why = 'just off ' + homeOrWork(arrival) + ' Wi-Fi, and still there (' + stillThere(arrival) + ' m away): no countdown';
     else if (arrival && !byHand && goesBack(arrival, now, trip.s === 'onbus')) why = (trip.s === 'onbus' ? 'on a bus' : 'just off a bus') + ' by ' + arrival.n + ', but its buses go back the way you came: no countdown';
     // Walking towards it inside its circle (4.60): shown now, as it would be heading for it from
     // outside the circle. On Tuesday 13 October Ashenhurst (Stop U), with a 200 m circle, waited 2
@@ -478,8 +479,8 @@ function walkingTo(st) {
   if (closing < Math.max(0.5, 0.6 * speed) || st.d / speed > limit) return null;
   var place = homeOrWork(st);
   if (place) {
-    var pAt = getJSON(place === 'home' ? 'BusHomeAt' : 'BusWorkAt', null);
-    if (pAt && moveClosing(win, fixT, { lat: pAt.lat, lon: pAt.lon, d: metres(lat, lon, pAt.lat, pAt.lon) }) > 0.3) return null;
+    var placeAt = getJSON(place === 'home' ? 'BusHomeAt' : 'BusWorkAt', null);
+    if (placeAt && moveClosing(win, fixT, { lat: placeAt.lat, lon: placeAt.lon, d: metres(lat, lon, placeAt.lat, placeAt.lon) }) > 0.3) return null;
   }
   return { why: 'heading to ' + st.n + ' (' + Math.round(st.d) + ' m, about ' + Math.max(1, Math.round(st.d / speed / 60)) + ' min on foot, getting nearer at ' + Math.round(closing * 3.6) + ' km/h)' };
 }
@@ -540,16 +541,16 @@ function homeOrWork(st) {
   return '';
 }
 // Off home or work Wi-Fi in the last 5 minutes (BusStateWifiLeftAt, from wifi_save.js) and still within
-// 30 m of that place (BusHomeAt / BusWorkAt), for a stop by it: how far you are from the place, in
-// whole metres (at least 1), or 0 when not
+// 30 m of that place (BusHomeAt / BusWorkAt), for a stop by it: { place ('home' or 'work'), metres
+// (how far you are from it, whole, at least 1) }, or null when not
 function stillThere(st) {
   var place = homeOrWork(st);
-  var left = getJSON('BusStateWifiLeftAt', null);
-  if (!place || !left || left.p !== place || !(now - left.t >= 0 && now - left.t <= 5 * 60000)) return 0;
-  var at = getJSON(place === 'home' ? 'BusHomeAt' : 'BusWorkAt', null);
-  if (!at || at.lat === undefined) return 0;
-  var d = metres(lat, lon, at.lat, at.lon);
-  return d <= 30 ? Math.max(1, Math.round(d)) : 0;
+  var wifiLeft = getJSON('BusStateWifiLeftAt', null);
+  if (!place || !wifiLeft || wifiLeft.place !== place || !(now - wifiLeft.at >= 0 && now - wifiLeft.at <= 5 * 60000)) return null;
+  var placeAt = getJSON(place === 'home' ? 'BusHomeAt' : 'BusWorkAt', null);
+  if (!placeAt || placeAt.lat === undefined) return null;
+  var fromPlace = metres(lat, lon, placeAt.lat, placeAt.lon);
+  return fromPlace <= 30 ? { place: place, metres: Math.max(1, Math.round(fromPlace)) } : null;
 }
 
 // Where you are along a route: the nearest segment of any route's line of stops (within 60 m), and
@@ -576,9 +577,9 @@ function alongRoute(maxAlong) {
       if (!on || (on.dx * tx + on.dy * ty) / on.len < 0.5) continue;       // runs the other way
       if (on.off > 60) continue;
       // From this point, walk along the route to the first saved stop ahead
-      for (var j = i + 1; j < seq.length && line.cum[j] - on.along <= maxAlong; j++) {
-        if (savedById[seq[j][0]] && line.cum[j] - on.along > 30) {
-          if (!found || line.cum[j] - on.along < found.along) found = { st: savedById[seq[j][0]], along: line.cum[j] - on.along };
+      for (var j = i + 1; j < seq.length && line.metresAlong[j] - on.along <= maxAlong; j++) {
+        if (savedById[seq[j][0]] && line.metresAlong[j] - on.along > 30) {
+          if (!found || line.metresAlong[j] - on.along < found.along) found = { st: savedById[seq[j][0]], along: line.metresAlong[j] - on.along };
           break;
         }
       }
@@ -595,9 +596,9 @@ function pastAlong(st) {
   routeLines().forEach(function (line) {
     var seq = line.seq;
     var i0 = -1; for (var i = 0; i < seq.length && i0 < 0; i++) if (seq[i][0] === st.id) i0 = i;
-    for (var j = i0; i0 >= 0 && j < seq.length - 1 && line.cum[j] - line.cum[i0] <= 2000; j++) {
+    for (var j = i0; i0 >= 0 && j < seq.length - 1 && line.metresAlong[j] - line.metresAlong[i0] <= 2000; j++) {
       var on = onSegment(line, j, lat, lon);
-      if (on && on.off <= bestOff) { bestOff = on.off; best = on.along - line.cum[i0]; }
+      if (on && on.off <= bestOff) { bestOff = on.off; best = on.along - line.metresAlong[i0]; }
     }
   });
   return best;
